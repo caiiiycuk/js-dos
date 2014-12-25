@@ -1,0 +1,25 @@
+[% INCLUDE head.tt 
+    title = "JS-DOS"
+%]
+
+<ul>
+  <li>Starting MS-DOS...</li>
+  <li>MS-DOS Version 6.22</li>
+  <br/>
+  <li>C:\>dir</li>
+  <li>Directory of C:\</li>
+
+  [% FOR dir IN dirs %]
+    [% INCLUDE drivelink.tt 
+        title = dir
+        link = dir.lower
+        type = "&lt;DIR&gt;"
+    %]
+  [% END %]
+  
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${dirs.size} Datei(en)</li>
+  <br/>
+  <li>C:\>_</li>
+</ul>
+
+[% INCLUDE footer.tt %]
