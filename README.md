@@ -21,3 +21,7 @@ The build script works by convention. Expected directory layout in dos root:
 \FOLDER2
  \...
 ```
+
+Options (create file with this name in program directory):
+* ./dosbox.conf - config for dosbox
+* ./js-dos.nocursor - disable cursor when mouse on canvas
