@@ -65,7 +65,7 @@ my $tt = Template->new({
     EVAL_PERL => 1
 }) || die "$Template::ERROR\n";
 
-$tt->process("index.tt", { dirs => \@dirs }, "$build/index.html") || die $tt->error(), "\n";
+$tt->process("index.tt", { dirs => \@dirs, keywords => "dos,games,old" }, "$build/index.html") || die $tt->error(), "\n";
 
 foreach my $dir (@dirs) {
     my $path = "$drive/$dir";
@@ -77,8 +77,9 @@ foreach my $dir (@dirs) {
     my @execs = searchExecutables($path);
     my @links = map { buildJS($dir, $target, $_); }  @execs;
     my @sorted = sort(@links);
+    my $keywords = join(',', map { substr($_, 0, -4); } @sorted);
 
-    $tt->process("ls.tt", { dir => $dir, links => \@sorted }, "$target/index.html") || die $tt->error(), "\n";
+    $tt->process("ls.tt", { dir => $dir, links => \@sorted, keywords => $keywords }, "$target/index.html") || die $tt->error(), "\n";
 }
 
 print "Well done...\n";
@@ -111,7 +112,7 @@ sub buildJS {
     my $folder = $executable->{folder};
     my $targetFile = lc("$target/$file");
 
-    $tt->process("dosbox.tt", { dir => $dir, title => $file}, "$build/dosbox.html") || die $tt->error(), "\n";
+    $tt->process("dosbox.tt", { dir => $dir, title => substr($file, 0, -4)}, "$build/dosbox.html") || die $tt->error(), "\n";
 
     system("python $repo/dosbox/packager.py \"$targetFile\" \"$folder\" \"$file\"\n") == 0 || die "system failed: $?";
     return $file;
