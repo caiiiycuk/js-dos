@@ -1,0 +1,36 @@
+[% INCLUDE head.tt 
+    title = "JS-DOS / " _ dir
+%]
+
+<ul>
+  <li>Starting MS-DOS...</li>
+  <li>MS-DOS Version 6.22</li>
+  <br/>
+  <li>C:&#92;$dir>dir</li>
+  <li>Directory of C:&#92;$dir</li>
+  
+  [% INCLUDE drivelink.tt 
+      title = ".."
+      link = ".."
+      type = "&lt;DIR&gt;"
+      date = "07.05.1994"
+      time = "6.22"
+  %]
+
+  [% FOREACH link IN links %]
+    [% INCLUDE drivelink.tt 
+      title = link
+      link = link _ ".html"
+      type = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+      date = "??"
+      time = "??"
+    %]
+  [% END %]
+
+  
+  <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${links.size} Datei(en)</li>
+  <br/>
+  <li>C:&#92;$dir>_</li>
+</ul>
+
+[% INCLUDE footer.tt %]

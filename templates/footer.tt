@@ -1,0 +1,16 @@
+          </div>
+
+          <div class="span4"></div>
+        </div>
+      </div>
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/assets/js/jquery-1.11.2.min.js" defer></script>
+    <script src="/assets/js/bootstrap.min.js" defer></script>
+
+    [% INCLUDE metrika.tt %]
+
+  </body>
+</html>
