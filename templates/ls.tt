@@ -1,5 +1,6 @@
 [% INCLUDE head.tt 
     title = "JS-DOS / " _ dir
+    keywords = keywords
 %]
 
 <ul>
