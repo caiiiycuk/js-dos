@@ -5,7 +5,7 @@
 <ul>
   <li>Starting MS-DOS...</li>
   <li>MS-DOS Version 6.22</li>
-  <br/>
+  <li>&nbsp;</li>
   <li>C:\>dir</li>
   <li>Directory of C:\</li>
 
@@ -18,7 +18,7 @@
   [% END %]
   
   <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${dirs.size} Datei(en)</li>
-  <br/>
+  <li>&nbsp;</li>
   <li>C:\>_</li>
 </ul>
 
