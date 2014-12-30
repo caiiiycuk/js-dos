@@ -6,7 +6,7 @@
 <ul>
   <li>Starting MS-DOS...</li>
   <li>MS-DOS Version 6.22</li>
-  <br/>
+  <li>&nbsp;</li>
   <li>C:&#92;$dir>dir</li>
   <li>Directory of C:&#92;$dir</li>
   
@@ -30,7 +30,7 @@
 
   
   <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${links.size} Datei(en)</li>
-  <br/>
+  <li>&nbsp;</li>
   <li>C:&#92;$dir>_</li>
 </ul>
 
