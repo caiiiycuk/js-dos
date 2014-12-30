@@ -25,3 +25,6 @@ The build script works by convention. Expected directory layout in dos root:
 Options (create file with this name in program directory):
 * ./dosbox.conf - config for dosbox
 * ./js-dos.nocursor - disable cursor when mouse on canvas
+
+If you want to add a game on js-dos.com. Plase send me archive with game that runs in DosBox to 
+email (caiiiycuk@gmail.com).

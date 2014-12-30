@@ -38,7 +38,7 @@
 
       .emscripten canvas {
         border: 0;
-        /*cursor: none;*/
+        [% options.search('js-dos.nocursor') ? 'cursor: none;' : '' %]
       }
     </style>
   </head>
@@ -57,11 +57,14 @@
     </div>
     <div class="fullscreen">
       <a id="fullscreen" href="javascript:void(0);">Fullscreen</a><br/><br/>
+    </div>
+    <div class="emscripten-padding">
       <strong>NOTES:</strong> 
-        <ul>
-          <li>If you have problem with mouse positioning try to switching to <b>Fullscreen</b> mode</li>
-          <li>Your browser may hang up during loading of the game, please be patient</li>
-        </ul>
+      <ul>
+        <li>If you have problems with the mouse positioning of the mouse, then try to switching on <b>Fullscreen</b> mode</li>
+        <li>While the browser is loading the program, it may hang up for a while</li>
+        <li>Sometimes you should click on a canvas to capture the mouse</li>
+      </ul>
     </div>
 
     <div class="emscripten-padding">
@@ -78,6 +81,7 @@
       var progressElement = document.getElementById('progress');
 
       var Module = {
+        noImageDecoding: true,
         preRun: [],
         postRun: [],
         print: (function() {
