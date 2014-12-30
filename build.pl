@@ -66,6 +66,7 @@ my $tt = Template->new({
 }) || die "$Template::ERROR\n";
 
 $tt->process("index.tt", { dirs => \@dirs, keywords => "dos,games,old" }, "$build/index.html") || die $tt->error(), "\n";
+$tt->process("intro.tt", { keywords => "dos,games,old" }, "$build/intro/index.html") || die $tt->error(), "\n";
 
 foreach my $dir (@dirs) {
     my $path = "$drive/$dir";
