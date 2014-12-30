@@ -1,0 +1,14 @@
+[% INCLUDE head.tt 
+    title = "JS-DOS"
+%]
+
+On this site you can play in old dos games that ported into JavaScript with em-dosbox.
+em-dosbox is a DOS emulator based on DosBox sources. On the start page of this site you can choose 
+one of the available program to run it in browser. If you want add one or more games to this site,
+then send me mail with game archive and i try to add the game.
+<br/><br/>
+<a href="/">LET'S PLAY!</a>
+<br/><br/>
+Feedback: caiiiycuk@gmail.com
+
+[% INCLUDE footer.tt %]

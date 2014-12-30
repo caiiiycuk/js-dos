@@ -9,8 +9,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/assets/js/jquery-1.11.2.min.js" defer></script>
     <script src="/assets/js/bootstrap.min.js" defer></script>
-
-    [% INCLUDE metrika.tt %]
+    <script type="text/javascript" src="//yastatic.net/share/share.js" charset="utf-8" defer></script>
 
   </body>
 </html>
