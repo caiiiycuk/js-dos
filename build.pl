@@ -87,17 +87,19 @@ print "Well done...\n";
 sub searchExecutables {
     my $root = shift;
     my @execs = glob "$root/**/*.exe";
-    my @coms =  glob "$root/**/*.com";
+    my @coms = glob "$root/**/*.com";
+    my @bats = glob "$root/**/*.bat";
 
     my @found = ();
 
-    foreach my $file ((@execs, @coms)) {
+    foreach my $file ((@execs, @coms, @bats)) {
         my $name = basename($file);
         my $folder = dirname($file);
         my $folderName = basename($folder);
+        my $options = join(',', glob "$folder/js-dos.*");
 
         if (lc($name) eq lc($folderName)) {
-            push @found, { file => $name, folder => $folder };
+            push @found, { file => $name, folder => $folder, options => $options };
         }
     }
     
@@ -110,9 +112,10 @@ sub buildJS {
     my $executable = shift;
     my $file = $executable->{file};
     my $folder = $executable->{folder};
+    my $options = $executable->{options};
     my $targetFile = lc("$target/$file");
 
-    $tt->process("dosbox.tt", { dir => $dir, title => substr($file, 0, -4)}, "$build/dosbox.html") || die $tt->error(), "\n";
+    $tt->process("dosbox.tt", { dir => $dir, title => substr($file, 0, -4), options => $options}, "$build/dosbox.html") || die $tt->error(), "\n";
 
     system("python $repo/dosbox/packager.py \"$targetFile\" \"$folder\" \"$file\"\n") == 0 || die "system failed: $?";
     return $file;
