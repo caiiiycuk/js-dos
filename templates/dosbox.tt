@@ -138,7 +138,8 @@
             \$('.emscripten-status').hide();
             \$('.fullscreen').show();
           }
-        }
+        },
+        SDL_numSimultaneouslyQueuedBuffers: 1
       };
       Module.setStatus('Downloading...');
       window.onerror = function(event) {
