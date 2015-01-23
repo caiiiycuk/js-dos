@@ -1,7 +1,7 @@
 js-dos.com
 ==========
 
-js-doc.com codebase
+js-dos.com codebase
 
 Usage:
 ```sh
