@@ -1,41 +1,41 @@
-# Autotools.gitignore from https://github.com/github/gitignore/
+# Ignore docs files
+_gh_pages
+_site
+.ruby-version
 
-# http://www.gnu.org/software/automake
-
-Makefile.in
-
-# http://www.gnu.org/software/autoconf
-
-/autom4te.cache
-/aclocal.m4
-/compile
-/configure
-/depcomp
-/install-sh
-/missing
-/stamp-h1
-
-# End of template. Additional autoconf and automake files follow.
-
-Makefile
-/config.guess
-/config.h
-/config.h.in
-/config.log
-/config.status
-/config.sub
-.deps
-
-# Compiled files
-
-*.o
-*.a
-*.map
-src/dosbox
-src/dosbox.exe
-src/dosbox.js
-src/dosbox.html
-
-# Miscellaneous files
-
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.zip
+*.vi
 *~
+
+# OS or Editor folders
+.DS_Store
+._*
+Thumbs.db
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+nbproject
+*.sublime-project
+*.sublime-workspace
+.idea
+
+# Komodo
+*.komodoproject
+.komodotools
+
+# grunt-html-validation
+validation-status.json
+validation-report.json
+
+# Folders to ignore
+node_modules
