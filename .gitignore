@@ -1,0 +1,41 @@
+# Autotools.gitignore from https://github.com/github/gitignore/
+
+# http://www.gnu.org/software/automake
+
+Makefile.in
+
+# http://www.gnu.org/software/autoconf
+
+/autom4te.cache
+/aclocal.m4
+/compile
+/configure
+/depcomp
+/install-sh
+/missing
+/stamp-h1
+
+# End of template. Additional autoconf and automake files follow.
+
+Makefile
+/config.guess
+/config.h
+/config.h.in
+/config.log
+/config.status
+/config.sub
+.deps
+
+# Compiled files
+
+*.o
+*.a
+*.map
+src/dosbox
+src/dosbox.exe
+src/dosbox.js
+src/dosbox.html
+
+# Miscellaneous files
+
+*~
