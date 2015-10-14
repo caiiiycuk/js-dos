@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Dosbox.Module</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1 id="dosbox-module">Dosbox.Module</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Wrapper for emscripten module that also holds canvas element</p>
+<p>Usage:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">new</span> Dosbox.Module({canvas: canvas});
+</code></pre>
+<p>Constructor arguments:</p>
+<ul>
+<li>canvas - dom element it is used to render dosbox screen</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Dosbox</span>.<span class="hljs-title">Module</span></span>
+
+  <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+    <span class="hljs-property">@elCanvas</span> = options.canvas
+    <span class="hljs-property">@canvas</span> = <span class="hljs-property">@elCanvas</span>[<span class="hljs-number">0</span>]
+
+  <span class="hljs-attribute">preRun</span>: []
+
+  <span class="hljs-attribute">postRun</span>: []
+
+  <span class="hljs-attribute">totalDependencies</span>: <span class="hljs-number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>SDL_numSimultaneouslyQueuedBuffers: 1</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-attribute">print</span>: <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
+    text = <span class="hljs-attribute">Array</span>::slice.call(arguments).join(<span class="hljs-string">' '</span>)
+    <span class="hljs-built_in">console</span>?.log? text
+
+  <span class="hljs-attribute">printErr</span>: <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
+    text = <span class="hljs-attribute">Array</span>::slice.call(arguments).join(<span class="hljs-string">' '</span>)
+    <span class="hljs-built_in">console</span>?.error? text
+
+  <span class="hljs-attribute">setStatus</span>: <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
+    <span class="hljs-built_in">console</span>?.log? text
+
+  <span class="hljs-attribute">monitorRunDependencies</span>: <span class="hljs-function"><span class="hljs-params">(left)</span> -&gt;</span>
+    <span class="hljs-property">@totalDependencies</span> = Math.max(<span class="hljs-property">@totalDependencies</span>, left)
+    status =
+      <span class="hljs-keyword">if</span> left
+        <span class="hljs-string">"Preparing... (<span class="hljs-subst">#{<span class="hljs-property">@totalDependencies</span> - left}</span>/<span class="hljs-subst">#{<span class="hljs-property">@totalDependencies</span>}</span>)"</span>
+      <span class="hljs-keyword">else</span>
+        <span class="hljs-string">'All downloads complete.'</span>
+    Module.setStatus status</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
