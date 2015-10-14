@@ -25,7 +25,7 @@ author:
 paginate:         10
 
 # Custom vars
-version:          0.beta
+version:          0.0.beta
 
 github:
   repo:           https://github.com/caiiiycuk/js-dos.com
