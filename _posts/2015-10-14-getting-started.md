@@ -1,16 +1,17 @@
 ---
 layout: post
-title: Getting started
+title: Digger
+showcase: true
 ---
 
 In getting started tutorial we will launch [Digger](https://en.wikipedia.org/wiki/Digger_(video_game)) game in browser.
 
-<div id="dosbox"></div>
+<div id="digger"></div>
 
 <script type="text/javascript" src="http://js-dos.com/cdn/js-dos-api.js"></script>
 <script type="text/javascript">
   var dosbox = new Dosbox({
-    id: "dosbox",
+    id: "digger",
     onload: function (dosbox) {
       dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
     },
@@ -19,7 +20,10 @@ In getting started tutorial we will launch [Digger](https://en.wikipedia.org/wik
     }
   });
 </script>
+
 <!--more-->
+
+Digger is one of the first PC game. The game was created in 1983.
 
 Hyde is a brazen two-column [Jekyll](http://jekyllrb.com) theme that pairs a prominent sidebar with uncomplicated content. It's based on [Poole](http://getpoole.com), the Jekyll butler.
 

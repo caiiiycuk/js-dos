@@ -27,5 +27,8 @@ paginate:         10
 # Custom vars
 version:          0.0.beta
 
+gems:
+  - jekyll-sitemap
+
 github:
   repo:           https://github.com/caiiiycuk/js-dos.com

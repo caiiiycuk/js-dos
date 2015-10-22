@@ -1,7 +1,7 @@
 ---
 layout: page
 title: About
-permalink: '/js-dos.com/about/'
+permalink: 'about/'
 ---
 
 **js-dos** provides javascript API to easily run DOS programs and games in browser. This API allows to run unmodified versions of DOS programs, in other words you can run DOS binary in browser.

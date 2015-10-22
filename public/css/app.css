@@ -1,0 +1,2 @@
+#digger > .dosbox-container { width: 640px; height: 400px; }
+#digger > .dosbox-container > .dosbox-overlay { background: url(../../cdn/digger.png); }
