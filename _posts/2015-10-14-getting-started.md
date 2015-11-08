@@ -2,9 +2,13 @@
 layout: post
 title: Digger
 showcase: true
+keywords: digger,pc,game
+description: Play the legendary game Digger in browser.
+permalink: getting-started
+showfull: true
 ---
 
-In getting started tutorial we will launch [Digger](https://en.wikipedia.org/wiki/Digger_(video_game)) game in browser.
+In getting started tutorial we will launch [Digger]({% post_url 2015-10-14-getting-started %}) game in browser.
 
 <div id="digger"></div>
 
@@ -23,37 +27,86 @@ In getting started tutorial we will launch [Digger](https://en.wikipedia.org/wik
 
 <!--more-->
 
-Digger is one of the first PC game. The game was created in 1983.
+### Details
 
-Hyde is a brazen two-column [Jekyll](http://jekyllrb.com) theme that pairs a prominent sidebar with uncomplicated content. It's based on [Poole](http://getpoole.com), the Jekyll butler.
+<div itemscope itemtype="http://schema.org/VideoGame">
+  <meta itemprop="playMode" content="SinglePlayer">
+  <ul>
+    <li><span itemprop="name">Digger</span> was created in 1983</li>
+    <li><span class="gray">Creator</span> <span itemtype="http://schema.org/publisher">Windmill Software</span></li>
+    <li><span class="gray">Category</span> Arcade</li>
+    <li itemscope itemtype="http://schema.org/AggregateRating" itemprop="aggregateRating"><span class="gray">Age rating</span> +<span itemprop="ratingValue">0</span></li>
+    <li itemprop="gamePlatform"><span class="gray">Platform</span> PC</li>
+  </ul>
+</div>
 
-### Built on Poole
+Digger is one of the first PC game. The game was created in 1983. Let`s try to bring this legendary game in our time.
 
-Poole is the Jekyll Butler, serving as an upstanding and effective foundation for Jekyll themes by [@mdo](https://twitter.com/mdo). Poole, and every theme built on it (like Hyde here) includes the following:
+To run this game in browser you will need a zip archive with game, and a server that can host static web page. You can start with the [plunker template](http://plnkr.co/edit/yoEIKQ?p=preview):
 
-* Complete Jekyll setup included (layouts, config, [404](/404), [RSS feed](/atom.xml), posts, and [example page](/about))
-* Mobile friendly design and development
-* Easily scalable text and component sizing with `rem` units in the CSS
-* Support for a wide gamut of HTML elements
-* Related posts (time-based, because Jekyll) below each post
-* Syntax highlighting, courtesy Pygments (the Python-based code snippet highlighter)
+```html
+  <!doctype html>
+  <html lang="en-us">
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <title>js-dos api</title>
+      <style type="text/css">
+        .dosbox-container { width: 640px; height: 400px; }
+      </style>
+    </head>
+    <body>
+      <div id="dosbox"></div>
+      <br/>
+      <button onclick="dosbox.requestFullScreen();">Make fullscreen</button>
+      
+      <script type="text/javascript" src="http://js-dos.com/cdn/js-dos-api.js"></script>
+      <script type="text/javascript">
+        var dosbox = new Dosbox({
+          id: "dosbox",
+          onload: function (dosbox) {
+            dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
+          },
+          onrun: function (dosbox, app) {
+            console.log("App '" + app + "' is runned");
+          }
+        });
+      </script>
+    </body>
+  </html>
+```
 
-### Hyde features
+First of all we should prepare viewport where dosbox will render the game. Look at line 8 we set the `dosbox-container` size to 640x400 px. This means that Digger will runs in screen with resolution 640x400 px.
 
-In addition to the features of Poole, Hyde adds the following:
+At line 16 the `js-dos-api.js` was included. After processing this line, browser will download js-dos internals and prepare js-dos engine to work.
 
-* Sidebar includes support for textual modules and a dynamically generated navigation with active link support
-* Two orientations for content and sidebar, default (left sidebar) and [reverse](https://github.com/poole/lanyon#reverse-layout) (right sidebar), available via `<body>` classes
-* [Eight optional color schemes](https://github.com/poole/hyde#themes), available via `<body>` classes
+Finally we should bootstrap Digger game in browser.
 
-[Head to the readme](https://github.com/poole/hyde#readme) to learn more.
+```js
+  var dosbox = new Dosbox({
+    id: "dosbox",
+    onload: function (dosbox) {
+      dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
+    },
+    onrun: function (dosbox, app) {
+      console.log("App '" + app + "' is runned");
+    }
+  });
+```
 
-### Browser support
+* *id* - a HTML element id where dosbox will create the dosbox canvas
+* *onload* - a callback that was called when dosbox is initialized
+* *onrun* - a callback that was called when dos application was runned
 
-Hyde is by preference a forward-thinking project. In addition to the latest versions of Chrome, Safari (mobile and desktop), and Firefox, it is only compatible with Internet Explorer 9 and above.
+On line 4 we actually start the game:
 
-### Download
+```js
+  dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
+```
 
-Hyde is developed on and hosted with GitHub. Head to the <a href="https://github.com/poole/hyde">GitHub repository</a> for downloads, bug reports, and features requests.
+* First argument is the place where archive with digger is located
+* Second argument is a executable file name
 
-Thanks!
+Now you can run Digger or any other dos game in browser.
+
+Have fun!

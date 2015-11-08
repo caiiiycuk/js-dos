@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Games
-permalink: '/js-dos.com/games/'
+permalink: 'games/'
 ---
 
 There are listing of many games that can be run in browser with js-dos.

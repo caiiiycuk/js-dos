@@ -1,0 +1,4 @@
+User-Agent: *
+Disallow: /
+
+Sitemap: http://js-dos.com/sitemap.xml

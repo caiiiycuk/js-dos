@@ -1,10 +1,13 @@
 ---
 layout: default
 title: Home
+keywords: dosbox,dos,games,browser,javascript,js-dos
+description: A javascript version of dosbox that can run dos programs and games in browser.
 ---
 
 <div class="posts">
   {% for post in paginator.posts %}
+  {% if post.private != true %}
   <div class="post">
     <h1 class="post-title">
       <a href="{{ site.baseurl }}{{ post.url }}">
@@ -13,9 +16,13 @@ title: Home
     </h1>
 
     <span class="post-date">{{ post.date | date_to_string }}</span>
-
-    {{ post.excerpt }}
+    {% if post.showfull == true %}
+      {{ post.content }}
+    {% else %}
+      {{ post.excerpt }}
+    {% endif %}
   </div>
+  {% endif %}
   {% endfor %}
 </div>
 

@@ -13,12 +13,12 @@
     <br/>
     <button onclick="dosbox.requestFullScreen();">Make fullscreen</button>
     
-    <script type="text/javascript" src="js-dos-api.js"></script>
+    <script type="text/javascript" src="http://js-dos.com/cdn/js-dos-api.js"></script>
     <script type="text/javascript">
       var dosbox = new Dosbox({
         id: "dosbox",
         onload: function (dosbox) {
-          dosbox.run("digger.zip", "./DIGGER.COM");
+          dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
         },
         onrun: function (dosbox, app) {
           console.log("App '" + app + "' is runned");
