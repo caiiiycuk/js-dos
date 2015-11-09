@@ -2,6 +2,8 @@
 layout: page
 title: Games
 permalink: 'games/'
+keywords: js-dos,games,browser
+description: The showcase of js-dos. Legendary dos games in browser.
 ---
 
 There are listing of many games that can be run in browser with js-dos.
