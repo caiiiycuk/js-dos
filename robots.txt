@@ -1,4 +1,6 @@
 User-Agent: *
 Allow: /
+Disallow: /cdn/test.html
+Disallow: /404.htm
 
 Sitemap: http://js-dos.com/sitemap.xml

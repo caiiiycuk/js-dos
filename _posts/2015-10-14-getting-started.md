@@ -2,9 +2,9 @@
 layout: post
 title: Digger
 showcase: true
-keywords: digger,pc,game
+keywords: digger,pc,game,javscript
 description: Play the legendary game Digger in browser.
-permalink: getting-started
+permalink: getting-started/
 showfull: true
 ---
 
