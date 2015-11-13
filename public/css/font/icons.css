@@ -1,37 +1,10 @@
-.gray {
-  color: #AAA;
-}
-
-.post-share {
-  float: right;
-}
-
-.dosbox-default > .dosbox-container { width: 640px; height: 400px; }
-
-#digger > .dosbox-container > .dosbox-overlay { background: url(../../cdn/digger.png); }
-
-#xonix > .dosbox-container > .dosbox-overlay { background: url(../../cdn/xonix.png); }
-
-.icon-resize-full,
-.icon-resize-full:hover,
-.icon-resize-full:visited {
-  color: black;
-  text-decoration: none !important;
-}
-
-.icon-resize-full:hover {
-  color: #268bd2;
-}
-
-/* FONTELLO */
-
 @font-face {
   font-family: 'icons';
-  src: url('font/icons.eot?13187811');
-  src: url('font/icons.eot?13187811#iefix') format('embedded-opentype'),
-       url('font/icons.woff?13187811') format('woff'),
-       url('font/icons.ttf?13187811') format('truetype'),
-       url('font/icons.svg?13187811#icons') format('svg');
+  src: url('../font/icons.eot?13187811');
+  src: url('../font/icons.eot?13187811#iefix') format('embedded-opentype'),
+       url('../font/icons.woff?13187811') format('woff'),
+       url('../font/icons.ttf?13187811') format('truetype'),
+       url('../font/icons.svg?13187811#icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }

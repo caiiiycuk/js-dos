@@ -8,43 +8,19 @@ permalink: getting-started/
 showfull: true
 ---
 
-In getting started tutorial we will launch [Digger]({% post_url 2015-10-14-getting-started %}) game in browser.
+In getting started tutorial we will launch Digger game in browser.
 
-<div id="digger"></div>
-
-<script type="text/javascript" src="http://js-dos.com/cdn/js-dos-api.js"></script>
-<script type="text/javascript">
-  var dosbox = new Dosbox({
-    id: "digger",
-    onload: function (dosbox) {
-      dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
-    },
-    onrun: function (dosbox, app) {
-      console.log("App '" + app + "' is runned");
-    }
-  });
-</script>
+{% include dosbox.html game="digger" archive="/cdn/digger.zip" exe="./DIGGER.COM" %}
 
 <!--more-->
 
-### Details
-
-<div itemscope itemtype="http://schema.org/VideoGame">
-  <meta itemprop="playMode" content="SinglePlayer">
-  <ul>
-    <li><span itemprop="name">Digger</span> was created in 1983</li>
-    <li><span class="gray">Creator</span> <span itemtype="http://schema.org/publisher">Windmill Software</span></li>
-    <li><span class="gray">Category</span> Arcade</li>
-    <li itemscope itemtype="http://schema.org/AggregateRating" itemprop="aggregateRating"><span class="gray">Age rating</span> +<span itemprop="ratingValue">0</span></li>
-    <li itemprop="gamePlatform"><span class="gray">Platform</span> PC</li>
-  </ul>
-</div>
+{% include details.html name="Digger" createdat="1983" publisher="Windmill Software" category="Arcade" %}
 
 Digger is one of the first PC game. The game was created in 1983. Let`s try to bring this legendary game in our time.
 
-To run this game in browser you will need a zip archive with game, and a server that can host static web page. You can start with the [plunker template](http://plnkr.co/edit/yoEIKQ?p=preview):
+To run this game in browser you will need a zip archive with game, and a server that can host static web page. You can start with the [plunk template](http://plnkr.co/edit/yoEIKQ?p=preview):
 
-```html
+{% highlight html linenos %}
   <!doctype html>
   <html lang="en-us">
     <head>
@@ -74,7 +50,7 @@ To run this game in browser you will need a zip archive with game, and a server 
       </script>
     </body>
   </html>
-```
+{% endhighlight %}
 
 First of all we should prepare viewport where dosbox will render the game. Look at line 8 we set the `dosbox-container` size to 640x400 px. This means that Digger will runs in screen with resolution 640x400 px.
 
@@ -82,7 +58,7 @@ At line 16 the `js-dos-api.js` was included. After processing this line, browser
 
 Finally we should bootstrap Digger game in browser.
 
-```js
+{% highlight js linenos %}
   var dosbox = new Dosbox({
     id: "dosbox",
     onload: function (dosbox) {
@@ -92,7 +68,7 @@ Finally we should bootstrap Digger game in browser.
       console.log("App '" + app + "' is runned");
     }
   });
-```
+{% endhighlight %}
 
 * *id* - a HTML element id where dosbox will create the dosbox canvas
 * *onload* - a callback that was called when dosbox is initialized
@@ -100,9 +76,9 @@ Finally we should bootstrap Digger game in browser.
 
 On line 4 we actually start the game:
 
-```js
+{% highlight js linenos %}
   dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
-```
+{% endhighlight %}
 
 * First argument is the place where archive with digger is located
 * Second argument is a executable file name

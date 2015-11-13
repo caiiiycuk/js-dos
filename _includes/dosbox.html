@@ -1,0 +1,18 @@
+<div id="{{include.game}}" class="dosbox-default"></div>
+<br/><a id="fullscreen_{{include.game}}" href="javascript: void 0;" class="icon-resize-full">Fullscreen</a>
+
+<script type="text/javascript">
+  var dosbox_{{include.game}} = new Dosbox({
+    id: "{{include.game}}",
+    onload: function (dosbox) {
+      dosbox_{{include.game}}.run("{{include.archive}}", "{{include.exe}}");
+    },
+    onrun: function (dosbox, app) {
+      console.log("App '" + app + "' is runned");
+    }
+  });
+
+  document.getElementById("fullscreen_{{include.game}}").addEventListener("click", function() {
+    dosbox_{{include.game}}.requestFullScreen();
+  });
+</script>
