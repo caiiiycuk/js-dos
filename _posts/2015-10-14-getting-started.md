@@ -3,12 +3,12 @@ layout: post
 title: Digger
 showcase: true
 keywords: digger,pc,game,javscript
-description: Play the legendary game Digger in browser.
+description: Play in the legendary game Digger in browser.
 permalink: getting-started/
 showfull: true
 ---
 
-In getting started tutorial we will launch Digger game in browser.
+In getting started tutorial we will launch **Digger** game in browser.
 
 {% include dosbox.html game="digger" archive="/cdn/digger.zip" exe="./DIGGER.COM" %}
 
@@ -18,7 +18,7 @@ In getting started tutorial we will launch Digger game in browser.
 
 Digger is one of the first PC game. The game was created in 1983. Let`s try to bring this legendary game in our time.
 
-To run this game in browser you will need a zip archive with game, and a server that can host static web page. You can start with the [plunk template](http://plnkr.co/edit/yoEIKQ?p=preview):
+To run this game in browser you will need a zip archive with game, and a server that can host static web page. You can start with a template [plunk](http://plnkr.co/edit/yoEIKQ?p=preview), [codepen](http://codepen.io/caiiiycuk/pen/rOPXeL):
 
 {% highlight html linenos %}
   <!doctype html>

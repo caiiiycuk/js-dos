@@ -9,8 +9,9 @@
 .dosbox-default > .dosbox-container { width: 640px; height: 400px; }
 
 #digger > .dosbox-container > .dosbox-overlay { background: url(../../cdn/digger.png); }
-
 #xonix > .dosbox-container > .dosbox-overlay { background: url(../../cdn/xonix.png); }
+#dave > .dosbox-container > .dosbox-overlay { background: url(../../cdn/dave.png); }
+#alley_cat > .dosbox-container > .dosbox-overlay { background: url(../../cdn/alley_cat.png); }
 
 .icon-resize-full,
 .icon-resize-full:hover,
