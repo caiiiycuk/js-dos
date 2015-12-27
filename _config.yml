@@ -13,7 +13,7 @@ relative_permalinks: true
 title:            js-dos
 tagline:          'Dosbox for browser'
 description:      'A javascript version of dosbox that can run dos programs and games in browser. Made by <a href="https://twitter.com/caiiiycuk" target="_blank">@caiiiycuk</a>'
-url:              'http://js-dos.com'
+url:              'https://js-dos.com'
 baseurl:          ''
 
 excerpt_separator: <!--more-->

@@ -3,4 +3,4 @@ Allow: /
 Disallow: /cdn/test.html
 Disallow: /404.htm
 
-Sitemap: http://js-dos.com/sitemap.xml
+Sitemap: https://js-dos.com/sitemap.xml

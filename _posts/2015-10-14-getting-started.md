@@ -36,12 +36,12 @@ To run this game in browser you will need a zip archive with game, and a server 
       <br/>
       <button onclick="dosbox.requestFullScreen();">Make fullscreen</button>
       
-      <script type="text/javascript" src="http://js-dos.com/cdn/js-dos-api.js"></script>
+      <script type="text/javascript" src="https://js-dos.com/cdn/js-dos-api.js"></script>
       <script type="text/javascript">
         var dosbox = new Dosbox({
           id: "dosbox",
           onload: function (dosbox) {
-            dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
+            dosbox.run("https://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
           },
           onrun: function (dosbox, app) {
             console.log("App '" + app + "' is runned");
@@ -62,7 +62,7 @@ Finally we should bootstrap Digger game in browser.
   var dosbox = new Dosbox({
     id: "dosbox",
     onload: function (dosbox) {
-      dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
+      dosbox.run("https://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
     },
     onrun: function (dosbox, app) {
       console.log("App '" + app + "' is runned");
@@ -77,7 +77,7 @@ Finally we should bootstrap Digger game in browser.
 On line 4 we actually start the game:
 
 {% highlight js linenos %}
-  dosbox.run("http://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
+  dosbox.run("https://js-dos.com/cdn/digger.zip", "./DIGGER.COM");
 {% endhighlight %}
 
 * First argument is the place where archive with digger is located
