@@ -6,6 +6,25 @@ description: A javascript version of dosbox that can run dos programs and games 
 ---
 
 <div class="posts">
+  <div class="post">
+    <h1 class="post-title">
+      Publish Game
+    </h1>
+
+    <span class="post-date">16 Jul 2017</span>
+
+    You can upload games on js-dos.com. All upload will be checked before publishing. <a id="upload-click" href="#" onclick='javascript: document.getElementById("upload-form").style.display="block";document.getElementById("upload-click").style.display="none"'>Click to upload</a>
+
+    <form id="upload-form" class="upload-form" method="POST" target="_blank" action="uploadgame" enctype="multipart/form-data">
+      <p><label for="author">Your name (appears on site)</label><input type="text" name="author" placeholder="@caiiiycuk"></p>
+      <p><label for="game">Game name (appears on site)</label><input type="text" name="game" placeholder="Digger"></p>
+      <p><label for="executable">Command to run</label><input type="text" name="executable" placeholder="./DIGGER.COM"></p>
+      <p><label for="resolution">Resolution</label><input type="text" name="resolution" placeholder="640x400" ></p>
+      <p><label for="archive">Zip archive</label><input type="file" name="archive"></p>
+      <button type="submit">Publish</button>
+    </form>
+  </div>
+
   {% for post in paginator.posts %}
   {% if post.private != true %}
   <div class="post">
