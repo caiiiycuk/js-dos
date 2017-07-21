@@ -162,4 +162,4 @@ Play in the legendary game **%s** in browser. (Uploaded by: %s)
   return template % (game, game, game, game, game, author, game, archive, executable,
                      game, game, width, height, game, archive, executable)
 
-run(host='localhost', port=9000, debug=False)
+run(host='localhost', port=9001, debug=False)
