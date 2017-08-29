@@ -1,3 +1,23 @@
+<!-- {{ include.version }} -->
+{% if include.version == "2" %}
+<style>
+    #{{ include.game }} > .dosbox-container { width: {{ include.width }}px; height: {{ include.height }}px; }
+    #{{ include.game }} > .dosbox-container > .dosbox-overlay { background: url("https://js-dos.com/cdn/{{ include.bg }}"); }
+    #{{ include.game }} > .dosbox-container > .dosbox-overlay > .dosbox-start {
+        border-radius: 17px 17px 17px 17px;
+        -moz-border-radius: 17px 17px 17px 17px;
+        -webkit-border-radius: 17px 17px 17px 17px;
+        border: 0px solid #000000;
+        background-color: rgba(90, 90, 90, 0.57);
+        padding: 5px;
+        text-align: center;
+        vertical-align: middle;
+        width: 10em;
+        margin: 0 auto;
+    }
+</style>
+{% endif %}
+
 <div id="{{include.game}}" class="dosbox-default"></div>
 <br/><a id="fullscreen_{{include.game}}" href="javascript: void 0;" class="icon-resize-full">Fullscreen</a>
 
