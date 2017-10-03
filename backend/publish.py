@@ -52,6 +52,7 @@ print('height', height)
 print('bg', bg)
 
 print('scp root@epicport.com:' + os.path.abspath(os.path.join(upload, archive)) + ' ./')
+print('document.write(\'<img src="\'+Module.canvas.toDataURL(\'image/png\')+\'"/>\');')
 print('scp image.png root@epicport.com:' + os.path.abspath(os.path.join(_cdn, bg)) + ' ./')
 
 if delete:
@@ -81,7 +82,7 @@ else:
   contents = askreplace(r'(createdat)="(\?\?\?)"', contents)
   contents = askreplace(r'(publisher)="(\?\?\?)"', contents)
   contents = askreplace(r'(category)="(\?\?\?)"', contents)
-  contents = re.sub(r'^\?\?\?', '', contents)
+  contents = re.sub(r'^\s*\?\?\?', '', contents)
 
   print(contents)
 
