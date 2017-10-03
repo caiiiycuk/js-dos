@@ -52,7 +52,7 @@ print('height', height)
 print('bg', bg)
 
 print('scp root@epicport.com:' + os.path.abspath(os.path.join(upload, archive)) + ' ./')
-print('document.write(\'<img src="\'+Module.canvas.toDataURL(\'image/png\')+\'"/>\');')
+print('document.write(\'<img src="\'+document.getElementsByTagName(\'canvas\')[0].toDataURL(\'image/png\')+\'"/>\');')
 print('scp image.png root@epicport.com:' + os.path.abspath(os.path.join(_cdn, bg)) + ' ./')
 
 if delete:
@@ -69,6 +69,9 @@ else:
     contents = re.sub(r'\*\*%s\*\*' % title, '**' + new_title + '**', contents)
     contents = re.sub(r'name="%s"' % title, 'name="' + new_title + '"', contents)
 
+  contents = re.sub(r'game="%s*"' % title, 'game="' + title.replace(" ", "_") + '"', contents)
+
+
   def askreplace(template, contents, yml = False):
     value = re.search(template, contents).group(2)
     new = raw_input(template + ' == ' + value + ' enter new value:\n')
@@ -82,7 +85,7 @@ else:
   contents = askreplace(r'(createdat)="(\?\?\?)"', contents)
   contents = askreplace(r'(publisher)="(\?\?\?)"', contents)
   contents = askreplace(r'(category)="(\?\?\?)"', contents)
-  contents = re.sub(r'^\s*\?\?\?', '', contents)
+  contents = re.sub(r'\?\?\?', '', contents)
 
   print(contents)
 
