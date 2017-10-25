@@ -96,7 +96,7 @@ function(a,b){jQuery.fn[b]=function(d){return d?this.bind(b,d):this.trigger(b)}}
     Dosbox.prototype.downloadScript = function() {
       this.module.setStatus('Downloading js-dos');
       this.ui.updateMessage('Downloading js-dos');
-      return new Dosbox.Xhr('https://js-dos.com/cdn/js-dos-v2.js', {
+      return new Dosbox.Xhr('https://js-dos.com/cdn/js-dos-v3.js', {
         success: (function(_this) {
           return function(script) {
             var func;
@@ -134,8 +134,8 @@ function(a,b){jQuery.fn[b]=function(d){return d?this.bind(b,d):this.trigger(b)}}
           setTimeout(func, 1000);
         }
         return dosbox.module.ccall('dosbox_main', 'int', ['string'], [executable]);
-      } catch (_error) {
-        exception = _error;
+      } catch (error) {
+        exception = error;
         if (exception === 'SimulateInfiniteLoop') {
 
         } else {
@@ -181,7 +181,7 @@ function(a,b){jQuery.fn[b]=function(d){return d?this.bind(b,d):this.trigger(b)}}
       var status;
       this.totalDependencies = Math.max(this.totalDependencies, left);
       status = left ? "Preparing... (" + (this.totalDependencies - left) + "/" + this.totalDependencies + ")" : 'All downloads complete.';
-      return Module.setStatus(status);
+      return this.setStatus(status);
     };
 
     return Module;
@@ -311,8 +311,8 @@ function(a,b){jQuery.fn[b]=function(d){return d?this.bind(b,d):this.trigger(b)}}
       if (window.ActiveXObject) {
         try {
           this.xhr = new ActiveXObject('Microsoft.XMLHTTP');
-        } catch (_error) {
-          e = _error;
+        } catch (error) {
+          e = error;
           this.xhr = null;
         }
       } else {
