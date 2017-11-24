@@ -77,6 +77,7 @@ try:
   client.set_missing_host_key_policy(paramiko.WarningPolicy)
   
   client.connect(hostname, port=port, username=username, password=password)
+  sftp = client.open_sftp()
 
   def read(rfile):
     print('Reading:', rfile)
@@ -86,22 +87,30 @@ try:
     if len(error) != 0:
       raise Exception('Unable to execute command: ' + command + " out: " + error)
     return stdout.read()
+    # file = sftp.file(rfile)
+    # data = file.read()
+    # return data
 
   def write(contents, rfile):
     print('Writing:', rfile)
     command = 'cat > "' + rfile + '"'
     stdin, stdout, stderr = client.exec_command(command)
-    stdin.write(contents)
-    # error = stderr.read().decode("utf-8") 
-    stdin.close()
-    # if len(error) != 0:
-    #   raise Exception('Unable to execute command: ' + command + " out: " + error)
+    try:
+      stdin.write(contents)
+      stdin.close()
+    except:
+      print('Unable to execute command:', command)
+      raise
 
   def download(rfile, lfile):
-    data = read(rfile)
-    print('Store ', lfile)
-    with open(lfile, 'wb') as f:
-      f.write(data)
+    print('Downloading', rfile, '->', lfile)
+    def progress(curr, total):
+      print('Progress', curr * 100 / total, '%')
+    sftp.get(rfile, lfile, callback=progress)
+    # data = read(rfile)
+    # print('Store ', lfile)
+    # with open(lfile, 'wb') as f:
+    #   f.write(data)
 
   def execute(command, ignore_err = False):
     print('Executing: ', command)
@@ -124,88 +133,95 @@ try:
   def select_game():
     games = ls(upload + "/*.md")
 
-    index = 0
-    for game in games:
-      print(index, game)
-      index += 1
-
-    command = input('Select md to publish {num}(p: publish, t: wine test, i: pulish image, d: delete):\n')
-    index = int(command[0])
-    command = command[1]
+    index, game = select_option(games)
 
     game = games[index]
     md = read(game).decode('utf-8')
     meta = extract_meta_from_md(md)
+    
+    while True:
+      command = input('Select what to do (d: delete, p: publish, t: test, i: upload image, e: exit)\n')
 
-    if command == 'w':
-      try:
-        os.remove('/tmp/game.zip')
-      except:
-        pass
+      if command == 'e':
+        break
+      elif command == 'd':
+        execute('rm -rfv "' + os.path.join(meta['archive']) + '" "' + game + '"')
+        break        
+      elif command == 't':
+        try:
+          os.remove('/tmp/game.zip')
+        except:
+          pass
 
-      try:
-        shutil.rmtree('/tmp/game')
-      except:
-        pass
+        try:
+          shutil.rmtree('/tmp/game')
+        except:
+          pass
 
-      download(meta['archive'], '/tmp/game.zip')
-      
-      if subprocess.run(["unzip", "/tmp/game.zip", "-d", "/tmp/game"], stdout=subprocess.PIPE).returncode != 0:
-        raise Exception("Can't extract /tmp/game.zip")
+        download(meta['archive'], '/tmp/game.zip')
+        
+        if subprocess.run(["unzip", "/tmp/game.zip", "-d", "/tmp/game"], stdout=subprocess.PIPE).returncode != 0:
+          raise Exception("Can't extract /tmp/game.zip")
 
-      execs = findexe('/tmp/game')
-      index, executable = select_option(execs)
-      
-      # winedir = os.path.dirname(executable)
-      # os.chdir(winedir)
-      subprocess.run(['dosbox', executable])
-      print(index, executable)      
-    elif command == 'p':
-      archive = meta['archive']
-      bg = meta['bg']
-      title = meta['title']
-      width = meta['width']
-      height = meta['height']
-      exe = meta['exe']
-      contents = md
+        execs = findexe('/tmp/game')
+        index, executable = select_option(execs)
+        
+        # winedir = os.path.dirname(executable)
+        # os.chdir(winedir)
+        subprocess.run(['dosbox', executable])
+        print(index, executable)
+      elif command == 'p':
+        archive = meta['archive']
+        bg = meta['bg']
+        title = meta['title']
+        width = meta['width']
+        height = meta['height']
+        exe = meta['exe']
+        contents = md
 
-      contents = re.sub(r'include dosbox\.html', 'include dosbox.html version="2" width="%s" height="%s" bg="%s"' %
-        (width, height, os.path.basename(bg)), contents)
+        contents = re.sub(r'include dosbox\.html', 'include dosbox.html version="2" width="%s" height="%s" bg="%s"' %
+          (width, height, os.path.basename(bg)), contents)
 
-      new_title = input('New title?\n')
-      if len(new_title) > 0:
-        contents = re.sub(r'title:.*', 'title: ' + new_title, contents)
-        contents = re.sub(r'\*\*%s\*\*' % title, '**' + new_title + '**', contents)
-        contents = re.sub(r'name="%s"' % title, 'name="' + new_title + '"', contents)
+        new_title = input('New title?\n')
+        if len(new_title) > 0:
+          contents = re.sub(r'title:.*', 'title: ' + new_title, contents)
+          contents = re.sub(r'\*\*%s\*\*' % title, '**' + new_title + '**', contents)
+          contents = re.sub(r'name="%s"' % title, 'name="' + new_title + '"', contents)
 
-      contents = re.sub(r'game="%s*"' % title, 'game="' + title.replace(" ", "_") + '"', contents)
+        contents = re.sub(r'game="%s*"' % title, 'game="' + title.replace(" ", "_") + '"', contents)
 
 
-      def askreplace(template, contents, yml = False):
-        value = re.search(template, contents).group(2)
-        new = input(template + ' == ' + value + ' enter new value:\n')
-        if new and yml:
-          return re.sub(template, r'\1: %s' % new, contents)
-        elif new:
-          return re.sub(template, r'\1="%s"' % new, contents)
-        return contents
+        def askreplace(template, contents, yml = False):
+          value = re.search(template, contents).group(2)
+          new = input(template + ' == ' + value + ' enter new value:\n')
+          if new and yml:
+            return re.sub(template, r'\1: %s' % new, contents)
+          elif new:
+            return re.sub(template, r'\1="%s"' % new, contents)
+          return contents
 
-      contents = askreplace(r'(exe)="(.*?)"', contents)
-      contents = askreplace(r'(createdat)="(\?\?\?)"', contents)
-      contents = askreplace(r'(publisher)="(\?\?\?)"', contents)
-      contents = askreplace(r'(category)="(\?\?\?)"', contents)
-      contents = re.sub(r'\?\?\?', '', contents)
+        contents = askreplace(r'(exe)="(.*?)"', contents)
+        contents = askreplace(r'(createdat)="(\?\?\?)"', contents)
+        contents = askreplace(r'(publisher)="(\?\?\?)"', contents)
+        contents = askreplace(r'(category)="(\?\?\?)"', contents)
+        contents = re.sub(r'\?\?\?', '', contents)
 
-      print(contents)
+        print(contents)
 
-      write(contents, os.path.join(_posts, os.path.basename(game)))
-      execute('cp "' + os.path.join(archive) + '" "' + os.path.join(_upload, os.path.basename(archive)) + '"')
-      jekyll()
-    elif command == 'i':
-      bg = meta['bg']
-      print('Publish image')
-      print('document.write(\'<img src="\'+document.getElementsByTagName(\'canvas\')[0].toDataURL(\'image/png\')+\'"/>\');')
-      print('scp ~/Загрузки/image.png root@epicport.com:' + os.path.abspath(os.path.join(_cdn, bg)) + ' ./')
+        write(contents, os.path.join(_posts, os.path.basename(game)))
+        execute('cp "' + os.path.join(archive) + '" "' + os.path.join(_upload, os.path.basename(archive)) + '"')
+        jekyll()
+      elif command == 'i':
+        bg = meta['bg']
+        print('Publish image')
+        print('document.write(\'<img src="\'+document.getElementsByTagName(\'canvas\')[0].toDataURL(\'image/png\')+\'"/>\');')
+        ready = input('ready for cp (~/Загрузки/index.png)? y(enter)/n\n')
+        
+        if ready == 'y' or ready == '':
+          # print('scp ~/Загрузки/image.png root@epicport.com:' + os.path.abspath(os.path.join(_cdn, bg)) + ' ./')
+          with open('/home/caiiiycuk/Загрузки/index.png', 'rb') as f:
+            write(f.read(), bg)
+          jekyll()
 
   def loop():
     command, name = select_option(['select_game', 'jekyll'])
