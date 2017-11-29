@@ -6,8 +6,8 @@
   <!-- Enable responsiveness on mobile devices-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
   
-  <meta name="description" content="{{page.keywords}}">
-  <meta name="keywords" content="{{page.description}}">
+  <meta name="description" content="{{page.description}}">
+  <meta name="keywords" content="{{page.keywords}}">
   <meta name="author" content="Guryanov Aleksander aka caiiiycuk">
 
   <title>
@@ -17,6 +17,12 @@
       {{ page.title }} &middot; {{ site.title }}
     {% endif %}
   </title>
+
+  <meta property="og:title" content='{% if page.title == "Home" %}{{ site.title }} &middot; {{ site.tagline }}{% else %}{{ page.title }} &middot; {{ site.title }}{% endif %}' />
+  <meta property="og:description" content="{{page.description}}" />
+  <meta property="og:type" content="game" />
+  <meta property="og:url" content="{{ site.url }}{{ page.url | replace: 'index.html','' | replace: ' ', '%20'}}" />
+  <meta property="og:image" content="https://js-dos.com/cdn{{page.url | append: '.png' | replace: '/.png', '.png' | replace: ' ', '%20'}}" />
 
   <!-- CSS -->
   <link rel="stylesheet" href="{{ site.baseurl }}/public/css/poole.css">
