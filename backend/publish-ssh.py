@@ -164,18 +164,31 @@ try:
           raise Exception("Can't extract /tmp/game.zip")
 
         execs = findexe('/tmp/game')
-        index, executable = select_option(execs)
-        
-        # winedir = os.path.dirname(executable)
-        # os.chdir(winedir)
-        subprocess.run(['dosbox', executable])
-        print(index, executable)
+        execs.append('repack')
+        execs.append('done')
+
+        while True:
+          index, executable = select_option(execs)
+          
+          if executable == 'repack':
+            result = subprocess.run(["zip", "-rv", "/tmp/game.zip", ".", "-i", "*"], stdout=subprocess.PIPE,  stderr=subprocess.STDOUT, cwd="/tmp/game/")
+            print(result.stdout)
+            if result.returncode != 0:
+              raise Exception("Can't compress /tmp/game.zip")
+            print("Sending...")
+            with open('/tmp/game.zip', 'rb') as f:
+              write(f.read(), meta['archive'])
+            print("Ok")
+          elif executable == 'done':
+            break
+          else:
+            subprocess.run(['dosbox', executable])
       elif command == 'p':
         archive = meta['archive']
         bg = meta['bg']
         title = meta['title']
-        width = meta['width']
-        height = meta['height']
+        width = 640 #meta['width']
+        height = 400 #meta['height']
         exe = meta['exe']
         contents = md
 
