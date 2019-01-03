@@ -1,0 +1,7 @@
+# This only lists files generated when building the function pointer array core
+core_normal_fun.h
+core_normal_fun.ii
+core_prefetch_fun.h
+core_prefetch_fun.ii
+core_simple_fun.h
+core_simple_fun.ii
