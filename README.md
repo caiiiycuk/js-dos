@@ -1,3 +1,18 @@
+Building
+========
+
+
+dosbox
+------
+
+```
+mkdir build
+cd build
+emcmake cmake -GNinja ..
+ninja -j4
+```
+
+
 Folder structure
 ================
 
