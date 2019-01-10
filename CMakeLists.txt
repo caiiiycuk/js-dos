@@ -11,6 +11,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \
 	-s TOTAL_MEMORY=134217728 \
 	-s WASM_MEM_MAX=134217728 \
 	-s INVOKE_RUN=0 \
+	-s MODULARIZE=1 \
+	-s EXPORT_NAME='WDOSBOX' \
 	-s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt \
 	-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency', 'FS_createPath', 'FS_createPreloadedFile', \
 		'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString']\" \
@@ -149,6 +151,6 @@ set(SOURCES
 )
 
 add_library(bin-obj OBJECT ${SOURCES})
-add_executable(wbin $<TARGET_OBJECTS:bin-obj>)
-set_target_properties(wbin PROPERTIES SUFFIX .js)
-set_target_properties(wbin PROPERTIES LINK_FLAGS "-s OUTLINING_LIMIT=0 -s WASM=1 -s BINARYEN_TRAP_MODE=\"clamp\" -s BINARYEN_METHOD=\"native-wasm\"")
+add_executable(wdosbox $<TARGET_OBJECTS:bin-obj>)
+set_target_properties(wdosbox PROPERTIES SUFFIX .js)
+set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s OUTLINING_LIMIT=0 -s WASM=1 -s BINARYEN_TRAP_MODE=\"clamp\" -s BINARYEN_METHOD=\"native-wasm\"")
