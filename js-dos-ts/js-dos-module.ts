@@ -1,6 +1,6 @@
-import { JsDosOptions } from "./js-dos-options";
+import { DosOptions } from "./js-dos-options";
 
-export class JsDosModule extends JsDosOptions {
+export class DosModule extends DosOptions {
     public isValid: boolean = false;
     private instance: any;
 

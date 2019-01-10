@@ -1,8 +1,8 @@
-import { JsDosModule } from "./js-dos-module";
+import { DosModule } from "./js-dos-module";
 
 (window as any).exports = {};
 
-export function resolveDosBox(url: string, module: JsDosModule) {
+export function resolveDosBox(url: string, module: DosModule) {
     if ((window as any).exports.WDOSBOX) {
         module.ondosbox((window as any).exports.WDOSBOX);
         return;

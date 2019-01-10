@@ -1,13 +1,13 @@
 
-import { JsDosOptions } from "./js-dos-options";
-import { JsDosModule } from "./js-dos-module";
 import { resolveDosBox } from "./js-dos-dosbox";
+import { DosModule } from "./js-dos-module";
+import { DosOptions } from "./js-dos-options";
 
-export class JsDos {
-    public module: JsDosModule;
+export class Dos {
+    public module: DosModule;
 
-    constructor(options: JsDosOptions) {
-        this.module = new JsDosModule();
+    constructor(options: DosOptions) {
+        this.module = new DosModule();
         Object.assign(this.module, options);
         this.module.resolve();
 
