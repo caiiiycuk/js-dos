@@ -1,3 +1,4 @@
+var fs = require('fs');
 var gulp = require('gulp');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
@@ -5,9 +6,21 @@ var tsify = require('tsify');
 var sourcemaps = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
 var uglify = require('gulp-uglify');
+var getRepoInfo = require('git-repo-info');
+
+gulp.task('generateBuildInfo', function() {
+    var info = getRepoInfo();
+
+    require('fs').writeFileSync('js-dos-ts/js-dos-build.ts', 
+        "export const Build = {\n" +
+        "    version: \"" + info.branch + "-" + info.sha + "\",\n" +
+        "    wasmSize: " + fs.statSync("build/wdosbox.wasm")['size'] + ",\n" +
+        "    jsSize:  " + fs.statSync("build/wdosbox.js")['size'] + ",\n" +
+        "};\n");
+})
 
 gulp.task('copyAssets', function () {
-    return gulp.src(['test/*.html', 'build/wdosbox*'])
+    return gulp.src(['test/*.html', 'build/wdosbox.wasm', 'build/wdosbox.js', 'build/wdosbox.js.symbols'])
         .pipe(gulp.dest('dist'));
 });
 
@@ -32,7 +45,7 @@ gulp.task('test', function () {
     .pipe(gulp.dest('dist'));
 })
 
-gulp.task('default', ['test', 'copyAssets'], function () {
+gulp.task('default', ['generateBuildInfo', 'test', 'copyAssets'], function () {
     return browserify({
         basedir: '.',
         debug: true,

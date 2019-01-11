@@ -7,7 +7,8 @@
     "rules": {
         "interface-name": false,
         "no-unused-expression": false, // should be no-new rule
-        "no-shadowed-variable": false
+        "no-shadowed-variable": false,
+        "object-literal-sort-keys": false
     },
     "rulesDirectory": []
 }

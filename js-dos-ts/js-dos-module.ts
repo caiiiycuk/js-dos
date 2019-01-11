@@ -39,7 +39,11 @@ export class DosModule extends DosOptions {
         }
 
         if (!this.onready) {
-            this.onready = () => this.info("Dosbox is ready");
+            this.onready = () => this.info("DosBox is ready");
+        }
+
+        if (!this.onprogress) {
+            this.onprogress = (total, loaded) => this.info("Resolving DosBox - " + loaded * 100 / total + "%");
         }
 
         if (!this.canvas) {

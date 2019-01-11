@@ -29,6 +29,37 @@ test("loader should notify about error, if it can't download wdosbox", (done) =>
     } as DosModule);
 });
 
+test("loader should show progress loading", (done) => {
+    let lastLoaded = -1;
+    Host.resolveDosBox("wdosbox.js", {
+        onprogress: (total: number, loaded: number) => {
+            assert.equal(true, loaded < total);
+            assert.equal(true, lastLoaded < loaded);
+            lastLoaded = loaded;
+        },
+        ondosbox: (dosbox: any, instantiateWasm: any) => {
+            done();
+        },
+        onerror: (message: string) => {
+            assert.fail();
+        },
+    } as DosModule);
+});
+
+test("loader should never load twice wdosbox", (done) => {
+    Host.resolveDosBox("wdosbox.js", {
+        onprogress: (total: number, loaded: number) => {
+            assert.fail();
+        },
+        ondosbox: (dosbox: any, instantiateWasm: any) => {
+            done();
+        },
+        onerror: (message: string) => {
+            assert.fail();
+        },
+    } as DosModule);
+});
+
 test("loader should fire event when wdosbox is loaded", (done) => {
     Host.resolveDosBox("wdosbox.js", {
         ondosbox: (dosbox: any, instantiateWasm: any) => {

@@ -1,3 +1,4 @@
+import { Build } from "./js-dos-build";
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
 
@@ -61,15 +62,21 @@ class DosHost {
     }
 
     private compileDosBox(url: string, module: DosModule) {
+        const buildTotal = Build.wasmSize + Build.jsSize;
         return new Promise((resolve, reject) => {
             const wasmUrl = url.replace(".js", ".wasm");
 
             new Xhr(wasmUrl, {
+                responseType: "arraybuffer",
+                progress: (total, loaded) => {
+                    if (module.onprogress) {
+                        module.onprogress(buildTotal, loaded);
+                    }
+                },
                 fail: (url: string, status: number, message: string) => {
                     reject("Can't download wasm, code: " + status +
                         ", message: " + message + ", url: " + url);
                 },
-                responseType: "arraybuffer",
                 success: (response: any) => {
                     const promise = WebAssembly.compile(response);
                     const onreject = (reason: any) => {
@@ -86,6 +93,11 @@ class DosHost {
                         };
 
                         new Xhr(url, {
+                            progress: (total, loaded) => {
+                                if (module.onprogress) {
+                                    module.onprogress(buildTotal, Build.wasmSize + loaded);
+                                }
+                            },
                             fail: (url: string, status: number, message: string) => {
                                 reject("Can't download wdosbox.js, code: " + status +
                                     ", message: " + message + ", url: " + url);
@@ -117,12 +129,12 @@ class DosHost {
         Math.imul = Math.imul;
 
         if (!Math.fround) {
-            Math.fround = function (x) { return x; };
+            Math.fround = function(x) { return x; };
         }
         Math.fround = Math.fround;
 
         if (!Math.clz32) {
-            Math.clz32 = function (x) {
+            Math.clz32 = function(x) {
                 x = x >>> 0;
                 for (let i = 0; i < 32; i++) {
                     if (x & (1 << (31 - i))) { return i; }
@@ -133,7 +145,7 @@ class DosHost {
         Math.clz32 = Math.clz32;
 
         if (!Math.trunc) {
-            Math.trunc = function (x) {
+            Math.trunc = function(x) {
                 return x < 0 ? Math.ceil(x) : Math.floor(x);
             };
         }
