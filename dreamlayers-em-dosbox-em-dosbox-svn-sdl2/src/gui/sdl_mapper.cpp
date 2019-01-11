@@ -29,8 +29,8 @@
 #include <emscripten.h>
 #endif
 
-#include "SDL.h"
-#include "SDL_thread.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_thread.h"
 #ifdef EMSCRIPTEN
 /* Not sure why this is needed. */
 #define SDLK_QUOTE (0xde)

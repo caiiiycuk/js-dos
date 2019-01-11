@@ -1,23 +1,29 @@
 cmake_minimum_required(VERSION 3.6)
 
-set(CMAKE_C_FLAGS "-Oz -w -Werror=return-type")
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \
-	${BUILD_TYPE_FLAGS} \
-	-Oz \
-	--emit-symbol-map \
-	-s ASSERTIONS=0 \
-	-s SAFE_HEAP=0 \
-	-s TOTAL_MEMORY=134217728 \
-	-s WASM_MEM_MAX=134217728 \
-	-s INVOKE_RUN=0 \
-	-s MODULARIZE=1 \
-	-s EXPORT_NAME='WDOSBOX' \
-	-s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt \
-	-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency', 'FS_createPath', 'FS_createPreloadedFile', \
-		'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString']\" \
-	-s NO_EXIT_RUNTIME=1 \
-	-s ERROR_ON_UNDEFINED_SYMBOLS=0")
+if(${EMSCRIPTEN})
+	set(CMAKE_C_FLAGS "-Oz -w -Werror=return-type")
+	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \
+		${BUILD_TYPE_FLAGS} \
+		-Oz \
+		--emit-symbol-map \
+		-s ASSERTIONS=0 \
+		-s SAFE_HEAP=0 \
+		-s TOTAL_MEMORY=134217728 \
+		-s WASM_MEM_MAX=134217728 \
+		-s INVOKE_RUN=0 \
+		-s MODULARIZE=1 \
+		-s EXPORT_NAME='WDOSBOX' \
+		-s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt \
+		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency', 'FS_createPath', 'FS_createPreloadedFile', \
+			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString']\" \
+		-s NO_EXIT_RUNTIME=1 \
+		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
+else()
+	set(CMAKE_C_FLAGS "-w -Werror=return-type -O0 -g -ggdb3")
+	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
+	add_definitions(-DDEBUG)
+endif()
 
 add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS)
 
@@ -150,7 +156,18 @@ set(SOURCES
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/libs/zmbv/zmbv_vfw.cpp"
 )
 
-add_library(bin-obj OBJECT ${SOURCES})
-add_executable(wdosbox $<TARGET_OBJECTS:bin-obj>)
-set_target_properties(wdosbox PROPERTIES SUFFIX .js)
-set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s OUTLINING_LIMIT=0 -s WASM=1 -s BINARYEN_TRAP_MODE=\"clamp\" -s BINARYEN_METHOD=\"native-wasm\"")
+if(${EMSCRIPTEN})
+	add_library(bin-obj OBJECT ${SOURCES})
+	add_executable(wdosbox $<TARGET_OBJECTS:bin-obj>)
+	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
+	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s OUTLINING_LIMIT=0 -s WASM=1 -s BINARYEN_TRAP_MODE=\"clamp\" -s BINARYEN_METHOD=\"native-wasm\"")
+else()
+	add_executable(bin
+		${SOURCES}
+	)
+	target_link_libraries(bin
+		SDL
+	)
+
+	set_target_properties(bin PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+endif()

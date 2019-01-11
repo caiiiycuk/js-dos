@@ -21,14 +21,14 @@
 // SDL CDROM 
 // ******************************************************
 
-#include "SDL_version.h"
+#include "SDL/SDL_version.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 #include "dosbox.h"
-#include "SDL.h"
+#include "SDL/SDL.h"
 #include "support.h"
 #include "cdrom.h"
 

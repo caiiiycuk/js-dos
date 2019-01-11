@@ -17,7 +17,7 @@
  */
 
 
-#include "SDL_version.h"
+#include "SDL/SDL_version.h"
 // On all platforms, if SDL 2.0 is used then we don't support physical CD-ROMs.
 #if !SDL_VERSION_ATLEAST(2,0,0)
 

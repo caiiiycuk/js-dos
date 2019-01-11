@@ -38,7 +38,7 @@
 #endif
 
 #include "cross.h"
-#include "SDL.h"
+#include "SDL/SDL.h"
 
 #include "version.h"
 #include "dosbox.h"
