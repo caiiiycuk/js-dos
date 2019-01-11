@@ -1,6 +1,8 @@
+import { DosControlInteface } from "./js-dos-ci";
 import { DosOptions } from "./js-dos-options";
 
 export class DosModule extends DosOptions {
+    public ci: DosControlInteface = null;
     public isValid: boolean = false;
     private instance: any;
 
@@ -67,6 +69,8 @@ export class DosModule extends DosOptions {
     public onRuntimeInitialized() {
         const mainFn = (args: string[]) => {
             (this as any).callMain(args);
+            this.ci = new DosControlInteface(this);
+            return this.ci;
         };
 
         if (this.onready) {

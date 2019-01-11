@@ -7,6 +7,7 @@ if(${EMSCRIPTEN})
 		${BUILD_TYPE_FLAGS} \
 		-Oz \
 		--emit-symbol-map \
+		-s EXIT_RUNTIME=1 \
 		-s ASSERTIONS=0 \
 		-s SAFE_HEAP=0 \
 		-s TOTAL_MEMORY=134217728 \

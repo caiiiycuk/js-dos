@@ -90,9 +90,12 @@ test("js-dos should start with canvas", (done) => {
     const jsdos = new Dos({
         canvas: (document.getElementById("canvas") as HTMLCanvasElement),
         onready: (main) => {
-            main([]);
+            const ci = main([]);
+            assert.equal(jsdos.module.ci, ci);
+            //take screen
             done();
-            (window as any).jsdos = jsdos;
+            ci.exit();
+
         },
     });
 });
