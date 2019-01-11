@@ -1,5 +1,5 @@
 
-import { resolveDosBox } from "./js-dos-dosbox";
+import { Host } from "./js-dos-host";
 import { DosModule } from "./js-dos-module";
 import { DosOptions } from "./js-dos-options";
 
@@ -15,6 +15,6 @@ export class Dos {
             return;
         }
 
-        resolveDosBox(this.module.wdosbox, this.module);
+        Host.resolveDosBox(this.module.wdosboxUrl, this.module);
     }
 }

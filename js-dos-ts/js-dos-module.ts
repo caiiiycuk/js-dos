@@ -16,16 +16,17 @@ export class DosModule extends DosOptions {
         this.log("[INFO] " + message);
     }
 
-    public ondosbox(dosbox: any) {
+    public ondosbox(dosbox: any, instantiateWasm: any) {
         this.info("DosBox resolved");
+        (this as any).instantiateWasm = instantiateWasm;
         this.instance = new dosbox(this);
-        // TODO: wait for module ready!
-        this.onready();
+        // emscripten will call this.onRuntimeInitialized
+        // when runtime will ready
     }
 
     public resolve() {
-        if (!this.wdosbox) {
-            this.wdosbox = "wdosbox.js";
+        if (!this.wdosboxUrl) {
+            this.wdosboxUrl = "wdosbox.js";
         }
 
         if (!this.log) {
@@ -47,6 +48,10 @@ export class DosModule extends DosOptions {
         }
 
         this.isValid = true;
+    }
+
+    public onRuntimeInitialized() {
+        this.onready();
     }
 
 }

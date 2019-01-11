@@ -23,3 +23,14 @@ Is folder for storing ported version of dosbox. It's came from this repository:
 https://github.com/dreamlayers/em-dosbox/
 commit: 4526ed7fa56fc70a5de7b666f97a097c27b9ee9f
 ```
+
+/js-dos-cpp
+
+If folder with sources that extends functionanlity of dosbox
+
+/js-dos-ts
+
+Api layer written is TypedScript
+
+
+
