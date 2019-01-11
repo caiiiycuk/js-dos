@@ -51,11 +51,29 @@ export class DosModule extends DosOptions {
             return;
         }
 
+        (this as any).SDL = {
+            defaults: {
+                widht: 320,
+                height: 200,
+                copyOnLock: false,
+                discardOnLock: true,
+                opaqueFrontBuffer: false,
+            },
+        };
+
         this.isValid = true;
     }
 
     public onRuntimeInitialized() {
-        this.onready();
+        const mainFn = (args: string[]) => {
+            (this as any).callMain(args);
+        };
+
+        if (this.onready) {
+            this.onready(mainFn);
+        } else {
+            mainFn([]);
+        }
     }
 
 }

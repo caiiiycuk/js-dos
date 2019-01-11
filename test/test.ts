@@ -1,4 +1,5 @@
 /* tslint:disable:max-line-length */
+/* tslint:disable:no-console */
 
 import * as assert from "assert";
 import { Dos } from "../js-dos-ts/js-dos";
@@ -33,7 +34,8 @@ test("loader should show progress loading", (done) => {
     let lastLoaded = -1;
     Host.resolveDosBox("wdosbox.js", {
         onprogress: (total: number, loaded: number) => {
-            assert.equal(true, loaded < total);
+            console.log("Resolving DosBox: ", total, loaded);
+            assert.equal(true, loaded <= total);
             assert.equal(true, lastLoaded < loaded);
             lastLoaded = loaded;
         },
@@ -86,9 +88,11 @@ test("js-dos can't start without canvas", (done) => {
 
 test("js-dos should start with canvas", (done) => {
     const jsdos = new Dos({
-        canvas: "canvas",
-        onready: () => {
+        canvas: (document.getElementById("canvas") as HTMLCanvasElement),
+        onready: (main) => {
+            main([]);
             done();
+            (window as any).jsdos = jsdos;
         },
     });
 });
