@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>js-dos-ci.ts</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="js-dos-build.html">
+                js-dos-build.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-ci.html">
+                js-dos-ci.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-host.html">
+                js-dos-host.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-module.html">
+                js-dos-module.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-options.html">
+                js-dos-options.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-xhr.html">
+                js-dos-xhr.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos.html">
+                js-dos.ts
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>js-dos-ci.ts</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosModule } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-module"</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosControlInteface {
+    <span class="hljs-keyword">private</span> dos: DosModule;
+    <span class="hljs-keyword">private</span> api: <span class="hljs-built_in">any</span>;
+
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params">dos: DosModule</span>) {
+        <span class="hljs-keyword">this</span>.dos = dos;
+        <span class="hljs-keyword">this</span>.api = dos;
+    }
+
+    <span class="hljs-keyword">public</span> exit() {
+        <span class="hljs-keyword">this</span>.api._jsdos_exit();
+    }
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
