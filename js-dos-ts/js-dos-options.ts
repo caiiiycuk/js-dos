@@ -5,7 +5,7 @@ import { DosControlInteface } from "./js-dos-ci";
 // Is a options object that you pass to constructor of [Dos](js-dos.html)
 // class, to configure emulation layer:
 export class DosOptions {
-    
+
     // canvas
     // ------
     // is **required** field, you should set existing HTMLCanvasElement, it will be used for render dos screen

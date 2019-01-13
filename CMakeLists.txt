@@ -29,9 +29,17 @@ endif()
 add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS)
 
 include_directories(
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/include"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/include"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2"
 )
+
+set(SOURCES_CXX11 
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-ci.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-events.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-json.cpp"
+)
+set_source_files_properties(${SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "-std=c++11")
 
 set(SOURCES 
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dosbox.cpp"
@@ -158,14 +166,12 @@ set(SOURCES
 )
 
 if(${EMSCRIPTEN})
-	add_library(bin-obj OBJECT ${SOURCES})
+	add_library(bin-obj OBJECT ${SOURCES} ${SOURCES_CXX11})
 	add_executable(wdosbox $<TARGET_OBJECTS:bin-obj>)
 	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
 	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s OUTLINING_LIMIT=0 -s WASM=1 -s BINARYEN_TRAP_MODE=\"clamp\" -s BINARYEN_METHOD=\"native-wasm\"")
 else()
-	add_executable(bin
-		${SOURCES}
-	)
+	add_executable(bin ${SOURCES} ${SOURCES_CXX11})
 	target_link_libraries(bin
 		SDL
 	)

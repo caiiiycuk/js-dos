@@ -10,7 +10,7 @@ var getRepoInfo = require('git-repo-info');
 var exec = require('child_process').exec;
 
 gulp.task("docs", function (cb) {
-    exec('node_modules/docco/bin/docco js-dos-ts/* -o docs/api -l classic', function (err, stdout, stderr) {
+    exec('node_modules/docco/bin/docco js-dos-ts/* js-dos-cpp/* js-dos-cpp/include/* -o docs/api -l classic', function (err, stdout, stderr) {
       console.log(stdout);
       console.log(stderr);
       cb(err);
