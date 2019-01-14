@@ -39,3 +39,10 @@ validation-report.json
 
 # Folders to ignore
 node_modules
+.buildconfig
+.vscode
+buildconfig
+cmake-build-debug
+travis-build
+build
+package-lock.json
