@@ -12,7 +12,7 @@ ninja -j4
 ```
 
 
-Client layer (JavaScrip)
+Client layer (JavaScript)
 ------------------------
 ```
 gulp
