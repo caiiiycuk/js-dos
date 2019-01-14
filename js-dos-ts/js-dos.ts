@@ -1,28 +1,52 @@
 
+import { DosCommandInteface } from "./js-dos-ci";
 import { Host } from "./js-dos-host";
 import { DosModule } from "./js-dos-module";
 import { DosOptions } from "./js-dos-options";
 
 // Dos
-// ---
-// Dos is main class that provides emulation layer.
+// ===
+// Dos is function is entry point that provides emulation layer.
 // As emulation layer js-dos uses [DosBox ported to emscripten](https://github.com/dreamlayers/em-dosbox/#compiling).
 //
 // See [DosOptions](js-dos-options.html) to understand how you can configure Dos class.
-export class Dos {
-    // Here we are holding instance of emscripten module.
-    public module: DosModule;
+export function Dos(options: DosOptions) {
+    return new Promise<DosCommandInteface>((resolve, reject) => {
+        const module = new DosModule();
+        Object.assign(module, options);
 
-    constructor(options: DosOptions) {
-        this.module = new DosModule();
-        Object.assign(this.module, options);
-        this.module.resolve();
+        // Errors
+        // ------
+        // Error propagation should support both ways:
+        // 1. Through reject of promise
+        // 2. Listner style of DosOptions object
+        const onerror = module.onerror;
+        module.onerror = (message: string) => {
+            reject(message);
 
-        if (!this.module.isValid) {
+            // leaving promise scope
+            const fn = () => {
+                if (onerror) {
+                    onerror(message);
+                    module.onerror = onerror;
+                } else {
+                    module.onerror = module.error;
+                }
+            };
+
+            setTimeout(fn, 1);
+        };
+
+        module.resolve();
+        if (!module.isValid) {
             return;
         }
 
+        new DosCommandInteface(module, (ci: DosCommandInteface) => {
+            resolve(ci);
+        });
+
         // See [Host](js-dos-host.html) to understand resolving of emulation layer (dosbox).
-        Host.resolveDosBox(this.module.wdosboxUrl, this.module);
-    }
+        Host.resolveDosBox(module.wdosboxUrl, module);
+    });
 }

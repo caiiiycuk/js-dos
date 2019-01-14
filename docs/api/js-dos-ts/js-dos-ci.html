@@ -106,27 +106,76 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosModule } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-module"</span>;
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { Dos } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos"</span>;
+<span class="hljs-keyword">import</span> { DosModule } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-module"</span>;
 
 <span class="hljs-keyword">interface</span> LowLevelApi {
     send: <span class="hljs-function">(<span class="hljs-params">event: <span class="hljs-built_in">string</span>, msg?: <span class="hljs-built_in">any</span>, callback?: (<span class="hljs-params">msg: <span class="hljs-built_in">string</span></span>) =&gt; <span class="hljs-built_in">void</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
     ping: <span class="hljs-function">(<span class="hljs-params">msg: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
 }
 
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosControlInteface {
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosCommandInteface {
+    <span class="hljs-keyword">private</span> dos: DosModule;
     <span class="hljs-keyword">private</span> api: LowLevelApi;
+    <span class="hljs-keyword">private</span> onready: <span class="hljs-function">(<span class="hljs-params">ci: DosCommandInteface</span>) =&gt;</span> <span class="hljs-built_in">void</span>;
 
-    <span class="hljs-keyword">constructor</span>(<span class="hljs-params">dos: DosModule</span>) {
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params">dos: DosModule, onready: (ci: DosCommandInteface) =&gt; <span class="hljs-built_in">void</span></span>) {
+        <span class="hljs-keyword">this</span>.dos = dos;
         <span class="hljs-keyword">this</span>.api = ((dos <span class="hljs-keyword">as</span> unknown) <span class="hljs-keyword">as</span> LowLevelApi);
         <span class="hljs-keyword">this</span>.api.ping = <span class="hljs-function">(<span class="hljs-params">msg: <span class="hljs-built_in">string</span></span>) =&gt;</span> {
-            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"PING: "</span> + msg);
+            <span class="hljs-keyword">this</span>.onping(msg);
         };
+        <span class="hljs-keyword">this</span>.onready = onready;
+    }
 
-        (<span class="hljs-built_in">window</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>).m = dos;
+    <span class="hljs-keyword">public</span> width() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.dos.canvas.width;
+    }
+
+    <span class="hljs-keyword">public</span> height() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.dos.canvas.height;
+    }
+
+    <span class="hljs-keyword">public</span> screenshot() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve</span>) =&gt;</span> {
+            <span class="hljs-keyword">this</span>.api.send(<span class="hljs-string">"screenshot"</span>, <span class="hljs-string">""</span>, <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
+                resolve(data);
+            });
+        });
     }
 
     <span class="hljs-keyword">public</span> exit() {
-        <span class="hljs-keyword">this</span>.api.send(<span class="hljs-string">"exit"</span>);
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">this</span>.api.send(<span class="hljs-string">"exit"</span>);
+        } <span class="hljs-keyword">catch</span> (e) {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+        }
+
+        <span class="hljs-keyword">this</span>.dos.error(<span class="hljs-string">"Runtime is still alive!"</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    }
+
+    <span class="hljs-keyword">private</span> onping(msg: <span class="hljs-built_in">string</span>) {
+        <span class="hljs-keyword">switch</span> (msg) {
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"ready"</span>:
+                <span class="hljs-keyword">this</span>.onready(<span class="hljs-keyword">this</span>);
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">default</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>do nothing</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        }
     }
 }</pre></div></div>
             

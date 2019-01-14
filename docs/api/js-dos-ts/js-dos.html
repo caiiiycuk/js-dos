@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>js-dos.ts</title>
+  <title>Dos</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" media="all" href="../docco.css" />
@@ -89,12 +89,6 @@
     
     <ul class="sections">
         
-          <li id="title">
-              <div class="annotation">
-                  <h1>js-dos.ts</h1>
-              </div>
-          </li>
-        
         
         
         <li id="section-1">
@@ -107,6 +101,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">import</span> { DosCommandInteface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
 <span class="hljs-keyword">import</span> { Host } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-host"</span>;
 <span class="hljs-keyword">import</span> { DosModule } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-module"</span>;
 <span class="hljs-keyword">import</span> { DosOptions } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-options"</span>;</pre></div></div>
@@ -120,7 +115,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2 id="dos">Dos</h2>
+              <h1 id="dos">Dos</h1>
 
             </div>
             
@@ -133,13 +128,18 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Dos is main class that provides emulation layer.
+              <p>Dos is function is entry point that provides emulation layer.
 As emulation layer js-dos uses <a href="https://github.com/dreamlayers/em-dosbox/#compiling">DosBox ported to emscripten</a>.</p>
 <p>See <a href="js-dos-options.html">DosOptions</a> to understand how you can configure Dos class.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> Dos {</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Dos</span>(<span class="hljs-params">options: DosOptions</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>&lt;DosCommandInteface&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">resolve, reject</span>) =&gt; {
+        <span class="hljs-keyword">const</span> <span class="hljs-built_in">module</span> = <span class="hljs-keyword">new</span> DosModule(<span class="hljs-params"></span>);
+        <span class="hljs-built_in">Object</span>.assign(<span class="hljs-params"><span class="hljs-built_in">module</span>, options</span>);
+
+</span></span></pre></div></div>
             
         </li>
         
@@ -150,20 +150,9 @@ As emulation layer js-dos uses <a href="https://github.com/dreamlayers/em-dosbox
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Here we are holding instance of emscripten module.</p>
+              <h2 id="errors">Errors</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">module</span>: DosModule;
-
-    constructor(options: DosOptions) {
-        <span class="hljs-keyword">this</span>.module = <span class="hljs-keyword">new</span> DosModule();
-        <span class="hljs-built_in">Object</span>.assign(<span class="hljs-keyword">this</span>.module, options);
-        <span class="hljs-keyword">this</span>.module.resolve();
-
-        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.module.isValid) {
-            <span class="hljs-keyword">return</span>;
-        }</pre></div></div>
             
         </li>
         
@@ -174,12 +163,67 @@ As emulation layer js-dos uses <a href="https://github.com/dreamlayers/em-dosbox
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
+              <p>Error propagation should support both ways:</p>
+<ol>
+<li>Through reject of promise</li>
+<li>Listner style of DosOptions object</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">const</span> onerror = <span class="hljs-built_in">module</span>.onerror;
+        <span class="hljs-built_in">module</span>.onerror = <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> {
+            reject(message);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>leaving promise scope</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">const</span> fn = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+                <span class="hljs-keyword">if</span> (onerror) {
+                    onerror(message);
+                    <span class="hljs-built_in">module</span>.onerror = onerror;
+                } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-built_in">module</span>.onerror = <span class="hljs-built_in">module</span>.error;
+                }
+            };
+
+            setTimeout(fn, <span class="hljs-number">1</span>);
+        };
+
+        <span class="hljs-built_in">module</span>.resolve();
+        <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">module</span>.isValid) {
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-keyword">new</span> DosCommandInteface(<span class="hljs-keyword">module</span>, (ci: DosCommandInteface) =&gt; {
+            resolve(ci);
+        });</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
               <p>See <a href="js-dos-host.html">Host</a> to understand resolving of emulation layer (dosbox).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        Host.resolveDosBox(<span class="hljs-keyword">this</span>.module.wdosboxUrl, <span class="hljs-keyword">this</span>.module);
-    }
+            <div class="content"><div class='highlight'><pre>        Host.resolveDosBox(<span class="hljs-built_in">module</span>.wdosboxUrl, <span class="hljs-keyword">module</span>);
+    });
 }</pre></div></div>
             
         </li>

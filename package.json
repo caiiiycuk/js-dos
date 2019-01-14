@@ -33,6 +33,7 @@
     "docco": "^0.8.0",
     "git-repo-info": "^2.1.0",
     "gulp": "^3.9.1",
+    "gulp-clean": "^0.4.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-uglify": "^3.0.1",
     "mocha": "^5.2.0",

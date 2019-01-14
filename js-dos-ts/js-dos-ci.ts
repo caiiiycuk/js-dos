@@ -1,3 +1,4 @@
+import { Dos } from "./js-dos";
 import { DosModule } from "./js-dos-module";
 
 interface LowLevelApi {
@@ -5,19 +6,54 @@ interface LowLevelApi {
     ping: (msg: string) => void;
 }
 
-export class DosControlInteface {
+export class DosCommandInteface {
+    private dos: DosModule;
     private api: LowLevelApi;
+    private onready: (ci: DosCommandInteface) => void;
 
-    constructor(dos: DosModule) {
+    constructor(dos: DosModule, onready: (ci: DosCommandInteface) => void) {
+        this.dos = dos;
         this.api = ((dos as unknown) as LowLevelApi);
         this.api.ping = (msg: string) => {
-            console.log("PING: " + msg);
+            this.onping(msg);
         };
+        this.onready = onready;
+    }
 
-        (window as any).m = dos;
+    public width() {
+        return this.dos.canvas.width;
+    }
+
+    public height() {
+        return this.dos.canvas.height;
+    }
+
+    public screenshot() {
+        return new Promise((resolve) => {
+            this.api.send("screenshot", "", (data) => {
+                resolve(data);
+            });
+        });
     }
 
     public exit() {
-        this.api.send("exit");
+        try {
+            this.api.send("exit");
+        } catch (e) {
+            return 0;
+        }
+
+        this.dos.error("Runtime is still alive!");
+        return -1;
+    }
+
+    private onping(msg: string) {
+        switch (msg) {
+            case "ready":
+                this.onready(this);
+                break;
+            default:
+                // do nothing
+        }
     }
 }

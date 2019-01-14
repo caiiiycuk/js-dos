@@ -56,6 +56,8 @@
 #include "cross.h"
 #include "control.h"
 
+#include <js-dos-ci.h>
+
 #define MAPPERFILE "mapper-" VERSION ".map"
 //#define DISABLE_JOYSTICK
 
@@ -1584,6 +1586,8 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 	default:
 		break;
 	}
+
+	ci()->events()->frame();
 }
 
 

@@ -3,9 +3,12 @@
 
 import * as assert from "assert";
 import { Dos } from "../js-dos-ts/js-dos";
+import { DosCommandInteface } from "../js-dos-ts/js-dos-ci";
 import { Host } from "../js-dos-ts/js-dos-host";
 import { DosModule } from "../js-dos-ts/js-dos-module";
 import { DosOptions } from "../js-dos-ts/js-dos-options";
+import { compareAndExit } from "./compare";
+import { doCatch, doThen } from "./do";
 
 suite("js-dos-host");
 
@@ -32,7 +35,7 @@ test("loader should notify about error, if it can't download wdosbox", (done) =>
 
 test("loader should show progress loading", (done) => {
     let lastLoaded = -1;
-    Host.resolveDosBox("wdosbox.js", {
+    Host.resolveDosBox("/wdosbox.js", {
         onprogress: (total: number, loaded: number) => {
             console.log("Resolving DosBox: ", total, loaded);
             assert.equal(true, loaded <= total);
@@ -49,7 +52,7 @@ test("loader should show progress loading", (done) => {
 });
 
 test("loader should never load twice wdosbox", (done) => {
-    Host.resolveDosBox("wdosbox.js", {
+    Host.resolveDosBox("/wdosbox.js", {
         onprogress: (total: number, loaded: number) => {
             assert.fail();
         },
@@ -63,7 +66,7 @@ test("loader should never load twice wdosbox", (done) => {
 });
 
 test("loader should fire event when wdosbox is loaded", (done) => {
-    Host.resolveDosBox("wdosbox.js", {
+    Host.resolveDosBox("/wdosbox.js", {
         ondosbox: (dosbox: any, instantiateWasm: any) => {
             assert.ok(dosbox);
             assert.ok(instantiateWasm);
@@ -77,8 +80,9 @@ test("loader should fire event when wdosbox is loaded", (done) => {
 
 suite("js-dos");
 
-test("js-dos can't start without canvas", (done) => {
-    const jsdos = new Dos({
+test("js-dos can't start without canvas (listener style)", (done) => {
+    Dos({
+        wdosboxUrl: "/wdosbox.js",
         onerror: (message: string) => {
             assert.equal("canvas field is required, but not set!", message);
             done();
@@ -86,16 +90,38 @@ test("js-dos can't start without canvas", (done) => {
     } as DosOptions);
 });
 
-test("js-dos should start with canvas", (done) => {
-    const jsdos = new Dos({
-        canvas: (document.getElementById("canvas") as HTMLCanvasElement),
-        onready: (main) => {
-            const ci = main([]);
-            assert.equal(jsdos.module.ci, ci);
-            //take screen
-            done();
-            ci.exit();
+test("js-dos can't start without canvas (promise style)", (done) => {
+    const dos = Dos({
+        wdosboxUrl: "/wdosbox.js",
+    } as DosOptions);
+    doCatch(dos, (message) => {
+        assert.equal("canvas field is required, but not set!", message);
+        done();
+    });
+    doThen(dos, () => {
+        assert.fail();
+    });
+});
 
-        },
+test("js-dos should start with canvas", (done) => {
+    const dos = Dos({
+        wdosboxUrl: "/wdosbox.js",
+        canvas: (document.getElementById("canvas") as HTMLCanvasElement),
+    });
+    doCatch(dos, () => assert.fail());
+    doThen(dos, (ci) => {
+        ci.exit();
+        done();
+    });
+});
+
+test("js-dos can take screenshot of canvas", (done) => {
+    const dos = Dos({
+        wdosboxUrl: "/wdosbox.js",
+        canvas: (document.getElementById("canvas") as HTMLCanvasElement),
+    });
+    doCatch(dos, () => assert.fail());
+    doThen(dos, (ci) => {
+        compareAndExit("init.png", ci, done);
     });
 });

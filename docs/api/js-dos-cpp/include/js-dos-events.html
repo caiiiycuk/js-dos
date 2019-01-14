@@ -101,7 +101,9 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-meta">#ifndef _JSDOS_EVENTS_H_</span>
-<span class="hljs-meta">#define _JSDOS_EVENTS_H_</span></pre></div></div>
+<span class="hljs-meta">#define _JSDOS_EVENTS_H_</span>
+
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;string&gt;</span></span></pre></div></div>
             
         </li>
         
@@ -131,9 +133,8 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">class</span> Events {
 private:
-    friend <span class="hljs-keyword">class</span> CommandInterface;
-    Events();
-public:</pre></div></div>
+  friend <span class="hljs-keyword">class</span> CommandInterface;
+  Events();</pre></div></div>
             
         </li>
         
@@ -161,7 +162,10 @@ public:</pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">void</span> ready();</pre></div></div>
+            <div class="content"><div class='highlight'><pre>private:
+  <span class="hljs-keyword">void</span> ready();
+
+public:</pre></div></div>
             
         </li>
         
@@ -172,9 +176,13 @@ public:</pre></div></div>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <h2 id="js--c">JS –&gt; C++</h2>
+              <p><strong>frame</strong> - triggered when frame is rendered</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">void</span> frame();
+
+private:</pre></div></div>
             
         </li>
         
@@ -185,11 +193,40 @@ public:</pre></div></div>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
+              <h2 id="js--c">JS –&gt; C++</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
               <p><strong>exit</strong> - if tirggered then runtime will be stopped</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">void</span> registerExit();
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">void</span> registerExit();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><strong>screenshot</strong> - if triggered then callback will receive screenshot image</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">void</span> registerScreenshot();
+  <span class="hljs-keyword">void</span> supplyScreenshotIfNeeded();
 };
 
 <span class="hljs-meta">#endif // _JSDOS_EVENTS_H_</span></pre></div></div>

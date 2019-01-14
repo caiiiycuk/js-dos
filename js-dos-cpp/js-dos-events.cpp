@@ -25,9 +25,9 @@
 // Types:
 // * **send_callback_fn** - function that C++ code should call, to trigger
 // javascript callback function (that passed to send method)
-// * **send_handler_fn** - handler of one 'event'
 typedef void (*send_callback_fn)(const std::string &callback_name,
                                  const jsonstream &);
+// * **send_handler_fn** - handler for javascript callbacks
 typedef void (*send_handler_fn)(const std::string &callback_name,
                                 const char *data, send_callback_fn callback_fn);
 
@@ -36,7 +36,7 @@ std::unordered_map<std::string, send_handler_fn> &getSendHandlers() {
   return sendHandlers;
 }
 
-// **_send** - is actual implemenation of Module['_send']
+// **_send** - is actual implemenation of Module['__send']
 extern "C" void EMSCRIPTEN_KEEPALIVE _send(const char *ckey, const char *data,
                                            const char *ccallback) {
   jsonstream emptystream;
@@ -101,7 +101,7 @@ void registerSendFn() {
       Module['stringToUTF8'](data, dataBuffer, dataLength);
 
       Module[clfield] = callback;
-      Module['_send'](keyBuffer, dataBuffer, clfieldBuffer);
+      Module['__send'](keyBuffer, dataBuffer, clfieldBuffer);
       Module['_free'](keyBuffer);
       Module['_free'](clfieldBuffer);
       Module['_free'](dataBuffer);
@@ -128,9 +128,25 @@ void ping(const char *event) {
 Events::Events() {
   registerSendFn();
   registerExit();
+  registerScreenshot();
 }
 
 void Events::ready() { ping("ready"); }
+
+void Events::frame() {
+  static long frameCount = 0;
+
+  if (frameCount == 0) {
+    // do nothing
+  } else if (frameCount == 1) {
+    ready();
+  } else {
+    ping("frame");
+    supplyScreenshotIfNeeded();
+  }
+
+  frameCount++;
+}
 
 void Events::registerExit() {
   getSendHandlers().insert(std::make_pair<>(
@@ -139,4 +155,33 @@ void Events::registerExit() {
         delete ci();
         callback_fn(callback_name, jsonstream());
       }));
+}
+
+void Events::registerScreenshot() {
+  getSendHandlers().insert(std::make_pair<>(
+      "screenshot", [](const std::string &callback_name, const char *data,
+                       send_callback_fn callback_fn) {
+#ifdef EMSCRIPTEN
+        EM_ASM((const callbackName = Pointer_stringify($0);
+                Module['screenshot_callback_name'] = callbackName;),
+               callback_name.c_str());
+#endif
+      }));
+}
+
+void Events::supplyScreenshotIfNeeded() {
+#ifdef EMSCRIPTEN
+  EM_ASM(({
+    if (!Module['screenshot_callback_name']) {
+      return;
+    }
+
+    const callbackName = Module['screenshot_callback_name'];
+    const imgData = Module['canvas'].toDataURL("image/png");
+    const callback = Module[callbackName];
+    delete Module[callbackName];
+    delete Module['screenshot_callback_name'];
+    callback(imgData);
+  }));
+#endif
 }

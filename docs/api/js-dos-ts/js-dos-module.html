@@ -106,11 +106,11 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosControlInteface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosCommandInteface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
 <span class="hljs-keyword">import</span> { DosOptions } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-options"</span>;
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosModule <span class="hljs-keyword">extends</span> DosOptions {
-    <span class="hljs-keyword">public</span> ci: DosControlInteface = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">public</span> ci: <span class="hljs-built_in">Promise</span>&lt;DosCommandInteface&gt; = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">public</span> isValid: <span class="hljs-built_in">boolean</span> = <span class="hljs-literal">false</span>;
     <span class="hljs-keyword">private</span> instance: <span class="hljs-built_in">any</span>;
 
@@ -118,12 +118,16 @@
         <span class="hljs-keyword">this</span>.log(<span class="hljs-string">"[DEBUG] "</span> + message);
     }
 
-    <span class="hljs-keyword">public</span> error(message: <span class="hljs-built_in">string</span>) {
-        <span class="hljs-keyword">this</span>.log(<span class="hljs-string">"[ERROR] "</span> + message);
-    }
-
     <span class="hljs-keyword">public</span> info(message: <span class="hljs-built_in">string</span>) {
         <span class="hljs-keyword">this</span>.log(<span class="hljs-string">"[INFO] "</span> + message);
+    }
+
+    <span class="hljs-keyword">public</span> warn(message: <span class="hljs-built_in">string</span>) {
+        <span class="hljs-keyword">this</span>.log(<span class="hljs-string">"[WARN] "</span> + message);
+    }
+
+    <span class="hljs-keyword">public</span> error(message: <span class="hljs-built_in">string</span>) {
+        <span class="hljs-keyword">this</span>.log(<span class="hljs-string">"[ERROR] "</span> + message);
     }
 
     <span class="hljs-keyword">public</span> ondosbox(dosbox: <span class="hljs-built_in">any</span>, instantiateWasm: <span class="hljs-built_in">any</span>) {
@@ -157,12 +161,11 @@ when runtime will ready</p>
             <span class="hljs-keyword">this</span>.log = <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">console</span>.log(message);
         }
 
-        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.onerror) {
-            <span class="hljs-keyword">this</span>.onerror = <span class="hljs-keyword">this</span>.error;
-        }
-
         <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.onready) {
-            <span class="hljs-keyword">this</span>.onready = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-keyword">this</span>.info(<span class="hljs-string">"DosBox is ready"</span>);
+            <span class="hljs-keyword">this</span>.onready = <span class="hljs-function">(<span class="hljs-params">main</span>) =&gt;</span> {
+                <span class="hljs-keyword">this</span>.info(<span class="hljs-string">"DosBox is ready"</span>);
+                main([]);
+            };
         }
 
         <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.onprogress) {
@@ -190,15 +193,9 @@ when runtime will ready</p>
     <span class="hljs-keyword">public</span> onRuntimeInitialized() {
         <span class="hljs-keyword">const</span> mainFn = <span class="hljs-function">(<span class="hljs-params">args: <span class="hljs-built_in">string</span>[]</span>) =&gt;</span> {
             (<span class="hljs-keyword">this</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>).callMain(args);
-            <span class="hljs-keyword">this</span>.ci = <span class="hljs-keyword">new</span> DosControlInteface(<span class="hljs-keyword">this</span>);
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.ci;
         };
 
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.onready) {
-            <span class="hljs-keyword">this</span>.onready(mainFn);
-        } <span class="hljs-keyword">else</span> {
-            mainFn([]);
-        }
+        <span class="hljs-keyword">this</span>.onready(mainFn);
     }
 
 }</pre></div></div>

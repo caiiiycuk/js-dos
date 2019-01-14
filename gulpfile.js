@@ -8,6 +8,12 @@ var buffer = require('vinyl-buffer');
 var uglify = require('gulp-uglify');
 var getRepoInfo = require('git-repo-info');
 var exec = require('child_process').exec;
+var clean = require('gulp-clean');
+
+gulp.task('clean', function () {
+    return gulp.src('dist', {read: false})
+        .pipe(clean());
+});
 
 gulp.task("docs", function (cb) {
     exec('node_modules/docco/bin/docco js-dos-ts/* js-dos-cpp/* js-dos-cpp/include/* -o docs/api -l classic', function (err, stdout, stderr) {
@@ -32,11 +38,16 @@ gulp.task('generateBuildInfo', function() {
 })
 
 gulp.task('copyAssets', function () {
-    return gulp.src(['test/*.html', 'build/wdosbox.wasm', 'build/wdosbox.js', 'build/wdosbox.js.symbols'])
+    return gulp.src(['build/wdosbox.wasm', 'build/wdosbox.js', 'build/wdosbox.js.symbols'])
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('test', function () {
+gulp.task('copyAssetsTest', function () {
+    return gulp.src(['test/*.html', 'test/*.png'])
+        .pipe(gulp.dest('dist/test'));
+});
+
+gulp.task('test', ['copyAssetsTest'], function () {
     return browserify({
         basedir: '.',
         debug: true,
@@ -54,7 +65,7 @@ gulp.task('test', function () {
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('dist/test'));
 })
 
 gulp.task('default', ['generateBuildInfo', 'test', 'copyAssets', 'docs'], function () {

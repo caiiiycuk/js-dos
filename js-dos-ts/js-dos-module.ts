@@ -1,8 +1,8 @@
-import { DosControlInteface } from "./js-dos-ci";
+import { DosCommandInteface } from "./js-dos-ci";
 import { DosOptions } from "./js-dos-options";
 
 export class DosModule extends DosOptions {
-    public ci: DosControlInteface = null;
+    public ci: Promise<DosCommandInteface> = null;
     public isValid: boolean = false;
     private instance: any;
 
@@ -10,12 +10,16 @@ export class DosModule extends DosOptions {
         this.log("[DEBUG] " + message);
     }
 
-    public error(message: string) {
-        this.log("[ERROR] " + message);
-    }
-
     public info(message: string) {
         this.log("[INFO] " + message);
+    }
+
+    public warn(message: string) {
+        this.log("[WARN] " + message);
+    }
+
+    public error(message: string) {
+        this.log("[ERROR] " + message);
     }
 
     public ondosbox(dosbox: any, instantiateWasm: any) {
@@ -36,12 +40,11 @@ export class DosModule extends DosOptions {
             this.log = (message: string) => console.log(message);
         }
 
-        if (!this.onerror) {
-            this.onerror = this.error;
-        }
-
         if (!this.onready) {
-            this.onready = () => this.info("DosBox is ready");
+            this.onready = (main) => {
+                this.info("DosBox is ready");
+                main([]);
+            };
         }
 
         if (!this.onprogress) {
@@ -69,15 +72,9 @@ export class DosModule extends DosOptions {
     public onRuntimeInitialized() {
         const mainFn = (args: string[]) => {
             (this as any).callMain(args);
-            this.ci = new DosControlInteface(this);
-            return this.ci;
         };
 
-        if (this.onready) {
-            this.onready(mainFn);
-        } else {
-            mainFn([]);
-        }
+        this.onready(mainFn);
     }
 
 }

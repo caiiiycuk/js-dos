@@ -1,4 +1,4 @@
-import { DosControlInteface } from "./js-dos-ci";
+import { DosCommandInteface } from "./js-dos-ci";
 
 // DosOptions
 // ----------
@@ -13,18 +13,10 @@ export class DosOptions {
 
     // onready
     // -------
-    // This function is very important, it is a entry point. It's called
-    // when js-dos is completely ready to run emulation layer (dosbox).
-    //
-    // To do this you must call main function (1st argument) with arguments like you do in
-    // shell.
-    // ```
-    //    let ci = main([])
-    // ```
-    //
-    // main function will return [DosControlInteface](js-dos-ci.html), you can
-    // use it to control emulation layer
-    public onready?: (main: (args: string[]) => DosControlInteface) => void;
+    // This function is called before run entry point of dosbox
+    // with it you can change command line arguments that
+    // passed to dosbox
+    public onready?: (main: (args: string[]) => void) => void;
 
     // onprogress
     // ----------

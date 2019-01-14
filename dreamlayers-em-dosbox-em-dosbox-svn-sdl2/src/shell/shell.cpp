@@ -27,9 +27,6 @@
 #include "callback.h"
 #include "support.h"
 
-#include <js-dos-ci.h>
-
-
 Bitu call_shellstop;
 /* Larger scope so shell_del autoexec can use it to
  * remove things from the environment */
@@ -502,8 +499,6 @@ static char const * const full_name="Z:\\COMMAND.COM";
 static char const * const init_line="/INIT AUTOEXEC.BAT";
 
 void SHELL_Init() {
-	ci()->events()->ready();
-
 	/* Add messages */
 	MSG_Add("SHELL_ILLEGAL_PATH","Illegal Path.\n");
 	MSG_Add("SHELL_CMD_HELP","If you want a list of all supported commands type \033[33;1mhelp /all\033[0m .\nA short list of the most often used commands:\n");

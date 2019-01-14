@@ -162,20 +162,12 @@ c++ layer call callback so IT IS ASYNC!</p>
 <ul>
 <li><strong>send_callback_fn</strong> - function that C++ code should call, to trigger
 javascript callback function (that passed to send method)</li>
-<li><strong>send_handler_fn</strong> - handler of one ‘event’</li>
 </ul>
 
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">void</span> <span class="hljs-params">(*send_callback_fn)</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> &amp;callback_name,
-                                 <span class="hljs-keyword">const</span> jsonstream &amp;)</span></span>;
-<span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">void</span> <span class="hljs-params">(*send_handler_fn)</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> &amp;callback_name,
-                                <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *data, send_callback_fn callback_fn)</span></span>;
-
-<span class="hljs-built_in">std</span>::<span class="hljs-built_in">unordered_map</span>&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>, send_handler_fn&gt; &amp;getSendHandlers() {
-  <span class="hljs-keyword">static</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">unordered_map</span>&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>, send_handler_fn&gt; sendHandlers;
-  <span class="hljs-keyword">return</span> sendHandlers;
-}</pre></div></div>
+                                 <span class="hljs-keyword">const</span> jsonstream &amp;)</span></span>;</pre></div></div>
             
         </li>
         
@@ -186,7 +178,30 @@ javascript callback function (that passed to send method)</li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p><strong>_send</strong> - is actual implemenation of Module[‘_send’]</p>
+              <ul>
+<li><strong>send_handler_fn</strong> - handler for javascript callbacks</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">void</span> <span class="hljs-params">(*send_handler_fn)</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> &amp;callback_name,
+                                <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *data, send_callback_fn callback_fn)</span></span>;
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">unordered_map</span>&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>, send_handler_fn&gt; &amp;getSendHandlers() {
+  <span class="hljs-keyword">static</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">unordered_map</span>&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>, send_handler_fn&gt; sendHandlers;
+  <span class="hljs-keyword">return</span> sendHandlers;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p><strong>_send</strong> - is actual implemenation of Module[‘__send’]</p>
 
             </div>
             
@@ -229,11 +244,11 @@ javascript callback function (that passed to send method)</li>
         </li>
         
         
-        <li id="section-6">
+        <li id="section-7">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
+                <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
               <p><strong>registerSendFn</strong> - add send function to Module object</p>
 
@@ -242,7 +257,6 @@ javascript callback function (that passed to send method)</li>
             <div class="content"><div class='highlight'><pre>void registerSendFn() {
 #ifdef EMSCRIPTEN
   EM_ASM(({
-    console.log("Register SEND!");
     Module['send'] = function(key, data, callback) {
       if (!callback) {
         callback = function(){};
@@ -267,7 +281,7 @@ javascript callback function (that passed to send method)</li>
       Module['stringToUTF8'](data, dataBuffer, dataLength);
 
       Module[clfield] = callback;
-      Module['_send'](keyBuffer, dataBuffer, clfieldBuffer);
+      Module['__send'](keyBuffer, dataBuffer, clfieldBuffer);
       Module['_free'](keyBuffer);
       Module['_free'](clfieldBuffer);
       Module['_free'](dataBuffer);
@@ -279,11 +293,11 @@ javascript callback function (that passed to send method)</li>
         </li>
         
         
-        <li id="section-7">
+        <li id="section-8">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
               <h2 id="ping">Ping</h2>
 
@@ -292,11 +306,11 @@ javascript callback function (that passed to send method)</li>
         </li>
         
         
-        <li id="section-8">
+        <li id="section-9">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
+                <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
               <p>Ping is opposite to send, it called by c++ to trigger something in javascript</p>
 
@@ -317,9 +331,38 @@ javascript callback function (that passed to send method)</li>
 Events::Events() {
   registerSendFn();
   registerExit();
+  registerScreenshot();
 }
 
 void Events::ready() { ping("ready"); }
+
+void Events::frame() {
+  static long frameCount = 0;
+
+  if (frameCount == 0) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>do nothing</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  } else if (frameCount == 1) {
+    ready();
+  } else {
+    ping("frame");
+    supplyScreenshotIfNeeded();
+  }
+
+  frameCount++;
+}
 
 void Events::registerExit() {
   getSendHandlers().insert(std::make_pair&lt;&gt;(
@@ -328,6 +371,35 @@ void Events::registerExit() {
         delete ci();
         callback_fn(callback_name, jsonstream());
       }));
+}
+
+void Events::registerScreenshot() {
+  getSendHandlers().insert(std::make_pair&lt;&gt;(
+      "screenshot", [](const std::string &amp;callback_name, const char *data,
+                       send_callback_fn callback_fn) {
+#ifdef EMSCRIPTEN
+        EM_ASM((const callbackName = Pointer_stringify($0);
+                Module['screenshot_callback_name'] = callbackName;),
+               callback_name.c_str());
+#endif
+      }));
+}
+
+void Events::supplyScreenshotIfNeeded() {
+#ifdef EMSCRIPTEN
+  EM_ASM(({
+    if (!Module['screenshot_callback_name']) {
+      return;
+    }
+
+    const callbackName = Module['screenshot_callback_name'];
+    const imgData = Module['canvas'].toDataURL("image/png");
+    const callback = Module[callbackName];
+    delete Module[callbackName];
+    delete Module['screenshot_callback_name'];
+    callback(imgData);
+  }));
+#endif
 }</pre></div></div>
             
         </li>
