@@ -1,16 +1,26 @@
 Building
 ========
+[![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos)
 
-
-dosbox
-------
-
+Emulation layer (aka dosbox)
+----------------------------
 ```
 mkdir build
 cd build
 emcmake cmake -GNinja ..
 ninja -j4
 ```
+
+
+Client layer (JavaScrip)
+------------------------
+```
+gulp
+```
+
+Running tests
+-------------
+firefox dist/test/index.html
 
 
 Folder structure
