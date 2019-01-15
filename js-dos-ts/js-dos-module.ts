@@ -1,6 +1,7 @@
 import { DosCommandInteface } from "./js-dos-ci";
 import { DosFS } from "./js-dos-fs";
 import { DosOptions } from "./js-dos-options";
+import { JsDosUi } from "./js-dos-ui";
 
 export class DosModule extends DosOptions {
     public isValid: boolean = false;
@@ -49,13 +50,14 @@ export class DosModule extends DosOptions {
             };
         }
 
-        if (!this.onprogress) {
-            this.onprogress = (total, loaded) => this.info("Resolving DosBox - " + loaded * 100 / total + "%");
-        }
-
         if (!this.canvas) {
             this.onerror("canvas field is required, but not set!");
             return;
+        }
+
+        if (!this.onprogress) {
+            const ui = new JsDosUi(this);
+            this.onprogress = (total, loaded) => ui.onprogress(total, loaded);
         }
 
         (this as any).SDL = {
