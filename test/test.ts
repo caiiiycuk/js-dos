@@ -128,16 +128,20 @@ test("js-dos can run digger.zip", (done) => {
     const dos = Dos({
         wdosboxUrl: "/wdosbox.js",
         canvas: (document.getElementById("canvas") as HTMLCanvasElement),
-    });
-    doNext(dos, (ci) => {
-        doNext(ci.mount("digger.zip"), () => {
-            doNext(ci.shell("mount c .", "c:", "DIGGER.COM"), () => {
-                const fn = () => {
-                    compareAndExit("digger.png", ci, done);
-                };
-
-                setTimeout(fn, 500);
+        onready: (fs, main) => {
+            doNext(fs.extract("digger.zip"), () => {
+                main([]);
             });
+        },
+    });
+
+    doNext(dos, (ci) => {
+        doNext(ci.shell("mount c .", "c:", "DIGGER.COM"), () => {
+            const fn = () => {
+                compareAndExit("digger.png", ci, done);
+            };
+
+            setTimeout(fn, 500);
         });
     });
 });

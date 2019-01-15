@@ -48,28 +48,6 @@ export class DosCommandInteface {
         });
     }
 
-    public mount(url: string) {
-        return new Promise<void>((resolve, reject) => {
-            new Xhr(url, {
-                responseType: "arraybuffer",
-                fail: (msg) => reject(msg),
-                success: (data: ArrayBuffer) => {
-                    const bytes = new Uint8Array(data);
-                    const buffer = this.em._malloc(bytes.length);
-                    this.em.HEAPU8.set(bytes, buffer);
-                    const retcode = (this.em as any)._extract_zip(buffer, bytes.length);
-                    this.em._free(buffer);
-
-                    if (retcode === 0) {
-                        resolve();
-                    } else {
-                        reject("Can't extract zip, retcode " + retcode + ", see more info in logs");
-                    }
-                },
-            });
-        });
-    }
-
     public screenshot() {
         return new Promise((resolve) => {
             this.api.send("screenshot", "", (data) => {

@@ -1,10 +1,12 @@
 import { DosCommandInteface } from "./js-dos-ci";
+import { DosFS } from "./js-dos-fs";
 import { DosOptions } from "./js-dos-options";
 
 export class DosModule extends DosOptions {
-    public ci: Promise<DosCommandInteface> = null;
     public isValid: boolean = false;
+    private ci: Promise<DosCommandInteface> = null;
     private instance: any;
+    private fs: DosFS = null;
 
     public debug(message: string) {
         this.log("[DEBUG] " + message);
@@ -41,7 +43,7 @@ export class DosModule extends DosOptions {
         }
 
         if (!this.onready) {
-            this.onready = (main) => {
+            this.onready = (fs, main) => {
                 this.info("DosBox is ready");
                 main([]);
             };
@@ -73,8 +75,8 @@ export class DosModule extends DosOptions {
         const mainFn = (args: string[]) => {
             (this as any).callMain(args);
         };
-
-        this.onready(mainFn);
+        this.fs = new DosFS(this);
+        this.onready(this.fs, mainFn);
     }
 
 }

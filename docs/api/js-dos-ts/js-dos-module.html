@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="js-dos-fs.html">
+                js-dos-fs.ts
+              </a>
+            
+              
               <a class="source" href="js-dos-host.html">
                 js-dos-host.ts
               </a>
@@ -117,12 +122,14 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosCommandInteface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
+<span class="hljs-keyword">import</span> { DosFS } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-fs"</span>;
 <span class="hljs-keyword">import</span> { DosOptions } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-options"</span>;
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosModule <span class="hljs-keyword">extends</span> DosOptions {
-    <span class="hljs-keyword">public</span> ci: <span class="hljs-built_in">Promise</span>&lt;DosCommandInteface&gt; = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">public</span> isValid: <span class="hljs-built_in">boolean</span> = <span class="hljs-literal">false</span>;
+    <span class="hljs-keyword">private</span> ci: <span class="hljs-built_in">Promise</span>&lt;DosCommandInteface&gt; = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">private</span> instance: <span class="hljs-built_in">any</span>;
+    <span class="hljs-keyword">private</span> fs: DosFS = <span class="hljs-literal">null</span>;
 
     <span class="hljs-keyword">public</span> debug(message: <span class="hljs-built_in">string</span>) {
         <span class="hljs-keyword">this</span>.log(<span class="hljs-string">"[DEBUG] "</span> + message);
@@ -172,7 +179,7 @@ when runtime will ready</p>
         }
 
         <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.onready) {
-            <span class="hljs-keyword">this</span>.onready = <span class="hljs-function">(<span class="hljs-params">main</span>) =&gt;</span> {
+            <span class="hljs-keyword">this</span>.onready = <span class="hljs-function">(<span class="hljs-params">fs, main</span>) =&gt;</span> {
                 <span class="hljs-keyword">this</span>.info(<span class="hljs-string">"DosBox is ready"</span>);
                 main([]);
             };
@@ -204,8 +211,8 @@ when runtime will ready</p>
         <span class="hljs-keyword">const</span> mainFn = <span class="hljs-function">(<span class="hljs-params">args: <span class="hljs-built_in">string</span>[]</span>) =&gt;</span> {
             (<span class="hljs-keyword">this</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>).callMain(args);
         };
-
-        <span class="hljs-keyword">this</span>.onready(mainFn);
+        <span class="hljs-keyword">this</span>.fs = <span class="hljs-keyword">new</span> DosFS(<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">this</span>.onready(<span class="hljs-keyword">this</span>.fs, mainFn);
     }
 
 }</pre></div></div>

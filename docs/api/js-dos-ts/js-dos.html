@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="js-dos-fs.html">
+                js-dos-fs.ts
+              </a>
+            
+              
               <a class="source" href="js-dos-host.html">
                 js-dos-host.ts
               </a>
@@ -138,7 +143,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Dos is function is entry point that provides emulation layer.
+              <p>Dos function is entry point that provides emulation layer.
 As emulation layer js-dos uses <a href="https://github.com/dreamlayers/em-dosbox/#compiling">DosBox ported to emscripten</a>.</p>
 <p>See <a href="js-dos-options.html">DosOptions</a> to understand how you can configure Dos class.</p>
 
@@ -176,29 +181,16 @@ As emulation layer js-dos uses <a href="https://github.com/dreamlayers/em-dosbox
               <p>Error propagation should support both ways:</p>
 <ol>
 <li>Through reject of promise</li>
-<li>Listner style of DosOptions object</li>
+<li>Fire onerror function of DosOptions object</li>
 </ol>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">const</span> onerror = <span class="hljs-built_in">module</span>.onerror;
         <span class="hljs-built_in">module</span>.onerror = <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> {
-            reject(message);</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>leaving promise scope</p>
+            reject(message);
 
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">const</span> fn = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+            <span class="hljs-keyword">const</span> fn = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
                 <span class="hljs-keyword">if</span> (onerror) {
                     onerror(message);
                     <span class="hljs-built_in">module</span>.onerror = onerror;
@@ -222,11 +214,11 @@ As emulation layer js-dos uses <a href="https://github.com/dreamlayers/em-dosbox
         </li>
         
         
-        <li id="section-7">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>See <a href="js-dos-host.html">Host</a> to understand resolving of emulation layer (dosbox).</p>
 

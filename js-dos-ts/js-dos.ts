@@ -6,7 +6,7 @@ import { DosOptions } from "./js-dos-options";
 
 // Dos
 // ===
-// Dos is function is entry point that provides emulation layer.
+// Dos function is entry point that provides emulation layer.
 // As emulation layer js-dos uses [DosBox ported to emscripten](https://github.com/dreamlayers/em-dosbox/#compiling).
 //
 // See [DosOptions](js-dos-options.html) to understand how you can configure Dos class.
@@ -19,12 +19,11 @@ export function Dos(options: DosOptions) {
         // ------
         // Error propagation should support both ways:
         // 1. Through reject of promise
-        // 2. Listner style of DosOptions object
+        // 2. Fire onerror function of DosOptions object
         const onerror = module.onerror;
         module.onerror = (message: string) => {
             reject(message);
 
-            // leaving promise scope
             const fn = () => {
                 if (onerror) {
                     onerror(message);

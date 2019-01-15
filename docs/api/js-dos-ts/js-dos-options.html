@@ -69,6 +69,11 @@
               </a>
             
               
+              <a class="source" href="js-dos-fs.html">
+                js-dos-fs.ts
+              </a>
+            
+              
               <a class="source" href="js-dos-host.html">
                 js-dos-host.ts
               </a>
@@ -116,7 +121,8 @@
               
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosCommandInteface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosCommandInteface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
+<span class="hljs-keyword">import</span> { DosFS } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-fs"</span>;</pre></div></div>
             
         </li>
         
@@ -197,13 +203,13 @@ class, to configure emulation layer:</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>This function is called before run entry point of dosbox
-with it you can change command line arguments that
-passed to dosbox</p>
+              <p>This function is called before running entry point of dosbox
+with it you can change command line arguments that passed to dosbox
+or configure FS layer</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onready?: <span class="hljs-function">(<span class="hljs-params">main: (<span class="hljs-params">args: <span class="hljs-built_in">string</span>[]</span>) =&gt; <span class="hljs-built_in">void</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onready?: <span class="hljs-function">(<span class="hljs-params">fs: DosFS, main: (<span class="hljs-params">args: <span class="hljs-built_in">string</span>[]</span>) =&gt; <span class="hljs-built_in">void</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
             
         </li>
         

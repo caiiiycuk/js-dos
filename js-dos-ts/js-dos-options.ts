@@ -1,4 +1,5 @@
 import { DosCommandInteface } from "./js-dos-ci";
+import { DosFS } from "./js-dos-fs";
 
 // DosOptions
 // ----------
@@ -13,10 +14,10 @@ export class DosOptions {
 
     // onready
     // -------
-    // This function is called before run entry point of dosbox
-    // with it you can change command line arguments that
-    // passed to dosbox
-    public onready?: (main: (args: string[]) => void) => void;
+    // This function is called before running entry point of dosbox
+    // with it you can change command line arguments that passed to dosbox
+    // or configure FS layer
+    public onready?: (fs: DosFS, main: (args: string[]) => void) => void;
 
     // onprogress
     // ----------
