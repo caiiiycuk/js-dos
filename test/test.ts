@@ -131,8 +131,20 @@ test("js-dos can run digger.zip", (done) => {
     });
     doNext(dos, (ci) => {
         doNext(ci.mount("digger.zip"), () => {
-            ci.shell("mount c .", "c:", "DIGGER.COM");
-            // compareAndExit("init.png", ci, done);
+            doNext(ci.shell("mount c .", "c:", "DIGGER.COM"), () => {
+                const fn = () => {
+                    compareAndExit("digger.png", ci, done);
+                };
+
+                setTimeout(fn, 500);
+            });
         });
     });
 });
+
+const saveImage = (ci: DosCommandInteface) => {
+    ci.screenshot().then((data) => {
+        const w = window.open("about:blank", "image from canvas");
+        w.document.write("<img src='" + data + "' alt='from canvas'/>");
+    });
+};

@@ -130,7 +130,9 @@
     <span class="hljs-keyword">private</span> em: <span class="hljs-keyword">typeof</span> Module;
     <span class="hljs-keyword">private</span> api: LowLevelApi;
     <span class="hljs-keyword">private</span> onready: <span class="hljs-function">(<span class="hljs-params">ci: DosCommandInteface</span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+
     <span class="hljs-keyword">private</span> shellInputQueue: <span class="hljs-built_in">string</span>[] = [];
+    <span class="hljs-keyword">private</span> shellInputClients: <span class="hljs-built_in">Array</span>&lt;<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-built_in">void</span>&gt; = [];
 
     <span class="hljs-keyword">constructor</span>(<span class="hljs-params">dos: DosModule, onready: (ci: DosCommandInteface) =&gt; <span class="hljs-built_in">void</span></span>) {
         <span class="hljs-keyword">this</span>.dos = dos;
@@ -151,10 +153,17 @@
     }
 
     <span class="hljs-keyword">public</span> shell(...cmd: <span class="hljs-built_in">string</span>[]) {
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> next of cmd) {
-            <span class="hljs-keyword">this</span>.shellInputQueue.push(next);
+        <span class="hljs-keyword">if</span> (cmd.length === <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">return</span>;
         }
-        <span class="hljs-keyword">this</span>.requestShellInput();
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
+            <span class="hljs-keyword">this</span>.shellInputClients.push(resolve);
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> next of cmd) {
+                <span class="hljs-keyword">this</span>.shellInputQueue.push(next);
+            }
+            <span class="hljs-keyword">this</span>.requestShellInput();
+        });
     }
 
     <span class="hljs-keyword">public</span> mount(url: <span class="hljs-built_in">string</span>) {
@@ -230,7 +239,12 @@
 
                 (<span class="hljs-params"><span class="hljs-keyword">this</span>.em <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span></span>).<span class="hljs-params">stringToUTF8</span>(<span class="hljs-params">cmd, buffer, cmdLength</span>);
 
-                <span class="hljs-params">if</span> (<span class="hljs-params"><span class="hljs-keyword">this</span>.shellInputQueue.length &gt; 0</span>) {
+                <span class="hljs-params">if</span> (<span class="hljs-params"><span class="hljs-keyword">this</span>.shellInputQueue.length === 0</span>) {
+                    <span class="hljs-params">for</span> (<span class="hljs-params"><span class="hljs-keyword">const</span> resolve of <span class="hljs-keyword">this</span>.shellInputClients</span>) {
+                        <span class="hljs-params">resolve</span><span class="hljs-params">()</span>;
+                    }
+                    <span class="hljs-params">this</span>.<span class="hljs-params">shellInputClients</span> = [];
+                } <span class="hljs-params">else</span> {
                     <span class="hljs-params">this</span>.<span class="hljs-params">requestShellInput</span><span class="hljs-params">()</span>;
                 }
             <span class="hljs-params">default</span>:

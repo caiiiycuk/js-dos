@@ -12,7 +12,9 @@ export class DosCommandInteface {
     private em: typeof Module;
     private api: LowLevelApi;
     private onready: (ci: DosCommandInteface) => void;
+
     private shellInputQueue: string[] = [];
+    private shellInputClients: Array<() => void> = [];
 
     constructor(dos: DosModule, onready: (ci: DosCommandInteface) => void) {
         this.dos = dos;
@@ -33,10 +35,17 @@ export class DosCommandInteface {
     }
 
     public shell(...cmd: string[]) {
-        for (const next of cmd) {
-            this.shellInputQueue.push(next);
+        if (cmd.length === 0) {
+            return;
         }
-        this.requestShellInput();
+
+        return new Promise((resolve, reject) => {
+            this.shellInputClients.push(resolve);
+            for (const next of cmd) {
+                this.shellInputQueue.push(next);
+            }
+            this.requestShellInput();
+        });
     }
 
     public mount(url: string) {
@@ -112,7 +121,12 @@ export class DosCommandInteface {
 
                 (this.em as any).stringToUTF8(cmd, buffer, cmdLength);
 
-                if (this.shellInputQueue.length > 0) {
+                if (this.shellInputQueue.length === 0) {
+                    for (const resolve of this.shellInputClients) {
+                        resolve();
+                    }
+                    this.shellInputClients = [];
+                } else {
                     this.requestShellInput();
                 }
             default:
