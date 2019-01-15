@@ -19,6 +19,11 @@
           <div id="jump_page">
             
               
+              <a class="source" href="../js-dos-cpp/include/js-dos-3rdparty.html">
+                js-dos-3rdparty.h
+              </a>
+            
+              
               <a class="source" href="../js-dos-cpp/include/js-dos-ci.html">
                 js-dos-ci.h
               </a>
@@ -31,6 +36,11 @@
               
               <a class="source" href="../js-dos-cpp/include/js-dos-json.html">
                 js-dos-json.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-3rdparty.html">
+                js-dos-3rdparty.c
               </a>
             
               
@@ -265,7 +275,7 @@
     <span class="hljs-comment">/* tslint:disable:only-arrow-functions */</span>
     <span class="hljs-keyword">private</span> polyfill() {
         <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">Math</span>.imul || <span class="hljs-built_in">Math</span>.imul(<span class="hljs-number">0xffffffff</span>, <span class="hljs-number">5</span>) !== <span class="hljs-number">-5</span>) {
-            <span class="hljs-built_in">Math</span>.imul = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">imul</span>(<span class="hljs-params">a, b</span>) </span>{
+            <span class="hljs-built_in">Math</span>.imul = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">imul</span>(<span class="hljs-params">a: <span class="hljs-built_in">any</span>, b: <span class="hljs-built_in">any</span></span>) </span>{
                 <span class="hljs-keyword">const</span> ah = a &gt;&gt;&gt; <span class="hljs-number">16</span>;
                 <span class="hljs-keyword">const</span> al = a &amp; <span class="hljs-number">0xffff</span>;
                 <span class="hljs-keyword">const</span> bh = b &gt;&gt;&gt; <span class="hljs-number">16</span>;

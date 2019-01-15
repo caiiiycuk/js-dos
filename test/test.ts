@@ -8,7 +8,7 @@ import { Host } from "../js-dos-ts/js-dos-host";
 import { DosModule } from "../js-dos-ts/js-dos-module";
 import { DosOptions } from "../js-dos-ts/js-dos-options";
 import { compareAndExit } from "./compare";
-import { doCatch, doThen } from "./do";
+import { doCatch, doNext, doThen } from "./do";
 
 suite("js-dos-host");
 
@@ -108,8 +108,7 @@ test("js-dos should start with canvas", (done) => {
         wdosboxUrl: "/wdosbox.js",
         canvas: (document.getElementById("canvas") as HTMLCanvasElement),
     });
-    doCatch(dos, () => assert.fail());
-    doThen(dos, (ci) => {
+    doNext(dos, (ci) => {
         ci.exit();
         done();
     });
@@ -120,8 +119,20 @@ test("js-dos can take screenshot of canvas", (done) => {
         wdosboxUrl: "/wdosbox.js",
         canvas: (document.getElementById("canvas") as HTMLCanvasElement),
     });
-    doCatch(dos, () => assert.fail());
-    doThen(dos, (ci) => {
+    doNext(dos, (ci) => {
         compareAndExit("init.png", ci, done);
+    });
+});
+
+test("js-dos can run digger.zip", (done) => {
+    const dos = Dos({
+        wdosboxUrl: "/wdosbox.js",
+        canvas: (document.getElementById("canvas") as HTMLCanvasElement),
+    });
+    doNext(dos, (ci) => {
+        doNext(ci.mount("digger.zip"), () => {
+            ci.shell("mount c .", "c:", "DIGGER.COM");
+            // compareAndExit("init.png", ci, done);
+        });
     });
 });

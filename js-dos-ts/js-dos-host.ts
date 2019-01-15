@@ -118,7 +118,7 @@ class DosHost {
     /* tslint:disable:only-arrow-functions */
     private polyfill() {
         if (!Math.imul || Math.imul(0xffffffff, 5) !== -5) {
-            Math.imul = function imul(a, b) {
+            Math.imul = function imul(a: any, b: any) {
                 const ah = a >>> 16;
                 const al = a & 0xffff;
                 const bh = b >>> 16;

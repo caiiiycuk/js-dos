@@ -1,5 +1,6 @@
 import { Dos } from "./js-dos";
 import { DosModule } from "./js-dos-module";
+import { Xhr } from "./js-dos-xhr";
 
 interface LowLevelApi {
     send: (event: string, msg?: any, callback?: (msg: string) => void) => void;
@@ -7,15 +8,18 @@ interface LowLevelApi {
 }
 
 export class DosCommandInteface {
-    private dos: DosModule;
+    public dos: DosModule;
+    private em: typeof Module;
     private api: LowLevelApi;
     private onready: (ci: DosCommandInteface) => void;
+    private shellInputQueue: string[] = [];
 
     constructor(dos: DosModule, onready: (ci: DosCommandInteface) => void) {
         this.dos = dos;
-        this.api = ((dos as unknown) as LowLevelApi);
-        this.api.ping = (msg: string) => {
-            this.onping(msg);
+        this.em = (dos as any);
+        this.api = (dos as any);
+        this.api.ping = (msg: string, ...args: any[]) => {
+            this.onping(msg, args);
         };
         this.onready = onready;
     }
@@ -26,6 +30,35 @@ export class DosCommandInteface {
 
     public height() {
         return this.dos.canvas.height;
+    }
+
+    public shell(...cmd: string[]) {
+        for (const next of cmd) {
+            this.shellInputQueue.push(next);
+        }
+        this.requestShellInput();
+    }
+
+    public mount(url: string) {
+        return new Promise<void>((resolve, reject) => {
+            new Xhr(url, {
+                responseType: "arraybuffer",
+                fail: (msg) => reject(msg),
+                success: (data: ArrayBuffer) => {
+                    const bytes = new Uint8Array(data);
+                    const buffer = this.em._malloc(bytes.length);
+                    this.em.HEAPU8.set(bytes, buffer);
+                    const retcode = (this.em as any)._extract_zip(buffer, bytes.length);
+                    this.em._free(buffer);
+
+                    if (retcode === 0) {
+                        resolve();
+                    } else {
+                        reject("Can't extract zip, retcode " + retcode + ", see more info in logs");
+                    }
+                },
+            });
+        });
     }
 
     public screenshot() {
@@ -47,13 +80,43 @@ export class DosCommandInteface {
         return -1;
     }
 
-    private onping(msg: string) {
+    private sendKeyPress(code: number) {
+        this.api.send("sdl_key_event", code + "");
+    }
+
+    private requestShellInput() {
+        this.sendKeyPress(13);
+    }
+
+    private onping(msg: string, args: any[]) {
         switch (msg) {
             case "ready":
                 this.onready(this);
                 break;
+            case "shell_input":
+                if (this.shellInputQueue.length === 0) {
+                    return;
+                }
+
+                const buffer: number = args[0];
+                const maxLength: number = args[1];
+
+                const cmd = this.shellInputQueue.shift();
+                const cmdLength = (this.em as any).lengthBytesUTF8(cmd) + 1;
+
+                if (cmdLength > maxLength) {
+                    this.dos.onerror("Can't execute cmd '" + cmd +
+                        "', because it's bigger then max cmd length " + maxLength);
+                    return;
+                }
+
+                (this.em as any).stringToUTF8(cmd, buffer, cmdLength);
+
+                if (this.shellInputQueue.length > 0) {
+                    this.requestShellInput();
+                }
             default:
-                // do nothing
+            // do nothing
         }
     }
 }

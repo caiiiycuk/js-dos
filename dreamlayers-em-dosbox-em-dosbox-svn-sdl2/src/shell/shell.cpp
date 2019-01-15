@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <js-dos-ci.h>
 #include "dosbox.h"
 #include "regs.h"
 #include "control.h"
@@ -326,6 +327,7 @@ void DOS_Shell::Run(void) {
 		} else {
 			if (echo) ShowPrompt();
 			InputCommand(input_line);
+			ci()->events()->shell_input(input_line, CMD_MAXLINE);
 			ParseLine(input_line);
 			if (echo && !bf) WriteOut_NoParsing("\n");
 		}

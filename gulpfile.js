@@ -43,7 +43,7 @@ gulp.task('copyAssets', function () {
 });
 
 gulp.task('copyAssetsTest', function () {
-    return gulp.src(['test/*.html', 'test/*.png'])
+    return gulp.src(['test/*.html', 'test/*.png', 'test/*.zip'])
         .pipe(gulp.dest('dist/test'));
 });
 

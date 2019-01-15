@@ -19,6 +19,11 @@
           <div id="jump_page">
             
               
+              <a class="source" href="js-dos-3rdparty.html">
+                js-dos-3rdparty.h
+              </a>
+            
+              
               <a class="source" href="js-dos-ci.html">
                 js-dos-ci.h
               </a>
@@ -31,6 +36,11 @@
               
               <a class="source" href="js-dos-json.html">
                 js-dos-json.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-3rdparty.html">
+                js-dos-3rdparty.c
               </a>
             
               
@@ -103,7 +113,10 @@
             <div class="content"><div class='highlight'><pre><span class="hljs-meta">#ifndef _JSDOS_EVENTS_H_</span>
 <span class="hljs-meta">#define _JSDOS_EVENTS_H_</span>
 
-<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;string&gt;</span></span></pre></div></div>
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;string&gt;</span></span>
+<span class="hljs-meta">#include <span class="hljs-meta-string">&lt;vector&gt;</span></span>
+
+<span class="hljs-keyword">union</span> SDL_Event;</pre></div></div>
             
         </li>
         
@@ -133,8 +146,9 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">class</span> Events {
 private:
-  friend <span class="hljs-keyword">class</span> CommandInterface;
-  Events();</pre></div></div>
+    friend <span class="hljs-keyword">class</span> CommandInterface;
+
+    Events();</pre></div></div>
             
         </li>
         
@@ -163,7 +177,7 @@ private:
             </div>
             
             <div class="content"><div class='highlight'><pre>private:
-  <span class="hljs-keyword">void</span> ready();
+    <span class="hljs-keyword">void</span> ready();
 
 public:</pre></div></div>
             
@@ -180,9 +194,7 @@ public:</pre></div></div>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">void</span> frame();
-
-private:</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">void</span> frame();</pre></div></div>
             
         </li>
         
@@ -193,9 +205,11 @@ private:</pre></div></div>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <h2 id="js--c">JS –&gt; C++</h2>
+              <p>when dos shell is running  we can provide shell commands using this</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">void</span> shell_input(<span class="hljs-keyword">char</span> *input_line, <span class="hljs-keyword">int</span> length);</pre></div></div>
             
         </li>
         
@@ -206,11 +220,9 @@ private:</pre></div></div>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <p><strong>exit</strong> - if tirggered then runtime will be stopped</p>
+              <h2 id="js--c">JS –&gt; C++</h2>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">void</span> registerExit();</pre></div></div>
             
         </li>
         
@@ -221,12 +233,64 @@ private:</pre></div></div>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><strong>sdl_event</strong> - wrapper over SDL_PollEvent allows injecting custom events
+available events:</p>
+<ul>
+<li>sdl_key_event - to send key press</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>private:
+    <span class="hljs-keyword">void</span> registerPushSDLEvent();
+public:
+    <span class="hljs-keyword">int</span> pollSDLEvent(SDL_Event *event);
+
+private:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><strong>exit</strong> - if tirggered then runtime will be stopped</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">void</span> registerExit();</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
               <p><strong>screenshot</strong> - if triggered then callback will receive screenshot image</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">void</span> registerScreenshot();
-  <span class="hljs-keyword">void</span> supplyScreenshotIfNeeded();
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">void</span> registerScreenshot();
+
+    <span class="hljs-keyword">void</span> supplyScreenshotIfNeeded();
 };
 
 <span class="hljs-meta">#endif // _JSDOS_EVENTS_H_</span></pre></div></div>

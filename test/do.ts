@@ -1,3 +1,5 @@
+import assert = require("assert");
+
 // Do
 // ==
 // We use this functions to avoid problem of throwing,
@@ -22,4 +24,9 @@ export function doCatch<T>(promise: Promise<T>, fn: (v: string) => void) {
 
         setTimeout(topFn, 1);
     });
+}
+
+export function doNext<T>(promise: Promise<T>, fn: (v: T) => void) {
+    doThen(promise, fn);
+    doCatch(promise, (msg: string) => assert.fail(msg));
 }

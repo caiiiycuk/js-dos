@@ -20,7 +20,9 @@ gulp
 
 Running tests
 -------------
+```
 firefox dist/test/index.html
+```
 
 
 Folder structure

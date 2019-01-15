@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.6)
 
 if(${EMSCRIPTEN})
-	set(CMAKE_C_FLAGS "-Oz -w -Werror=return-type")
-	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
+	set(USE_PORTS "-s USE_ZLIB=1")
+	set(CMAKE_C_FLAGS "-Oz -w -Werror=return-type ${USE_PORTS}")
+	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} ${USE_PORTS}")
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \
-		${BUILD_TYPE_FLAGS} \
+		${USE_PORTS} \
 		-Oz \
 		--emit-symbol-map \
 		-s EXIT_RUNTIME=1 \
@@ -16,17 +17,21 @@ if(${EMSCRIPTEN})
 		-s MODULARIZE=1 \
 		-s EXPORT_NAME='WDOSBOX' \
 		-s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt \
-		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency', 'FS_createPath', 'FS_createPreloadedFile', \
+		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency','FS', 'FS_createPath', 'FS_createPreloadedFile', \
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString']\" \
 		-s NO_EXIT_RUNTIME=1 \
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
 else()
 	set(CMAKE_C_FLAGS "-w -Werror=return-type -O0 -g -ggdb3")
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
-	add_definitions(-DDEBUG)
+	add_definitions(-DDEBUG -DEMSCRIPTEN_KEEPALIVE=)
 endif()
 
 add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS)
+
+include(
+	"${CMAKE_CURRENT_LIST_DIR}/3rd-party/3rd-party.cmake"
+)
 
 include_directories(
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/include"
@@ -42,6 +47,7 @@ set(SOURCES_CXX11
 set_source_files_properties(${SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "-std=c++11")
 
 set(SOURCES 
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-3rdparty.c"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dosbox.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/cpu/core_simple.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/cpu/paging.cpp"
@@ -166,14 +172,14 @@ set(SOURCES
 )
 
 if(${EMSCRIPTEN})
-	add_library(bin-obj OBJECT ${SOURCES} ${SOURCES_CXX11})
+	add_library(bin-obj OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	add_executable(wdosbox $<TARGET_OBJECTS:bin-obj>)
 	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
 	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s OUTLINING_LIMIT=0 -s WASM=1  -s BINARYEN_TRAP_MODE=\"clamp\"")
 else()
-	add_executable(bin ${SOURCES} ${SOURCES_CXX11})
+	add_executable(bin ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	target_link_libraries(bin
-		SDL
+		SDL z
 	)
 
 	set_target_properties(bin PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")

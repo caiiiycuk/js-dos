@@ -2268,7 +2268,7 @@ void GFX_Events() {
 		MAPPER_UpdateJoysticks();
 	}
 #endif
-	while (SDL_PollEvent(&event)) {
+	while (ci()->events()->pollSDLEvent(&event)) {
 		switch (event.type) {
 #if SDL_VERSION_ATLEAST(2,0,0)
 		case SDL_WINDOWEVENT:

@@ -22,6 +22,7 @@
   "homepage": "https://js-dos.com",
   "devDependencies": {
     "@types/assert": "^1.4.1",
+    "@types/emscripten": "0.0.31",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.12",
     "@types/webassembly-js-api": "0.0.2",

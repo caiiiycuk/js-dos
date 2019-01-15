@@ -19,6 +19,11 @@
           <div id="jump_page">
             
               
+              <a class="source" href="../js-dos-cpp/include/js-dos-3rdparty.html">
+                js-dos-3rdparty.h
+              </a>
+            
+              
               <a class="source" href="../js-dos-cpp/include/js-dos-ci.html">
                 js-dos-ci.h
               </a>
@@ -31,6 +36,11 @@
               
               <a class="source" href="../js-dos-cpp/include/js-dos-json.html">
                 js-dos-json.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-3rdparty.html">
+                js-dos-3rdparty.c
               </a>
             
               
@@ -108,6 +118,7 @@
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { Dos } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos"</span>;
 <span class="hljs-keyword">import</span> { DosModule } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-module"</span>;
+<span class="hljs-keyword">import</span> { Xhr } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-xhr"</span>;
 
 <span class="hljs-keyword">interface</span> LowLevelApi {
     send: <span class="hljs-function">(<span class="hljs-params">event: <span class="hljs-built_in">string</span>, msg?: <span class="hljs-built_in">any</span>, callback?: (<span class="hljs-params">msg: <span class="hljs-built_in">string</span></span>) =&gt; <span class="hljs-built_in">void</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
@@ -115,15 +126,18 @@
 }
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosCommandInteface {
-    <span class="hljs-keyword">private</span> dos: DosModule;
+    <span class="hljs-keyword">public</span> dos: DosModule;
+    <span class="hljs-keyword">private</span> em: <span class="hljs-keyword">typeof</span> Module;
     <span class="hljs-keyword">private</span> api: LowLevelApi;
     <span class="hljs-keyword">private</span> onready: <span class="hljs-function">(<span class="hljs-params">ci: DosCommandInteface</span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+    <span class="hljs-keyword">private</span> shellInputQueue: <span class="hljs-built_in">string</span>[] = [];
 
     <span class="hljs-keyword">constructor</span>(<span class="hljs-params">dos: DosModule, onready: (ci: DosCommandInteface) =&gt; <span class="hljs-built_in">void</span></span>) {
         <span class="hljs-keyword">this</span>.dos = dos;
-        <span class="hljs-keyword">this</span>.api = ((dos <span class="hljs-keyword">as</span> unknown) <span class="hljs-keyword">as</span> LowLevelApi);
-        <span class="hljs-keyword">this</span>.api.ping = <span class="hljs-function">(<span class="hljs-params">msg: <span class="hljs-built_in">string</span></span>) =&gt;</span> {
-            <span class="hljs-keyword">this</span>.onping(msg);
+        <span class="hljs-keyword">this</span>.em = (dos <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>);
+        <span class="hljs-keyword">this</span>.api = (dos <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>);
+        <span class="hljs-keyword">this</span>.api.ping = <span class="hljs-function">(<span class="hljs-params">msg: <span class="hljs-built_in">string</span>, ...args: <span class="hljs-built_in">any</span>[]</span>) =&gt;</span> {
+            <span class="hljs-keyword">this</span>.onping(msg, args);
         };
         <span class="hljs-keyword">this</span>.onready = onready;
     }
@@ -136,31 +150,91 @@
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.dos.canvas.height;
     }
 
-    <span class="hljs-keyword">public</span> screenshot() {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve</span>) =&gt;</span> {
-            <span class="hljs-keyword">this</span>.api.send(<span class="hljs-string">"screenshot"</span>, <span class="hljs-string">""</span>, <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
-                resolve(data);
-            });
-        });
+    <span class="hljs-keyword">public</span> shell(...cmd: <span class="hljs-built_in">string</span>[]) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> next of cmd) {
+            <span class="hljs-keyword">this</span>.shellInputQueue.push(next);
+        }
+        <span class="hljs-keyword">this</span>.requestShellInput();
     }
 
-    <span class="hljs-keyword">public</span> exit() {
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-keyword">this</span>.api.send(<span class="hljs-string">"exit"</span>);
-        } <span class="hljs-keyword">catch</span> (e) {
-            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">public</span> mount(url: <span class="hljs-built_in">string</span>) {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">resolve, reject</span>) =&gt; {
+            <span class="hljs-keyword">new</span> Xhr(<span class="hljs-params">url, {
+                responseType: "arraybuffer",
+                fail: (<span class="hljs-params">msg</span>) =&gt; reject(<span class="hljs-params">msg</span>),
+                success: (<span class="hljs-params">data: <span class="hljs-built_in">ArrayBuffer</span></span>) =&gt; {
+                    <span class="hljs-keyword">const</span> bytes = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(<span class="hljs-params">data</span>);
+                    <span class="hljs-keyword">const</span> buffer = <span class="hljs-keyword">this</span>.em._malloc(<span class="hljs-params">bytes.length</span>);
+                    <span class="hljs-keyword">this</span>.em.HEAPU8.<span class="hljs-keyword">set</span>(<span class="hljs-params">bytes, buffer</span>);
+                    <span class="hljs-keyword">const</span> retcode = (<span class="hljs-params"><span class="hljs-keyword">this</span>.em <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span></span>)._extract_zip(<span class="hljs-params">buffer, bytes.length</span>);
+                    <span class="hljs-keyword">this</span>.em._free(<span class="hljs-params">buffer</span>);
+
+                    <span class="hljs-keyword">if</span> (<span class="hljs-params">retcode === 0</span>) {
+                        resolve(<span class="hljs-params"></span>);
+                    } <span class="hljs-keyword">else</span> {
+                        reject(<span class="hljs-params">"Can't extract zip, retcode " + retcode + ", see more info <span class="hljs-keyword">in</span> logs"</span>);
+                    }
+                },
+            }</span>);
+        }</span>);
+    }
+
+    <span class="hljs-params">public</span> <span class="hljs-params">screenshot</span><span class="hljs-params">()</span> {
+        <span class="hljs-params">return</span> <span class="hljs-params">new</span> <span class="hljs-params">Promise</span>(<span class="hljs-params">(<span class="hljs-params">resolve</span>) =&gt; {
+            <span class="hljs-keyword">this</span>.api.send(<span class="hljs-params">"screenshot", "", (<span class="hljs-params">data</span>) =&gt; {
+                resolve(<span class="hljs-params">data</span>);
+            }</span>);
+        }</span>);
+    }
+
+    <span class="hljs-params">public</span> <span class="hljs-params">exit</span><span class="hljs-params">()</span> {
+        <span class="hljs-params">try</span> {
+            <span class="hljs-params">this</span>.<span class="hljs-params">api</span>.<span class="hljs-params">send</span>(<span class="hljs-params">"exit"</span>);
+        } <span class="hljs-params">catch</span> (<span class="hljs-params">e</span>) {
+            <span class="hljs-params">return</span> 0;
         }
 
-        <span class="hljs-keyword">this</span>.dos.error(<span class="hljs-string">"Runtime is still alive!"</span>);
-        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+        <span class="hljs-params">this</span>.<span class="hljs-params">dos</span>.<span class="hljs-params">error</span>(<span class="hljs-params">"Runtime is still alive!"</span>);
+        <span class="hljs-params">return</span> -1;
     }
 
-    <span class="hljs-keyword">private</span> onping(msg: <span class="hljs-built_in">string</span>) {
-        <span class="hljs-keyword">switch</span> (msg) {
-            <span class="hljs-keyword">case</span> <span class="hljs-string">"ready"</span>:
-                <span class="hljs-keyword">this</span>.onready(<span class="hljs-keyword">this</span>);
-                <span class="hljs-keyword">break</span>;
-            <span class="hljs-keyword">default</span>:</pre></div></div>
+    <span class="hljs-params">private</span> <span class="hljs-params">sendKeyPress</span>(<span class="hljs-params">code: <span class="hljs-built_in">number</span></span>) {
+        <span class="hljs-params">this</span>.<span class="hljs-params">api</span>.<span class="hljs-params">send</span>(<span class="hljs-params">"sdl_key_event", code + ""</span>);
+    }
+
+    <span class="hljs-params">private</span> <span class="hljs-params">requestShellInput</span><span class="hljs-params">()</span> {
+        <span class="hljs-params">this</span>.<span class="hljs-params">sendKeyPress</span>(<span class="hljs-params">13</span>);
+    }
+
+    <span class="hljs-params">private</span> <span class="hljs-params">onping</span>(<span class="hljs-params">msg: <span class="hljs-built_in">string</span>, args: <span class="hljs-built_in">any</span>[]</span>) {
+        <span class="hljs-params">switch</span> (<span class="hljs-params">msg</span>) {
+            <span class="hljs-params">case</span> "<span class="hljs-params">ready</span>":
+                <span class="hljs-params">this</span>.<span class="hljs-params">onready</span>(<span class="hljs-params"><span class="hljs-keyword">this</span></span>);
+                <span class="hljs-params">break</span>;
+            <span class="hljs-params">case</span> "<span class="hljs-params">shell_input</span>":
+                <span class="hljs-params">if</span> (<span class="hljs-params"><span class="hljs-keyword">this</span>.shellInputQueue.length === 0</span>) {
+                    <span class="hljs-params">return</span>;
+                }
+
+                <span class="hljs-params">const</span> <span class="hljs-params">buffer</span>: <span class="hljs-params">number</span> = <span class="hljs-params">args</span>[0];
+                <span class="hljs-params">const</span> <span class="hljs-params">maxLength</span>: <span class="hljs-params">number</span> = <span class="hljs-params">args</span>[1];
+
+                <span class="hljs-params">const</span> <span class="hljs-params">cmd</span> = <span class="hljs-params">this</span>.<span class="hljs-params">shellInputQueue</span>.<span class="hljs-params">shift</span><span class="hljs-params">()</span>;
+                <span class="hljs-params">const</span> <span class="hljs-params">cmdLength</span> = (<span class="hljs-params"><span class="hljs-keyword">this</span>.em <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span></span>).<span class="hljs-params">lengthBytesUTF8</span>(<span class="hljs-params">cmd</span>) + 1;
+
+                <span class="hljs-params">if</span> (<span class="hljs-params">cmdLength &gt; maxLength</span>) {
+                    <span class="hljs-params">this</span>.<span class="hljs-params">dos</span>.<span class="hljs-params">onerror</span>(<span class="hljs-params">"Can't execute cmd '" + cmd +
+                        "', because it's bigger then max cmd length " + maxLength</span>);
+                    <span class="hljs-params">return</span>;
+                }
+
+                (<span class="hljs-params"><span class="hljs-keyword">this</span>.em <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span></span>).<span class="hljs-params">stringToUTF8</span>(<span class="hljs-params">cmd, buffer, cmdLength</span>);
+
+                <span class="hljs-params">if</span> (<span class="hljs-params"><span class="hljs-keyword">this</span>.shellInputQueue.length &gt; 0</span>) {
+                    <span class="hljs-params">this</span>.<span class="hljs-params">requestShellInput</span><span class="hljs-params">()</span>;
+                }
+            <span class="hljs-params">default</span>:
+</span></pre></div></div>
             
         </li>
         
