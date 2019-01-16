@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>JS-DOS / GAMES / MK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="On this site you can play in MK in browser">
+    <meta name="keywords" content="MK">
+    <meta name="author" content="caiiiycuk">
+
+    <!-- Le styles -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/assets/ico/favicon.png">
+
+    <style type="text/css">
+      div.emscripten, .emscripten-status, .emscripten-padding {
+        padding-top: 20px;
+        padding-left: 20px;
+      }
+
+      .fullscreen {
+        display: none;
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
+      .emscripten canvas {
+        border: 0;
+        
+      }
+    </style>
+  </head>
+  
+  <body data-spy="scroll" data-target=".bs-docs-sidebar" style="visibility: hidden;">
+    <div class="emscripten-status" >
+      Starting MS-DOS...<br/>
+      MS-DOS Version 6.22<br/><br/>
+      <p id="error"></p>
+      <p id="status">Downloading data...</p>
+      <p id="progress">Progress...</p>
+    </div>
+
+    <div class="emscripten">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+    <div class="fullscreen">
+      <a id="fullscreen" href="javascript:void(0);">Fullscreen</a><br/><br/>
+    </div>
+    <div class="emscripten-padding">
+      <strong>NOTES:</strong> 
+      <ul>
+        <li>If you have problems with the mouse positioning of the mouse, then try to switching on <b>Fullscreen</b> mode</li>
+        <li>While the browser is loading the program, it may hang up for a while</li>
+        <li>Sometimes you should click on a canvas to capture the mouse</li>
+      </ul>
+    </div>
+
+    <div class="emscripten-padding">
+      <a href="/games">cd C:&#92;GAMES</a>
+    </div>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/assets/js/jquery-1.11.2.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js" defer></script>
+
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+
+      var Module = {
+        noImageDecoding: true,
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('output');
+          if (element) element.value = ''; // clear browser cache
+          return function(text) {
+            text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            if (element) {
+              element.value += text + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        printErr: function(text) {
+          text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          //if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m) {
+            text = m[1];
+            progressElement.innerHTML = "Progress " + Math.round(parseInt(m[2]) / parseInt(m[4]) * 100) + "%";
+            progressElement.hidden = false;
+          } else {
+            progressElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+
+          if (left == 0) {
+            $('.emscripten-status').hide();
+            $('.fullscreen').show();
+          }
+        },
+        SDL_numSimultaneouslyQueuedBuffers: 1
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+
+       $(document).ready(function () {
+         $("#fullscreen").click(function() {
+            Module.requestFullScreen(false, false);
+         });
+
+         setTimeout(function () {
+          $.ajax({
+             url: "/dosbox.js",
+             dataType: "script",
+             error: function(jqXHR, textStatus, error) {
+              $('#error').html('Exception thrown, see JavaScript console');
+              console.log(textStatus, error);
+             },
+             xhr: function() {
+               var xhr;
+               Module.setStatus("Downloading script");
+               xhr = $.ajaxSettings.xhr();
+               xhr.addEventListener("progress", function(evt) {
+                 if (evt.lengthComputable) {
+                   Module.setStatus("Downloading script... (" + evt.loaded + "/" + evt.total + ")");
+                 }
+               });
+               return xhr;
+             }
+          });
+         }, 1000);
+      });
+   </script>
+<script type="text/javascript">
+var Module;
+if (typeof Module === 'undefined') Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
+if (!Module.expectedDataFileDownloads) {
+  Module.expectedDataFileDownloads = 0;
+  Module.finishedDataFileDownloads = 0;
+}
+Module.expectedDataFileDownloads++;
+(function() {
+
+    var PACKAGE_PATH;
+    if (typeof window === 'object') {
+      PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.toString().substring(0, window.location.pathname.toString().lastIndexOf('/')) + '/');
+    } else {
+      // worker
+      PACKAGE_PATH = encodeURIComponent(location.pathname.toString().substring(0, location.pathname.toString().lastIndexOf('/')) + '/');
+    }
+    var PACKAGE_NAME = '/home/caiiiycuk/js/js-dos.com/build/games/mk.exe.data';
+    var REMOTE_PACKAGE_BASE = 'mk.exe.data';
+    if (typeof Module['locateFilePackage'] === 'function' && !Module['locateFile']) {
+      Module['locateFile'] = Module['locateFilePackage'];
+      Module.printErr('warning: you defined Module.locateFilePackage, that has been renamed to Module.locateFile (using your locateFilePackage for now)');
+    }
+    var REMOTE_PACKAGE_NAME = typeof Module['locateFile'] === 'function' ?
+                              Module['locateFile'](REMOTE_PACKAGE_BASE) :
+                              ((Module['filePackagePrefixURL'] || '') + REMOTE_PACKAGE_BASE);
+    var REMOTE_PACKAGE_SIZE = 7196380;
+    var PACKAGE_UUID = '53a82c2b-c786-4d9c-bad9-42cb8a3ae7e9';
+  
+    function fetchRemotePackage(packageName, packageSize, callback, errback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', packageName, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onprogress = function(event) {
+        var url = packageName;
+        var size = packageSize;
+        if (event.total) size = event.total;
+        if (event.loaded) {
+          if (!xhr.addedTotal) {
+            xhr.addedTotal = true;
+            if (!Module.dataFileDownloads) Module.dataFileDownloads = {};
+            Module.dataFileDownloads[url] = {
+              loaded: event.loaded,
+              total: size
+            };
+          } else {
+            Module.dataFileDownloads[url].loaded = event.loaded;
+          }
+          var total = 0;
+          var loaded = 0;
+          var num = 0;
+          for (var download in Module.dataFileDownloads) {
+          var data = Module.dataFileDownloads[download];
+            total += data.total;
+            loaded += data.loaded;
+            num++;
+          }
+          total = Math.ceil(total * Module.expectedDataFileDownloads/num);
+          if (Module['setStatus']) Module['setStatus']('Downloading data... (' + loaded + '/' + total + ')');
+        } else if (!Module.dataFileDownloads) {
+          if (Module['setStatus']) Module['setStatus']('Downloading data...');
+        }
+      };
+      xhr.onload = function(event) {
+        var packageData = xhr.response;
+        callback(packageData);
+      };
+      xhr.send(null);
+    };
+
+    function handleError(error) {
+      console.error('package error:', error);
+    };
+  
+      var fetched = null, fetchedCallback = null;
+      fetchRemotePackage(REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE, function(data) {
+        if (fetchedCallback) {
+          fetchedCallback(data);
+          fetchedCallback = null;
+        } else {
+          fetched = data;
+        }
+      }, handleError);
+    
+  function runWithFS() {
+
+function assert(check, msg) {
+  if (!check) throw msg + new Error().stack;
+}
+
+    function DataRequest(start, end, crunched, audio) {
+      this.start = start;
+      this.end = end;
+      this.crunched = crunched;
+      this.audio = audio;
+    }
+    DataRequest.prototype = {
+      requests: {},
+      open: function(mode, name) {
+        this.name = name;
+        this.requests[name] = this;
+        Module['addRunDependency']('fp ' + this.name);
+      },
+      send: function() {},
+      onload: function() {
+        var byteArray = this.byteArray.subarray(this.start, this.end);
+
+          this.finish(byteArray);
+
+      },
+      finish: function(byteArray) {
+        var that = this;
+        Module['FS_createPreloadedFile'](this.name, null, byteArray, true, true, function() {
+          Module['removeRunDependency']('fp ' + that.name);
+        }, function() {
+          if (that.audio) {
+            Module['removeRunDependency']('fp ' + that.name); // workaround for chromium bug 124926 (still no audio with this, but at least we don't hang)
+          } else {
+            Module.printErr('Preloading file ' + that.name + ' failed');
+          }
+        }, false, true); // canOwn this data in the filesystem, it is a slide into the heap that will never change
+        this.requests[this.name] = null;
+      },
+    };
+      new DataRequest(0, 311976, 0, 0).open('GET', '/SAMPLES.DAT');
+    new DataRequest(311976, 317750, 0, 0).open('GET', '/KEND1.GRA');
+    new DataRequest(317750, 412118, 0, 0).open('GET', '/FU1HDRS.GRA');
+    new DataRequest(412118, 412137, 0, 0).open('GET', '/(START).BAT');
+    new DataRequest(412137, 416621, 0, 0).open('GET', '/RDEND1.GRA');
+    new DataRequest(416621, 466023, 0, 0).open('GET', '/JCATT.GRA');
+    new DataRequest(466023, 528417, 0, 0).open('GET', '/LKATT.GRA');
+    new DataRequest(528417, 529985, 0, 0).open('GET', '/SBLASTER.DRV');
+    new DataRequest(529985, 551649, 0, 0).open('GET', '/PROBE.GRA');
+    new DataRequest(551649, 571869, 0, 0).open('GET', '/SOATT.GRA');
+    new DataRequest(571869, 573905, 0, 0).open('GET', '/ACCLAIM.GRA');
+    new DataRequest(573905, 574434, 0, 0).open('GET', '/MKSYM.BIN');
+    new DataRequest(574434, 581206, 0, 0).open('GET', '/S2HDRS.GRA');
+    new DataRequest(581206, 608602, 0, 0).open('GET', '/MKTITLE1.GRA');
+    new DataRequest(608602, 849182, 0, 0).open('GET', '/DOS4GW.EXE');
+    new DataRequest(849182, 897118, 0, 0).open('GET', '/FU8HDRS.GRA');
+    new DataRequest(897118, 906034, 0, 0).open('GET', '/T2HDRS.GRA');
+    new DataRequest(906034, 1101230, 0, 0).open('GET', '/STANCE.GRA');
+    new DataRequest(1101230, 1531341, 0, 0).open('GET', '/MK.EXE');
+    new DataRequest(1531341, 1535797, 0, 0).open('GET', '/SZEND2.GRA');
+    new DataRequest(1535797, 2086737, 0, 0).open('GET', '/LIZ.GRA');
+    new DataRequest(2086737, 2139295, 0, 0).open('GET', '/RDATT.GRA');
+    new DataRequest(2139295, 2139343, 0, 0).open('GET', '/MKSET.BIN');
+    new DataRequest(2139343, 2139365, 0, 0).open('GET', '/(SETUP).BAT');
+    new DataRequest(2139365, 2145433, 0, 0).open('GET', '/ORE1HDRS.GRA');
+    new DataRequest(2145433, 2180655, 0, 0).open('GET', '/GORO1.GRA');
+    new DataRequest(2180655, 2189443, 0, 0).open('GET', '/NG1HDRS.GRA');
+    new DataRequest(2189443, 2217593, 0, 0).open('GET', '/ROLAND.DRV');
+    new DataRequest(2217593, 2898637, 0, 0).open('GET', '/NINJA.GRA');
+    new DataRequest(2898637, 3025221, 0, 0).open('GET', '/FONTS.GRA');
+    new DataRequest(3025221, 3053021, 0, 0).open('GET', '/SZATT.GRA');
+    new DataRequest(3053021, 3156785, 0, 0).open('GET', '/MISC.GRA');
+    new DataRequest(3156785, 3161579, 0, 0).open('GET', '/RDEND2.GRA');
+    new DataRequest(3161579, 3167985, 0, 0).open('GET', '/LKEND2.GRA');
+    new DataRequest(3167985, 3785705, 0, 0).open('GET', '/KANO.GRA');
+    new DataRequest(3785705, 3790771, 0, 0).open('GET', '/JCEND2.GRA');
+    new DataRequest(3790771, 3795881, 0, 0).open('GET', '/SCEND1.GRA');
+    new DataRequest(3795881, 3882793, 0, 0).open('GET', '/FU2HDRS.GRA');
+    new DataRequest(3882793, 3892619, 0, 0).open('GET', '/ADLIB.DRV');
+    new DataRequest(3892619, 3919227, 0, 0).open('GET', '/LESCHDRS.GRA');
+    new DataRequest(3919227, 3925049, 0, 0).open('GET', '/LKEND1.GRA');
+    new DataRequest(3925049, 4505517, 0, 0).open('GET', '/VANDAN.GRA');
+    new DataRequest(4505517, 4510785, 0, 0).open('GET', '/SCEND2.GRA');
+    new DataRequest(4510785, 4511165, 0, 0).open('GET', '/CMOS');
+    new DataRequest(4511165, 4586021, 0, 0).open('GET', '/FU7HDRS.GRA');
+    new DataRequest(4586021, 4604889, 0, 0).open('GET', '/MPHDRS.GRA');
+    new DataRequest(4604889, 4902897, 0, 0).open('GET', '/CHOP.GRA');
+    new DataRequest(4902897, 4914297, 0, 0).open('GET', '/MKSFONT.BIN');
+    new DataRequest(4914297, 4940649, 0, 0).open('GET', '/VICTORY.GRA');
+    new DataRequest(4940649, 5000881, 0, 0).open('GET', '/MKPIC1.LBM');
+    new DataRequest(5000881, 5007361, 0, 0).open('GET', '/PAGEHDRS.GRA');
+    new DataRequest(5007361, 5461181, 0, 0).open('GET', '/KANG.GRA');
+    new DataRequest(5461181, 5461207, 0, 0).open('GET', '/FILE_ID.DIZ');
+    new DataRequest(5461207, 5690011, 0, 0).open('GET', '/EMP.GRA');
+    new DataRequest(5690011, 5724835, 0, 0).open('GET', '/SCATT.GRA');
+    new DataRequest(5724835, 5727117, 0, 0).open('GET', '/BEEP.DRV');
+    new DataRequest(5727117, 5731173, 0, 0).open('GET', '/SOEND2.GRA');
+    new DataRequest(5731173, 5751325, 0, 0).open('GET', '/S1HDRS.GRA');
+    new DataRequest(5751325, 5756505, 0, 0).open('GET', '/SOEND1.GRA');
+    new DataRequest(5756505, 6188765, 0, 0).open('GET', '/GGORO.GRA');
+    new DataRequest(6188765, 6336109, 0, 0).open('GET', '/FU4HDRS.GRA');
+    new DataRequest(6336109, 6341301, 0, 0).open('GET', '/JCEND1.GRA');
+    new DataRequest(6341301, 6374341, 0, 0).open('GET', '/KATT.GRA');
+    new DataRequest(6374341, 6383129, 0, 0).open('GET', '/ACT1HDRS.GRA');
+    new DataRequest(6383129, 6503601, 0, 0).open('GET', '/FU5HDRS.GRA');
+    new DataRequest(6503601, 6512517, 0, 0).open('GET', '/T1HDRS.GRA');
+    new DataRequest(6512517, 6521305, 0, 0).open('GET', '/NG2HDRS.GRA');
+    new DataRequest(6521305, 7176753, 0, 0).open('GET', '/RAIDEN.GRA');
+    new DataRequest(7176753, 7184900, 0, 0).open('GET', '/SETUP.EXE');
+    new DataRequest(7184900, 7190238, 0, 0).open('GET', '/KEND2.GRA');
+    new DataRequest(7190238, 7196380, 0, 0).open('GET', '/SZEND1.GRA');
+
+    function processPackageData(arrayBuffer) {
+      Module.finishedDataFileDownloads++;
+      assert(arrayBuffer, 'Loading data file failed.');
+      var byteArray = new Uint8Array(arrayBuffer);
+      var curr;
+      
+      // Reuse the bytearray from the XHR as the source for file reads.
+      DataRequest.prototype.byteArray = byteArray;
+          DataRequest.prototype.requests["/SAMPLES.DAT"].onload();
+          DataRequest.prototype.requests["/KEND1.GRA"].onload();
+          DataRequest.prototype.requests["/FU1HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/(START).BAT"].onload();
+          DataRequest.prototype.requests["/RDEND1.GRA"].onload();
+          DataRequest.prototype.requests["/JCATT.GRA"].onload();
+          DataRequest.prototype.requests["/LKATT.GRA"].onload();
+          DataRequest.prototype.requests["/SBLASTER.DRV"].onload();
+          DataRequest.prototype.requests["/PROBE.GRA"].onload();
+          DataRequest.prototype.requests["/SOATT.GRA"].onload();
+          DataRequest.prototype.requests["/ACCLAIM.GRA"].onload();
+          DataRequest.prototype.requests["/MKSYM.BIN"].onload();
+          DataRequest.prototype.requests["/S2HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/MKTITLE1.GRA"].onload();
+          DataRequest.prototype.requests["/DOS4GW.EXE"].onload();
+          DataRequest.prototype.requests["/FU8HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/T2HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/STANCE.GRA"].onload();
+          DataRequest.prototype.requests["/MK.EXE"].onload();
+          DataRequest.prototype.requests["/SZEND2.GRA"].onload();
+          DataRequest.prototype.requests["/LIZ.GRA"].onload();
+          DataRequest.prototype.requests["/RDATT.GRA"].onload();
+          DataRequest.prototype.requests["/MKSET.BIN"].onload();
+          DataRequest.prototype.requests["/(SETUP).BAT"].onload();
+          DataRequest.prototype.requests["/ORE1HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/GORO1.GRA"].onload();
+          DataRequest.prototype.requests["/NG1HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/ROLAND.DRV"].onload();
+          DataRequest.prototype.requests["/NINJA.GRA"].onload();
+          DataRequest.prototype.requests["/FONTS.GRA"].onload();
+          DataRequest.prototype.requests["/SZATT.GRA"].onload();
+          DataRequest.prototype.requests["/MISC.GRA"].onload();
+          DataRequest.prototype.requests["/RDEND2.GRA"].onload();
+          DataRequest.prototype.requests["/LKEND2.GRA"].onload();
+          DataRequest.prototype.requests["/KANO.GRA"].onload();
+          DataRequest.prototype.requests["/JCEND2.GRA"].onload();
+          DataRequest.prototype.requests["/SCEND1.GRA"].onload();
+          DataRequest.prototype.requests["/FU2HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/ADLIB.DRV"].onload();
+          DataRequest.prototype.requests["/LESCHDRS.GRA"].onload();
+          DataRequest.prototype.requests["/LKEND1.GRA"].onload();
+          DataRequest.prototype.requests["/VANDAN.GRA"].onload();
+          DataRequest.prototype.requests["/SCEND2.GRA"].onload();
+          DataRequest.prototype.requests["/CMOS"].onload();
+          DataRequest.prototype.requests["/FU7HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/MPHDRS.GRA"].onload();
+          DataRequest.prototype.requests["/CHOP.GRA"].onload();
+          DataRequest.prototype.requests["/MKSFONT.BIN"].onload();
+          DataRequest.prototype.requests["/VICTORY.GRA"].onload();
+          DataRequest.prototype.requests["/MKPIC1.LBM"].onload();
+          DataRequest.prototype.requests["/PAGEHDRS.GRA"].onload();
+          DataRequest.prototype.requests["/KANG.GRA"].onload();
+          DataRequest.prototype.requests["/FILE_ID.DIZ"].onload();
+          DataRequest.prototype.requests["/EMP.GRA"].onload();
+          DataRequest.prototype.requests["/SCATT.GRA"].onload();
+          DataRequest.prototype.requests["/BEEP.DRV"].onload();
+          DataRequest.prototype.requests["/SOEND2.GRA"].onload();
+          DataRequest.prototype.requests["/S1HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/SOEND1.GRA"].onload();
+          DataRequest.prototype.requests["/GGORO.GRA"].onload();
+          DataRequest.prototype.requests["/FU4HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/JCEND1.GRA"].onload();
+          DataRequest.prototype.requests["/KATT.GRA"].onload();
+          DataRequest.prototype.requests["/ACT1HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/FU5HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/T1HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/NG2HDRS.GRA"].onload();
+          DataRequest.prototype.requests["/RAIDEN.GRA"].onload();
+          DataRequest.prototype.requests["/SETUP.EXE"].onload();
+          DataRequest.prototype.requests["/KEND2.GRA"].onload();
+          DataRequest.prototype.requests["/SZEND1.GRA"].onload();
+          Module['removeRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/mk.exe.data');
+
+    };
+    Module['addRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/mk.exe.data');
+  
+    if (!Module.preloadResults) Module.preloadResults = {};
+  
+      Module.preloadResults[PACKAGE_NAME] = {fromCache: false};
+      if (fetched) {
+        processPackageData(fetched);
+        fetched = null;
+      } else {
+        fetchedCallback = processPackageData;
+      }
+    
+  }
+  if (Module['calledRun']) {
+    runWithFS();
+  } else {
+    if (!Module['preRun']) Module['preRun'] = [];
+    Module["preRun"].push(runWithFS); // FS is not initialized yet, wait for it
+  }
+
+})();
+
+Module['arguments'] = [ '-conf', './dosbox.conf', './MK.EXE' ];
+</script>
+   <!-- <script async type="text/javascript" src="/dosbox.js"></script> -->
+
+   <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter27763311 = new Ya.Metrika({id:27763311,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+  </body>
+</html>

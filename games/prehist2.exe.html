@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>JS-DOS / GAMES / PREHIST2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="On this site you can play in PREHIST2 in browser">
+    <meta name="keywords" content="PREHIST2">
+    <meta name="author" content="caiiiycuk">
+
+    <!-- Le styles -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/assets/ico/favicon.png">
+
+    <style type="text/css">
+      div.emscripten, .emscripten-status, .emscripten-padding {
+        padding-top: 20px;
+        padding-left: 20px;
+      }
+
+      .fullscreen {
+        display: none;
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
+      .emscripten canvas {
+        border: 0;
+        
+      }
+    </style>
+  </head>
+  
+  <body data-spy="scroll" data-target=".bs-docs-sidebar" style="visibility: hidden;">
+    <div class="emscripten-status" >
+      Starting MS-DOS...<br/>
+      MS-DOS Version 6.22<br/><br/>
+      <p id="error"></p>
+      <p id="status">Downloading data...</p>
+      <p id="progress">Progress...</p>
+    </div>
+
+    <div class="emscripten">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+    <div class="fullscreen">
+      <a id="fullscreen" href="javascript:void(0);">Fullscreen</a><br/><br/>
+    </div>
+    <div class="emscripten-padding">
+      <strong>NOTES:</strong> 
+      <ul>
+        <li>If you have problems with the mouse positioning of the mouse, then try to switching on <b>Fullscreen</b> mode</li>
+        <li>While the browser is loading the program, it may hang up for a while</li>
+        <li>Sometimes you should click on a canvas to capture the mouse</li>
+      </ul>
+    </div>
+
+    <div class="emscripten-padding">
+      <a href="/games">cd C:&#92;GAMES</a>
+    </div>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/assets/js/jquery-1.11.2.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js" defer></script>
+
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+
+      var Module = {
+        noImageDecoding: true,
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('output');
+          if (element) element.value = ''; // clear browser cache
+          return function(text) {
+            text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            if (element) {
+              element.value += text + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        printErr: function(text) {
+          text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          //if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m) {
+            text = m[1];
+            progressElement.innerHTML = "Progress " + Math.round(parseInt(m[2]) / parseInt(m[4]) * 100) + "%";
+            progressElement.hidden = false;
+          } else {
+            progressElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+
+          if (left == 0) {
+            $('.emscripten-status').hide();
+            $('.fullscreen').show();
+          }
+        },
+        SDL_numSimultaneouslyQueuedBuffers: 1
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+
+       $(document).ready(function () {
+         $("#fullscreen").click(function() {
+            Module.requestFullScreen(false, false);
+         });
+
+         setTimeout(function () {
+          $.ajax({
+             url: "/dosbox.js",
+             dataType: "script",
+             error: function(jqXHR, textStatus, error) {
+              $('#error').html('Exception thrown, see JavaScript console');
+              console.log(textStatus, error);
+             },
+             xhr: function() {
+               var xhr;
+               Module.setStatus("Downloading script");
+               xhr = $.ajaxSettings.xhr();
+               xhr.addEventListener("progress", function(evt) {
+                 if (evt.lengthComputable) {
+                   Module.setStatus("Downloading script... (" + evt.loaded + "/" + evt.total + ")");
+                 }
+               });
+               return xhr;
+             }
+          });
+         }, 1000);
+      });
+   </script>
+<script type="text/javascript">
+var Module;
+if (typeof Module === 'undefined') Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
+if (!Module.expectedDataFileDownloads) {
+  Module.expectedDataFileDownloads = 0;
+  Module.finishedDataFileDownloads = 0;
+}
+Module.expectedDataFileDownloads++;
+(function() {
+
+    var PACKAGE_PATH;
+    if (typeof window === 'object') {
+      PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.toString().substring(0, window.location.pathname.toString().lastIndexOf('/')) + '/');
+    } else {
+      // worker
+      PACKAGE_PATH = encodeURIComponent(location.pathname.toString().substring(0, location.pathname.toString().lastIndexOf('/')) + '/');
+    }
+    var PACKAGE_NAME = '/home/caiiiycuk/js/js-dos.com/build/games/prehist2.exe.data';
+    var REMOTE_PACKAGE_BASE = 'prehist2.exe.data';
+    if (typeof Module['locateFilePackage'] === 'function' && !Module['locateFile']) {
+      Module['locateFile'] = Module['locateFilePackage'];
+      Module.printErr('warning: you defined Module.locateFilePackage, that has been renamed to Module.locateFile (using your locateFilePackage for now)');
+    }
+    var REMOTE_PACKAGE_NAME = typeof Module['locateFile'] === 'function' ?
+                              Module['locateFile'](REMOTE_PACKAGE_BASE) :
+                              ((Module['filePackagePrefixURL'] || '') + REMOTE_PACKAGE_BASE);
+    var REMOTE_PACKAGE_SIZE = 1154952;
+    var PACKAGE_UUID = '6ad04755-0544-418d-8558-49696f1dd656';
+  
+    function fetchRemotePackage(packageName, packageSize, callback, errback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', packageName, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onprogress = function(event) {
+        var url = packageName;
+        var size = packageSize;
+        if (event.total) size = event.total;
+        if (event.loaded) {
+          if (!xhr.addedTotal) {
+            xhr.addedTotal = true;
+            if (!Module.dataFileDownloads) Module.dataFileDownloads = {};
+            Module.dataFileDownloads[url] = {
+              loaded: event.loaded,
+              total: size
+            };
+          } else {
+            Module.dataFileDownloads[url].loaded = event.loaded;
+          }
+          var total = 0;
+          var loaded = 0;
+          var num = 0;
+          for (var download in Module.dataFileDownloads) {
+          var data = Module.dataFileDownloads[download];
+            total += data.total;
+            loaded += data.loaded;
+            num++;
+          }
+          total = Math.ceil(total * Module.expectedDataFileDownloads/num);
+          if (Module['setStatus']) Module['setStatus']('Downloading data... (' + loaded + '/' + total + ')');
+        } else if (!Module.dataFileDownloads) {
+          if (Module['setStatus']) Module['setStatus']('Downloading data...');
+        }
+      };
+      xhr.onload = function(event) {
+        var packageData = xhr.response;
+        callback(packageData);
+      };
+      xhr.send(null);
+    };
+
+    function handleError(error) {
+      console.error('package error:', error);
+    };
+  
+      var fetched = null, fetchedCallback = null;
+      fetchRemotePackage(REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE, function(data) {
+        if (fetchedCallback) {
+          fetchedCallback(data);
+          fetchedCallback = null;
+        } else {
+          fetched = data;
+        }
+      }, handleError);
+    
+  function runWithFS() {
+
+function assert(check, msg) {
+  if (!check) throw msg + new Error().stack;
+}
+
+    function DataRequest(start, end, crunched, audio) {
+      this.start = start;
+      this.end = end;
+      this.crunched = crunched;
+      this.audio = audio;
+    }
+    DataRequest.prototype = {
+      requests: {},
+      open: function(mode, name) {
+        this.name = name;
+        this.requests[name] = this;
+        Module['addRunDependency']('fp ' + this.name);
+      },
+      send: function() {},
+      onload: function() {
+        var byteArray = this.byteArray.subarray(this.start, this.end);
+
+          this.finish(byteArray);
+
+      },
+      finish: function(byteArray) {
+        var that = this;
+        Module['FS_createPreloadedFile'](this.name, null, byteArray, true, true, function() {
+          Module['removeRunDependency']('fp ' + that.name);
+        }, function() {
+          if (that.audio) {
+            Module['removeRunDependency']('fp ' + that.name); // workaround for chromium bug 124926 (still no audio with this, but at least we don't hang)
+          } else {
+            Module.printErr('Preloading file ' + that.name + ' failed');
+          }
+        }, false, true); // canOwn this data in the filesystem, it is a slide into the heap that will never change
+        this.requests[this.name] = null;
+      },
+    };
+      new DataRequest(0, 5676, 0, 0).open('GET', '/TITUS.SQZ');
+    new DataRequest(5676, 25736, 0, 0).open('GET', '/LEVELA.SQZ');
+    new DataRequest(25736, 71663, 0, 0).open('GET', '/PRESENTA.TRK');
+    new DataRequest(71663, 86202, 0, 0).open('GET', '/FRONT.SQZ');
+    new DataRequest(86202, 122941, 0, 0).open('GET', '/PRESENT.SQZ');
+    new DataRequest(122941, 136577, 0, 0).open('GET', '/BACK5.SQZ');
+    new DataRequest(136577, 181849, 0, 0).open('GET', '/UNION.SQZ');
+    new DataRequest(181849, 187125, 0, 0).open('GET', '/LEVELF.SQZ');
+    new DataRequest(187125, 213377, 0, 0).open('GET', '/LEVEL9.SQZ');
+    new DataRequest(213377, 217474, 0, 0).open('GET', '/ALLFONTS.SQZ');
+    new DataRequest(217474, 245870, 0, 0).open('GET', '/GLACE.TRK');
+    new DataRequest(245870, 268302, 0, 0).open('GET', '/LEVEL4.SQZ');
+    new DataRequest(268302, 277698, 0, 0).open('GET', '/MOTIF.SQZ');
+    new DataRequest(277698, 304230, 0, 0).open('GET', '/KOOL.TRK');
+    new DataRequest(304230, 306028, 0, 0).open('GET', '/LEVELD.SQZ');
+    new DataRequest(306028, 323950, 0, 0).open('GET', '/LEVEL6.SQZ');
+    new DataRequest(323950, 325497, 0, 0).open('GET', '/LEVELC.SQZ');
+    new DataRequest(325497, 361618, 0, 0).open('GET', '/MAP.SQZ');
+    new DataRequest(361618, 401042, 0, 0).open('GET', '/LEVELH.SQZ');
+    new DataRequest(401042, 428587, 0, 0).open('GET', '/FINAL.TRK');
+    new DataRequest(428587, 442744, 0, 0).open('GET', '/LEVEL2.SQZ');
+    new DataRequest(442744, 446235, 0, 0).open('GET', '/CODE.TRK');
+    new DataRequest(446235, 472948, 0, 0).open('GET', '/LEVEL8.SQZ');
+    new DataRequest(472948, 483501, 0, 0).open('GET', '/GAMEOVER.SQZ');
+    new DataRequest(483501, 499257, 0, 0).open('GET', '/LEVEL3.SQZ');
+    new DataRequest(499257, 503494, 0, 0).open('GET', '/CARTE.TRK');
+    new DataRequest(503494, 518894, 0, 0).open('GET', '/BACK2.SQZ');
+    new DataRequest(518894, 548997, 0, 0).open('GET', '/PRES.TRK');
+    new DataRequest(548997, 578934, 0, 0).open('GET', '/MYSTERY.TRK');
+    new DataRequest(578934, 600135, 0, 0).open('GET', '/MENU.SQZ');
+    new DataRequest(600135, 600656, 0, 0).open('GET', '/KEYB.SQZ');
+    new DataRequest(600656, 623889, 0, 0).open('GET', '/CASTLE.SQZ');
+    new DataRequest(623889, 629968, 0, 0).open('GET', '/LEVELG.SQZ');
+    new DataRequest(629968, 630259, 0, 0).open('GET', '/INSTALL.BAT');
+    new DataRequest(630259, 686176, 0, 0).open('GET', '/SAMPLE.SQZ');
+    new DataRequest(686176, 687915, 0, 0).open('GET', '/LEVELB.SQZ');
+    new DataRequest(687915, 704338, 0, 0).open('GET', '/BACK1.SQZ');
+    new DataRequest(704338, 725915, 0, 0).open('GET', '/MINES.TRK');
+    new DataRequest(725915, 750227, 0, 0).open('GET', '/LEVELI.SQZ');
+    new DataRequest(750227, 774978, 0, 0).open('GET', '/MONSTER.TRK');
+    new DataRequest(774978, 806385, 0, 0).open('GET', '/LEVEL5.SQZ');
+    new DataRequest(806385, 858575, 0, 0).open('GET', '/PRE2.EXE');
+    new DataRequest(858575, 877808, 0, 0).open('GET', '/BACK3.SQZ');
+    new DataRequest(877808, 900865, 0, 0).open('GET', '/BRAVO.TRK');
+    new DataRequest(900865, 908193, 0, 0).open('GET', '/LEVEL1.SQZ');
+    new DataRequest(908193, 914642, 0, 0).open('GET', '/BACK0.SQZ');
+    new DataRequest(914642, 933572, 0, 0).open('GET', '/MENU2.SQZ');
+    new DataRequest(933572, 952334, 0, 0).open('GET', '/BOULA.TRK');
+    new DataRequest(952334, 969951, 0, 0).open('GET', '/LEVELE.SQZ');
+    new DataRequest(969951, 970235, 0, 0).open('GET', '/FILE_ID.DIZ');
+    new DataRequest(970235, 983492, 0, 0).open('GET', '/BACK4.SQZ');
+    new DataRequest(983492, 1077113, 0, 0).open('GET', '/SPRITES.SQZ');
+    new DataRequest(1077113, 1090662, 0, 0).open('GET', '/THEEND.SQZ');
+    new DataRequest(1090662, 1142852, 0, 0).open('GET', '/PREHIST2.EXE');
+    new DataRequest(1142852, 1154952, 0, 0).open('GET', '/LEVEL7.SQZ');
+
+    function processPackageData(arrayBuffer) {
+      Module.finishedDataFileDownloads++;
+      assert(arrayBuffer, 'Loading data file failed.');
+      var byteArray = new Uint8Array(arrayBuffer);
+      var curr;
+      
+      // Reuse the bytearray from the XHR as the source for file reads.
+      DataRequest.prototype.byteArray = byteArray;
+          DataRequest.prototype.requests["/TITUS.SQZ"].onload();
+          DataRequest.prototype.requests["/LEVELA.SQZ"].onload();
+          DataRequest.prototype.requests["/PRESENTA.TRK"].onload();
+          DataRequest.prototype.requests["/FRONT.SQZ"].onload();
+          DataRequest.prototype.requests["/PRESENT.SQZ"].onload();
+          DataRequest.prototype.requests["/BACK5.SQZ"].onload();
+          DataRequest.prototype.requests["/UNION.SQZ"].onload();
+          DataRequest.prototype.requests["/LEVELF.SQZ"].onload();
+          DataRequest.prototype.requests["/LEVEL9.SQZ"].onload();
+          DataRequest.prototype.requests["/ALLFONTS.SQZ"].onload();
+          DataRequest.prototype.requests["/GLACE.TRK"].onload();
+          DataRequest.prototype.requests["/LEVEL4.SQZ"].onload();
+          DataRequest.prototype.requests["/MOTIF.SQZ"].onload();
+          DataRequest.prototype.requests["/KOOL.TRK"].onload();
+          DataRequest.prototype.requests["/LEVELD.SQZ"].onload();
+          DataRequest.prototype.requests["/LEVEL6.SQZ"].onload();
+          DataRequest.prototype.requests["/LEVELC.SQZ"].onload();
+          DataRequest.prototype.requests["/MAP.SQZ"].onload();
+          DataRequest.prototype.requests["/LEVELH.SQZ"].onload();
+          DataRequest.prototype.requests["/FINAL.TRK"].onload();
+          DataRequest.prototype.requests["/LEVEL2.SQZ"].onload();
+          DataRequest.prototype.requests["/CODE.TRK"].onload();
+          DataRequest.prototype.requests["/LEVEL8.SQZ"].onload();
+          DataRequest.prototype.requests["/GAMEOVER.SQZ"].onload();
+          DataRequest.prototype.requests["/LEVEL3.SQZ"].onload();
+          DataRequest.prototype.requests["/CARTE.TRK"].onload();
+          DataRequest.prototype.requests["/BACK2.SQZ"].onload();
+          DataRequest.prototype.requests["/PRES.TRK"].onload();
+          DataRequest.prototype.requests["/MYSTERY.TRK"].onload();
+          DataRequest.prototype.requests["/MENU.SQZ"].onload();
+          DataRequest.prototype.requests["/KEYB.SQZ"].onload();
+          DataRequest.prototype.requests["/CASTLE.SQZ"].onload();
+          DataRequest.prototype.requests["/LEVELG.SQZ"].onload();
+          DataRequest.prototype.requests["/INSTALL.BAT"].onload();
+          DataRequest.prototype.requests["/SAMPLE.SQZ"].onload();
+          DataRequest.prototype.requests["/LEVELB.SQZ"].onload();
+          DataRequest.prototype.requests["/BACK1.SQZ"].onload();
+          DataRequest.prototype.requests["/MINES.TRK"].onload();
+          DataRequest.prototype.requests["/LEVELI.SQZ"].onload();
+          DataRequest.prototype.requests["/MONSTER.TRK"].onload();
+          DataRequest.prototype.requests["/LEVEL5.SQZ"].onload();
+          DataRequest.prototype.requests["/PRE2.EXE"].onload();
+          DataRequest.prototype.requests["/BACK3.SQZ"].onload();
+          DataRequest.prototype.requests["/BRAVO.TRK"].onload();
+          DataRequest.prototype.requests["/LEVEL1.SQZ"].onload();
+          DataRequest.prototype.requests["/BACK0.SQZ"].onload();
+          DataRequest.prototype.requests["/MENU2.SQZ"].onload();
+          DataRequest.prototype.requests["/BOULA.TRK"].onload();
+          DataRequest.prototype.requests["/LEVELE.SQZ"].onload();
+          DataRequest.prototype.requests["/FILE_ID.DIZ"].onload();
+          DataRequest.prototype.requests["/BACK4.SQZ"].onload();
+          DataRequest.prototype.requests["/SPRITES.SQZ"].onload();
+          DataRequest.prototype.requests["/THEEND.SQZ"].onload();
+          DataRequest.prototype.requests["/PREHIST2.EXE"].onload();
+          DataRequest.prototype.requests["/LEVEL7.SQZ"].onload();
+          Module['removeRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/prehist2.exe.data');
+
+    };
+    Module['addRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/prehist2.exe.data');
+  
+    if (!Module.preloadResults) Module.preloadResults = {};
+  
+      Module.preloadResults[PACKAGE_NAME] = {fromCache: false};
+      if (fetched) {
+        processPackageData(fetched);
+        fetched = null;
+      } else {
+        fetchedCallback = processPackageData;
+      }
+    
+  }
+  if (Module['calledRun']) {
+    runWithFS();
+  } else {
+    if (!Module['preRun']) Module['preRun'] = [];
+    Module["preRun"].push(runWithFS); // FS is not initialized yet, wait for it
+  }
+
+})();
+
+Module['arguments'] = [ '-conf', './dosbox.conf', './PREHIST2.EXE' ];
+</script>
+   <!-- <script async type="text/javascript" src="/dosbox.js"></script> -->
+
+   <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter27763311 = new Ya.Metrika({id:27763311,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+  </body>
+</html>

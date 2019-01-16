@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>JS-DOS / GAMES / SUPAPLEX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="On this site you can play in SUPAPLEX in browser">
+    <meta name="keywords" content="SUPAPLEX">
+    <meta name="author" content="caiiiycuk">
+
+    <!-- Le styles -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/assets/ico/favicon.png">
+
+    <style type="text/css">
+      div.emscripten, .emscripten-status, .emscripten-padding {
+        padding-top: 20px;
+        padding-left: 20px;
+      }
+
+      .fullscreen {
+        display: none;
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
+      .emscripten canvas {
+        border: 0;
+        
+      }
+    </style>
+  </head>
+  
+  <body data-spy="scroll" data-target=".bs-docs-sidebar" style="visibility: hidden;">
+    <div class="emscripten-status" >
+      Starting MS-DOS...<br/>
+      MS-DOS Version 6.22<br/><br/>
+      <p id="error"></p>
+      <p id="status">Downloading data...</p>
+      <p id="progress">Progress...</p>
+    </div>
+
+    <div class="emscripten">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+    <div class="fullscreen">
+      <a id="fullscreen" href="javascript:void(0);">Fullscreen</a><br/><br/>
+    </div>
+    <div class="emscripten-padding">
+      <strong>NOTES:</strong> 
+      <ul>
+        <li>If you have problems with the mouse positioning of the mouse, then try to switching on <b>Fullscreen</b> mode</li>
+        <li>While the browser is loading the program, it may hang up for a while</li>
+        <li>Sometimes you should click on a canvas to capture the mouse</li>
+      </ul>
+    </div>
+
+    <div class="emscripten-padding">
+      <a href="/games">cd C:&#92;GAMES</a>
+    </div>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/assets/js/jquery-1.11.2.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js" defer></script>
+
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+
+      var Module = {
+        noImageDecoding: true,
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('output');
+          if (element) element.value = ''; // clear browser cache
+          return function(text) {
+            text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            if (element) {
+              element.value += text + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        printErr: function(text) {
+          text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          //if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m) {
+            text = m[1];
+            progressElement.innerHTML = "Progress " + Math.round(parseInt(m[2]) / parseInt(m[4]) * 100) + "%";
+            progressElement.hidden = false;
+          } else {
+            progressElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+
+          if (left == 0) {
+            $('.emscripten-status').hide();
+            $('.fullscreen').show();
+          }
+        },
+        SDL_numSimultaneouslyQueuedBuffers: 1
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+
+       $(document).ready(function () {
+         $("#fullscreen").click(function() {
+            Module.requestFullScreen(false, false);
+         });
+
+         setTimeout(function () {
+          $.ajax({
+             url: "/dosbox.js",
+             dataType: "script",
+             error: function(jqXHR, textStatus, error) {
+              $('#error').html('Exception thrown, see JavaScript console');
+              console.log(textStatus, error);
+             },
+             xhr: function() {
+               var xhr;
+               Module.setStatus("Downloading script");
+               xhr = $.ajaxSettings.xhr();
+               xhr.addEventListener("progress", function(evt) {
+                 if (evt.lengthComputable) {
+                   Module.setStatus("Downloading script... (" + evt.loaded + "/" + evt.total + ")");
+                 }
+               });
+               return xhr;
+             }
+          });
+         }, 1000);
+      });
+   </script>
+<script type="text/javascript">
+var Module;
+if (typeof Module === 'undefined') Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
+if (!Module.expectedDataFileDownloads) {
+  Module.expectedDataFileDownloads = 0;
+  Module.finishedDataFileDownloads = 0;
+}
+Module.expectedDataFileDownloads++;
+(function() {
+
+    var PACKAGE_PATH;
+    if (typeof window === 'object') {
+      PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.toString().substring(0, window.location.pathname.toString().lastIndexOf('/')) + '/');
+    } else {
+      // worker
+      PACKAGE_PATH = encodeURIComponent(location.pathname.toString().substring(0, location.pathname.toString().lastIndexOf('/')) + '/');
+    }
+    var PACKAGE_NAME = '/home/caiiiycuk/js/js-dos.com/build/games/supaplex.exe.data';
+    var REMOTE_PACKAGE_BASE = 'supaplex.exe.data';
+    if (typeof Module['locateFilePackage'] === 'function' && !Module['locateFile']) {
+      Module['locateFile'] = Module['locateFilePackage'];
+      Module.printErr('warning: you defined Module.locateFilePackage, that has been renamed to Module.locateFile (using your locateFilePackage for now)');
+    }
+    var REMOTE_PACKAGE_NAME = typeof Module['locateFile'] === 'function' ?
+                              Module['locateFile'](REMOTE_PACKAGE_BASE) :
+                              ((Module['filePackagePrefixURL'] || '') + REMOTE_PACKAGE_BASE);
+    var REMOTE_PACKAGE_SIZE = 674892;
+    var PACKAGE_UUID = '8502d4c9-a839-4f19-92e3-f58fbf85e4cb';
+  
+    function fetchRemotePackage(packageName, packageSize, callback, errback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', packageName, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onprogress = function(event) {
+        var url = packageName;
+        var size = packageSize;
+        if (event.total) size = event.total;
+        if (event.loaded) {
+          if (!xhr.addedTotal) {
+            xhr.addedTotal = true;
+            if (!Module.dataFileDownloads) Module.dataFileDownloads = {};
+            Module.dataFileDownloads[url] = {
+              loaded: event.loaded,
+              total: size
+            };
+          } else {
+            Module.dataFileDownloads[url].loaded = event.loaded;
+          }
+          var total = 0;
+          var loaded = 0;
+          var num = 0;
+          for (var download in Module.dataFileDownloads) {
+          var data = Module.dataFileDownloads[download];
+            total += data.total;
+            loaded += data.loaded;
+            num++;
+          }
+          total = Math.ceil(total * Module.expectedDataFileDownloads/num);
+          if (Module['setStatus']) Module['setStatus']('Downloading data... (' + loaded + '/' + total + ')');
+        } else if (!Module.dataFileDownloads) {
+          if (Module['setStatus']) Module['setStatus']('Downloading data...');
+        }
+      };
+      xhr.onload = function(event) {
+        var packageData = xhr.response;
+        callback(packageData);
+      };
+      xhr.send(null);
+    };
+
+    function handleError(error) {
+      console.error('package error:', error);
+    };
+  
+      var fetched = null, fetchedCallback = null;
+      fetchRemotePackage(REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE, function(data) {
+        if (fetchedCallback) {
+          fetchedCallback(data);
+          fetchedCallback = null;
+        } else {
+          fetched = data;
+        }
+      }, handleError);
+    
+  function runWithFS() {
+
+function assert(check, msg) {
+  if (!check) throw msg + new Error().stack;
+}
+Module['FS_createPath']('/', '!!!Vsetky Levely!!!', true, true);
+
+    function DataRequest(start, end, crunched, audio) {
+      this.start = start;
+      this.end = end;
+      this.crunched = crunched;
+      this.audio = audio;
+    }
+    DataRequest.prototype = {
+      requests: {},
+      open: function(mode, name) {
+        this.name = name;
+        this.requests[name] = this;
+        Module['addRunDependency']('fp ' + this.name);
+      },
+      send: function() {},
+      onload: function() {
+        var byteArray = this.byteArray.subarray(this.start, this.end);
+
+          this.finish(byteArray);
+
+      },
+      finish: function(byteArray) {
+        var that = this;
+        Module['FS_createPreloadedFile'](this.name, null, byteArray, true, true, function() {
+          Module['removeRunDependency']('fp ' + that.name);
+        }, function() {
+          if (that.audio) {
+            Module['removeRunDependency']('fp ' + that.name); // workaround for chromium bug 124926 (still no audio with this, but at least we don't hang)
+          } else {
+            Module.printErr('Preloading file ' + that.name + ' failed');
+          }
+        }, false, true); // canOwn this data in the filesystem, it is a slide into the heap that will never change
+        this.requests[this.name] = null;
+      },
+    };
+      new DataRequest(0, 45948, 0, 0).open('GET', '/SUPAPLEX.EXE');
+    new DataRequest(45948, 77948, 0, 0).open('GET', '/MENU.DAT');
+    new DataRequest(77948, 77989, 0, 0).open('GET', '/RUNME.BAT');
+    new DataRequest(77989, 80745, 0, 0).open('GET', '/BEEP.SND');
+    new DataRequest(80745, 85865, 0, 0).open('GET', '/FIXED.DAT');
+    new DataRequest(85865, 89705, 0, 0).open('GET', '/PANEL.DAT');
+    new DataRequest(89705, 121705, 0, 0).open('GET', '/BACK.DAT');
+    new DataRequest(121705, 122031, 0, 0).open('GET', '/DEMO2.BIN');
+    new DataRequest(122031, 122287, 0, 0).open('GET', '/PALETTES.DAT');
+    new DataRequest(122287, 122587, 0, 0).open('GET', '/DEMO5.BIN');
+    new DataRequest(122587, 122792, 0, 0).open('GET', '/DEMO3.BIN');
+    new DataRequest(122792, 161987, 0, 0).open('GET', '/BLASTER.SND');
+    new DataRequest(161987, 162023, 0, 0).open('GET', '/HALLFAME.LST');
+    new DataRequest(162023, 162385, 0, 0).open('GET', '/DEMO1.BIN');
+    new DataRequest(162385, 162974, 0, 0).open('GET', '/DEMO4.BIN');
+    new DataRequest(162974, 163298, 0, 0).open('GET', '/CHKLIST.CPS');
+    new DataRequest(163298, 163302, 0, 0).open('GET', '/SUPAPLEX.CFG');
+    new DataRequest(163302, 163725, 0, 0).open('GET', '/DEMO6.BIN');
+    new DataRequest(163725, 164237, 0, 0).open('GET', '/CHARS6.DAT');
+    new DataRequest(164237, 196238, 0, 0).open('GET', '/CONTROLS.DAT');
+    new DataRequest(196238, 200206, 0, 0).open('GET', '/ROLAND.SND');
+    new DataRequest(200206, 232206, 0, 0).open('GET', '/TITLE1.DAT');
+    new DataRequest(232206, 235289, 0, 0).open('GET', '/!!-README-!!.txt');
+    new DataRequest(235289, 235801, 0, 0).open('GET', '/CHARS8.DAT');
+    new DataRequest(235801, 272069, 0, 0).open('GET', '/SAMPLE.SND');
+    new DataRequest(272069, 304070, 0, 0).open('GET', '/TITLE2.DAT');
+    new DataRequest(304070, 309424, 0, 0).open('GET', '/ADLIB.SND');
+    new DataRequest(309424, 309630, 0, 0).open('GET', '/DEMO0.BIN');
+    new DataRequest(309630, 310395, 0, 0).open('GET', '/DEMO9.BIN');
+    new DataRequest(310395, 480891, 0, 0).open('GET', '/LEVELS.DAT');
+    new DataRequest(480891, 554811, 0, 0).open('GET', '/MOVING.DAT');
+    new DataRequest(554811, 557371, 0, 0).open('GET', '/PLAYER.LST');
+    new DataRequest(557371, 557878, 0, 0).open('GET', '/DEMO7.BIN');
+    new DataRequest(557878, 589879, 0, 0).open('GET', '/TITLE.DAT');
+    new DataRequest(589879, 636311, 0, 0).open('GET', '/INSTALL.EXE');
+    new DataRequest(636311, 639419, 0, 0).open('GET', '/LEVEL.LST');
+    new DataRequest(639419, 671420, 0, 0).open('GET', '/GFX.DAT');
+    new DataRequest(671420, 671886, 0, 0).open('GET', '/DEMO8.BIN');
+    new DataRequest(671886, 672332, 0, 0).open('GET', '/!!!Vsetky Levely!!!/!!!¡taj_ma!!!.txt');
+    new DataRequest(672332, 674892, 0, 0).open('GET', '/!!!Vsetky Levely!!!/PLAYER.LST');
+
+    function processPackageData(arrayBuffer) {
+      Module.finishedDataFileDownloads++;
+      assert(arrayBuffer, 'Loading data file failed.');
+      var byteArray = new Uint8Array(arrayBuffer);
+      var curr;
+      
+      // Reuse the bytearray from the XHR as the source for file reads.
+      DataRequest.prototype.byteArray = byteArray;
+          DataRequest.prototype.requests["/SUPAPLEX.EXE"].onload();
+          DataRequest.prototype.requests["/MENU.DAT"].onload();
+          DataRequest.prototype.requests["/RUNME.BAT"].onload();
+          DataRequest.prototype.requests["/BEEP.SND"].onload();
+          DataRequest.prototype.requests["/FIXED.DAT"].onload();
+          DataRequest.prototype.requests["/PANEL.DAT"].onload();
+          DataRequest.prototype.requests["/BACK.DAT"].onload();
+          DataRequest.prototype.requests["/DEMO2.BIN"].onload();
+          DataRequest.prototype.requests["/PALETTES.DAT"].onload();
+          DataRequest.prototype.requests["/DEMO5.BIN"].onload();
+          DataRequest.prototype.requests["/DEMO3.BIN"].onload();
+          DataRequest.prototype.requests["/BLASTER.SND"].onload();
+          DataRequest.prototype.requests["/HALLFAME.LST"].onload();
+          DataRequest.prototype.requests["/DEMO1.BIN"].onload();
+          DataRequest.prototype.requests["/DEMO4.BIN"].onload();
+          DataRequest.prototype.requests["/CHKLIST.CPS"].onload();
+          DataRequest.prototype.requests["/SUPAPLEX.CFG"].onload();
+          DataRequest.prototype.requests["/DEMO6.BIN"].onload();
+          DataRequest.prototype.requests["/CHARS6.DAT"].onload();
+          DataRequest.prototype.requests["/CONTROLS.DAT"].onload();
+          DataRequest.prototype.requests["/ROLAND.SND"].onload();
+          DataRequest.prototype.requests["/TITLE1.DAT"].onload();
+          DataRequest.prototype.requests["/!!-README-!!.txt"].onload();
+          DataRequest.prototype.requests["/CHARS8.DAT"].onload();
+          DataRequest.prototype.requests["/SAMPLE.SND"].onload();
+          DataRequest.prototype.requests["/TITLE2.DAT"].onload();
+          DataRequest.prototype.requests["/ADLIB.SND"].onload();
+          DataRequest.prototype.requests["/DEMO0.BIN"].onload();
+          DataRequest.prototype.requests["/DEMO9.BIN"].onload();
+          DataRequest.prototype.requests["/LEVELS.DAT"].onload();
+          DataRequest.prototype.requests["/MOVING.DAT"].onload();
+          DataRequest.prototype.requests["/PLAYER.LST"].onload();
+          DataRequest.prototype.requests["/DEMO7.BIN"].onload();
+          DataRequest.prototype.requests["/TITLE.DAT"].onload();
+          DataRequest.prototype.requests["/INSTALL.EXE"].onload();
+          DataRequest.prototype.requests["/LEVEL.LST"].onload();
+          DataRequest.prototype.requests["/GFX.DAT"].onload();
+          DataRequest.prototype.requests["/DEMO8.BIN"].onload();
+          DataRequest.prototype.requests["/!!!Vsetky Levely!!!/!!!¡taj_ma!!!.txt"].onload();
+          DataRequest.prototype.requests["/!!!Vsetky Levely!!!/PLAYER.LST"].onload();
+          Module['removeRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/supaplex.exe.data');
+
+    };
+    Module['addRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/supaplex.exe.data');
+  
+    if (!Module.preloadResults) Module.preloadResults = {};
+  
+      Module.preloadResults[PACKAGE_NAME] = {fromCache: false};
+      if (fetched) {
+        processPackageData(fetched);
+        fetched = null;
+      } else {
+        fetchedCallback = processPackageData;
+      }
+    
+  }
+  if (Module['calledRun']) {
+    runWithFS();
+  } else {
+    if (!Module['preRun']) Module['preRun'] = [];
+    Module["preRun"].push(runWithFS); // FS is not initialized yet, wait for it
+  }
+
+})();
+
+Module['arguments'] = [ '-conf', './dosbox.conf', './SUPAPLEX.EXE' ];
+</script>
+   <!-- <script async type="text/javascript" src="/dosbox.js"></script> -->
+
+   <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter27763311 = new Ya.Metrika({id:27763311,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+  </body>
+</html>

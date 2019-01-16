@@ -1,0 +1,16 @@
+{
+  "name": "icons",
+  "css_prefix_text": "icon-",
+  "css_use_suffix": false,
+  "hinting": true,
+  "units_per_em": 1000,
+  "ascent": 850,
+  "glyphs": [
+    {
+      "uid": "cdfalpadi7huwv9ah4fef2gpfpb4c6qm",
+      "css": "resize-full",
+      "code": 59392,
+      "src": "typicons"
+    }
+  ]
+}

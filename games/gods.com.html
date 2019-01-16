@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>JS-DOS / GAMES / GODS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="On this site you can play in GODS in browser">
+    <meta name="keywords" content="GODS">
+    <meta name="author" content="caiiiycuk">
+
+    <!-- Le styles -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/assets/ico/favicon.png">
+
+    <style type="text/css">
+      div.emscripten, .emscripten-status, .emscripten-padding {
+        padding-top: 20px;
+        padding-left: 20px;
+      }
+
+      .fullscreen {
+        display: none;
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
+      .emscripten canvas {
+        border: 0;
+        
+      }
+    </style>
+  </head>
+  
+  <body data-spy="scroll" data-target=".bs-docs-sidebar" style="visibility: hidden;">
+    <div class="emscripten-status" >
+      Starting MS-DOS...<br/>
+      MS-DOS Version 6.22<br/><br/>
+      <p id="error"></p>
+      <p id="status">Downloading data...</p>
+      <p id="progress">Progress...</p>
+    </div>
+
+    <div class="emscripten">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+    <div class="fullscreen">
+      <a id="fullscreen" href="javascript:void(0);">Fullscreen</a><br/><br/>
+    </div>
+    <div class="emscripten-padding">
+      <strong>NOTES:</strong> 
+      <ul>
+        <li>If you have problems with the mouse positioning of the mouse, then try to switching on <b>Fullscreen</b> mode</li>
+        <li>While the browser is loading the program, it may hang up for a while</li>
+        <li>Sometimes you should click on a canvas to capture the mouse</li>
+      </ul>
+    </div>
+
+    <div class="emscripten-padding">
+      <a href="/games">cd C:&#92;GAMES</a>
+    </div>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/assets/js/jquery-1.11.2.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js" defer></script>
+
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+
+      var Module = {
+        noImageDecoding: true,
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('output');
+          if (element) element.value = ''; // clear browser cache
+          return function(text) {
+            text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            if (element) {
+              element.value += text + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        printErr: function(text) {
+          text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          //if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m) {
+            text = m[1];
+            progressElement.innerHTML = "Progress " + Math.round(parseInt(m[2]) / parseInt(m[4]) * 100) + "%";
+            progressElement.hidden = false;
+          } else {
+            progressElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+
+          if (left == 0) {
+            $('.emscripten-status').hide();
+            $('.fullscreen').show();
+          }
+        },
+        SDL_numSimultaneouslyQueuedBuffers: 1
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+
+       $(document).ready(function () {
+         $("#fullscreen").click(function() {
+            Module.requestFullScreen(false, false);
+         });
+
+         setTimeout(function () {
+          $.ajax({
+             url: "/dosbox.js",
+             dataType: "script",
+             error: function(jqXHR, textStatus, error) {
+              $('#error').html('Exception thrown, see JavaScript console');
+              console.log(textStatus, error);
+             },
+             xhr: function() {
+               var xhr;
+               Module.setStatus("Downloading script");
+               xhr = $.ajaxSettings.xhr();
+               xhr.addEventListener("progress", function(evt) {
+                 if (evt.lengthComputable) {
+                   Module.setStatus("Downloading script... (" + evt.loaded + "/" + evt.total + ")");
+                 }
+               });
+               return xhr;
+             }
+          });
+         }, 1000);
+      });
+   </script>
+<script type="text/javascript">
+var Module;
+if (typeof Module === 'undefined') Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
+if (!Module.expectedDataFileDownloads) {
+  Module.expectedDataFileDownloads = 0;
+  Module.finishedDataFileDownloads = 0;
+}
+Module.expectedDataFileDownloads++;
+(function() {
+
+    var PACKAGE_PATH;
+    if (typeof window === 'object') {
+      PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.toString().substring(0, window.location.pathname.toString().lastIndexOf('/')) + '/');
+    } else {
+      // worker
+      PACKAGE_PATH = encodeURIComponent(location.pathname.toString().substring(0, location.pathname.toString().lastIndexOf('/')) + '/');
+    }
+    var PACKAGE_NAME = '/home/caiiiycuk/js/js-dos.com/build/games/gods.com.data';
+    var REMOTE_PACKAGE_BASE = 'gods.com.data';
+    if (typeof Module['locateFilePackage'] === 'function' && !Module['locateFile']) {
+      Module['locateFile'] = Module['locateFilePackage'];
+      Module.printErr('warning: you defined Module.locateFilePackage, that has been renamed to Module.locateFile (using your locateFilePackage for now)');
+    }
+    var REMOTE_PACKAGE_NAME = typeof Module['locateFile'] === 'function' ?
+                              Module['locateFile'](REMOTE_PACKAGE_BASE) :
+                              ((Module['filePackagePrefixURL'] || '') + REMOTE_PACKAGE_BASE);
+    var REMOTE_PACKAGE_SIZE = 1132834;
+    var PACKAGE_UUID = 'd7b5e6ec-1314-4c23-ad96-54187da2bf66';
+  
+    function fetchRemotePackage(packageName, packageSize, callback, errback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', packageName, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onprogress = function(event) {
+        var url = packageName;
+        var size = packageSize;
+        if (event.total) size = event.total;
+        if (event.loaded) {
+          if (!xhr.addedTotal) {
+            xhr.addedTotal = true;
+            if (!Module.dataFileDownloads) Module.dataFileDownloads = {};
+            Module.dataFileDownloads[url] = {
+              loaded: event.loaded,
+              total: size
+            };
+          } else {
+            Module.dataFileDownloads[url].loaded = event.loaded;
+          }
+          var total = 0;
+          var loaded = 0;
+          var num = 0;
+          for (var download in Module.dataFileDownloads) {
+          var data = Module.dataFileDownloads[download];
+            total += data.total;
+            loaded += data.loaded;
+            num++;
+          }
+          total = Math.ceil(total * Module.expectedDataFileDownloads/num);
+          if (Module['setStatus']) Module['setStatus']('Downloading data... (' + loaded + '/' + total + ')');
+        } else if (!Module.dataFileDownloads) {
+          if (Module['setStatus']) Module['setStatus']('Downloading data...');
+        }
+      };
+      xhr.onload = function(event) {
+        var packageData = xhr.response;
+        callback(packageData);
+      };
+      xhr.send(null);
+    };
+
+    function handleError(error) {
+      console.error('package error:', error);
+    };
+  
+      var fetched = null, fetchedCallback = null;
+      fetchRemotePackage(REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE, function(data) {
+        if (fetchedCallback) {
+          fetchedCallback(data);
+          fetchedCallback = null;
+        } else {
+          fetched = data;
+        }
+      }, handleError);
+    
+  function runWithFS() {
+
+function assert(check, msg) {
+  if (!check) throw msg + new Error().stack;
+}
+
+    function DataRequest(start, end, crunched, audio) {
+      this.start = start;
+      this.end = end;
+      this.crunched = crunched;
+      this.audio = audio;
+    }
+    DataRequest.prototype = {
+      requests: {},
+      open: function(mode, name) {
+        this.name = name;
+        this.requests[name] = this;
+        Module['addRunDependency']('fp ' + this.name);
+      },
+      send: function() {},
+      onload: function() {
+        var byteArray = this.byteArray.subarray(this.start, this.end);
+
+          this.finish(byteArray);
+
+      },
+      finish: function(byteArray) {
+        var that = this;
+        Module['FS_createPreloadedFile'](this.name, null, byteArray, true, true, function() {
+          Module['removeRunDependency']('fp ' + that.name);
+        }, function() {
+          if (that.audio) {
+            Module['removeRunDependency']('fp ' + that.name); // workaround for chromium bug 124926 (still no audio with this, but at least we don't hang)
+          } else {
+            Module.printErr('Preloading file ' + that.name + ' failed');
+          }
+        }, false, true); // canOwn this data in the filesystem, it is a slide into the heap that will never change
+        this.requests[this.name] = null;
+      },
+    };
+      new DataRequest(0, 411, 0, 0).open('GET', '/PSMLFNT.DAT');
+    new DataRequest(411, 586, 0, 0).open('GET', '/PAMDRAGN.DAT');
+    new DataRequest(586, 19778, 0, 0).open('GET', '/PBITS3B.PI1');
+    new DataRequest(19778, 42964, 0, 0).open('GET', '/PBITS2B.PI1');
+    new DataRequest(42964, 43180, 0, 0).open('GET', '/HISCORES.BIN');
+    new DataRequest(43180, 43379, 0, 0).open('GET', '/PJOYL1.DAT');
+    new DataRequest(43379, 50437, 0, 0).open('GET', '/PSHOPSPR.PI1');
+    new DataRequest(50437, 52642, 0, 0).open('GET', '/PALFILS.0B1');
+    new DataRequest(52642, 53561, 0, 0).open('GET', '/PXTRA1B.PI1');
+    new DataRequest(53561, 74764, 0, 0).open('GET', '/PSTBACK.PI1');
+    new DataRequest(74764, 74868, 0, 0).open('GET', '/PGUARD31.DAT');
+    new DataRequest(74868, 75937, 0, 0).open('GET', '/PXTRA4B.PI1');
+    new DataRequest(75937, 76449, 0, 0).open('GET', '/DLAAA.000');
+    new DataRequest(76449, 81325, 0, 0).open('GET', '/DREAM.NFO');
+    new DataRequest(81325, 81749, 0, 0).open('GET', '/POBJ2.DAT');
+    new DataRequest(81749, 89455, 0, 0).open('GET', '/PLEV2B.MAP');
+    new DataRequest(89455, 89969, 0, 0).open('GET', '/POBJ1.DAT');
+    new DataRequest(89969, 97693, 0, 0).open('GET', '/PGODS.MUS');
+    new DataRequest(97693, 97797, 0, 0).open('GET', '/PLEVEL1B.DAT');
+    new DataRequest(97797, 98208, 0, 0).open('GET', '/PINTROFT.DAT');
+    new DataRequest(98208, 110443, 0, 0).open('GET', '/PLEVEL4B.PI1');
+    new DataRequest(110443, 129700, 0, 0).open('GET', '/PLEVEL1A.PI1');
+    new DataRequest(129700, 135488, 0, 0).open('GET', '/PSMLFNT.PI1');
+    new DataRequest(135488, 135592, 0, 0).open('GET', '/PBUMLIST.BIN');
+    new DataRequest(135592, 138465, 0, 0).open('GET', '/PALWAYS3.PI1');
+    new DataRequest(138465, 141574, 0, 0).open('GET', '/PALFILS.0A4');
+    new DataRequest(141574, 142086, 0, 0).open('GET', '/DBAAA.000');
+    new DataRequest(142086, 162661, 0, 0).open('GET', '/PGODSRLA.RL');
+    new DataRequest(162661, 170386, 0, 0).open('GET', '/PLEV4B.MAP');
+    new DataRequest(170386, 171764, 0, 0).open('GET', '/TDY.EXE');
+    new DataRequest(171764, 178108, 0, 0).open('GET', '/PLEV3B.MAP');
+    new DataRequest(178108, 183820, 0, 0).open('GET', '/INTROT.EXE');
+    new DataRequest(183820, 193939, 0, 0).open('GET', '/PGUARD12.PI1');
+    new DataRequest(193939, 194054, 0, 0).open('GET', '/PLEVEL3A.DAT');
+    new DataRequest(194054, 202051, 0, 0).open('GET', '/PGUARD41.PI1');
+    new DataRequest(202051, 224286, 0, 0).open('GET', '/PBACKSCR.PI1');
+    new DataRequest(224286, 227141, 0, 0).open('GET', '/PALFILS.0A2');
+    new DataRequest(227141, 227653, 0, 0).open('GET', '/DMEAB.000');
+    new DataRequest(227653, 228064, 0, 0).open('GET', '/PWEAPONS.003');
+    new DataRequest(228064, 234291, 0, 0).open('GET', '/PLEV3A.MAP');
+    new DataRequest(234291, 234441, 0, 0).open('GET', '/PJOYG3.DAT');
+    new DataRequest(234441, 234953, 0, 0).open('GET', '/DBAAB.000');
+    new DataRequest(234953, 235147, 0, 0).open('GET', '/PLEVEL3B.DAT');
+    new DataRequest(235147, 241317, 0, 0).open('GET', '/INTROE.EXE');
+    new DataRequest(241317, 264675, 0, 0).open('GET', '/PBITS4A.PI1');
+    new DataRequest(264675, 265213, 0, 0).open('GET', '/PGOD02.PAT');
+    new DataRequest(265213, 265341, 0, 0).open('GET', '/PALWAYS1.DAT');
+    new DataRequest(265341, 265853, 0, 0).open('GET', '/DBEAA.000');
+    new DataRequest(265853, 266365, 0, 0).open('GET', '/DLAAB.000');
+    new DataRequest(266365, 283285, 0, 0).open('GET', '/PGODSRLG.RL');
+    new DataRequest(283285, 289539, 0, 0).open('GET', '/PLEV1B.MAP');
+    new DataRequest(289539, 295600, 0, 0).open('GET', '/PLEV1A.MAP');
+    new DataRequest(295600, 297974, 0, 0).open('GET', '/ROL.EXE');
+    new DataRequest(297974, 298824, 0, 0).open('GET', '/DREAM.COM');
+    new DataRequest(298824, 298903, 0, 0).open('GET', '/PGUARD12.DAT');
+    new DataRequest(298903, 308597, 0, 0).open('GET', '/PGODSRLD.RL');
+    new DataRequest(308597, 310033, 0, 0).open('GET', '/POBJECTS.003');
+    new DataRequest(310033, 313097, 0, 0).open('GET', '/PSHOPFNT.PI1');
+    new DataRequest(313097, 313382, 0, 0).open('GET', '/PJOYL3.DAT');
+    new DataRequest(313382, 321283, 0, 0).open('GET', '/PGODSRLF.RL');
+    new DataRequest(321283, 321795, 0, 0).open('GET', '/DMAAA.000');
+    new DataRequest(321795, 377381, 0, 0).open('GET', '/DIGDREAM.MOD');
+    new DataRequest(377381, 378834, 0, 0).open('GET', '/POBJECTS.002');
+    new DataRequest(378834, 398031, 0, 0).open('GET', '/POBJ1.PI1');
+    new DataRequest(398031, 398123, 0, 0).open('GET', '/PGUARD42.DAT');
+    new DataRequest(398123, 398299, 0, 0).open('GET', '/PLEVEL4A.DAT');
+    new DataRequest(398299, 398811, 0, 0).open('GET', '/DMAAB.000');
+    new DataRequest(398811, 398886, 0, 0).open('GET', '/GODS.INI');
+    new DataRequest(398886, 407184, 0, 0).open('GET', '/PINTROFT.PI1');
+    new DataRequest(407184, 420473, 0, 0).open('GET', '/PSHOP.PI1');
+    new DataRequest(420473, 438313, 0, 0).open('GET', '/PBITS1A.PI1');
+    new DataRequest(438313, 452291, 0, 0).open('GET', '/PGODSRLB.RL');
+    new DataRequest(452291, 452387, 0, 0).open('GET', '/PJOYG1.DAT');
+    new DataRequest(452387, 453168, 0, 0).open('GET', '/READ.ME');
+    new DataRequest(453168, 470990, 0, 0).open('GET', '/PALWAYS1.PI1');
+    new DataRequest(470990, 485362, 0, 0).open('GET', '/PLEVEL2A.PI1');
+    new DataRequest(485362, 485550, 0, 0).open('GET', '/PLEVEL1A.DAT');
+    new DataRequest(485550, 486932, 0, 0).open('GET', '/BPR.EXE');
+    new DataRequest(486932, 490105, 0, 0).open('GET', '/PBEEPER.BIN');
+    new DataRequest(490105, 490279, 0, 0).open('GET', '/PGOD03.PAT');
+    new DataRequest(490279, 492435, 0, 0).open('GET', '/PALFILS.0A1');
+    new DataRequest(492435, 492603, 0, 0).open('GET', '/PLEVEL2A.DAT');
+    new DataRequest(492603, 492687, 0, 0).open('GET', '/PALWAYS3.DAT');
+    new DataRequest(492687, 495640, 0, 0).open('GET', '/PALFILS.0B3');
+    new DataRequest(495640, 499036, 0, 0).open('GET', '/PSTATUS.PI1');
+    new DataRequest(499036, 502906, 0, 0).open('GET', '/PSTAT3.PI1');
+    new DataRequest(502906, 503418, 0, 0).open('GET', '/DMEAA.000');
+    new DataRequest(503418, 504251, 0, 0).open('GET', '/GODS.COM');
+    new DataRequest(504251, 504763, 0, 0).open('GET', '/DBEAB.000');
+    new DataRequest(504763, 589152, 0, 0).open('GET', '/PDEMOSB4.SB');
+    new DataRequest(589152, 609202, 0, 0).open('GET', '/PBITS1B.PI1');
+    new DataRequest(609202, 609994, 0, 0).open('GET', '/PXTRA3A.PI1');
+    new DataRequest(609994, 623832, 0, 0).open('GET', '/PALWAYS2.PI1');
+    new DataRequest(623832, 629937, 0, 0).open('GET', '/INTROV.EXE');
+    new DataRequest(629937, 643291, 0, 0).open('GET', '/PONE.PI1');
+    new DataRequest(643291, 652963, 0, 0).open('GET', '/PGODSRLE.RL');
+    new DataRequest(652963, 658461, 0, 0).open('GET', '/PGODFONT.PI1');
+    new DataRequest(658461, 680526, 0, 0).open('GET', '/PBITS3A.PI1');
+    new DataRequest(680526, 680682, 0, 0).open('GET', '/PSHOPSPR.DAT');
+    new DataRequest(680682, 680866, 0, 0).open('GET', '/PLEVEL4B.DAT');
+    new DataRequest(680866, 695692, 0, 0).open('GET', '/PGUARD31.PI1');
+    new DataRequest(695692, 700185, 0, 0).open('GET', '/PGOD01.PAT');
+    new DataRequest(700185, 700697, 0, 0).open('GET', '/DLEAB.000');
+    new DataRequest(700697, 723874, 0, 0).open('GET', '/PBITS2A.PI1');
+    new DataRequest(723874, 726152, 0, 0).open('GET', '/PGODMUS2.MUS');
+    new DataRequest(726152, 735480, 0, 0).open('GET', '/VGA.EXE');
+    new DataRequest(735480, 735626, 0, 0).open('GET', '/PLEVEL2B.DAT');
+    new DataRequest(735626, 742605, 0, 0).open('GET', '/PAMDRAGN.PI1');
+    new DataRequest(742605, 793895, 0, 0).open('GET', '/TGAME.EXE');
+    new DataRequest(793895, 798763, 0, 0).open('GET', '/GAME.TDT');
+    new DataRequest(798763, 799176, 0, 0).open('GET', '/PWEAPONS.004');
+    new DataRequest(799176, 806875, 0, 0).open('GET', '/PLEV2A.MAP');
+    new DataRequest(806875, 809622, 0, 0).open('GET', '/PALFILS.0A3');
+    new DataRequest(809622, 860373, 0, 0).open('GET', '/GAME.EXE');
+    new DataRequest(860373, 869954, 0, 0).open('GET', '/EGA.EXE');
+    new DataRequest(869954, 882256, 0, 0).open('GET', '/PTITLE.RL');
+    new DataRequest(882256, 894421, 0, 0).open('GET', '/POBJ2.PI1');
+    new DataRequest(894421, 894551, 0, 0).open('GET', '/PJOYG2.DAT');
+    new DataRequest(894551, 894958, 0, 0).open('GET', '/PWEAPONS.001');
+    new DataRequest(894958, 899917, 0, 0).open('GET', '/PMUSIC.MUS');
+    new DataRequest(899917, 923668, 0, 0).open('GET', '/PBITS4B.PI1');
+    new DataRequest(923668, 936768, 0, 0).open('GET', '/TGA.EXE');
+    new DataRequest(936768, 937071, 0, 0).open('GET', '/PJOYL2.DAT');
+    new DataRequest(937071, 937500, 0, 0).open('GET', '/TRAIN.COM');
+    new DataRequest(937500, 937655, 0, 0).open('GET', '/PGUARD41.DAT');
+    new DataRequest(937655, 944898, 0, 0).open('GET', '/PLEVEL1B.PI1');
+    new DataRequest(944898, 945164, 0, 0).open('GET', '/PALWAYS2.DAT');
+    new DataRequest(945164, 948311, 0, 0).open('GET', '/PALFILS.0B4');
+    new DataRequest(948311, 951580, 0, 0).open('GET', '/PTANDY.BIN');
+    new DataRequest(951580, 951717, 0, 0).open('GET', '/PGODFONT.DAT');
+    new DataRequest(951717, 959266, 0, 0).open('GET', '/PLEV4A.MAP');
+    new DataRequest(959266, 962059, 0, 0).open('GET', '/WIBBLE.EXE');
+    new DataRequest(962059, 962571, 0, 0).open('GET', '/DLEAA.000');
+    new DataRequest(962571, 964809, 0, 0).open('GET', '/PGOD04.PAT');
+    new DataRequest(964809, 966461, 0, 0).open('GET', '/ADL.EXE');
+    new DataRequest(966461, 966872, 0, 0).open('GET', '/PSHOPFNT.DAT');
+    new DataRequest(966872, 966947, 0, 0).open('GET', '/PGUARD32.DAT');
+    new DataRequest(966947, 991415, 0, 0).open('GET', '/DIGDREAM.EXE');
+    new DataRequest(991415, 991491, 0, 0).open('GET', '/PGUARD11.DAT');
+    new DataRequest(991491, 991903, 0, 0).open('GET', '/PWEAPONS.002');
+    new DataRequest(991903, 1006823, 0, 0).open('GET', '/PLEVEL4A.PI1');
+    new DataRequest(1006823, 1009970, 0, 0).open('GET', '/PXTRA2A.PI1');
+    new DataRequest(1009970, 1011414, 0, 0).open('GET', '/POBJECTS.001');
+    new DataRequest(1011414, 1012866, 0, 0).open('GET', '/POBJECTS.004');
+    new DataRequest(1012866, 1021814, 0, 0).open('GET', '/PGODSRLC.RL');
+    new DataRequest(1021814, 1028683, 0, 0).open('GET', '/PLEVEL2B.PI1');
+    new DataRequest(1028683, 1045297, 0, 0).open('GET', '/PGUARD32.PI1');
+    new DataRequest(1045297, 1046897, 0, 0).open('GET', '/BEZIER.DAT');
+    new DataRequest(1046897, 1048177, 0, 0).open('GET', '/SINCOS.DAT');
+    new DataRequest(1048177, 1059870, 0, 0).open('GET', '/PLEVEL3A.PI1');
+    new DataRequest(1059870, 1075477, 0, 0).open('GET', '/PGUARD11.PI1');
+    new DataRequest(1075477, 1083845, 0, 0).open('GET', '/UNPACK.EXE');
+    new DataRequest(1083845, 1094667, 0, 0).open('GET', '/PLEVEL3B.PI1');
+    new DataRequest(1094667, 1099696, 0, 0).open('GET', '/INSTALL.EXE');
+    new DataRequest(1099696, 1102573, 0, 0).open('GET', '/PALFILS.0B2');
+    new DataRequest(1102573, 1113804, 0, 0).open('GET', '/PGUARD42.PI1');
+    new DataRequest(1113804, 1125877, 0, 0).open('GET', '/PPAYOFF.PI1');
+    new DataRequest(1125877, 1132834, 0, 0).open('GET', '/PPLAYER.BIN');
+
+    function processPackageData(arrayBuffer) {
+      Module.finishedDataFileDownloads++;
+      assert(arrayBuffer, 'Loading data file failed.');
+      var byteArray = new Uint8Array(arrayBuffer);
+      var curr;
+      
+      // Reuse the bytearray from the XHR as the source for file reads.
+      DataRequest.prototype.byteArray = byteArray;
+          DataRequest.prototype.requests["/PSMLFNT.DAT"].onload();
+          DataRequest.prototype.requests["/PAMDRAGN.DAT"].onload();
+          DataRequest.prototype.requests["/PBITS3B.PI1"].onload();
+          DataRequest.prototype.requests["/PBITS2B.PI1"].onload();
+          DataRequest.prototype.requests["/HISCORES.BIN"].onload();
+          DataRequest.prototype.requests["/PJOYL1.DAT"].onload();
+          DataRequest.prototype.requests["/PSHOPSPR.PI1"].onload();
+          DataRequest.prototype.requests["/PALFILS.0B1"].onload();
+          DataRequest.prototype.requests["/PXTRA1B.PI1"].onload();
+          DataRequest.prototype.requests["/PSTBACK.PI1"].onload();
+          DataRequest.prototype.requests["/PGUARD31.DAT"].onload();
+          DataRequest.prototype.requests["/PXTRA4B.PI1"].onload();
+          DataRequest.prototype.requests["/DLAAA.000"].onload();
+          DataRequest.prototype.requests["/DREAM.NFO"].onload();
+          DataRequest.prototype.requests["/POBJ2.DAT"].onload();
+          DataRequest.prototype.requests["/PLEV2B.MAP"].onload();
+          DataRequest.prototype.requests["/POBJ1.DAT"].onload();
+          DataRequest.prototype.requests["/PGODS.MUS"].onload();
+          DataRequest.prototype.requests["/PLEVEL1B.DAT"].onload();
+          DataRequest.prototype.requests["/PINTROFT.DAT"].onload();
+          DataRequest.prototype.requests["/PLEVEL4B.PI1"].onload();
+          DataRequest.prototype.requests["/PLEVEL1A.PI1"].onload();
+          DataRequest.prototype.requests["/PSMLFNT.PI1"].onload();
+          DataRequest.prototype.requests["/PBUMLIST.BIN"].onload();
+          DataRequest.prototype.requests["/PALWAYS3.PI1"].onload();
+          DataRequest.prototype.requests["/PALFILS.0A4"].onload();
+          DataRequest.prototype.requests["/DBAAA.000"].onload();
+          DataRequest.prototype.requests["/PGODSRLA.RL"].onload();
+          DataRequest.prototype.requests["/PLEV4B.MAP"].onload();
+          DataRequest.prototype.requests["/TDY.EXE"].onload();
+          DataRequest.prototype.requests["/PLEV3B.MAP"].onload();
+          DataRequest.prototype.requests["/INTROT.EXE"].onload();
+          DataRequest.prototype.requests["/PGUARD12.PI1"].onload();
+          DataRequest.prototype.requests["/PLEVEL3A.DAT"].onload();
+          DataRequest.prototype.requests["/PGUARD41.PI1"].onload();
+          DataRequest.prototype.requests["/PBACKSCR.PI1"].onload();
+          DataRequest.prototype.requests["/PALFILS.0A2"].onload();
+          DataRequest.prototype.requests["/DMEAB.000"].onload();
+          DataRequest.prototype.requests["/PWEAPONS.003"].onload();
+          DataRequest.prototype.requests["/PLEV3A.MAP"].onload();
+          DataRequest.prototype.requests["/PJOYG3.DAT"].onload();
+          DataRequest.prototype.requests["/DBAAB.000"].onload();
+          DataRequest.prototype.requests["/PLEVEL3B.DAT"].onload();
+          DataRequest.prototype.requests["/INTROE.EXE"].onload();
+          DataRequest.prototype.requests["/PBITS4A.PI1"].onload();
+          DataRequest.prototype.requests["/PGOD02.PAT"].onload();
+          DataRequest.prototype.requests["/PALWAYS1.DAT"].onload();
+          DataRequest.prototype.requests["/DBEAA.000"].onload();
+          DataRequest.prototype.requests["/DLAAB.000"].onload();
+          DataRequest.prototype.requests["/PGODSRLG.RL"].onload();
+          DataRequest.prototype.requests["/PLEV1B.MAP"].onload();
+          DataRequest.prototype.requests["/PLEV1A.MAP"].onload();
+          DataRequest.prototype.requests["/ROL.EXE"].onload();
+          DataRequest.prototype.requests["/DREAM.COM"].onload();
+          DataRequest.prototype.requests["/PGUARD12.DAT"].onload();
+          DataRequest.prototype.requests["/PGODSRLD.RL"].onload();
+          DataRequest.prototype.requests["/POBJECTS.003"].onload();
+          DataRequest.prototype.requests["/PSHOPFNT.PI1"].onload();
+          DataRequest.prototype.requests["/PJOYL3.DAT"].onload();
+          DataRequest.prototype.requests["/PGODSRLF.RL"].onload();
+          DataRequest.prototype.requests["/DMAAA.000"].onload();
+          DataRequest.prototype.requests["/DIGDREAM.MOD"].onload();
+          DataRequest.prototype.requests["/POBJECTS.002"].onload();
+          DataRequest.prototype.requests["/POBJ1.PI1"].onload();
+          DataRequest.prototype.requests["/PGUARD42.DAT"].onload();
+          DataRequest.prototype.requests["/PLEVEL4A.DAT"].onload();
+          DataRequest.prototype.requests["/DMAAB.000"].onload();
+          DataRequest.prototype.requests["/GODS.INI"].onload();
+          DataRequest.prototype.requests["/PINTROFT.PI1"].onload();
+          DataRequest.prototype.requests["/PSHOP.PI1"].onload();
+          DataRequest.prototype.requests["/PBITS1A.PI1"].onload();
+          DataRequest.prototype.requests["/PGODSRLB.RL"].onload();
+          DataRequest.prototype.requests["/PJOYG1.DAT"].onload();
+          DataRequest.prototype.requests["/READ.ME"].onload();
+          DataRequest.prototype.requests["/PALWAYS1.PI1"].onload();
+          DataRequest.prototype.requests["/PLEVEL2A.PI1"].onload();
+          DataRequest.prototype.requests["/PLEVEL1A.DAT"].onload();
+          DataRequest.prototype.requests["/BPR.EXE"].onload();
+          DataRequest.prototype.requests["/PBEEPER.BIN"].onload();
+          DataRequest.prototype.requests["/PGOD03.PAT"].onload();
+          DataRequest.prototype.requests["/PALFILS.0A1"].onload();
+          DataRequest.prototype.requests["/PLEVEL2A.DAT"].onload();
+          DataRequest.prototype.requests["/PALWAYS3.DAT"].onload();
+          DataRequest.prototype.requests["/PALFILS.0B3"].onload();
+          DataRequest.prototype.requests["/PSTATUS.PI1"].onload();
+          DataRequest.prototype.requests["/PSTAT3.PI1"].onload();
+          DataRequest.prototype.requests["/DMEAA.000"].onload();
+          DataRequest.prototype.requests["/GODS.COM"].onload();
+          DataRequest.prototype.requests["/DBEAB.000"].onload();
+          DataRequest.prototype.requests["/PDEMOSB4.SB"].onload();
+          DataRequest.prototype.requests["/PBITS1B.PI1"].onload();
+          DataRequest.prototype.requests["/PXTRA3A.PI1"].onload();
+          DataRequest.prototype.requests["/PALWAYS2.PI1"].onload();
+          DataRequest.prototype.requests["/INTROV.EXE"].onload();
+          DataRequest.prototype.requests["/PONE.PI1"].onload();
+          DataRequest.prototype.requests["/PGODSRLE.RL"].onload();
+          DataRequest.prototype.requests["/PGODFONT.PI1"].onload();
+          DataRequest.prototype.requests["/PBITS3A.PI1"].onload();
+          DataRequest.prototype.requests["/PSHOPSPR.DAT"].onload();
+          DataRequest.prototype.requests["/PLEVEL4B.DAT"].onload();
+          DataRequest.prototype.requests["/PGUARD31.PI1"].onload();
+          DataRequest.prototype.requests["/PGOD01.PAT"].onload();
+          DataRequest.prototype.requests["/DLEAB.000"].onload();
+          DataRequest.prototype.requests["/PBITS2A.PI1"].onload();
+          DataRequest.prototype.requests["/PGODMUS2.MUS"].onload();
+          DataRequest.prototype.requests["/VGA.EXE"].onload();
+          DataRequest.prototype.requests["/PLEVEL2B.DAT"].onload();
+          DataRequest.prototype.requests["/PAMDRAGN.PI1"].onload();
+          DataRequest.prototype.requests["/TGAME.EXE"].onload();
+          DataRequest.prototype.requests["/GAME.TDT"].onload();
+          DataRequest.prototype.requests["/PWEAPONS.004"].onload();
+          DataRequest.prototype.requests["/PLEV2A.MAP"].onload();
+          DataRequest.prototype.requests["/PALFILS.0A3"].onload();
+          DataRequest.prototype.requests["/GAME.EXE"].onload();
+          DataRequest.prototype.requests["/EGA.EXE"].onload();
+          DataRequest.prototype.requests["/PTITLE.RL"].onload();
+          DataRequest.prototype.requests["/POBJ2.PI1"].onload();
+          DataRequest.prototype.requests["/PJOYG2.DAT"].onload();
+          DataRequest.prototype.requests["/PWEAPONS.001"].onload();
+          DataRequest.prototype.requests["/PMUSIC.MUS"].onload();
+          DataRequest.prototype.requests["/PBITS4B.PI1"].onload();
+          DataRequest.prototype.requests["/TGA.EXE"].onload();
+          DataRequest.prototype.requests["/PJOYL2.DAT"].onload();
+          DataRequest.prototype.requests["/TRAIN.COM"].onload();
+          DataRequest.prototype.requests["/PGUARD41.DAT"].onload();
+          DataRequest.prototype.requests["/PLEVEL1B.PI1"].onload();
+          DataRequest.prototype.requests["/PALWAYS2.DAT"].onload();
+          DataRequest.prototype.requests["/PALFILS.0B4"].onload();
+          DataRequest.prototype.requests["/PTANDY.BIN"].onload();
+          DataRequest.prototype.requests["/PGODFONT.DAT"].onload();
+          DataRequest.prototype.requests["/PLEV4A.MAP"].onload();
+          DataRequest.prototype.requests["/WIBBLE.EXE"].onload();
+          DataRequest.prototype.requests["/DLEAA.000"].onload();
+          DataRequest.prototype.requests["/PGOD04.PAT"].onload();
+          DataRequest.prototype.requests["/ADL.EXE"].onload();
+          DataRequest.prototype.requests["/PSHOPFNT.DAT"].onload();
+          DataRequest.prototype.requests["/PGUARD32.DAT"].onload();
+          DataRequest.prototype.requests["/DIGDREAM.EXE"].onload();
+          DataRequest.prototype.requests["/PGUARD11.DAT"].onload();
+          DataRequest.prototype.requests["/PWEAPONS.002"].onload();
+          DataRequest.prototype.requests["/PLEVEL4A.PI1"].onload();
+          DataRequest.prototype.requests["/PXTRA2A.PI1"].onload();
+          DataRequest.prototype.requests["/POBJECTS.001"].onload();
+          DataRequest.prototype.requests["/POBJECTS.004"].onload();
+          DataRequest.prototype.requests["/PGODSRLC.RL"].onload();
+          DataRequest.prototype.requests["/PLEVEL2B.PI1"].onload();
+          DataRequest.prototype.requests["/PGUARD32.PI1"].onload();
+          DataRequest.prototype.requests["/BEZIER.DAT"].onload();
+          DataRequest.prototype.requests["/SINCOS.DAT"].onload();
+          DataRequest.prototype.requests["/PLEVEL3A.PI1"].onload();
+          DataRequest.prototype.requests["/PGUARD11.PI1"].onload();
+          DataRequest.prototype.requests["/UNPACK.EXE"].onload();
+          DataRequest.prototype.requests["/PLEVEL3B.PI1"].onload();
+          DataRequest.prototype.requests["/INSTALL.EXE"].onload();
+          DataRequest.prototype.requests["/PALFILS.0B2"].onload();
+          DataRequest.prototype.requests["/PGUARD42.PI1"].onload();
+          DataRequest.prototype.requests["/PPAYOFF.PI1"].onload();
+          DataRequest.prototype.requests["/PPLAYER.BIN"].onload();
+          Module['removeRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/gods.com.data');
+
+    };
+    Module['addRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/gods.com.data');
+  
+    if (!Module.preloadResults) Module.preloadResults = {};
+  
+      Module.preloadResults[PACKAGE_NAME] = {fromCache: false};
+      if (fetched) {
+        processPackageData(fetched);
+        fetched = null;
+      } else {
+        fetchedCallback = processPackageData;
+      }
+    
+  }
+  if (Module['calledRun']) {
+    runWithFS();
+  } else {
+    if (!Module['preRun']) Module['preRun'] = [];
+    Module["preRun"].push(runWithFS); // FS is not initialized yet, wait for it
+  }
+
+})();
+
+Module['arguments'] = [ '-conf', './dosbox.conf', './GODS.COM' ];
+</script>
+   <!-- <script async type="text/javascript" src="/dosbox.js"></script> -->
+
+   <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter27763311 = new Ya.Metrika({id:27763311,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+  </body>
+</html>

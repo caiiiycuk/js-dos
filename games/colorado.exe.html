@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>JS-DOS / GAMES / COLORADO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="On this site you can play in COLORADO in browser">
+    <meta name="keywords" content="COLORADO">
+    <meta name="author" content="caiiiycuk">
+
+    <!-- Le styles -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/assets/ico/favicon.png">
+
+    <style type="text/css">
+      div.emscripten, .emscripten-status, .emscripten-padding {
+        padding-top: 20px;
+        padding-left: 20px;
+      }
+
+      .fullscreen {
+        display: none;
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
+      .emscripten canvas {
+        border: 0;
+        
+      }
+    </style>
+  </head>
+  
+  <body data-spy="scroll" data-target=".bs-docs-sidebar" style="visibility: hidden;">
+    <div class="emscripten-status" >
+      Starting MS-DOS...<br/>
+      MS-DOS Version 6.22<br/><br/>
+      <p id="error"></p>
+      <p id="status">Downloading data...</p>
+      <p id="progress">Progress...</p>
+    </div>
+
+    <div class="emscripten">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+    <div class="fullscreen">
+      <a id="fullscreen" href="javascript:void(0);">Fullscreen</a><br/><br/>
+    </div>
+    <div class="emscripten-padding">
+      <strong>NOTES:</strong> 
+      <ul>
+        <li>If you have problems with the mouse positioning of the mouse, then try to switching on <b>Fullscreen</b> mode</li>
+        <li>While the browser is loading the program, it may hang up for a while</li>
+        <li>Sometimes you should click on a canvas to capture the mouse</li>
+      </ul>
+    </div>
+
+    <div class="emscripten-padding">
+      <a href="/games">cd C:&#92;GAMES</a>
+    </div>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/assets/js/jquery-1.11.2.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js" defer></script>
+
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+
+      var Module = {
+        noImageDecoding: true,
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('output');
+          if (element) element.value = ''; // clear browser cache
+          return function(text) {
+            text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            if (element) {
+              element.value += text + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        printErr: function(text) {
+          text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          //if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m) {
+            text = m[1];
+            progressElement.innerHTML = "Progress " + Math.round(parseInt(m[2]) / parseInt(m[4]) * 100) + "%";
+            progressElement.hidden = false;
+          } else {
+            progressElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+
+          if (left == 0) {
+            $('.emscripten-status').hide();
+            $('.fullscreen').show();
+          }
+        },
+        SDL_numSimultaneouslyQueuedBuffers: 1
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+
+       $(document).ready(function () {
+         $("#fullscreen").click(function() {
+            Module.requestFullScreen(false, false);
+         });
+
+         setTimeout(function () {
+          $.ajax({
+             url: "/dosbox.js",
+             dataType: "script",
+             error: function(jqXHR, textStatus, error) {
+              $('#error').html('Exception thrown, see JavaScript console');
+              console.log(textStatus, error);
+             },
+             xhr: function() {
+               var xhr;
+               Module.setStatus("Downloading script");
+               xhr = $.ajaxSettings.xhr();
+               xhr.addEventListener("progress", function(evt) {
+                 if (evt.lengthComputable) {
+                   Module.setStatus("Downloading script... (" + evt.loaded + "/" + evt.total + ")");
+                 }
+               });
+               return xhr;
+             }
+          });
+         }, 1000);
+      });
+   </script>
+<script type="text/javascript">
+var Module;
+if (typeof Module === 'undefined') Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
+if (!Module.expectedDataFileDownloads) {
+  Module.expectedDataFileDownloads = 0;
+  Module.finishedDataFileDownloads = 0;
+}
+Module.expectedDataFileDownloads++;
+(function() {
+
+    var PACKAGE_PATH;
+    if (typeof window === 'object') {
+      PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.toString().substring(0, window.location.pathname.toString().lastIndexOf('/')) + '/');
+    } else {
+      // worker
+      PACKAGE_PATH = encodeURIComponent(location.pathname.toString().substring(0, location.pathname.toString().lastIndexOf('/')) + '/');
+    }
+    var PACKAGE_NAME = '/home/caiiiycuk/js/js-dos.com/build/games/colorado.exe.data';
+    var REMOTE_PACKAGE_BASE = 'colorado.exe.data';
+    if (typeof Module['locateFilePackage'] === 'function' && !Module['locateFile']) {
+      Module['locateFile'] = Module['locateFilePackage'];
+      Module.printErr('warning: you defined Module.locateFilePackage, that has been renamed to Module.locateFile (using your locateFilePackage for now)');
+    }
+    var REMOTE_PACKAGE_NAME = typeof Module['locateFile'] === 'function' ?
+                              Module['locateFile'](REMOTE_PACKAGE_BASE) :
+                              ((Module['filePackagePrefixURL'] || '') + REMOTE_PACKAGE_BASE);
+    var REMOTE_PACKAGE_SIZE = 707656;
+    var PACKAGE_UUID = '94c4b27e-595e-4995-b4dd-cb3f5986058e';
+  
+    function fetchRemotePackage(packageName, packageSize, callback, errback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', packageName, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onprogress = function(event) {
+        var url = packageName;
+        var size = packageSize;
+        if (event.total) size = event.total;
+        if (event.loaded) {
+          if (!xhr.addedTotal) {
+            xhr.addedTotal = true;
+            if (!Module.dataFileDownloads) Module.dataFileDownloads = {};
+            Module.dataFileDownloads[url] = {
+              loaded: event.loaded,
+              total: size
+            };
+          } else {
+            Module.dataFileDownloads[url].loaded = event.loaded;
+          }
+          var total = 0;
+          var loaded = 0;
+          var num = 0;
+          for (var download in Module.dataFileDownloads) {
+          var data = Module.dataFileDownloads[download];
+            total += data.total;
+            loaded += data.loaded;
+            num++;
+          }
+          total = Math.ceil(total * Module.expectedDataFileDownloads/num);
+          if (Module['setStatus']) Module['setStatus']('Downloading data... (' + loaded + '/' + total + ')');
+        } else if (!Module.dataFileDownloads) {
+          if (Module['setStatus']) Module['setStatus']('Downloading data...');
+        }
+      };
+      xhr.onload = function(event) {
+        var packageData = xhr.response;
+        callback(packageData);
+      };
+      xhr.send(null);
+    };
+
+    function handleError(error) {
+      console.error('package error:', error);
+    };
+  
+      var fetched = null, fetchedCallback = null;
+      fetchRemotePackage(REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE, function(data) {
+        if (fetchedCallback) {
+          fetchedCallback(data);
+          fetchedCallback = null;
+        } else {
+          fetched = data;
+        }
+      }, handleError);
+    
+  function runWithFS() {
+
+function assert(check, msg) {
+  if (!check) throw msg + new Error().stack;
+}
+
+    function DataRequest(start, end, crunched, audio) {
+      this.start = start;
+      this.end = end;
+      this.crunched = crunched;
+      this.audio = audio;
+    }
+    DataRequest.prototype = {
+      requests: {},
+      open: function(mode, name) {
+        this.name = name;
+        this.requests[name] = this;
+        Module['addRunDependency']('fp ' + this.name);
+      },
+      send: function() {},
+      onload: function() {
+        var byteArray = this.byteArray.subarray(this.start, this.end);
+
+          this.finish(byteArray);
+
+      },
+      finish: function(byteArray) {
+        var that = this;
+        Module['FS_createPreloadedFile'](this.name, null, byteArray, true, true, function() {
+          Module['removeRunDependency']('fp ' + that.name);
+        }, function() {
+          if (that.audio) {
+            Module['removeRunDependency']('fp ' + that.name); // workaround for chromium bug 124926 (still no audio with this, but at least we don't hang)
+          } else {
+            Module.printErr('Preloading file ' + that.name + ' failed');
+          }
+        }, false, true); // canOwn this data in the filesystem, it is a slide into the heap that will never change
+        this.requests[this.name] = null;
+      },
+    };
+      new DataRequest(0, 2163, 0, 0).open('GET', '/Bouclier.io');
+    new DataRequest(2163, 28163, 0, 0).open('GET', '/MINEUR.IO');
+    new DataRequest(28163, 41529, 0, 0).open('GET', '/CIEL1.IO');
+    new DataRequest(41529, 46231, 0, 0).open('GET', '/HUCK.IO');
+    new DataRequest(46231, 73338, 0, 0).open('GET', '/IROQUOIS.IO');
+    new DataRequest(73338, 91406, 0, 0).open('GET', '/SCOLO.IO');
+    new DataRequest(91406, 141478, 0, 0).open('GET', '/MINE.IO');
+    new DataRequest(141478, 143246, 0, 0).open('GET', '/disk1');
+    new DataRequest(143246, 162666, 0, 0).open('GET', '/INDIEN.IO');
+    new DataRequest(162666, 170880, 0, 0).open('GET', '/SPLASH.IO');
+    new DataRequest(170880, 212359, 0, 0).open('GET', '/NEIGEPC.IO');
+    new DataRequest(212359, 214174, 0, 0).open('GET', '/CANOT.IO');
+    new DataRequest(214174, 226739, 0, 0).open('GET', '/DECORUM.IO');
+    new DataRequest(226739, 228277, 0, 0).open('GET', '/VICTORY.IO');
+    new DataRequest(228277, 241223, 0, 0).open('GET', '/MAIN.IO');
+    new DataRequest(241223, 244748, 0, 0).open('GET', '/SORCIER.IO');
+    new DataRequest(244748, 248762, 0, 0).open('GET', '/BEN.IO');
+    new DataRequest(248762, 262778, 0, 0).open('GET', '/ELEM.IO');
+    new DataRequest(262778, 265668, 0, 0).open('GET', '/WAGON.IO');
+    new DataRequest(265668, 266206, 0, 0).open('GET', '/SOS.FIC');
+    new DataRequest(266206, 279407, 0, 0).open('GET', '/CANOE.IO');
+    new DataRequest(279407, 295583, 0, 0).open('GET', '/CONTOUR.IO');
+    new DataRequest(295583, 329020, 0, 0).open('GET', '/CANYON.IO');
+    new DataRequest(329020, 331966, 0, 0).open('GET', '/TANGO.IO');
+    new DataRequest(331966, 352378, 0, 0).open('GET', '/CAMP.IO');
+    new DataRequest(352378, 419391, 0, 0).open('GET', '/FORET.IO');
+    new DataRequest(419391, 424314, 0, 0).open('GET', '/OBJET.IO');
+    new DataRequest(424314, 424454, 0, 0).open('GET', '/VS.VSN');
+    new DataRequest(424454, 431402, 0, 0).open('GET', '/CONDOR.IO');
+    new DataRequest(431402, 440978, 0, 0).open('GET', '/SLOUP.IO');
+    new DataRequest(440978, 446501, 0, 0).open('GET', '/GEANT.IO');
+    new DataRequest(446501, 468199, 0, 0).open('GET', '/DECOR.IO');
+    new DataRequest(468199, 481618, 0, 0).open('GET', '/CARTE.IO');
+    new DataRequest(481618, 530324, 0, 0).open('GET', '/COLORADO.EXE');
+    new DataRequest(530324, 543928, 0, 0).open('GET', '/LOGO.IO');
+    new DataRequest(543928, 556047, 0, 0).open('GET', '/FLOT.IO');
+    new DataRequest(556047, 560734, 0, 0).open('GET', '/SCOMBAT.IO');
+    new DataRequest(560734, 561733, 0, 0).open('GET', '/NOTTEPC.IO');
+    new DataRequest(561733, 608854, 0, 0).open('GET', '/BERGE.IO');
+    new DataRequest(608854, 610954, 0, 0).open('GET', '/BLANCPC.IO');
+    new DataRequest(610954, 616016, 0, 0).open('GET', '/CMAIN.IO');
+    new DataRequest(616016, 622896, 0, 0).open('GET', '/BIGGLE.IO');
+    new DataRequest(622896, 650626, 0, 0).open('GET', '/APACHES.IO');
+    new DataRequest(650626, 653968, 0, 0).open('GET', '/TAB.FIC');
+    new DataRequest(653968, 655343, 0, 0).open('GET', '/disk2');
+    new DataRequest(655343, 655894, 0, 0).open('GET', '/PORTE.IO');
+    new DataRequest(655894, 665948, 0, 0).open('GET', '/LOUP.IO');
+    new DataRequest(665948, 707656, 0, 0).open('GET', '/PASQUI.IO');
+
+    function processPackageData(arrayBuffer) {
+      Module.finishedDataFileDownloads++;
+      assert(arrayBuffer, 'Loading data file failed.');
+      var byteArray = new Uint8Array(arrayBuffer);
+      var curr;
+      
+      // Reuse the bytearray from the XHR as the source for file reads.
+      DataRequest.prototype.byteArray = byteArray;
+          DataRequest.prototype.requests["/Bouclier.io"].onload();
+          DataRequest.prototype.requests["/MINEUR.IO"].onload();
+          DataRequest.prototype.requests["/CIEL1.IO"].onload();
+          DataRequest.prototype.requests["/HUCK.IO"].onload();
+          DataRequest.prototype.requests["/IROQUOIS.IO"].onload();
+          DataRequest.prototype.requests["/SCOLO.IO"].onload();
+          DataRequest.prototype.requests["/MINE.IO"].onload();
+          DataRequest.prototype.requests["/disk1"].onload();
+          DataRequest.prototype.requests["/INDIEN.IO"].onload();
+          DataRequest.prototype.requests["/SPLASH.IO"].onload();
+          DataRequest.prototype.requests["/NEIGEPC.IO"].onload();
+          DataRequest.prototype.requests["/CANOT.IO"].onload();
+          DataRequest.prototype.requests["/DECORUM.IO"].onload();
+          DataRequest.prototype.requests["/VICTORY.IO"].onload();
+          DataRequest.prototype.requests["/MAIN.IO"].onload();
+          DataRequest.prototype.requests["/SORCIER.IO"].onload();
+          DataRequest.prototype.requests["/BEN.IO"].onload();
+          DataRequest.prototype.requests["/ELEM.IO"].onload();
+          DataRequest.prototype.requests["/WAGON.IO"].onload();
+          DataRequest.prototype.requests["/SOS.FIC"].onload();
+          DataRequest.prototype.requests["/CANOE.IO"].onload();
+          DataRequest.prototype.requests["/CONTOUR.IO"].onload();
+          DataRequest.prototype.requests["/CANYON.IO"].onload();
+          DataRequest.prototype.requests["/TANGO.IO"].onload();
+          DataRequest.prototype.requests["/CAMP.IO"].onload();
+          DataRequest.prototype.requests["/FORET.IO"].onload();
+          DataRequest.prototype.requests["/OBJET.IO"].onload();
+          DataRequest.prototype.requests["/VS.VSN"].onload();
+          DataRequest.prototype.requests["/CONDOR.IO"].onload();
+          DataRequest.prototype.requests["/SLOUP.IO"].onload();
+          DataRequest.prototype.requests["/GEANT.IO"].onload();
+          DataRequest.prototype.requests["/DECOR.IO"].onload();
+          DataRequest.prototype.requests["/CARTE.IO"].onload();
+          DataRequest.prototype.requests["/COLORADO.EXE"].onload();
+          DataRequest.prototype.requests["/LOGO.IO"].onload();
+          DataRequest.prototype.requests["/FLOT.IO"].onload();
+          DataRequest.prototype.requests["/SCOMBAT.IO"].onload();
+          DataRequest.prototype.requests["/NOTTEPC.IO"].onload();
+          DataRequest.prototype.requests["/BERGE.IO"].onload();
+          DataRequest.prototype.requests["/BLANCPC.IO"].onload();
+          DataRequest.prototype.requests["/CMAIN.IO"].onload();
+          DataRequest.prototype.requests["/BIGGLE.IO"].onload();
+          DataRequest.prototype.requests["/APACHES.IO"].onload();
+          DataRequest.prototype.requests["/TAB.FIC"].onload();
+          DataRequest.prototype.requests["/disk2"].onload();
+          DataRequest.prototype.requests["/PORTE.IO"].onload();
+          DataRequest.prototype.requests["/LOUP.IO"].onload();
+          DataRequest.prototype.requests["/PASQUI.IO"].onload();
+          Module['removeRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/colorado.exe.data');
+
+    };
+    Module['addRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/colorado.exe.data');
+  
+    if (!Module.preloadResults) Module.preloadResults = {};
+  
+      Module.preloadResults[PACKAGE_NAME] = {fromCache: false};
+      if (fetched) {
+        processPackageData(fetched);
+        fetched = null;
+      } else {
+        fetchedCallback = processPackageData;
+      }
+    
+  }
+  if (Module['calledRun']) {
+    runWithFS();
+  } else {
+    if (!Module['preRun']) Module['preRun'] = [];
+    Module["preRun"].push(runWithFS); // FS is not initialized yet, wait for it
+  }
+
+})();
+
+Module['arguments'] = [ '-conf', './dosbox.conf', './COLORADO.EXE' ];
+</script>
+   <!-- <script async type="text/javascript" src="/dosbox.js"></script> -->
+
+   <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter27763311 = new Ya.Metrika({id:27763311,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+  </body>
+</html>

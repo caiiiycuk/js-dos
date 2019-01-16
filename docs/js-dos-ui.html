@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Dosbox.UI</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1 id="dosbox-ui">Dosbox.UI</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>CSS+JS that implements js-dos look and feel</p>
+<p>Usage:</p>
+<pre><code class="lang-javascript"><span class="hljs-keyword">new</span> Dosbox.UI({id: <span class="hljs-string">'divId'</span>});
+</code></pre>
+<p>Constructor arguments:</p>
+<ul>
+<li>id - id of dom element where dosbox will be created</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Dosbox</span>.<span class="hljs-title">UI</span></span>
+
+  <span class="hljs-attribute">constructor</span>: <span class="hljs-function"><span class="hljs-params">(options)</span> -&gt;</span>
+    <span class="hljs-property">@appendCss</span>()
+    <span class="hljs-property">@div</span> = $(<span class="hljs-string">'#'</span> + (options.id || <span class="hljs-string">'dosbox'</span>))
+
+    <span class="hljs-property">@wrapper</span> = $(<span class="hljs-string">'&lt;div class="dosbox-container"&gt;'</span>)
+    <span class="hljs-property">@canvas</span> = $(<span class="hljs-string">'&lt;canvas class="dosbox-canvas" oncontextmenu="event.preventDefault()"&gt;'</span>)
+    <span class="hljs-property">@overlay</span> = $(<span class="hljs-string">'&lt;div class="dosbox-overlay"&gt;'</span>)
+    <span class="hljs-property">@loaderMessage</span> = $(<span class="hljs-string">'&lt;div class="dosbox-loader-message"&gt;'</span>)
+
+    <span class="hljs-property">@loader</span> =
+      $(<span class="hljs-string">'&lt;div class="dosbox-loader"&gt;'</span>)
+        .append($(<span class="hljs-string">'&lt;div class="st-loader"&gt;'</span>).append($(<span class="hljs-string">'&lt;span class="equal"&gt;'</span>)))
+        .append(<span class="hljs-property">@loaderMessage</span>)
+
+    <span class="hljs-property">@start</span> = $(<span class="hljs-string">'&lt;div class="dosbox-start"&gt;Click to start'</span>)
+
+    <span class="hljs-property">@div</span>.append(<span class="hljs-property">@wrapper</span>)
+    
+    <span class="hljs-property">@wrapper</span>.append(<span class="hljs-property">@canvas</span>)
+    <span class="hljs-property">@wrapper</span>.append(<span class="hljs-property">@loader</span>)
+    <span class="hljs-property">@wrapper</span>.append(<span class="hljs-property">@overlay</span>)
+
+    <span class="hljs-property">@overlay</span>
+      .append($(<span class="hljs-string">'&lt;div class="dosbox-powered"&gt;Powered by &amp;nbsp;'</span>)
+      .append($(<span class="hljs-string">'&lt;a href="http://js-dos.com"&gt;js-dos.com'</span>)))
+    <span class="hljs-property">@overlay</span>.append(<span class="hljs-property">@start</span>)
+
+  <span class="hljs-attribute">onStart</span>: <span class="hljs-function"><span class="hljs-params">(fun)</span> -&gt;</span>
+    <span class="hljs-property">@start</span>.click () =&gt;
+      fun()
+      <span class="hljs-property">@overlay</span>.hide()
+
+  <span class="hljs-attribute">appendCss</span>: <span class="hljs-function">-&gt;</span>
+    head = <span class="hljs-built_in">document</span>.head || <span class="hljs-built_in">document</span>.getElementsByTagName(<span class="hljs-string">'head'</span>)[<span class="hljs-number">0</span>]
+    style = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'style'</span>)
+
+    style.type = <span class="hljs-string">'text/css'</span>
+
+    <span class="hljs-keyword">if</span> style.styleSheet
+      style.styleSheet.cssText = <span class="hljs-property">@css</span>
+    <span class="hljs-keyword">else</span>
+      style.appendChild <span class="hljs-built_in">document</span>.createTextNode(<span class="hljs-property">@css</span>)
+    
+    head.appendChild style
+
+  <span class="hljs-attribute">showLoader</span>: <span class="hljs-function">-&gt;</span>
+    <span class="hljs-property">@loader</span>.show()
+    <span class="hljs-property">@loaderMessage</span>.html <span class="hljs-string">''</span>
+
+  <span class="hljs-attribute">updateMessage</span>: <span class="hljs-function"><span class="hljs-params">(message)</span> -&gt;</span>
+    <span class="hljs-property">@loaderMessage</span>.html message
+
+  <span class="hljs-attribute">hideLoader</span>: <span class="hljs-function">-&gt;</span>
+    <span class="hljs-property">@loader</span>.hide()
+
+  <span class="hljs-attribute">css</span>: <span class="hljs-string">'
+.dosbox-container {
+  position: relative;
+  min-width: 320px;
+  min-height: 200px;
+}
+
+.dosbox-canvas {
+}
+
+.dosbox-overlay, .dosbox-loader {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #333;
+}
+
+.dosbox-start {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 50%;
+  color: #f80;
+  font-size: 1.5em;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.dosbox-overlay a {
+  color: #f80;
+}
+
+.dosbox-loader {
+  display: none;
+}
+
+.dosbox-powered {
+  position: absolute;
+  right: 1em;
+  bottom: 1em;
+  font-size: 0.8em;
+  color: #9C9C9C;
+}
+
+.dosbox-loader-message {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 50%;
+  margin: 0 0 -3em 0;
+  box-sizing: border-box;
+  color: #f80;
+  font-size: 1.5em;
+}
+
+@-moz-keyframes loading {
+  0% {
+    left: 0;
+  }
+  50% {
+    left: 8.33333em;
+  }
+  100% {
+    left: 0;
+  }
+}
+@-webkit-keyframes loading {
+  0% {
+    left: 0;
+  }
+  50% {
+    left: 8.33333em;
+  }
+  100% {
+    left: 0;
+  }
+}
+@keyframes loading {
+  0% {
+    left: 0;
+  }
+  50% {
+    left: 8.33333em;
+  }
+  100% {
+    left: 0;
+  }
+}
+.st-loader {
+  width: 10em;
+  height: 2.5em;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -1.25em 0 0 -5em;
+  box-sizing: border-box;
+}
+
+.st-loader:before,
+.st-loader:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1.25em;
+  box-sizing: border-box;
+  border: 0.25em solid #f80;
+}
+
+.st-loader:before {
+  left: -0.76923em;
+  border-right: 0;
+}
+
+.st-loader:after {
+  right: -0.76923em;
+  border-left: 0;
+}
+
+.st-loader .equal {
+  display: block;
+  position: absolute;
+  top: 50%;
+  margin-top: -0.5em;
+  left: 4.16667em;
+  height: 1em;
+  width: 1.66667em;
+  border: 0.25em solid #f80;
+  box-sizing: border-box;
+  border-width: 0.25em 0;
+  -moz-animation: loading 1.5s infinite ease-in-out;
+  -webkit-animation: loading 1.5s infinite ease-in-out;
+  animation: loading 1.5s infinite ease-in-out;
+}
+'</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

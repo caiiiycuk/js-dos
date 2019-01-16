@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>JS-DOS / GAMES / TYRIAN2K</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="On this site you can play in TYRIAN2K in browser">
+    <meta name="keywords" content="TYRIAN2K">
+    <meta name="author" content="caiiiycuk">
+
+    <!-- Le styles -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/assets/ico/favicon.png">
+
+    <style type="text/css">
+      div.emscripten, .emscripten-status, .emscripten-padding {
+        padding-top: 20px;
+        padding-left: 20px;
+      }
+
+      .fullscreen {
+        display: none;
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
+      .emscripten canvas {
+        border: 0;
+        
+      }
+    </style>
+  </head>
+  
+  <body data-spy="scroll" data-target=".bs-docs-sidebar" style="visibility: hidden;">
+    <div class="emscripten-status" >
+      Starting MS-DOS...<br/>
+      MS-DOS Version 6.22<br/><br/>
+      <p id="error"></p>
+      <p id="status">Downloading data...</p>
+      <p id="progress">Progress...</p>
+    </div>
+
+    <div class="emscripten">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+    <div class="fullscreen">
+      <a id="fullscreen" href="javascript:void(0);">Fullscreen</a><br/><br/>
+    </div>
+    <div class="emscripten-padding">
+      <strong>NOTES:</strong> 
+      <ul>
+        <li>If you have problems with the mouse positioning of the mouse, then try to switching on <b>Fullscreen</b> mode</li>
+        <li>While the browser is loading the program, it may hang up for a while</li>
+        <li>Sometimes you should click on a canvas to capture the mouse</li>
+      </ul>
+    </div>
+
+    <div class="emscripten-padding">
+      <a href="/games">cd C:&#92;GAMES</a>
+    </div>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/assets/js/jquery-1.11.2.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js" defer></script>
+
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+
+      var Module = {
+        noImageDecoding: true,
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('output');
+          if (element) element.value = ''; // clear browser cache
+          return function(text) {
+            text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            if (element) {
+              element.value += text + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        printErr: function(text) {
+          text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          //if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m) {
+            text = m[1];
+            progressElement.innerHTML = "Progress " + Math.round(parseInt(m[2]) / parseInt(m[4]) * 100) + "%";
+            progressElement.hidden = false;
+          } else {
+            progressElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+
+          if (left == 0) {
+            $('.emscripten-status').hide();
+            $('.fullscreen').show();
+          }
+        },
+        SDL_numSimultaneouslyQueuedBuffers: 1
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+
+       $(document).ready(function () {
+         $("#fullscreen").click(function() {
+            Module.requestFullScreen(false, false);
+         });
+
+         setTimeout(function () {
+          $.ajax({
+             url: "/dosbox.js",
+             dataType: "script",
+             error: function(jqXHR, textStatus, error) {
+              $('#error').html('Exception thrown, see JavaScript console');
+              console.log(textStatus, error);
+             },
+             xhr: function() {
+               var xhr;
+               Module.setStatus("Downloading script");
+               xhr = $.ajaxSettings.xhr();
+               xhr.addEventListener("progress", function(evt) {
+                 if (evt.lengthComputable) {
+                   Module.setStatus("Downloading script... (" + evt.loaded + "/" + evt.total + ")");
+                 }
+               });
+               return xhr;
+             }
+          });
+         }, 1000);
+      });
+   </script>
+<script type="text/javascript">
+var Module;
+if (typeof Module === 'undefined') Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
+if (!Module.expectedDataFileDownloads) {
+  Module.expectedDataFileDownloads = 0;
+  Module.finishedDataFileDownloads = 0;
+}
+Module.expectedDataFileDownloads++;
+(function() {
+
+    var PACKAGE_PATH;
+    if (typeof window === 'object') {
+      PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.toString().substring(0, window.location.pathname.toString().lastIndexOf('/')) + '/');
+    } else {
+      // worker
+      PACKAGE_PATH = encodeURIComponent(location.pathname.toString().substring(0, location.pathname.toString().lastIndexOf('/')) + '/');
+    }
+    var PACKAGE_NAME = '/home/caiiiycuk/js/js-dos.com/build/games/tyrian2k.exe.data';
+    var REMOTE_PACKAGE_BASE = 'tyrian2k.exe.data';
+    if (typeof Module['locateFilePackage'] === 'function' && !Module['locateFile']) {
+      Module['locateFile'] = Module['locateFilePackage'];
+      Module.printErr('warning: you defined Module.locateFilePackage, that has been renamed to Module.locateFile (using your locateFilePackage for now)');
+    }
+    var REMOTE_PACKAGE_NAME = typeof Module['locateFile'] === 'function' ?
+                              Module['locateFile'](REMOTE_PACKAGE_BASE) :
+                              ((Module['filePackagePrefixURL'] || '') + REMOTE_PACKAGE_BASE);
+    var REMOTE_PACKAGE_SIZE = 12346016;
+    var PACKAGE_UUID = '72756dc5-4404-4f49-ac20-ac317ff39383';
+  
+    function fetchRemotePackage(packageName, packageSize, callback, errback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', packageName, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onprogress = function(event) {
+        var url = packageName;
+        var size = packageSize;
+        if (event.total) size = event.total;
+        if (event.loaded) {
+          if (!xhr.addedTotal) {
+            xhr.addedTotal = true;
+            if (!Module.dataFileDownloads) Module.dataFileDownloads = {};
+            Module.dataFileDownloads[url] = {
+              loaded: event.loaded,
+              total: size
+            };
+          } else {
+            Module.dataFileDownloads[url].loaded = event.loaded;
+          }
+          var total = 0;
+          var loaded = 0;
+          var num = 0;
+          for (var download in Module.dataFileDownloads) {
+          var data = Module.dataFileDownloads[download];
+            total += data.total;
+            loaded += data.loaded;
+            num++;
+          }
+          total = Math.ceil(total * Module.expectedDataFileDownloads/num);
+          if (Module['setStatus']) Module['setStatus']('Downloading data... (' + loaded + '/' + total + ')');
+        } else if (!Module.dataFileDownloads) {
+          if (Module['setStatus']) Module['setStatus']('Downloading data...');
+        }
+      };
+      xhr.onload = function(event) {
+        var packageData = xhr.response;
+        callback(packageData);
+      };
+      xhr.send(null);
+    };
+
+    function handleError(error) {
+      console.error('package error:', error);
+    };
+  
+      var fetched = null, fetchedCallback = null;
+      fetchRemotePackage(REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE, function(data) {
+        if (fetchedCallback) {
+          fetchedCallback(data);
+          fetchedCallback = null;
+        } else {
+          fetched = data;
+        }
+      }, handleError);
+    
+  function runWithFS() {
+
+function assert(check, msg) {
+  if (!check) throw msg + new Error().stack;
+}
+
+    function DataRequest(start, end, crunched, audio) {
+      this.start = start;
+      this.end = end;
+      this.crunched = crunched;
+      this.audio = audio;
+    }
+    DataRequest.prototype = {
+      requests: {},
+      open: function(mode, name) {
+        this.name = name;
+        this.requests[name] = this;
+        Module['addRunDependency']('fp ' + this.name);
+      },
+      send: function() {},
+      onload: function() {
+        var byteArray = this.byteArray.subarray(this.start, this.end);
+
+          this.finish(byteArray);
+
+      },
+      finish: function(byteArray) {
+        var that = this;
+        Module['FS_createPreloadedFile'](this.name, null, byteArray, true, true, function() {
+          Module['removeRunDependency']('fp ' + that.name);
+        }, function() {
+          if (that.audio) {
+            Module['removeRunDependency']('fp ' + that.name); // workaround for chromium bug 124926 (still no audio with this, but at least we don't hang)
+          } else {
+            Module.printErr('Preloading file ' + that.name + ' failed');
+          }
+        }, false, true); // canOwn this data in the filesystem, it is a slide into the heap that will never change
+        this.requests[this.name] = null;
+      },
+    };
+      new DataRequest(0, 41201, 0, 0).open('GET', '/NEWSHN.SHP');
+    new DataRequest(41201, 66823, 0, 0).open('GET', '/NEWSHA.SHP');
+    new DataRequest(66823, 572806, 0, 0).open('GET', '/TYRIAN.SHP');
+    new DataRequest(572806, 583922, 0, 0).open('GET', '/LEVELS4.DAT');
+    new DataRequest(583922, 583946, 0, 0).open('GET', '/SETUP.BOX');
+    new DataRequest(583946, 1521249, 0, 0).open('GET', '/TYRIAN4.LVL');
+    new DataRequest(1521249, 1915187, 0, 0).open('GET', '/TYRIAN3.LVL');
+    new DataRequest(1915187, 1948750, 0, 0).open('GET', '/NEWSHE.SHP');
+    new DataRequest(1948750, 1950988, 0, 0).open('GET', '/TYRICN3.ICO');
+    new DataRequest(1950988, 1968205, 0, 0).open('GET', '/UNINST.ISU');
+    new DataRequest(1968205, 2349392, 0, 0).open('GET', '/TYRIAN2.LVL');
+    new DataRequest(2349392, 2364321, 0, 0).open('GET', '/NEWSH~.SHP');
+    new DataRequest(2364321, 2403152, 0, 0).open('GET', '/NEWSH9.SHP');
+    new DataRequest(2403152, 2449791, 0, 0).open('GET', '/NEWSHH.SHP');
+    new DataRequest(2449791, 2455843, 0, 0).open('GET', '/LEVELS3.DAT');
+    new DataRequest(2455843, 2496557, 0, 0).open('GET', '/NEWSHC.SHP');
+    new DataRequest(2496557, 2500893, 0, 0).open('GET', '/TYRIAN2K.EXE');
+    new DataRequest(2500893, 2503086, 0, 0).open('GET', '/DEMO.2');
+    new DataRequest(2503086, 2542111, 0, 0).open('GET', '/NEWSHB.SHP');
+    new DataRequest(2542111, 2544856, 0, 0).open('GET', '/DEMO.1');
+    new DataRequest(2544856, 2588935, 0, 0).open('GET', '/NEWSH7.SHP');
+    new DataRequest(2588935, 2777210, 0, 0).open('GET', '/VOICESC.SND');
+    new DataRequest(2777210, 6093058, 0, 0).open('GET', '/TYREND.ANM');
+    new DataRequest(6093058, 6110808, 0, 0).open('GET', '/NEWSH#.SHP');
+    new DataRequest(6110808, 6317560, 0, 0).open('GET', '/SHAPESY.DAT');
+    new DataRequest(6317560, 6322882, 0, 0).open('GET', '/NEWSH$.SHP');
+    new DataRequest(6322882, 6350469, 0, 0).open('GET', '/NEWSHL.SHP');
+    new DataRequest(6350469, 6392595, 0, 0).open('GET', '/NEWSHM.SHP');
+    new DataRequest(6392595, 6454358, 0, 0).open('GET', '/CUBETXT4.DAT');
+    new DataRequest(6454358, 6489510, 0, 0).open('GET', '/NEWSH8.SHP');
+    new DataRequest(6489510, 6531522, 0, 0).open('GET', '/NEWSHD.SHP');
+    new DataRequest(6531522, 6568652, 0, 0).open('GET', '/NEWSH3.SHP');
+    new DataRequest(6568652, 6587084, 0, 0).open('GET', '/PALETTE.DAT');
+    new DataRequest(6587084, 6610169, 0, 0).open('GET', '/NEWSHK.SHP');
+    new DataRequest(6610169, 6645949, 0, 0).open('GET', '/CUBETXT1.DAT');
+    new DataRequest(6645949, 6647868, 0, 0).open('GET', '/README.TXT');
+    new DataRequest(6647868, 6651868, 0, 0).open('GET', '/EXITMSG.BIN');
+    new DataRequest(6651868, 6770588, 0, 0).open('GET', '/SHAPES).DAT');
+    new DataRequest(6770588, 6798262, 0, 0).open('GET', '/USER1.SHP');
+    new DataRequest(6798262, 6805286, 0, 0).open('GET', '/CUBETXT5.DAT');
+    new DataRequest(6805286, 6806408, 0, 0).open('GET', '/DEMO.5');
+    new DataRequest(6806408, 6852974, 0, 0).open('GET', '/NEWSHS.SHP');
+    new DataRequest(6852974, 6855212, 0, 0).open('GET', '/TYRICN4.ICO');
+    new DataRequest(6855212, 6890869, 0, 0).open('GET', '/NEWSHU.SHP');
+    new DataRequest(6890869, 7277182, 0, 0).open('GET', '/FILE0001.EXE');
+    new DataRequest(7277182, 7291278, 0, 0).open('GET', '/NEWSH0.SHP');
+    new DataRequest(7291278, 7353446, 0, 0).open('GET', '/TSHP2.PCX');
+    new DataRequest(7353446, 7355684, 0, 0).open('GET', '/TYRICN2.ICO');
+    new DataRequest(7355684, 7476537, 0, 0).open('GET', '/RTM.EXE');
+    new DataRequest(7476537, 7771606, 0, 0).open('GET', '/TYRIAN.HDT');
+    new DataRequest(7771606, 7798715, 0, 0).open('GET', '/NEWSH4.SHP');
+    new DataRequest(7798715, 7822818, 0, 0).open('GET', '/NEWSHV.SHP');
+    new DataRequest(7822818, 7965833, 0, 0).open('GET', '/SHIPEDIT.EXE');
+    new DataRequest(7965833, 8081171, 0, 0).open('GET', '/ESTSC.SHP');
+    new DataRequest(8081171, 8116407, 0, 0).open('GET', '/NEWSH2.SHP');
+    new DataRequest(8116407, 8148467, 0, 0).open('GET', '/NEWSH(.SHP');
+    new DataRequest(8148467, 8148925, 0, 0).open('GET', '/USER.SHP');
+    new DataRequest(8148925, 8180755, 0, 0).open('GET', '/NEWSHT.SHP');
+    new DataRequest(8180755, 8300307, 0, 0).open('GET', '/ESTPA.SHP');
+    new DataRequest(8300307, 8350851, 0, 0).open('GET', '/DPMI16BI.OVL');
+    new DataRequest(8350851, 8504333, 0, 0).open('GET', '/MUSIC.MUS');
+    new DataRequest(8504333, 8513933, 0, 0).open('GET', '/LEVELS1.DAT');
+    new DataRequest(8513933, 8598743, 0, 0).open('GET', '/TYRIAN2.EXE');
+    new DataRequest(8598743, 8632286, 0, 0).open('GET', '/NEWSHF.SHP');
+    new DataRequest(8632286, 8667174, 0, 0).open('GET', '/NEWSH^.SHP');
+    new DataRequest(8667174, 8675283, 0, 0).open('GET', '/CUBETXT2.DAT');
+    new DataRequest(8675283, 8680005, 0, 0).open('GET', '/TYRIAN.SAV');
+    new DataRequest(8680005, 8697815, 0, 0).open('GET', '/NEWSH6.SHP');
+    new DataRequest(8697815, 8738059, 0, 0).open('GET', '/NEWSH%.SHP');
+    new DataRequest(8738059, 8739026, 0, 0).open('GET', '/TYRIAN2K.PIF');
+    new DataRequest(8739026, 8741264, 0, 0).open('GET', '/TYRICON.ICO');
+    new DataRequest(8741264, 9280120, 0, 0).open('GET', '/TYRIAN1.LVL');
+    new DataRequest(9280120, 9497624, 0, 0).open('GET', '/SHAPESX.DAT');
+    new DataRequest(9497624, 9498702, 0, 0).open('GET', '/TYRIAN.CDT');
+    new DataRequest(9498702, 9510979, 0, 0).open('GET', '/CUBETXT3.DAT');
+    new DataRequest(9510979, 9547622, 0, 0).open('GET', '/NEWSHG.SHP');
+    new DataRequest(9547622, 9547650, 0, 0).open('GET', '/TYRIAN.CFG');
+    new DataRequest(9547650, 9564148, 0, 0).open('GET', '/NEWSH@.SHP');
+    new DataRequest(9564148, 9588626, 0, 0).open('GET', '/NEWSHO.SHP');
+    new DataRequest(9588626, 9589325, 0, 0).open('GET', '/DEMO.4');
+    new DataRequest(9589325, 9722092, 0, 0).open('GET', '/VOICES.SND');
+    new DataRequest(9722092, 9726349, 0, 0).open('GET', '/LEVELS5.DAT');
+    new DataRequest(9726349, 9898829, 0, 0).open('GET', '/SHAPESW.DAT');
+    new DataRequest(9898829, 9926503, 0, 0).open('GET', '/USER2.SHP');
+    new DataRequest(9926503, 9956444, 0, 0).open('GET', '/NEWSH1.SHP');
+    new DataRequest(9956444, 10275420, 0, 0).open('GET', '/SHAPESZ.DAT');
+    new DataRequest(10275420, 10310528, 0, 0).open('GET', '/NEWSH\'.SHP');
+    new DataRequest(10310528, 10316062, 0, 0).open('GET', '/LEVELS2.DAT');
+    new DataRequest(10316062, 10683223, 0, 0).open('GET', '/TYRIAN.PIC');
+    new DataRequest(10683223, 10685197, 0, 0).open('GET', '/DEMO.3');
+    new DataRequest(10685197, 10698647, 0, 0).open('GET', '/SHIPEDIT.PCX');
+    new DataRequest(10698647, 10733029, 0, 0).open('GET', '/LOUDNESS.AWE');
+    new DataRequest(10733029, 11254166, 0, 0).open('GET', '/TYRIAN5.LVL');
+    new DataRequest(11254166, 11300370, 0, 0).open('GET', '/NEWSHP.SHP');
+    new DataRequest(11300370, 11572059, 0, 0).open('GET', '/TYRIAN.SND');
+    new DataRequest(11572059, 11573026, 0, 0).open('GET', '/SETUP.PIF');
+    new DataRequest(11573026, 12089783, 0, 0).open('GET', '/TYRIANC.SHP');
+    new DataRequest(12089783, 12118032, 0, 0).open('GET', '/NEWSHR.SHP');
+    new DataRequest(12118032, 12148892, 0, 0).open('GET', '/NEWSHI.SHP');
+    new DataRequest(12148892, 12192891, 0, 0).open('GET', '/NEWSHJ.SHP');
+    new DataRequest(12192891, 12228701, 0, 0).open('GET', '/NEWSH5.SHP');
+    new DataRequest(12228701, 12346016, 0, 0).open('GET', '/SETUP.EXE');
+
+    function processPackageData(arrayBuffer) {
+      Module.finishedDataFileDownloads++;
+      assert(arrayBuffer, 'Loading data file failed.');
+      var byteArray = new Uint8Array(arrayBuffer);
+      var curr;
+      
+      // Reuse the bytearray from the XHR as the source for file reads.
+      DataRequest.prototype.byteArray = byteArray;
+          DataRequest.prototype.requests["/NEWSHN.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHA.SHP"].onload();
+          DataRequest.prototype.requests["/TYRIAN.SHP"].onload();
+          DataRequest.prototype.requests["/LEVELS4.DAT"].onload();
+          DataRequest.prototype.requests["/SETUP.BOX"].onload();
+          DataRequest.prototype.requests["/TYRIAN4.LVL"].onload();
+          DataRequest.prototype.requests["/TYRIAN3.LVL"].onload();
+          DataRequest.prototype.requests["/NEWSHE.SHP"].onload();
+          DataRequest.prototype.requests["/TYRICN3.ICO"].onload();
+          DataRequest.prototype.requests["/UNINST.ISU"].onload();
+          DataRequest.prototype.requests["/TYRIAN2.LVL"].onload();
+          DataRequest.prototype.requests["/NEWSH~.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSH9.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHH.SHP"].onload();
+          DataRequest.prototype.requests["/LEVELS3.DAT"].onload();
+          DataRequest.prototype.requests["/NEWSHC.SHP"].onload();
+          DataRequest.prototype.requests["/TYRIAN2K.EXE"].onload();
+          DataRequest.prototype.requests["/DEMO.2"].onload();
+          DataRequest.prototype.requests["/NEWSHB.SHP"].onload();
+          DataRequest.prototype.requests["/DEMO.1"].onload();
+          DataRequest.prototype.requests["/NEWSH7.SHP"].onload();
+          DataRequest.prototype.requests["/VOICESC.SND"].onload();
+          DataRequest.prototype.requests["/TYREND.ANM"].onload();
+          DataRequest.prototype.requests["/NEWSH#.SHP"].onload();
+          DataRequest.prototype.requests["/SHAPESY.DAT"].onload();
+          DataRequest.prototype.requests["/NEWSH$.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHL.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHM.SHP"].onload();
+          DataRequest.prototype.requests["/CUBETXT4.DAT"].onload();
+          DataRequest.prototype.requests["/NEWSH8.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHD.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSH3.SHP"].onload();
+          DataRequest.prototype.requests["/PALETTE.DAT"].onload();
+          DataRequest.prototype.requests["/NEWSHK.SHP"].onload();
+          DataRequest.prototype.requests["/CUBETXT1.DAT"].onload();
+          DataRequest.prototype.requests["/README.TXT"].onload();
+          DataRequest.prototype.requests["/EXITMSG.BIN"].onload();
+          DataRequest.prototype.requests["/SHAPES).DAT"].onload();
+          DataRequest.prototype.requests["/USER1.SHP"].onload();
+          DataRequest.prototype.requests["/CUBETXT5.DAT"].onload();
+          DataRequest.prototype.requests["/DEMO.5"].onload();
+          DataRequest.prototype.requests["/NEWSHS.SHP"].onload();
+          DataRequest.prototype.requests["/TYRICN4.ICO"].onload();
+          DataRequest.prototype.requests["/NEWSHU.SHP"].onload();
+          DataRequest.prototype.requests["/FILE0001.EXE"].onload();
+          DataRequest.prototype.requests["/NEWSH0.SHP"].onload();
+          DataRequest.prototype.requests["/TSHP2.PCX"].onload();
+          DataRequest.prototype.requests["/TYRICN2.ICO"].onload();
+          DataRequest.prototype.requests["/RTM.EXE"].onload();
+          DataRequest.prototype.requests["/TYRIAN.HDT"].onload();
+          DataRequest.prototype.requests["/NEWSH4.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHV.SHP"].onload();
+          DataRequest.prototype.requests["/SHIPEDIT.EXE"].onload();
+          DataRequest.prototype.requests["/ESTSC.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSH2.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSH(.SHP"].onload();
+          DataRequest.prototype.requests["/USER.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHT.SHP"].onload();
+          DataRequest.prototype.requests["/ESTPA.SHP"].onload();
+          DataRequest.prototype.requests["/DPMI16BI.OVL"].onload();
+          DataRequest.prototype.requests["/MUSIC.MUS"].onload();
+          DataRequest.prototype.requests["/LEVELS1.DAT"].onload();
+          DataRequest.prototype.requests["/TYRIAN2.EXE"].onload();
+          DataRequest.prototype.requests["/NEWSHF.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSH^.SHP"].onload();
+          DataRequest.prototype.requests["/CUBETXT2.DAT"].onload();
+          DataRequest.prototype.requests["/TYRIAN.SAV"].onload();
+          DataRequest.prototype.requests["/NEWSH6.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSH%.SHP"].onload();
+          DataRequest.prototype.requests["/TYRIAN2K.PIF"].onload();
+          DataRequest.prototype.requests["/TYRICON.ICO"].onload();
+          DataRequest.prototype.requests["/TYRIAN1.LVL"].onload();
+          DataRequest.prototype.requests["/SHAPESX.DAT"].onload();
+          DataRequest.prototype.requests["/TYRIAN.CDT"].onload();
+          DataRequest.prototype.requests["/CUBETXT3.DAT"].onload();
+          DataRequest.prototype.requests["/NEWSHG.SHP"].onload();
+          DataRequest.prototype.requests["/TYRIAN.CFG"].onload();
+          DataRequest.prototype.requests["/NEWSH@.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHO.SHP"].onload();
+          DataRequest.prototype.requests["/DEMO.4"].onload();
+          DataRequest.prototype.requests["/VOICES.SND"].onload();
+          DataRequest.prototype.requests["/LEVELS5.DAT"].onload();
+          DataRequest.prototype.requests["/SHAPESW.DAT"].onload();
+          DataRequest.prototype.requests["/USER2.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSH1.SHP"].onload();
+          DataRequest.prototype.requests["/SHAPESZ.DAT"].onload();
+          DataRequest.prototype.requests["/NEWSH\'.SHP"].onload();
+          DataRequest.prototype.requests["/LEVELS2.DAT"].onload();
+          DataRequest.prototype.requests["/TYRIAN.PIC"].onload();
+          DataRequest.prototype.requests["/DEMO.3"].onload();
+          DataRequest.prototype.requests["/SHIPEDIT.PCX"].onload();
+          DataRequest.prototype.requests["/LOUDNESS.AWE"].onload();
+          DataRequest.prototype.requests["/TYRIAN5.LVL"].onload();
+          DataRequest.prototype.requests["/NEWSHP.SHP"].onload();
+          DataRequest.prototype.requests["/TYRIAN.SND"].onload();
+          DataRequest.prototype.requests["/SETUP.PIF"].onload();
+          DataRequest.prototype.requests["/TYRIANC.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHR.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHI.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSHJ.SHP"].onload();
+          DataRequest.prototype.requests["/NEWSH5.SHP"].onload();
+          DataRequest.prototype.requests["/SETUP.EXE"].onload();
+          Module['removeRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/tyrian2k.exe.data');
+
+    };
+    Module['addRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/tyrian2k.exe.data');
+  
+    if (!Module.preloadResults) Module.preloadResults = {};
+  
+      Module.preloadResults[PACKAGE_NAME] = {fromCache: false};
+      if (fetched) {
+        processPackageData(fetched);
+        fetched = null;
+      } else {
+        fetchedCallback = processPackageData;
+      }
+    
+  }
+  if (Module['calledRun']) {
+    runWithFS();
+  } else {
+    if (!Module['preRun']) Module['preRun'] = [];
+    Module["preRun"].push(runWithFS); // FS is not initialized yet, wait for it
+  }
+
+})();
+
+Module['arguments'] = [ '-conf', './dosbox.conf', './TYRIAN2K.EXE' ];
+</script>
+   <!-- <script async type="text/javascript" src="/dosbox.js"></script> -->
+
+   <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter27763311 = new Ya.Metrika({id:27763311,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+  </body>
+</html>

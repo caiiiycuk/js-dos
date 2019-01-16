@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>JS-DOS / GAMES / MICRO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="On this site you can play in MICRO in browser">
+    <meta name="keywords" content="MICRO">
+    <meta name="author" content="caiiiycuk">
+
+    <!-- Le styles -->
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="/assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="/assets/ico/favicon.png">
+
+    <style type="text/css">
+      div.emscripten, .emscripten-status, .emscripten-padding {
+        padding-top: 20px;
+        padding-left: 20px;
+      }
+
+      .fullscreen {
+        display: none;
+        margin-top: 20px;
+        margin-left: 20px;
+      }
+
+      .emscripten canvas {
+        border: 0;
+        
+      }
+    </style>
+  </head>
+  
+  <body data-spy="scroll" data-target=".bs-docs-sidebar" style="visibility: hidden;">
+    <div class="emscripten-status" >
+      Starting MS-DOS...<br/>
+      MS-DOS Version 6.22<br/><br/>
+      <p id="error"></p>
+      <p id="status">Downloading data...</p>
+      <p id="progress">Progress...</p>
+    </div>
+
+    <div class="emscripten">
+      <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    </div>
+    <div class="fullscreen">
+      <a id="fullscreen" href="javascript:void(0);">Fullscreen</a><br/><br/>
+    </div>
+    <div class="emscripten-padding">
+      <strong>NOTES:</strong> 
+      <ul>
+        <li>If you have problems with the mouse positioning of the mouse, then try to switching on <b>Fullscreen</b> mode</li>
+        <li>While the browser is loading the program, it may hang up for a while</li>
+        <li>Sometimes you should click on a canvas to capture the mouse</li>
+      </ul>
+    </div>
+
+    <div class="emscripten-padding">
+      <a href="/games">cd C:&#92;GAMES</a>
+    </div>
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/assets/js/jquery-1.11.2.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js" defer></script>
+
+    <script type='text/javascript'>
+      var statusElement = document.getElementById('status');
+      var progressElement = document.getElementById('progress');
+
+      var Module = {
+        noImageDecoding: true,
+        preRun: [],
+        postRun: [],
+        print: (function() {
+          var element = document.getElementById('output');
+          if (element) element.value = ''; // clear browser cache
+          return function(text) {
+            text = Array.prototype.slice.call(arguments).join(' ');
+            console.log(text);
+            if (element) {
+              element.value += text + "\n";
+              element.scrollTop = element.scrollHeight; // focus on bottom
+            }
+          };
+        })(),
+        printErr: function(text) {
+          text = Array.prototype.slice.call(arguments).join(' ');
+          if (0) { // XXX disabled for safety typeof dump == 'function') {
+            dump(text + '\n'); // fast, straight to the real console
+          } else {
+            console.error(text);
+          }
+        },
+        canvas: (function() {
+          var canvas = document.getElementById('canvas');
+
+          // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+          // application robust, you may want to override this behavior before shipping!
+          // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+          canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+          return canvas;
+        })(),
+        setStatus: function(text) {
+          if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+          if (text === Module.setStatus.text) return;
+          var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+          var now = Date.now();
+          //if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+          if (m) {
+            text = m[1];
+            progressElement.innerHTML = "Progress " + Math.round(parseInt(m[2]) / parseInt(m[4]) * 100) + "%";
+            progressElement.hidden = false;
+          } else {
+            progressElement.hidden = true;
+          }
+          statusElement.innerHTML = text;
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) {
+          this.totalDependencies = Math.max(this.totalDependencies, left);
+          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+
+          if (left == 0) {
+            $('.emscripten-status').hide();
+            $('.fullscreen').show();
+          }
+        },
+        SDL_numSimultaneouslyQueuedBuffers: 1
+      };
+      Module.setStatus('Downloading...');
+      window.onerror = function(event) {
+        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+        Module.setStatus('Exception thrown, see JavaScript console');
+        Module.setStatus = function(text) {
+          if (text) Module.printErr('[post-exception status] ' + text);
+        };
+      };
+
+       $(document).ready(function () {
+         $("#fullscreen").click(function() {
+            Module.requestFullScreen(false, false);
+         });
+
+         setTimeout(function () {
+          $.ajax({
+             url: "/dosbox.js",
+             dataType: "script",
+             error: function(jqXHR, textStatus, error) {
+              $('#error').html('Exception thrown, see JavaScript console');
+              console.log(textStatus, error);
+             },
+             xhr: function() {
+               var xhr;
+               Module.setStatus("Downloading script");
+               xhr = $.ajaxSettings.xhr();
+               xhr.addEventListener("progress", function(evt) {
+                 if (evt.lengthComputable) {
+                   Module.setStatus("Downloading script... (" + evt.loaded + "/" + evt.total + ")");
+                 }
+               });
+               return xhr;
+             }
+          });
+         }, 1000);
+      });
+   </script>
+<script type="text/javascript">
+var Module;
+if (typeof Module === 'undefined') Module = eval('(function() { try { return Module || {} } catch(e) { return {} } })()');
+if (!Module.expectedDataFileDownloads) {
+  Module.expectedDataFileDownloads = 0;
+  Module.finishedDataFileDownloads = 0;
+}
+Module.expectedDataFileDownloads++;
+(function() {
+
+    var PACKAGE_PATH;
+    if (typeof window === 'object') {
+      PACKAGE_PATH = window['encodeURIComponent'](window.location.pathname.toString().substring(0, window.location.pathname.toString().lastIndexOf('/')) + '/');
+    } else {
+      // worker
+      PACKAGE_PATH = encodeURIComponent(location.pathname.toString().substring(0, location.pathname.toString().lastIndexOf('/')) + '/');
+    }
+    var PACKAGE_NAME = '/home/caiiiycuk/js/js-dos.com/build/games/micro.exe.data';
+    var REMOTE_PACKAGE_BASE = 'micro.exe.data';
+    if (typeof Module['locateFilePackage'] === 'function' && !Module['locateFile']) {
+      Module['locateFile'] = Module['locateFilePackage'];
+      Module.printErr('warning: you defined Module.locateFilePackage, that has been renamed to Module.locateFile (using your locateFilePackage for now)');
+    }
+    var REMOTE_PACKAGE_NAME = typeof Module['locateFile'] === 'function' ?
+                              Module['locateFile'](REMOTE_PACKAGE_BASE) :
+                              ((Module['filePackagePrefixURL'] || '') + REMOTE_PACKAGE_BASE);
+    var REMOTE_PACKAGE_SIZE = 744952;
+    var PACKAGE_UUID = '4ac9840a-845d-4156-9bfd-4b01037624c1';
+  
+    function fetchRemotePackage(packageName, packageSize, callback, errback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', packageName, true);
+      xhr.responseType = 'arraybuffer';
+      xhr.onprogress = function(event) {
+        var url = packageName;
+        var size = packageSize;
+        if (event.total) size = event.total;
+        if (event.loaded) {
+          if (!xhr.addedTotal) {
+            xhr.addedTotal = true;
+            if (!Module.dataFileDownloads) Module.dataFileDownloads = {};
+            Module.dataFileDownloads[url] = {
+              loaded: event.loaded,
+              total: size
+            };
+          } else {
+            Module.dataFileDownloads[url].loaded = event.loaded;
+          }
+          var total = 0;
+          var loaded = 0;
+          var num = 0;
+          for (var download in Module.dataFileDownloads) {
+          var data = Module.dataFileDownloads[download];
+            total += data.total;
+            loaded += data.loaded;
+            num++;
+          }
+          total = Math.ceil(total * Module.expectedDataFileDownloads/num);
+          if (Module['setStatus']) Module['setStatus']('Downloading data... (' + loaded + '/' + total + ')');
+        } else if (!Module.dataFileDownloads) {
+          if (Module['setStatus']) Module['setStatus']('Downloading data...');
+        }
+      };
+      xhr.onload = function(event) {
+        var packageData = xhr.response;
+        callback(packageData);
+      };
+      xhr.send(null);
+    };
+
+    function handleError(error) {
+      console.error('package error:', error);
+    };
+  
+      var fetched = null, fetchedCallback = null;
+      fetchRemotePackage(REMOTE_PACKAGE_NAME, REMOTE_PACKAGE_SIZE, function(data) {
+        if (fetchedCallback) {
+          fetchedCallback(data);
+          fetchedCallback = null;
+        } else {
+          fetched = data;
+        }
+      }, handleError);
+    
+  function runWithFS() {
+
+function assert(check, msg) {
+  if (!check) throw msg + new Error().stack;
+}
+Module['FS_createPath']('/', 'GAME1', true, true);
+
+    function DataRequest(start, end, crunched, audio) {
+      this.start = start;
+      this.end = end;
+      this.crunched = crunched;
+      this.audio = audio;
+    }
+    DataRequest.prototype = {
+      requests: {},
+      open: function(mode, name) {
+        this.name = name;
+        this.requests[name] = this;
+        Module['addRunDependency']('fp ' + this.name);
+      },
+      send: function() {},
+      onload: function() {
+        var byteArray = this.byteArray.subarray(this.start, this.end);
+
+          this.finish(byteArray);
+
+      },
+      finish: function(byteArray) {
+        var that = this;
+        Module['FS_createPreloadedFile'](this.name, null, byteArray, true, true, function() {
+          Module['removeRunDependency']('fp ' + that.name);
+        }, function() {
+          if (that.audio) {
+            Module['removeRunDependency']('fp ' + that.name); // workaround for chromium bug 124926 (still no audio with this, but at least we don't hang)
+          } else {
+            Module.printErr('Preloading file ' + that.name + ' failed');
+          }
+        }, false, true); // canOwn this data in the filesystem, it is a slide into the heap that will never change
+        this.requests[this.name] = null;
+      },
+    };
+      new DataRequest(0, 7707, 0, 0).open('GET', '/COMPRESS.PI1');
+    new DataRequest(7707, 7739, 0, 0).open('GET', '/SETTINGS.DAT');
+    new DataRequest(7739, 17913, 0, 0).open('GET', '/COMPRESS.PI4');
+    new DataRequest(17913, 28838, 0, 0).open('GET', '/COMPRESS.PI5');
+    new DataRequest(28838, 29310, 0, 0).open('GET', '/MICRO.COM');
+    new DataRequest(29310, 30078, 0, 0).open('GET', '/INTRO.PAL');
+    new DataRequest(30078, 41923, 0, 0).open('GET', '/DRIVER2.BIN');
+    new DataRequest(41923, 54936, 0, 0).open('GET', '/ANTIFONT.BIN');
+    new DataRequest(54936, 78603, 0, 0).open('GET', '/APPSETUP.INF');
+    new DataRequest(78603, 78603, 0, 0).open('GET', '/MICROMAS.TER');
+    new DataRequest(78603, 105687, 0, 0).open('GET', '/FONT.BIN');
+    new DataRequest(105687, 109298, 0, 0).open('GET', '/BITSFILE.PH0');
+    new DataRequest(109298, 109306, 0, 0).open('GET', '/DRIVER0.BIN');
+    new DataRequest(109306, 114138, 0, 0).open('GET', '/SM.EXE');
+    new DataRequest(114138, 120268, 0, 0).open('GET', '/COMPRESS.PI2');
+    new DataRequest(120268, 128059, 0, 0).open('GET', '/LEGEND.NFO');
+    new DataRequest(128059, 133684, 0, 0).open('GET', '/INSTALL.DAT');
+    new DataRequest(133684, 135402, 0, 0).open('GET', '/MICRO.ICO');
+    new DataRequest(135402, 189675, 0, 0).open('GET', '/GFX1.GFX');
+    new DataRequest(189675, 218630, 0, 0).open('GET', '/MICRO.EXE');
+    new DataRequest(218630, 225900, 0, 0).open('GET', '/COMPRESS.PI3');
+    new DataRequest(225900, 234077, 0, 0).open('GET', '/COMPRESS.PI0');
+    new DataRequest(234077, 234622, 0, 0).open('GET', '/MICRO.PIF');
+    new DataRequest(234622, 355171, 0, 0).open('GET', '/LEGEND.EXE');
+    new DataRequest(355171, 376147, 0, 0).open('GET', '/CTL3D.DLL');
+    new DataRequest(376147, 404772, 0, 0).open('GET', '/DRIVER1.BIN');
+    new DataRequest(404772, 417885, 0, 0).open('GET', '/INSTALL.EXE');
+    new DataRequest(417885, 445437, 0, 0).open('GET', '/SETUP.EXE');
+    new DataRequest(445437, 449494, 0, 0).open('GET', '/COMPRESS.PI6');
+    new DataRequest(449494, 451542, 0, 0).open('GET', '/GAME1/ROUND82.MAP');
+    new DataRequest(451542, 457059, 0, 0).open('GET', '/GAME1/ROUND5BR.PR0');
+    new DataRequest(457059, 459116, 0, 0).open('GET', '/GAME1/ROUND3BR.VH0');
+    new DataRequest(459116, 463724, 0, 0).open('GET', '/GAME1/ROUND3BR.CT');
+    new DataRequest(463724, 464492, 0, 0).open('GET', '/GAME1/ROUND9.PAL');
+    new DataRequest(464492, 465518, 0, 0).open('GET', '/GAME1/ROUND5.COL');
+    new DataRequest(465518, 467566, 0, 0).open('GET', '/GAME1/ROUND11.MAP');
+    new DataRequest(467566, 469614, 0, 0).open('GET', '/GAME1/ROUND32.MAP');
+    new DataRequest(469614, 471662, 0, 0).open('GET', '/GAME1/ROUND41.MAP');
+    new DataRequest(471662, 481726, 0, 0).open('GET', '/GAME1/ROUND1BR.PR1');
+    new DataRequest(481726, 490342, 0, 0).open('GET', '/GAME1/ROUND9BR.PR0');
+    new DataRequest(490342, 490486, 0, 0).open('GET', '/GAME1/STRT_POS.BIN');
+    new DataRequest(490486, 492534, 0, 0).open('GET', '/GAME1/ROUND63.MAP');
+    new DataRequest(492534, 494766, 0, 0).open('GET', '/GAME1/ROUND1.DIR');
+    new DataRequest(494766, 499508, 0, 0).open('GET', '/GAME1/ROUND1BR.PR2');
+    new DataRequest(499508, 499591, 0, 0).open('GET', '/GAME1/ROUND11B.BRK');
+    new DataRequest(499591, 501197, 0, 0).open('GET', '/GAME1/ROUND2BR.VH0');
+    new DataRequest(501197, 503228, 0, 0).open('GET', '/GAME1/ROUND4BR.VH0');
+    new DataRequest(503228, 507137, 0, 0).open('GET', '/GAME1/ROUND8BR.PR1');
+    new DataRequest(507137, 507905, 0, 0).open('GET', '/GAME1/ROUND5.PAL');
+    new DataRequest(507905, 511433, 0, 0).open('GET', '/GAME1/ROUND8BR.CT');
+    new DataRequest(511433, 513481, 0, 0).open('GET', '/GAME1/ROUND53.MAP');
+    new DataRequest(513481, 515529, 0, 0).open('GET', '/GAME1/ROUND23.MAP');
+    new DataRequest(515529, 517577, 0, 0).open('GET', '/GAME1/ROUND24.MAP');
+    new DataRequest(517577, 519625, 0, 0).open('GET', '/GAME1/ROUND52.MAP');
+    new DataRequest(519625, 521929, 0, 0).open('GET', '/GAME1/ROUND3.DIR');
+    new DataRequest(521929, 522697, 0, 0).open('GET', '/GAME1/ROUND6.PAL');
+    new DataRequest(522697, 522776, 0, 0).open('GET', '/GAME1/ROUND24B.BRK');
+    new DataRequest(522776, 522951, 0, 0).open('GET', '/GAME1/ROUND14B.BRK');
+    new DataRequest(522951, 527073, 0, 0).open('GET', '/GAME1/ROUND6BR.PR2');
+    new DataRequest(527073, 531393, 0, 0).open('GET', '/GAME1/ROUND2BR.CT');
+    new DataRequest(531393, 532161, 0, 0).open('GET', '/GAME1/ROUND7.PAL');
+    new DataRequest(532161, 532268, 0, 0).open('GET', '/GAME1/ROUND63B.BRK');
+    new DataRequest(532268, 543034, 0, 0).open('GET', '/GAME1/ROUND9BR.PR1');
+    new DataRequest(543034, 543147, 0, 0).open('GET', '/GAME1/ROUND43B.BRK');
+    new DataRequest(543147, 543209, 0, 0).open('GET', '/GAME1/ROUND1BR.LEV');
+    new DataRequest(543209, 545257, 0, 0).open('GET', '/GAME1/ROUND13.MAP');
+    new DataRequest(545257, 547305, 0, 0).open('GET', '/GAME1/ROUND31.MAP');
+    new DataRequest(547305, 547449, 0, 0).open('GET', '/GAME1/ROUND32B.BRK');
+    new DataRequest(547449, 552887, 0, 0).open('GET', '/GAME1/ROUND6BR.PR1');
+    new DataRequest(552887, 554921, 0, 0).open('GET', '/GAME1/ROUND5.DIR');
+    new DataRequest(554921, 555689, 0, 0).open('GET', '/GAME1/INTRO.PAL');
+    new DataRequest(555689, 555872, 0, 0).open('GET', '/GAME1/ROUND13B.BRK');
+    new DataRequest(555872, 564415, 0, 0).open('GET', '/GAME1/ROUND8BR.PR0');
+    new DataRequest(564415, 564479, 0, 0).open('GET', '/GAME1/ROUND3BR.LEV');
+    new DataRequest(564479, 566647, 0, 0).open('GET', '/GAME1/ROUND1BR.VH0');
+    new DataRequest(566647, 566701, 0, 0).open('GET', '/GAME1/ROUND7BR.LEV');
+    new DataRequest(566701, 567853, 0, 0).open('GET', '/GAME1/ROUND4.COL');
+    new DataRequest(567853, 569901, 0, 0).open('GET', '/GAME1/ROUND51.MAP');
+    new DataRequest(569901, 570842, 0, 0).open('GET', '/GAME1/ROUND8BR.VH0');
+    new DataRequest(570842, 572890, 0, 0).open('GET', '/GAME1/ROUND33.MAP');
+    new DataRequest(572890, 572919, 0, 0).open('GET', '/GAME1/ROUND21B.BRK');
+    new DataRequest(572919, 573053, 0, 0).open('GET', '/GAME1/ROUND53B.BRK');
+    new DataRequest(573053, 573140, 0, 0).open('GET', '/GAME1/ROUND73B.BRK');
+    new DataRequest(573140, 573296, 0, 0).open('GET', '/GAME1/ROUND33B.BRK');
+    new DataRequest(573296, 575832, 0, 0).open('GET', '/GAME1/ROUND3BR.PR0');
+    new DataRequest(575832, 575881, 0, 0).open('GET', '/GAME1/ROUND8BR.LEV');
+    new DataRequest(575881, 577929, 0, 0).open('GET', '/GAME1/ROUND43.MAP');
+    new DataRequest(577929, 578028, 0, 0).open('GET', '/GAME1/ROUND51B.BRK');
+    new DataRequest(578028, 582492, 0, 0).open('GET', '/GAME1/ROUND1BR.CT');
+    new DataRequest(582492, 582560, 0, 0).open('GET', '/GAME1/ROUND72B.BRK');
+    new DataRequest(582560, 582597, 0, 0).open('GET', '/GAME1/ROUND52B.BRK');
+    new DataRequest(582597, 588177, 0, 0).open('GET', '/GAME1/ROUND4BR.PR2');
+    new DataRequest(588177, 590225, 0, 0).open('GET', '/GAME1/ROUND92.MAP');
+    new DataRequest(590225, 592349, 0, 0).open('GET', '/GAME1/ROUND9.DIR');
+    new DataRequest(592349, 593429, 0, 0).open('GET', '/GAME1/ROUND2.COL');
+    new DataRequest(593429, 593492, 0, 0).open('GET', '/GAME1/ROUND2BR.LEV');
+    new DataRequest(593492, 595796, 0, 0).open('GET', '/GAME1/ROUND4.DIR');
+    new DataRequest(595796, 595884, 0, 0).open('GET', '/GAME1/ROUND41B.BRK');
+    new DataRequest(595884, 597610, 0, 0).open('GET', '/GAME1/ROUND6BR.VH0');
+    new DataRequest(597610, 605139, 0, 0).open('GET', '/GAME1/ROUND3BR.PR1');
+    new DataRequest(605139, 609040, 0, 0).open('GET', '/GAME1/ROUND2BR.PR1');
+    new DataRequest(609040, 611088, 0, 0).open('GET', '/GAME1/ROUND83.MAP');
+    new DataRequest(611088, 620031, 0, 0).open('GET', '/GAME1/ROUND4BR.PR0');
+    new DataRequest(620031, 623707, 0, 0).open('GET', '/GAME1/ROUND2BR.PR0');
+    new DataRequest(623707, 624475, 0, 0).open('GET', '/GAME1/ROUND1.PAL');
+    new DataRequest(624475, 625627, 0, 0).open('GET', '/GAME1/ROUND3.COL');
+    new DataRequest(625627, 629731, 0, 0).open('GET', '/GAME1/ROUND5BR.CT');
+    new DataRequest(629731, 632895, 0, 0).open('GET', '/GAME1/ROUND9BR.VH0');
+    new DataRequest(632895, 633255, 0, 0).open('GET', '/GAME1/CHEATS.BIN');
+    new DataRequest(633255, 635303, 0, 0).open('GET', '/GAME1/ROUND93.MAP');
+    new DataRequest(635303, 637603, 0, 0).open('GET', '/GAME1/ROUND8.DIR');
+    new DataRequest(637603, 638371, 0, 0).open('GET', '/GAME1/ROUND3.PAL');
+    new DataRequest(638371, 640387, 0, 0).open('GET', '/GAME1/ROUND6.DIR');
+    new DataRequest(640387, 640482, 0, 0).open('GET', '/GAME1/ROUND23B.BRK');
+    new DataRequest(640482, 640546, 0, 0).open('GET', '/GAME1/ROUND4BR.LEV');
+    new DataRequest(640546, 641314, 0, 0).open('GET', '/GAME1/ROUND4.PAL');
+    new DataRequest(641314, 645254, 0, 0).open('GET', '/GAME1/ROUND9BR.PR2');
+    new DataRequest(645254, 647414, 0, 0).open('GET', '/GAME1/ROUND2.DIR');
+    new DataRequest(647414, 649462, 0, 0).open('GET', '/GAME1/ROUND72.MAP');
+    new DataRequest(649462, 651510, 0, 0).open('GET', '/GAME1/ROUND62.MAP');
+    new DataRequest(651510, 651677, 0, 0).open('GET', '/GAME1/ROUND12B.BRK');
+    new DataRequest(651677, 653621, 0, 0).open('GET', '/GAME1/ROUND7.DIR');
+    new DataRequest(653621, 661376, 0, 0).open('GET', '/GAME1/ROUND1BR.PR0');
+    new DataRequest(661376, 666620, 0, 0).open('GET', '/GAME1/ROUND7BR.PR0');
+    new DataRequest(666620, 667502, 0, 0).open('GET', '/GAME1/ROUND8.COL');
+    new DataRequest(667502, 669532, 0, 0).open('GET', '/GAME1/ROUND5BR.VH0');
+    new DataRequest(669532, 670300, 0, 0).open('GET', '/GAME1/ROUND8.PAL');
+    new DataRequest(670300, 672348, 0, 0).open('GET', '/GAME1/ROUND61.MAP');
+    new DataRequest(672348, 673116, 0, 0).open('GET', '/GAME1/ROUND2.PAL');
+    new DataRequest(673116, 674178, 0, 0).open('GET', '/GAME1/ROUND9.COL');
+    new DataRequest(674178, 676226, 0, 0).open('GET', '/GAME1/ROUND71.MAP');
+    new DataRequest(676226, 679241, 0, 0).open('GET', '/GAME1/ROUND3BR.PR2');
+    new DataRequest(679241, 679337, 0, 0).open('GET', '/GAME1/ROUND82B.BRK');
+    new DataRequest(679337, 681610, 0, 0).open('GET', '/GAME1/ROUND2BR.PR2');
+    new DataRequest(681610, 687438, 0, 0).open('GET', '/GAME1/ROUND6BR.PR0');
+    new DataRequest(687438, 691593, 0, 0).open('GET', '/GAME1/ROUND5BR.PR1');
+    new DataRequest(691593, 693641, 0, 0).open('GET', '/GAME1/ROUND81.MAP');
+    new DataRequest(693641, 693697, 0, 0).open('GET', '/GAME1/ROUND6BR.LEV');
+    new DataRequest(693697, 693744, 0, 0).open('GET', '/GAME1/ROUND71B.BRK');
+    new DataRequest(693744, 698352, 0, 0).open('GET', '/GAME1/ROUND4BR.CT');
+    new DataRequest(698352, 702240, 0, 0).open('GET', '/GAME1/ROUND7BR.CT');
+    new DataRequest(702240, 702296, 0, 0).open('GET', '/GAME1/ROUND81B.BRK');
+    new DataRequest(702296, 702353, 0, 0).open('GET', '/GAME1/ROUND5BR.LEV');
+    new DataRequest(702353, 704401, 0, 0).open('GET', '/GAME1/ROUND14.MAP');
+    new DataRequest(704401, 704479, 0, 0).open('GET', '/GAME1/ROUND83B.BRK');
+    new DataRequest(704479, 706527, 0, 0).open('GET', '/GAME1/ROUND22.MAP');
+    new DataRequest(706527, 708575, 0, 0).open('GET', '/GAME1/ROUND42.MAP');
+    new DataRequest(708575, 708657, 0, 0).open('GET', '/GAME1/ROUND22B.BRK');
+    new DataRequest(708657, 710705, 0, 0).open('GET', '/GAME1/ROUND73.MAP');
+    new DataRequest(710705, 710820, 0, 0).open('GET', '/GAME1/ROUND62B.BRK');
+    new DataRequest(710820, 711828, 0, 0).open('GET', '/GAME1/ROUND6.COL');
+    new DataRequest(711828, 712944, 0, 0).open('GET', '/GAME1/ROUND1.COL');
+    new DataRequest(712944, 714992, 0, 0).open('GET', '/GAME1/ROUND21.MAP');
+    new DataRequest(714992, 720993, 0, 0).open('GET', '/GAME1/ROUND7BR.PR1');
+    new DataRequest(720993, 721965, 0, 0).open('GET', '/GAME1/ROUND7.COL');
+    new DataRequest(721965, 722046, 0, 0).open('GET', '/GAME1/ROUND42B.BRK');
+    new DataRequest(722046, 730795, 0, 0).open('GET', '/GAME1/ROUND4BR.PR1');
+    new DataRequest(730795, 734827, 0, 0).open('GET', '/GAME1/ROUND6BR.CT');
+    new DataRequest(734827, 734886, 0, 0).open('GET', '/GAME1/ROUND9BR.LEV');
+    new DataRequest(734886, 739134, 0, 0).open('GET', '/GAME1/ROUND9BR.CT');
+    new DataRequest(739134, 741182, 0, 0).open('GET', '/GAME1/ROUND12.MAP');
+    new DataRequest(741182, 743230, 0, 0).open('GET', '/GAME1/ROUND91.MAP');
+    new DataRequest(743230, 744751, 0, 0).open('GET', '/GAME1/ROUND7BR.VH0');
+    new DataRequest(744751, 744818, 0, 0).open('GET', '/GAME1/ROUND61B.BRK');
+    new DataRequest(744818, 744952, 0, 0).open('GET', '/GAME1/ROUND31B.BRK');
+
+    function processPackageData(arrayBuffer) {
+      Module.finishedDataFileDownloads++;
+      assert(arrayBuffer, 'Loading data file failed.');
+      var byteArray = new Uint8Array(arrayBuffer);
+      var curr;
+      
+      // Reuse the bytearray from the XHR as the source for file reads.
+      DataRequest.prototype.byteArray = byteArray;
+          DataRequest.prototype.requests["/COMPRESS.PI1"].onload();
+          DataRequest.prototype.requests["/SETTINGS.DAT"].onload();
+          DataRequest.prototype.requests["/COMPRESS.PI4"].onload();
+          DataRequest.prototype.requests["/COMPRESS.PI5"].onload();
+          DataRequest.prototype.requests["/MICRO.COM"].onload();
+          DataRequest.prototype.requests["/INTRO.PAL"].onload();
+          DataRequest.prototype.requests["/DRIVER2.BIN"].onload();
+          DataRequest.prototype.requests["/ANTIFONT.BIN"].onload();
+          DataRequest.prototype.requests["/APPSETUP.INF"].onload();
+          DataRequest.prototype.requests["/MICROMAS.TER"].onload();
+          DataRequest.prototype.requests["/FONT.BIN"].onload();
+          DataRequest.prototype.requests["/BITSFILE.PH0"].onload();
+          DataRequest.prototype.requests["/DRIVER0.BIN"].onload();
+          DataRequest.prototype.requests["/SM.EXE"].onload();
+          DataRequest.prototype.requests["/COMPRESS.PI2"].onload();
+          DataRequest.prototype.requests["/LEGEND.NFO"].onload();
+          DataRequest.prototype.requests["/INSTALL.DAT"].onload();
+          DataRequest.prototype.requests["/MICRO.ICO"].onload();
+          DataRequest.prototype.requests["/GFX1.GFX"].onload();
+          DataRequest.prototype.requests["/MICRO.EXE"].onload();
+          DataRequest.prototype.requests["/COMPRESS.PI3"].onload();
+          DataRequest.prototype.requests["/COMPRESS.PI0"].onload();
+          DataRequest.prototype.requests["/MICRO.PIF"].onload();
+          DataRequest.prototype.requests["/LEGEND.EXE"].onload();
+          DataRequest.prototype.requests["/CTL3D.DLL"].onload();
+          DataRequest.prototype.requests["/DRIVER1.BIN"].onload();
+          DataRequest.prototype.requests["/INSTALL.EXE"].onload();
+          DataRequest.prototype.requests["/SETUP.EXE"].onload();
+          DataRequest.prototype.requests["/COMPRESS.PI6"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND82.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND5BR.PR0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND3BR.VH0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND3BR.CT"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND9.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND5.COL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND11.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND32.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND41.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND1BR.PR1"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND9BR.PR0"].onload();
+          DataRequest.prototype.requests["/GAME1/STRT_POS.BIN"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND63.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND1.DIR"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND1BR.PR2"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND11B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND2BR.VH0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND4BR.VH0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND8BR.PR1"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND5.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND8BR.CT"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND53.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND23.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND24.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND52.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND3.DIR"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND6.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND24B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND14B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND6BR.PR2"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND2BR.CT"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND7.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND63B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND9BR.PR1"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND43B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND1BR.LEV"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND13.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND31.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND32B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND6BR.PR1"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND5.DIR"].onload();
+          DataRequest.prototype.requests["/GAME1/INTRO.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND13B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND8BR.PR0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND3BR.LEV"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND1BR.VH0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND7BR.LEV"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND4.COL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND51.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND8BR.VH0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND33.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND21B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND53B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND73B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND33B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND3BR.PR0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND8BR.LEV"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND43.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND51B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND1BR.CT"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND72B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND52B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND4BR.PR2"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND92.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND9.DIR"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND2.COL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND2BR.LEV"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND4.DIR"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND41B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND6BR.VH0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND3BR.PR1"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND2BR.PR1"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND83.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND4BR.PR0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND2BR.PR0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND1.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND3.COL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND5BR.CT"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND9BR.VH0"].onload();
+          DataRequest.prototype.requests["/GAME1/CHEATS.BIN"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND93.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND8.DIR"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND3.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND6.DIR"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND23B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND4BR.LEV"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND4.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND9BR.PR2"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND2.DIR"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND72.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND62.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND12B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND7.DIR"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND1BR.PR0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND7BR.PR0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND8.COL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND5BR.VH0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND8.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND61.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND2.PAL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND9.COL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND71.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND3BR.PR2"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND82B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND2BR.PR2"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND6BR.PR0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND5BR.PR1"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND81.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND6BR.LEV"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND71B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND4BR.CT"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND7BR.CT"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND81B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND5BR.LEV"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND14.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND83B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND22.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND42.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND22B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND73.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND62B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND6.COL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND1.COL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND21.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND7BR.PR1"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND7.COL"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND42B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND4BR.PR1"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND6BR.CT"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND9BR.LEV"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND9BR.CT"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND12.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND91.MAP"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND7BR.VH0"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND61B.BRK"].onload();
+          DataRequest.prototype.requests["/GAME1/ROUND31B.BRK"].onload();
+          Module['removeRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/micro.exe.data');
+
+    };
+    Module['addRunDependency']('datafile_/home/caiiiycuk/js/js-dos.com/build/games/micro.exe.data');
+  
+    if (!Module.preloadResults) Module.preloadResults = {};
+  
+      Module.preloadResults[PACKAGE_NAME] = {fromCache: false};
+      if (fetched) {
+        processPackageData(fetched);
+        fetched = null;
+      } else {
+        fetchedCallback = processPackageData;
+      }
+    
+  }
+  if (Module['calledRun']) {
+    runWithFS();
+  } else {
+    if (!Module['preRun']) Module['preRun'] = [];
+    Module["preRun"].push(runWithFS); // FS is not initialized yet, wait for it
+  }
+
+})();
+
+Module['arguments'] = [ '-conf', './dosbox.conf', './MICRO.EXE' ];
+</script>
+   <!-- <script async type="text/javascript" src="/dosbox.js"></script> -->
+
+   <!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+            w.yaCounter27763311 = new Ya.Metrika({id:27763311,
+                    clickmap:true,
+                    trackLinks:true,
+                    accurateTrackBounce:true});
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+<noscript><div><img src="//mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+  </body>
+</html>
