@@ -22,7 +22,7 @@ export class DosOptions {
     // onprogress
     // ----------
     // this function is called while js-dos is loading
-    public onprogress?: (total: number, loaded: number) => void;
+    public onprogress?: (stage: string, total: number, loaded: number) => void;
 
     // onerror
     // -------

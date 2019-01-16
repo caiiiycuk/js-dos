@@ -167,7 +167,7 @@ supported only zip archive</p>
             <span class="hljs-keyword">new</span> Xhr(<span class="hljs-params">url, {
                 responseType: "arraybuffer",
                 fail: (<span class="hljs-params">msg</span>) =&gt; reject(<span class="hljs-params">msg</span>),
-                progress: (<span class="hljs-params">total, loaded</span>) =&gt; <span class="hljs-keyword">this</span>.dos.onprogress(<span class="hljs-params">total, loaded</span>),
+                progress: (<span class="hljs-params">total, loaded</span>) =&gt; <span class="hljs-keyword">this</span>.dos.onprogress(<span class="hljs-params">"Downloading " + url, total, loaded</span>),
                 success: (<span class="hljs-params">data: <span class="hljs-built_in">ArrayBuffer</span></span>) =&gt; {
                     <span class="hljs-keyword">const</span> bytes = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(<span class="hljs-params">data</span>);
                     <span class="hljs-keyword">const</span> buffer = <span class="hljs-keyword">this</span>.em._malloc(<span class="hljs-params">bytes.length</span>);

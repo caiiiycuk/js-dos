@@ -1,13 +1,14 @@
 import { DosCommandInteface } from "./js-dos-ci";
 import { DosFS } from "./js-dos-fs";
 import { DosOptions } from "./js-dos-options";
-import { JsDosUi } from "./js-dos-ui";
+import { DosUi } from "./js-dos-ui";
 
 export class DosModule extends DosOptions {
     public isValid: boolean = false;
     private ci: Promise<DosCommandInteface> = null;
     private instance: any;
     private fs: DosFS = null;
+    private ui: DosUi = null;
 
     public debug(message: string) {
         this.log("[DEBUG] " + message);
@@ -56,8 +57,8 @@ export class DosModule extends DosOptions {
         }
 
         if (!this.onprogress) {
-            const ui = new JsDosUi(this);
-            this.onprogress = (total, loaded) => ui.onprogress(total, loaded);
+            this.ui = new DosUi(this);
+            this.onprogress = (stage, total, loaded) => this.ui.onprogress(stage, total, loaded);
         }
 
         (this as any).SDL = {
@@ -75,6 +76,10 @@ export class DosModule extends DosOptions {
 
     public onRuntimeInitialized() {
         const mainFn = (args: string[]) => {
+            if (this.ui !== null) {
+                this.ui.detach();
+                this.ui = null;
+            }
             (this as any).callMain(args);
         };
         this.fs = new DosFS(this);

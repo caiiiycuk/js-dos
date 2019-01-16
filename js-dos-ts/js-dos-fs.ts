@@ -22,7 +22,7 @@ export class DosFS {
             new Xhr(url, {
                 responseType: "arraybuffer",
                 fail: (msg) => reject(msg),
-                progress: (total, loaded) => this.dos.onprogress(total, loaded),
+                progress: (total, loaded) => this.dos.onprogress("Downloading " + url, total, loaded),
                 success: (data: ArrayBuffer) => {
                     const bytes = new Uint8Array(data);
                     const buffer = this.em._malloc(bytes.length);

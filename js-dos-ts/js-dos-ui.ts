@@ -4,49 +4,114 @@ import { DosModule } from "./js-dos-module";
 // =======
 // Optional ui module to show progress if onprogress is not set by client
 
-export class JsDosUi {
+export class DosUi {
     private canvas: HTMLCanvasElement;
     private dos: DosModule;
-    
-    // private overlay: HTMLDivElement;
-    // private loaderMessage: HTMLDivElement;
+
+    private overlay: HTMLDivElement;
+    private loaderMessage: HTMLDivElement;
+    private hidden: boolean;
 
     constructor(dos: DosModule) {
-        if (document.getElementById("js-dos-ui-css") === null) {
-            const style = document.createElement("style") as HTMLStyleElement;
-            style.id = "js-dos-ui-css";
-            style.innerHTML = this.css;
-            document.head.appendChild(style);
-        }
-
         this.dos = dos;
         this.canvas = dos.canvas;
 
-        if (this.canvas.parentElement.className !== "dosbox-container") {
-            const wrapper = document.createElement("div") as HTMLDivElement;
-            wrapper.className = "dosbox-container";
+        try {
+            if (document.getElementById("js-dos-ui-css") === null) {
+                const style = document.createElement("style") as HTMLStyleElement;
+                style.id = "js-dos-ui-css";
+                style.innerHTML = this.css;
+                document.head.appendChild(style);
+            }
 
-            const parent = this.canvas.parentElement;
-            parent.replaceChild(wrapper, this.canvas);
-            wrapper.appendChild(this.canvas);
+            if (this.canvas.parentElement.className !== "dosbox-container") {
+                const container = document.createElement("div") as HTMLDivElement;
+                container.className = "dosbox-container";
 
-            const overlay = document.createElement("div") as HTMLDivElement;
-            overlay.className = "dosbox-overlay";
-            wrapper.appendChild(overlay);
+                const parent = this.canvas.parentElement;
+                parent.replaceChild(container, this.canvas);
+                container.appendChild(this.canvas);
 
-            overlay.innerHTML = this.overlayHtml;
+                const overlay = document.createElement("div") as HTMLDivElement;
+                overlay.className = "dosbox-overlay";
+                container.appendChild(overlay);
+
+                overlay.innerHTML = this.overlayHtml;
+            }
+
+            const container = this.canvas.parentElement;
+            this.overlay = this.childById(container, "dosbox-overlay");
+            this.loaderMessage = this.childById(this.overlay, "dosbox-loader-message");
+
+            this.hidden = false;
+            this.hide();
+        } catch (e) {
+            this.onprogress = this.onprogressFallback;
         }
     }
 
-    public onprogress(total: number, loaded: number) {
-        this.dos.info("UI.progress " + loaded * 100 / total + "%");
+    public onprogress(stage: string, total: number, loaded: number) {
+        const message = stage + " " + loaded * 100 / total + "%";
+        this.loaderMessage.innerHTML = message;
+        this.dos.info(message);
+
+        if (total >= loaded) {
+            this.hide();
+        } else {
+            this.show();
+        }
+    }
+
+    public detach() {
+        this.hide();
+        this.onprogress = this.onprogressFallback;
+    }
+
+    public hide() {
+        if (this.hidden) {
+            return;
+        }
+        this.hidden = true;
+        this.overlay.setAttribute("style", "display: none");
+    }
+
+    public show() {
+        if (!this.hidden) {
+            return;
+        }
+        this.hidden = false;
+        this.overlay.setAttribute("style", "display: block");
+    }
+
+    private onprogressFallback(stage: string, total: number, loaded: number) {
+        this.dos.info(stage + " " + loaded * 100 / total + "%");
+    }
+
+    private childById(parent: Element, className: string) {
+        if (parent === null) {
+            return null;
+        }
+
+        for (let i = 0; i < parent.childElementCount; ++i) {
+            let child = parent.children[i];
+            if (child.className === className) {
+                return child as HTMLDivElement;
+            }
+
+            child = this.childById(child, className);
+            if (child !== null) {
+                return child as HTMLDivElement;
+            }
+        }
+
+        return null;
     }
 
     /* tslint:disable:member-ordering */
     /* tslint:disable:max-line-length */
     private css: string = `
     .dosbox-container { position: relative; min-width: 320px; min-height: 200px; display: inline-block; }
-    .dosbox-overlay, .dosbox-loader { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: #333; }
+    .dosbox-overlay, .dosbox-loader { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(51, 51, 51, 0.7); }
     .dosbox-start { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; color: #f80; font-size: 1.5em; text-decoration: underline; cursor: pointer; }
     .dosbox-overlay a { color: #f80; }
     .dosbox-powered { position: absolute; right: 1em; bottom: 1em; font-size: 0.8em; color: #9C9C9C; }
@@ -55,22 +120,20 @@ export class JsDosUi {
     .st-loader:before, .st-loader:after { content: ""; display: block; position: absolute; top: 0; bottom: 0; width: 1.25em; box-sizing: border-box; border: 0.25em solid #f80; }
     .st-loader:before { left: -0.76923em; border-right: 0; }
     .st-loader:after { right: -0.76923em; border-left: 0; }
-    .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #f80; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; }
+    .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #f80; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; background: #f80; }
     `;
 
     /* tslint:disable:member-ordering */
     /* tslint:disable:max-line-length */
     private overlayHtml: string = `
-        <div class="dosbox-overlay">
-            <div class="dosbox-loader">
-                <div class="st-loader">
-                    <span class="equal"></span>
-                    <div class="dosbox-loader-message"></div>
-                </div>
+        <div class="dosbox-loader">
+            <div class="st-loader">
+                <span class="equal"></span>
             </div>
-            <div class="dosbox-powered">
-                Powered by &nbsp;<a href="https://js-dos.com">js-dos.com</a>
-            </div>
+            <div class="dosbox-loader-message"></div>
+        </div>
+        <div class="dosbox-powered">
+            Powered by &nbsp;<a href="https://js-dos.com">js-dos.com</a> (6.22)
         </div>
     `;
 }

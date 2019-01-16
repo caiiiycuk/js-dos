@@ -237,7 +237,7 @@
                 responseType: <span class="hljs-string">"arraybuffer"</span>,
                 progress: <span class="hljs-function">(<span class="hljs-params">total, loaded</span>) =&gt;</span> {
                     <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.onprogress) {
-                        <span class="hljs-built_in">module</span>.onprogress(buildTotal, loaded);
+                        <span class="hljs-built_in">module</span>.onprogress(<span class="hljs-string">"Resolving DosBox"</span>, buildTotal, loaded);
                     }
                 },
                 fail: <span class="hljs-function">(<span class="hljs-params">url: <span class="hljs-built_in">string</span>, status: <span class="hljs-built_in">number</span>, message: <span class="hljs-built_in">string</span></span>) =&gt;</span> {
@@ -262,7 +262,7 @@
                         <span class="hljs-keyword">new</span> Xhr(url, {
                             progress: <span class="hljs-function">(<span class="hljs-params">total, loaded</span>) =&gt;</span> {
                                 <span class="hljs-keyword">if</span> (<span class="hljs-built_in">module</span>.onprogress) {
-                                    <span class="hljs-built_in">module</span>.onprogress(buildTotal, Build.wasmSize + loaded);
+                                    <span class="hljs-built_in">module</span>.onprogress(<span class="hljs-string">"Resolving DosBox"</span>, buildTotal, Build.wasmSize + loaded);
                                 }
                             },
                             fail: <span class="hljs-function">(<span class="hljs-params">url: <span class="hljs-built_in">string</span>, status: <span class="hljs-built_in">number</span>, message: <span class="hljs-built_in">string</span></span>) =&gt;</span> {
@@ -270,6 +270,8 @@
                                     <span class="hljs-string">", message: "</span> + message + <span class="hljs-string">", url: "</span> + url);
                             },
                             success: <span class="hljs-function">(<span class="hljs-params">response: <span class="hljs-built_in">any</span></span>) =&gt;</span> {
+                                <span class="hljs-built_in">module</span>.onprogress(<span class="hljs-string">"Resolving DosBox"</span>, buildTotal, buildTotal);
+
                                 <span class="hljs-comment">/* tslint:disable:no-eval */</span>
                                 <span class="hljs-built_in">eval</span>.call(<span class="hljs-built_in">window</span>, response);
                                 resolve(<span class="hljs-keyword">this</span>.global.exports.WDOSBOX);

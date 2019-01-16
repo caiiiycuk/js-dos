@@ -70,7 +70,7 @@ class DosHost {
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
                     if (module.onprogress) {
-                        module.onprogress(buildTotal, loaded);
+                        module.onprogress("Resolving DosBox", buildTotal, loaded);
                     }
                 },
                 fail: (url: string, status: number, message: string) => {
@@ -95,7 +95,7 @@ class DosHost {
                         new Xhr(url, {
                             progress: (total, loaded) => {
                                 if (module.onprogress) {
-                                    module.onprogress(buildTotal, Build.wasmSize + loaded);
+                                    module.onprogress("Resolving DosBox", buildTotal, Build.wasmSize + loaded);
                                 }
                             },
                             fail: (url: string, status: number, message: string) => {
@@ -103,6 +103,8 @@ class DosHost {
                                     ", message: " + message + ", url: " + url);
                             },
                             success: (response: any) => {
+                                module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+
                                 /* tslint:disable:no-eval */
                                 eval.call(window, response);
                                 resolve(this.global.exports.WDOSBOX);

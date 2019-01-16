@@ -136,17 +136,16 @@
 }
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> Xhr {
-    <span class="hljs-keyword">public</span> bytesReceived: <span class="hljs-built_in">number</span>;
-
     <span class="hljs-keyword">private</span> resource: <span class="hljs-built_in">string</span>;
     <span class="hljs-keyword">private</span> options: XhrOptions;
     <span class="hljs-keyword">private</span> xhr: XMLHttpRequest;
+    <span class="hljs-keyword">private</span> total: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">private</span> loaded: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
 
     <span class="hljs-keyword">constructor</span>(<span class="hljs-params">url: <span class="hljs-built_in">string</span>, options: XhrOptions</span>) {
         <span class="hljs-keyword">this</span>.resource = url;
         <span class="hljs-keyword">this</span>.options = options;
         <span class="hljs-keyword">this</span>.options.method = options.method || <span class="hljs-string">"GET"</span>;
-        <span class="hljs-keyword">this</span>.bytesReceived = <span class="hljs-number">0</span>;
         <span class="hljs-keyword">this</span>.xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
         <span class="hljs-keyword">this</span>.xhr.open(<span class="hljs-keyword">this</span>.options.method, url, <span class="hljs-literal">true</span>);
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.method === <span class="hljs-string">"POST"</span>) {
@@ -157,7 +156,8 @@
         <span class="hljs-keyword">let</span> progressListner;
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> (progressListner = <span class="hljs-keyword">this</span>.xhr).addEventListener === <span class="hljs-string">"function"</span>) {
             progressListner.addEventListener(<span class="hljs-string">"progress"</span>, <span class="hljs-function">(<span class="hljs-params">evt</span>) =&gt;</span> {
-                <span class="hljs-keyword">this</span>.bytesReceived = evt.loaded;
+                <span class="hljs-keyword">this</span>.total = evt.total;
+                <span class="hljs-keyword">this</span>.loaded = evt.loaded;
                 <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.progress) {
                     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options.progress(evt.total, evt.loaded);
                 }
@@ -186,6 +186,8 @@
         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.xhr.readyState === <span class="hljs-number">4</span>) {
             <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.xhr.status === <span class="hljs-number">200</span>) {
                 <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.success) {
+                    <span class="hljs-keyword">const</span> total = <span class="hljs-built_in">Math</span>.max(<span class="hljs-keyword">this</span>.total, <span class="hljs-keyword">this</span>.loaded);
+                    <span class="hljs-keyword">this</span>.options.progress(total, total);
                     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options.success(<span class="hljs-keyword">this</span>.xhr.response);
                 }
             } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.fail) {

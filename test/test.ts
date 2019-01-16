@@ -36,10 +36,10 @@ test("loader should notify about error, if it can't download wdosbox", (done) =>
 test("loader should show progress loading", (done) => {
     let lastLoaded = -1;
     Host.resolveDosBox("/wdosbox.js", {
-        onprogress: (total: number, loaded: number) => {
-            console.log("Resolving DosBox: ", total, loaded);
-            assert.equal(true, loaded <= total);
-            assert.equal(true, lastLoaded < loaded);
+        onprogress: (stage: string, total: number, loaded: number) => {
+            console.log(stage, total, loaded);
+            assert.equal(true, loaded <= total, loaded + "<=" + total);
+            assert.equal(true, lastLoaded <= loaded, lastLoaded + "<=" + loaded);
             lastLoaded = loaded;
         },
         ondosbox: (dosbox: any, instantiateWasm: any) => {
@@ -53,7 +53,7 @@ test("loader should show progress loading", (done) => {
 
 test("loader should never load twice wdosbox", (done) => {
     Host.resolveDosBox("/wdosbox.js", {
-        onprogress: (total: number, loaded: number) => {
+        onprogress: (stage: string, total: number, loaded: number) => {
             assert.fail();
         },
         ondosbox: (dosbox: any, instantiateWasm: any) => {

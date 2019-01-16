@@ -8,17 +8,16 @@ interface XhrOptions {
 }
 
 export class Xhr {
-    public bytesReceived: number;
-
     private resource: string;
     private options: XhrOptions;
     private xhr: XMLHttpRequest;
+    private total: number = 0;
+    private loaded: number = 0;
 
     constructor(url: string, options: XhrOptions) {
         this.resource = url;
         this.options = options;
         this.options.method = options.method || "GET";
-        this.bytesReceived = 0;
         this.xhr = new XMLHttpRequest();
         this.xhr.open(this.options.method, url, true);
         if (this.options.method === "POST") {
@@ -29,7 +28,8 @@ export class Xhr {
         let progressListner;
         if (typeof (progressListner = this.xhr).addEventListener === "function") {
             progressListner.addEventListener("progress", (evt) => {
-                this.bytesReceived = evt.loaded;
+                this.total = evt.total;
+                this.loaded = evt.loaded;
                 if (this.options.progress) {
                     return this.options.progress(evt.total, evt.loaded);
                 }
@@ -58,6 +58,8 @@ export class Xhr {
         if (this.xhr.readyState === 4) {
             if (this.xhr.status === 200) {
                 if (this.options.success) {
+                    const total = Math.max(this.total, this.loaded);
+                    this.options.progress(total, total);
                     return this.options.success(this.xhr.response);
                 }
             } else if (this.options.fail) {
