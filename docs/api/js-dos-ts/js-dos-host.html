@@ -231,7 +231,7 @@
     <span class="hljs-keyword">private</span> compileDosBox(url: <span class="hljs-built_in">string</span>, <span class="hljs-keyword">module</span>: DosModule) {
         <span class="hljs-keyword">const</span> buildTotal = Build.wasmSize + Build.jsSize;
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
-            <span class="hljs-keyword">const</span> wasmUrl = url.replace(<span class="hljs-string">".js"</span>, <span class="hljs-string">".wasm"</span>);
+            <span class="hljs-keyword">const</span> wasmUrl = url.replace(<span class="hljs-string">".js"</span>, <span class="hljs-string">".wasm.js"</span>);
 
             <span class="hljs-keyword">new</span> Xhr(wasmUrl, {
                 responseType: <span class="hljs-string">"arraybuffer"</span>,

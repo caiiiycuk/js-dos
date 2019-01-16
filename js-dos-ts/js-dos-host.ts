@@ -64,7 +64,7 @@ class DosHost {
     private compileDosBox(url: string, module: DosModule) {
         const buildTotal = Build.wasmSize + Build.jsSize;
         return new Promise((resolve, reject) => {
-            const wasmUrl = url.replace(".js", ".wasm");
+            const wasmUrl = url.replace(".js", ".wasm.js");
 
             new Xhr(wasmUrl, {
                 responseType: "arraybuffer",

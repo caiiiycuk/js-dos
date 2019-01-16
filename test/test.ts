@@ -27,7 +27,7 @@ test("loader should notify about error if wasm is not supported", (done) => {
 test("loader should notify about error, if it can't download wdosbox", (done) => {
     Host.resolveDosBox("wrongurl.js", {
         onerror: (message: string) => {
-            assert.equal("Can't download wasm, code: 404, message: connection problem, url: wrongurl.wasm", message);
+            assert.equal("Can't download wasm, code: 404, message: connection problem, url: wrongurl.wasm.js", message);
             done();
         },
     } as DosModule);

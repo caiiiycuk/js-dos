@@ -9,6 +9,7 @@ var uglify = require('gulp-uglify');
 var getRepoInfo = require('git-repo-info');
 var exec = require('child_process').exec;
 var clean = require('gulp-clean');
+var rename = require('gulp-rename');
 
 gulp.task('clean', function () {
     return gulp.src('dist', {read: false})
@@ -37,8 +38,14 @@ gulp.task('generateBuildInfo', function() {
         "};\n");
 })
 
-gulp.task('copyAssets', function () {
-    return gulp.src(['build/wdosbox.wasm', 'build/wdosbox.js', 'build/wdosbox.js.symbols'])
+gulp.task('copyScripts', function () {
+    return gulp.src(['build/wdosbox.js', 'build/wdosbox.js.symbols'])
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('copyWasm', function () {
+    return gulp.src('build/wdosbox.wasm')
+        .pipe(rename("wdosbox.wasm.js"))
         .pipe(gulp.dest('dist'));
 });
 
@@ -68,7 +75,7 @@ gulp.task('test', ['copyAssetsTest'], function () {
     .pipe(gulp.dest('dist/test'));
 })
 
-gulp.task('default', ['generateBuildInfo', 'test', 'copyAssets', 'docs'], function () {
+gulp.task('default', ['generateBuildInfo', 'test', 'copyScripts', 'copyWasm', 'docs'], function () {
     return browserify({
         basedir: '.',
         debug: true,
