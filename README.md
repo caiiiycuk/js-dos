@@ -1,3 +1,13 @@
+js-dos 6.22
+===========
+
+[![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos)
+
+6.22 is brand new version of js-dos, that should solve many problems of previouse releases. It under active
+development right now.
+
+You can get info about previous (stable) version here [v3](https://github.com/caiiiycuk/js-dos/tree/v3)
+
 Bootstrapping
 =============
 
@@ -11,7 +21,6 @@ npm start
 
 Building
 ========
-[![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos)
 
 Emulation layer (aka dosbox)
 ----------------------------
