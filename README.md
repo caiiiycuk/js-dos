@@ -3,7 +3,7 @@ Bootstrapping
 
 Just type this to run bootstrap dosbox with digger in browser:
 ```
-npx create-dos-box digger
+npx create-dosbox digger
 cd digger
 npm install
 npm start
