@@ -15,10 +15,15 @@ export class DosFS {
         this.em = dos as any;
     }
 
-    // **extract** - downloads url and extract it in cwd,
+    // **extract** - downloads url and extract it in cwd (cwd will be mounted as C:),
     // supported only zip archive
-    public extract(url: string) {
+    public extract(url: string, type: string = "zip") {
         return new Promise<void>((resolve, reject) => {
+            if (type !== "zip") {
+                reject("Only ZIP archive is supported");
+                return;
+            }
+
             new Xhr(url, {
                 responseType: "arraybuffer",
                 fail: (msg) => reject(msg),
@@ -36,7 +41,7 @@ export class DosFS {
                         reject("Can't extract zip, retcode " + retcode + ", see more info in logs");
                     }
                 },
-            })
+            });
         });
     }
 }

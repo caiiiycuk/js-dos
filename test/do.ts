@@ -1,4 +1,6 @@
 import assert = require("assert");
+import { DosReadyPromise, DosMainFn } from "../js-dos-ts/js-dos";
+import { DosFS } from "../js-dos-ts/js-dos-fs";
 
 // Do
 // ==
@@ -28,5 +30,12 @@ export function doCatch<T>(promise: Promise<T>, fn: (v: string) => void) {
 
 export function doNext<T>(promise: Promise<T>, fn: (v: T) => void) {
     doThen(promise, fn);
+    doCatch(promise, (msg: string) => assert.fail(msg));
+}
+
+export function doReady(promise: DosReadyPromise, fn: (fs: DosFS, main: DosMainFn) => void) {
+    doThen(promise, (runtime) => {
+        fn(runtime.fs, runtime.main);
+    });
     doCatch(promise, (msg: string) => assert.fail(msg));
 }

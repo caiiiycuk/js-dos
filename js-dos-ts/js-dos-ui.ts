@@ -51,11 +51,11 @@ export class DosUi {
     }
 
     public onprogress(stage: string, total: number, loaded: number) {
-        const message = stage + " " + loaded * 100 / total + "%";
+        const message = stage + " " + Math.round(loaded * 100 / total * 10) / 10 + "%";
         this.loaderMessage.innerHTML = message;
         this.dos.info(message);
 
-        if (total >= loaded) {
+        if (loaded >= total) {
             this.hide();
         } else {
             this.show();

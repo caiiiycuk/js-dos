@@ -17,7 +17,7 @@ gulp.task('clean', function () {
 });
 
 gulp.task("docs", function (cb) {
-    exec('node_modules/docco/bin/docco js-dos-ts/* js-dos-cpp/* js-dos-cpp/include/* -o docs/api -l classic', function (err, stdout, stderr) {
+    exec('node_modules/docco/bin/docco js-dos-ts/* js-dos-cpp/* js-dos-cpp/include/* -o dist/docs/api -l classic', function (err, stdout, stderr) {
       console.log(stdout);
       console.log(stderr);
       cb(err);
@@ -38,8 +38,8 @@ gulp.task('generateBuildInfo', function() {
         "};\n");
 })
 
-gulp.task('copyScripts', function () {
-    return gulp.src(['build/wdosbox.js', 'build/wdosbox.js.symbols'])
+gulp.task('copyAssets', function () {
+    return gulp.src(['test/example.html', 'build/wdosbox.js', 'build/wdosbox.js.symbols'])
         .pipe(gulp.dest('dist'));
 });
 
@@ -49,10 +49,20 @@ gulp.task('copyWasm', function () {
         .pipe(gulp.dest('dist'));
 });
 
+gulp.task('copyTypeScript', function() {
+    return gulp.src('js-dos-ts/*')
+        .pipe(gulp.dest('dist/typescript')); 
+})
+
 gulp.task('copyAssetsTest', function () {
-    return gulp.src(['test/*.html', 'test/*.png', 'test/*.zip'])
+    return gulp.src(['test/test.html', 'test/*.png', 'test/*.zip'])
         .pipe(gulp.dest('dist/test'));
 });
+
+gulp.task('copyPackageJson', function() {
+    return gulp.src(['package.json'])
+        .pipe(gulp.dest('dist'));
+})
 
 gulp.task('test', ['copyAssetsTest'], function () {
     return browserify({
@@ -75,7 +85,7 @@ gulp.task('test', ['copyAssetsTest'], function () {
     .pipe(gulp.dest('dist/test'));
 })
 
-gulp.task('default', ['generateBuildInfo', 'test', 'copyScripts', 'copyWasm', 'docs'], function () {
+gulp.task('default', ['test', 'generateBuildInfo', 'copyAssets', 'copyWasm', 'copyTypeScript', 'docs', 'copyPackageJson'], function () {
     return browserify({
         basedir: '.',
         debug: true,
@@ -92,7 +102,7 @@ gulp.task('default', ['generateBuildInfo', 'test', 'copyScripts', 'copyWasm', 'd
     .pipe(source('js-dos.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest('dist'));
 });

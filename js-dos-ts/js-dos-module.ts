@@ -1,3 +1,4 @@
+import { DosRuntime } from "./js-dos";
 import { DosCommandInteface } from "./js-dos-ci";
 import { DosFS } from "./js-dos-fs";
 import { DosOptions } from "./js-dos-options";
@@ -5,10 +6,18 @@ import { DosUi } from "./js-dos-ui";
 
 export class DosModule extends DosOptions {
     public isValid: boolean = false;
+    public canvas: HTMLCanvasElement = null;
     private ci: Promise<DosCommandInteface> = null;
     private instance: any;
     private fs: DosFS = null;
     private ui: DosUi = null;
+    private onready: (runtime: DosRuntime) => void;
+
+    constructor(canvas: HTMLCanvasElement, onready: (runtime: DosRuntime) => void) {
+        super();
+        this.canvas = canvas;
+        this.onready = onready;
+    }
 
     public debug(message: string) {
         this.log("[DEBUG] " + message);
@@ -44,13 +53,6 @@ export class DosModule extends DosOptions {
             this.log = (message: string) => console.log(message);
         }
 
-        if (!this.onready) {
-            this.onready = (fs, main) => {
-                this.info("DosBox is ready");
-                main([]);
-            };
-        }
-
         if (!this.canvas) {
             this.onerror("canvas field is required, but not set!");
             return;
@@ -80,10 +82,19 @@ export class DosModule extends DosOptions {
                 this.ui.detach();
                 this.ui = null;
             }
+            args.unshift("-c", "mount c .", "-c", "c:");
             (this as any).callMain(args);
+            return new Promise<DosCommandInteface>((resolve) => {
+                new DosCommandInteface(this, (ci: DosCommandInteface) => {
+                    resolve(ci);
+                });
+            });
         };
         this.fs = new DosFS(this);
-        this.onready(this.fs, mainFn);
+        this.onready({
+            fs: this.fs,
+            main: mainFn,
+        });
     }
 
 }

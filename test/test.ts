@@ -8,7 +8,7 @@ import { Host } from "../js-dos-ts/js-dos-host";
 import { DosModule } from "../js-dos-ts/js-dos-module";
 import { DosOptions } from "../js-dos-ts/js-dos-options";
 import { compareAndExit } from "./compare";
-import { doCatch, doNext, doThen } from "./do";
+import { doCatch, doNext, doReady, doThen } from "./do";
 
 suite("js-dos-host");
 
@@ -81,7 +81,7 @@ test("loader should fire event when wdosbox is loaded", (done) => {
 suite("js-dos");
 
 test("js-dos can't start without canvas (listener style)", (done) => {
-    Dos({
+    Dos(null, {
         wdosboxUrl: "/wdosbox.js",
         onerror: (message: string) => {
             assert.equal("canvas field is required, but not set!", message);
@@ -91,7 +91,7 @@ test("js-dos can't start without canvas (listener style)", (done) => {
 });
 
 test("js-dos can't start without canvas (promise style)", (done) => {
-    const dos = Dos({
+    const dos = Dos(null, {
         wdosboxUrl: "/wdosbox.js",
     } as DosOptions);
     doCatch(dos, (message) => {
@@ -104,44 +104,42 @@ test("js-dos can't start without canvas (promise style)", (done) => {
 });
 
 test("js-dos should start with canvas", (done) => {
-    const dos = Dos({
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
         wdosboxUrl: "/wdosbox.js",
-        canvas: (document.getElementById("canvas") as HTMLCanvasElement),
     });
-    doNext(dos, (ci) => {
-        ci.exit();
-        done();
+    doReady(dos, (fs, main) => {
+        doNext(main([]), (ci) => {
+            ci.exit();
+            done();
+        });
     });
 });
 
 test("js-dos can take screenshot of canvas", (done) => {
-    const dos = Dos({
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
         wdosboxUrl: "/wdosbox.js",
-        canvas: (document.getElementById("canvas") as HTMLCanvasElement),
     });
-    doNext(dos, (ci) => {
-        compareAndExit("init.png", ci, done);
+    doReady(dos, (fs, main) => {
+        doNext(main([]), (ci) => {
+            compareAndExit("init.png", ci, done);
+        });
     });
 });
 
 test("js-dos can run digger.zip", (done) => {
-    const dos = Dos({
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
         wdosboxUrl: "/wdosbox.js",
-        canvas: (document.getElementById("canvas") as HTMLCanvasElement),
-        onready: (fs, main) => {
-            doNext(fs.extract("digger.zip"), () => {
-                main([]);
-            });
-        },
     });
 
-    doNext(dos, (ci) => {
-        doNext(ci.shell("mount c .", "c:", "DIGGER.COM"), () => {
-            const fn = () => {
-                compareAndExit("digger.png", ci, done);
-            };
+    doReady(dos, (fs, main) => {
+        doNext(fs.extract("digger.zip"), () => {
+            doNext(main(["DIGGER.COM"]), (ci) => {
+                const fn = () => {
+                    compareAndExit("digger.png", ci, done);
+                };
 
-            setTimeout(fn, 500);
+                setTimeout(fn, 500);
+            });
         });
     });
 });

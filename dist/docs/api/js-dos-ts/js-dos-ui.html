@@ -196,11 +196,11 @@
     }
 
     <span class="hljs-keyword">public</span> onprogress(stage: <span class="hljs-built_in">string</span>, total: <span class="hljs-built_in">number</span>, loaded: <span class="hljs-built_in">number</span>) {
-        <span class="hljs-keyword">const</span> message = stage + <span class="hljs-string">" "</span> + loaded * <span class="hljs-number">100</span> / total + <span class="hljs-string">"%"</span>;
+        <span class="hljs-keyword">const</span> message = stage + <span class="hljs-string">" "</span> + <span class="hljs-built_in">Math</span>.round(loaded * <span class="hljs-number">100</span> / total * <span class="hljs-number">10</span>) / <span class="hljs-number">10</span> + <span class="hljs-string">"%"</span>;
         <span class="hljs-keyword">this</span>.loaderMessage.innerHTML = message;
         <span class="hljs-keyword">this</span>.dos.info(message);
 
-        <span class="hljs-keyword">if</span> (total &gt;= loaded) {
+        <span class="hljs-keyword">if</span> (loaded &gt;= total) {
             <span class="hljs-keyword">this</span>.hide();
         } <span class="hljs-keyword">else</span> {
             <span class="hljs-keyword">this</span>.show();

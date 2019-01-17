@@ -139,7 +139,8 @@
 <span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span>
 
 CommandInterface::CommandInterface(): m_events(<span class="hljs-keyword">new</span> Events()) {
-}</pre></div></div>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">ifdef</span> EMSCRIPTEN</span>
+  EM_ASM(({</pre></div></div>
             
         </li>
         
@@ -149,6 +150,49 @@ CommandInterface::CommandInterface(): m_events(<span class="hljs-keyword">new</s
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>ios.iframe.fix</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Module['canvas'].addEventListener('touchstart', function(event) {}, true);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>ios.swipe.fix</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Module['canvas'].addEventListener('touchmove', function(event) { event.preventDefault() }, true);
+
+    var fixSounds = function(event) {
+      if (SDL &amp;&amp; SDL.audioContext &amp;&amp; SDL.audioContext.state) {
+          if (SDL.audioContext.state !== 'running') {
+              SDL.audioContext.resume();
+          }
+      }
+    };
+    window.addEventListener("touchstart", fixSounds, true);
+    window.addEventListener("mousedown", fixSounds, true);    
+  }));
+#endif
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
               <p>When CommandInterface is destroyed, it means
 that client wants to stop dosbox, so we stop
@@ -168,11 +212,11 @@ Events *CommandInterface::events() { <span class="hljs-keyword">return</span> m_
         </li>
         
         
-        <li id="section-4">
+        <li id="section-6">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
+                <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
               <p>Singleton of CommandInterface</p>
 

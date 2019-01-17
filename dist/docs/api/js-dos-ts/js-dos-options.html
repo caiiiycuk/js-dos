@@ -167,7 +167,7 @@ class, to configure emulation layer:</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h2 id="canvas">canvas</h2>
+              <h2 id="onprogress">onprogress</h2>
 
             </div>
             
@@ -180,11 +180,11 @@ class, to configure emulation layer:</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>is <strong>required</strong> field, you should set existing HTMLCanvasElement, it will be used for render dos screen</p>
+              <p>this function is called while js-dos is loading</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> canvas: HTMLCanvasElement;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onprogress?: <span class="hljs-function">(<span class="hljs-params">stage: <span class="hljs-built_in">string</span>, total: <span class="hljs-built_in">number</span>, loaded: <span class="hljs-built_in">number</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
             
         </li>
         
@@ -195,7 +195,7 @@ class, to configure emulation layer:</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-6">&#182;</a>
               </div>
-              <h2 id="onready">onready</h2>
+              <h2 id="onerror">onerror</h2>
 
             </div>
             
@@ -208,13 +208,11 @@ class, to configure emulation layer:</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-7">&#182;</a>
               </div>
-              <p>This function is called before running entry point of dosbox
-with it you can change command line arguments that passed to dosbox
-or configure FS layer</p>
+              <p>this function is called when error happens</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onready?: <span class="hljs-function">(<span class="hljs-params">fs: DosFS, main: (<span class="hljs-params">args: <span class="hljs-built_in">string</span>[]</span>) =&gt; <span class="hljs-built_in">void</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onerror?: <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
             
         </li>
         
@@ -225,7 +223,7 @@ or configure FS layer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-8">&#182;</a>
               </div>
-              <h2 id="onprogress">onprogress</h2>
+              <h2 id="log">log</h2>
 
             </div>
             
@@ -238,11 +236,11 @@ or configure FS layer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>this function is called while js-dos is loading</p>
+              <p> you can provide log function, to override logging, by default js-dos uses console.log as implementation</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onprogress?: <span class="hljs-function">(<span class="hljs-params">stage: <span class="hljs-built_in">string</span>, total: <span class="hljs-built_in">number</span>, loaded: <span class="hljs-built_in">number</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> log?: <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
             
         </li>
         
@@ -253,7 +251,7 @@ or configure FS layer</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-10">&#182;</a>
               </div>
-              <h2 id="onerror">onerror</h2>
+              <h2 id="wdosboxurl">wdosboxUrl</h2>
 
             </div>
             
@@ -265,62 +263,6 @@ or configure FS layer</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>this function is called when error happens</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onerror?: <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-12">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-12">&#182;</a>
-              </div>
-              <h2 id="log">log</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-13">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-13">&#182;</a>
-              </div>
-              <p> you can provide log function, to override logging, by default js-dos uses console.log as implementation</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> log?: <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-14">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-14">&#182;</a>
-              </div>
-              <h2 id="wdosboxurl">wdosboxUrl</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-15">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-15">&#182;</a>
               </div>
               <p>you can set alternative url for downloading js-dos script, default is ‘wdosbox.js’</p>
 
