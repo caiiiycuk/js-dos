@@ -102,7 +102,7 @@ gulp.task('default', ['test', 'generateBuildInfo', 'copyAssets', 'copyWasm', 'co
     .pipe(source('js-dos.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({ loadMaps: true }))
-    // .pipe(uglify())
+    .pipe(uglify())
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest('dist'));
 });

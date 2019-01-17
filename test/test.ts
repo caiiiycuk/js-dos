@@ -135,10 +135,11 @@ test("js-dos can run digger.zip", (done) => {
         doNext(fs.extract("digger.zip"), () => {
             doNext(main(["DIGGER.COM"]), (ci) => {
                 const fn = () => {
-                    compareAndExit("digger.png", ci, done);
+                    // compareAndExit("digger.png", ci, done);
+                    saveImage(ci);
                 };
 
-                setTimeout(fn, 500);
+                setTimeout(fn, 5000);
             });
         });
     });
