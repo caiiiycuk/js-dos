@@ -39,7 +39,7 @@ gulp.task('generateBuildInfo', function() {
 })
 
 gulp.task('copyAssets', function () {
-    return gulp.src(['test/example.html', 'build/wdosbox.js', 'build/wdosbox.js.symbols'])
+    return gulp.src(['test/index.html', 'build/wdosbox.js', 'build/wdosbox.js.symbols'])
         .pipe(gulp.dest('dist'));
 });
 

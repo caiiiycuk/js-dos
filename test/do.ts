@@ -1,5 +1,5 @@
 import assert = require("assert");
-import { DosReadyPromise, DosMainFn } from "../js-dos-ts/js-dos";
+import { DosMainFn, DosReadyPromise } from "../js-dos-ts/js-dos";
 import { DosFS } from "../js-dos-ts/js-dos-fs";
 
 // Do

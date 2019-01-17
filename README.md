@@ -1,3 +1,14 @@
+Bootstrapping
+=============
+
+Just type this to run bootstrap dosbox with digger in browser:
+```
+npx create-dos-box digger
+cd digger
+npm install
+npm start
+```
+
 Building
 ========
 [![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos)

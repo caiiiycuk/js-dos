@@ -1,27 +1,27 @@
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>Mocha Tests</title>
-    <link href="https://unpkg.com/mocha@5.2.0/mocha.css" rel="stylesheet" />
+  <meta charset="utf-8">
+  <title>js-dos 6.22, Digger example</title>
+  <script src="js-dos.js"></script>
+  <style>
+    canvas {
+      width: 640px;
+      height: 400px;
+    }
+  </style>
 </head>
 
 <body>
-    <canvas id="canvas"></canvas>
-    <div id="mocha"></div>
-    <script src="https://unpkg.com/chai/chai.js"></script>
-    <script src="https://unpkg.com/mocha@5.2.0/mocha.js"></script>
-    <script>
-        mocha.setup({
-            ui: 'qunit',
-            timeout: 60000
-        });
-    </script>
-    <script src="test.js"></script>
-    <script>
-        (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})();
-        mocha.run();
-    </script>
+  <canvas id="jsdos"></canvas>
+  <script>
+    Dos(document.getElementById("jsdos")).ready((fs, main) => {
+      fs.extract("test/digger.zip").then(() => {
+        main(["DIGGER.COM"])
+      });
+    });
+  </script>
 </body>
 
 </html>
