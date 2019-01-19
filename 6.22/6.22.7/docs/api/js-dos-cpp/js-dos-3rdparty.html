@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>js-dos-3rdparty.c</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="include/js-dos-3rdparty.html">
+                js-dos-3rdparty.h
+              </a>
+            
+              
+              <a class="source" href="include/js-dos-ci.html">
+                js-dos-ci.h
+              </a>
+            
+              
+              <a class="source" href="include/js-dos-events.html">
+                js-dos-events.h
+              </a>
+            
+              
+              <a class="source" href="include/js-dos-json.html">
+                js-dos-json.h
+              </a>
+            
+              
+              <a class="source" href="js-dos-3rdparty.html">
+                js-dos-3rdparty.c
+              </a>
+            
+              
+              <a class="source" href="js-dos-ci.html">
+                js-dos-ci.cpp
+              </a>
+            
+              
+              <a class="source" href="js-dos-events.html">
+                js-dos-events.cpp
+              </a>
+            
+              
+              <a class="source" href="js-dos-json.html">
+                js-dos-json.cpp
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-build.html">
+                js-dos-build.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-ci.html">
+                js-dos-ci.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-fs.html">
+                js-dos-fs.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-host.html">
+                js-dos-host.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-module.html">
+                js-dos-module.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-options.html">
+                js-dos-options.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-ui.html">
+                js-dos-ui.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-xhr.html">
+                js-dos-xhr.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos.html">
+                js-dos.ts
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>js-dos-3rdparty.c</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;js-dos-3rdparty.h&gt;</span></span>
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;errno.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/stat.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;dirent.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;limits.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/stat.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;dirent.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;fcntl.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;limits.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/resource.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span>
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> EMSCRIPTEN_KEEPALIVE <span class="hljs-title">safe_create_dir</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *dir)</span>
+</span>{
+    <span class="hljs-keyword">if</span> (mkdir(dir, <span class="hljs-number">0755</span>) &lt; <span class="hljs-number">0</span>)
+    {
+        <span class="hljs-keyword">if</span> (errno != EEXIST)
+        {
+            perror(dir);
+            <span class="hljs-built_in">exit</span>(<span class="hljs-number">1</span>);
+        }
+    }
+}
+
+<span class="hljs-function"><span class="hljs-keyword">int</span> EMSCRIPTEN_KEEPALIVE <span class="hljs-title">extract_zip</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">void</span> *data, <span class="hljs-keyword">zip_uint64_t</span> length)</span>
+</span>{
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">zip</span> *<span class="hljs-title">za</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">zip_file</span> *<span class="hljs-title">zf</span>;</span>
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">zip_stat</span> <span class="hljs-title">sb</span>;</span>
+    <span class="hljs-keyword">char</span> buf[<span class="hljs-number">100</span>];
+    <span class="hljs-keyword">int</span> err;
+    <span class="hljs-keyword">int</span> i, len;
+    <span class="hljs-keyword">int</span> fd;
+    <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span> sum;
+
+    FILE *archive = fopen(<span class="hljs-string">"archive.zip"</span>, <span class="hljs-string">"wb"</span>);
+    <span class="hljs-keyword">if</span> (!archive) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">"extract-zip: unable to create `archive.zip`\n"</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }
+    fwrite(data, length, <span class="hljs-number">1</span>, archive);
+    fclose(archive);
+
+    <span class="hljs-keyword">if</span> ((za = zip_open(<span class="hljs-string">"archive.zip"</span>, <span class="hljs-number">0</span>, &amp;err)) == <span class="hljs-literal">NULL</span>)
+    {
+        zip_error_to_str(buf, <span class="hljs-keyword">sizeof</span>(buf), err, errno);
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">"extract-zip: can't open zip archive 'archive.zip': %s\n"</span>, buf);
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; zip_get_num_entries(za, <span class="hljs-number">0</span>); i++)
+    {
+        <span class="hljs-keyword">if</span> (zip_stat_index(za, i, <span class="hljs-number">0</span>, &amp;sb) == <span class="hljs-number">0</span>)
+        {
+            len = <span class="hljs-built_in">strlen</span>(sb.name);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"extracting: '%s', "</span>, sb.name);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"size: %llu, "</span>, (<span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span> <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span>) sb.size);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"mtime: %u\n"</span>, (<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span>)sb.mtime);
+            <span class="hljs-keyword">if</span> (sb.name[len - <span class="hljs-number">1</span>] == <span class="hljs-string">'/'</span>)
+            {
+                safe_create_dir(sb.name);
+            }
+            <span class="hljs-keyword">else</span>
+            {
+                zf = zip_fopen_index(za, i, <span class="hljs-number">0</span>);
+                <span class="hljs-keyword">if</span> (!zf)
+                {
+                    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">"boese, boese\n"</span>);
+                    <span class="hljs-built_in">exit</span>(<span class="hljs-number">100</span>);
+                }
+                fd = open(sb.name, O_RDWR | O_TRUNC | O_CREAT, <span class="hljs-number">0644</span>);
+                <span class="hljs-keyword">if</span> (fd &lt; <span class="hljs-number">0</span>)
+                {
+                    <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">"boese, boese\n"</span>);
+                    <span class="hljs-built_in">exit</span>(<span class="hljs-number">101</span>);
+                }
+                sum = <span class="hljs-number">0</span>;
+                <span class="hljs-keyword">while</span> (sum != sb.size)
+                {
+                    len = zip_fread(zf, buf, <span class="hljs-number">100</span>);
+                    <span class="hljs-keyword">if</span> (len &lt; <span class="hljs-number">0</span>)
+                    {
+                        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">"boese, boese\n"</span>);
+                        <span class="hljs-built_in">exit</span>(<span class="hljs-number">102</span>);
+                    }
+                    write(fd, buf, len);
+                    sum += len;
+                }
+                close(fd);
+                zip_fclose(zf);
+            }
+        }
+        <span class="hljs-keyword">else</span>
+        {
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"File[%s] Line[%d]\n"</span>, __FILE__, __LINE__);
+        }
+    }
+    <span class="hljs-keyword">if</span> (zip_close(za) == <span class="hljs-number">-1</span>)
+    {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">"extract-zip: can't close zip 'archive.zip'\n"</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">if</span> (remove(<span class="hljs-string">"archive.zip"</span>) != <span class="hljs-number">0</span>) {
+        <span class="hljs-built_in">fprintf</span>(<span class="hljs-built_in">stderr</span>, <span class="hljs-string">"extract-zip: unable to delete 'archive.zip'\n"</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

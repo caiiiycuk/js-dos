@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>js-dos-events.cpp</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="include/js-dos-3rdparty.html">
+                js-dos-3rdparty.h
+              </a>
+            
+              
+              <a class="source" href="include/js-dos-ci.html">
+                js-dos-ci.h
+              </a>
+            
+              
+              <a class="source" href="include/js-dos-events.html">
+                js-dos-events.h
+              </a>
+            
+              
+              <a class="source" href="include/js-dos-json.html">
+                js-dos-json.h
+              </a>
+            
+              
+              <a class="source" href="js-dos-3rdparty.html">
+                js-dos-3rdparty.c
+              </a>
+            
+              
+              <a class="source" href="js-dos-ci.html">
+                js-dos-ci.cpp
+              </a>
+            
+              
+              <a class="source" href="js-dos-events.html">
+                js-dos-events.cpp
+              </a>
+            
+              
+              <a class="source" href="js-dos-json.html">
+                js-dos-json.cpp
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-build.html">
+                js-dos-build.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-ci.html">
+                js-dos-ci.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-fs.html">
+                js-dos-fs.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-host.html">
+                js-dos-host.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-module.html">
+                js-dos-module.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-options.html">
+                js-dos-options.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-ui.html">
+                js-dos-ui.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos-xhr.html">
+                js-dos-xhr.ts
+              </a>
+            
+              
+              <a class="source" href="../js-dos-ts/js-dos.html">
+                js-dos.ts
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>js-dos-events.cpp</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;js-dos-ci.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;js-dos-events.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;js-dos-json.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unordered_map&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;SDL/SDL_events.h&gt;</span></span>
+
+<span class="hljs-meta">#<span class="hljs-meta-keyword">ifdef</span> EMSCRIPTEN</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;emscripten.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="send">send</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Send is low level api to communicate with CommandInterface, it is used by
+javascript. Javascript can use this method to send information into c++
+layer, like this:</p>
+<pre><code>  Module[&#39;send&#39;](&#39;event&#39;, msg, funciton callback(msg) {
+    // ...
+  });</code></pre><p>callback will be called only if ‘event’ is know for c++ layer, and only when
+c++ layer call callback so IT IS ASYNC!</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Types:</p>
+<ul>
+<li><strong>send_callback_fn</strong> - function that C++ code should call, to trigger
+javascript callback function (that passed to send method)</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">void</span> <span class="hljs-params">(*send_callback_fn)</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> &amp;callback_name,
+                                 <span class="hljs-keyword">const</span> jsonstream &amp;)</span></span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <ul>
+<li><strong>send_handler_fn</strong> - handler for javascript callbacks</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">typedef</span> <span class="hljs-title">void</span> <span class="hljs-params">(*send_handler_fn)</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> &amp;callback_name,
+                                <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *data, send_callback_fn callback_fn)</span></span>;
+
+<span class="hljs-built_in">std</span>::<span class="hljs-built_in">unordered_map</span>&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>, send_handler_fn&gt; &amp;getSendHandlers() {
+  <span class="hljs-keyword">static</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">unordered_map</span>&lt;<span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>, send_handler_fn&gt; sendHandlers;
+  <span class="hljs-keyword">return</span> sendHandlers;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p><strong>_send</strong> - is actual implemenation of Module[‘__send’]</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">extern</span> <span class="hljs-string">"C"</span> <span class="hljs-keyword">void</span> EMSCRIPTEN_KEEPALIVE _send(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *ckey, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *data,
+                                           <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *ccallback) {
+  jsonstream emptystream;
+  <span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-title">void</span> <span class="hljs-params">(*fn)</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> &amp;, <span class="hljs-keyword">const</span> jsonstream &amp;)</span> </span>=
+      [](<span class="hljs-keyword">const</span> <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span> &amp;callback, <span class="hljs-keyword">const</span> jsonstream &amp;stream) -&gt; <span class="hljs-keyword">void</span> {
+<span class="hljs-meta">#<span class="hljs-meta-keyword">ifdef</span> EMSCRIPTEN</span>
+    EM_ASM_ARGS(
+        {
+          var clfield = Pointer_stringify($<span class="hljs-number">0</span>);
+          var innerobj = Pointer_stringify($<span class="hljs-number">1</span>);
+          <span class="hljs-keyword">if</span> (innerobj.length &gt; <span class="hljs-number">0</span>) {
+            innerobj = innerobj.slice(<span class="hljs-number">0</span>, <span class="hljs-number">-1</span>);
+          }
+          var object = JSON.parse(<span class="hljs-string">'{'</span> + innerobj + <span class="hljs-string">'}'</span>);
+          <span class="hljs-keyword">if</span> (clfield in Module) {
+            Module[clfield](object);
+            <span class="hljs-keyword">delete</span> Module[clfield];
+          }
+        },
+        callback.c_str(), stream.c_str());
+<span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span>
+  };
+
+  <span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span> <span class="hljs-title">key</span><span class="hljs-params">(ckey)</span></span>;
+  <span class="hljs-built_in">std</span>::<span class="hljs-function"><span class="hljs-built_in">string</span> <span class="hljs-title">callback</span><span class="hljs-params">(ccallback)</span></span>;
+
+  <span class="hljs-keyword">auto</span> sendHandlers = getSendHandlers();
+  <span class="hljs-keyword">auto</span> found = sendHandlers.find(key);
+  <span class="hljs-keyword">if</span> (found != sendHandlers.end()) {
+    found-&gt;second(callback, data, fn);
+    <span class="hljs-keyword">return</span>;
+  }
+
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">"WARN! Can't find handler for key '%s'\n"</span>, ckey);
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p><strong>registerSendFn</strong> - add send function to Module object</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>void registerSendFn() {
+#ifdef EMSCRIPTEN
+  EM_ASM(({
+    Module['send'] = function(key, data, callback) {
+      if (!callback) {
+        callback = function(){};
+      }
+
+      if (!data) {
+        data = "";
+      }
+
+      var clfield = key + '_callback_' + Math.random();
+
+      var keyLength = Module['lengthBytesUTF8'](key) + 1;
+      var clfieldLength = Module['lengthBytesUTF8'](clfield) + 1;
+      var dataLength = Module['lengthBytesUTF8'](data) + 1;
+
+      var clfieldBuffer = Module['_malloc'](clfieldLength);
+      var keyBuffer = Module['_malloc'](keyLength);
+      var dataBuffer = Module['_malloc'](dataLength);
+
+      Module['stringToUTF8'](key, keyBuffer, keyLength);
+      Module['stringToUTF8'](clfield, clfieldBuffer, clfieldLength);
+      Module['stringToUTF8'](data, dataBuffer, dataLength);
+
+      Module[clfield] = callback;
+      Module['__send'](keyBuffer, dataBuffer, clfieldBuffer);
+      Module['_free'](keyBuffer);
+      Module['_free'](clfieldBuffer);
+      Module['_free'](dataBuffer);
+    };
+  }));
+#endif
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h2 id="ping">Ping</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Ping is opposite to send, it called by c++ to trigger something in javascript</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>void ping(const char *event) {
+#ifdef EMSCRIPTEN
+  EM_ASM(({
+           const event = Pointer_stringify($0);
+           Module['ping'](event);
+         }),
+         event);
+#else
+  printf("PING: %s\n", event);
+#endif
+}
+
+Events::Events() {
+  registerSendFn();
+  registerExit();
+  registerScreenshot();
+  registerPushSDLEvent();
+}
+
+void Events::ready() { ping("ready"); }
+
+void Events::frame() {
+  static long frameCount = 0;
+
+  if (frameCount == 0) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>do nothing</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  } else if (frameCount == 1) {
+    ready();
+  } else {
+    ping("frame");
+    supplyScreenshotIfNeeded();
+  }
+
+  frameCount++;
+}
+
+void Events::registerExit() {
+  getSendHandlers().insert(std::make_pair&lt;&gt;(
+      "exit", [](const std::string &amp;callback_name, const char *data,
+                 send_callback_fn callback_fn) {
+        delete ci();
+        callback_fn(callback_name, jsonstream());
+      }));
+}
+
+void Events::registerScreenshot() {
+  getSendHandlers().insert(std::make_pair&lt;&gt;(
+      "screenshot", [](const std::string &amp;callback_name, const char *data,
+                       send_callback_fn callback_fn) {
+#ifdef EMSCRIPTEN
+        EM_ASM((const callbackName = Pointer_stringify($0);
+                Module['screenshot_callback_name'] = callbackName;),
+               callback_name.c_str());
+#endif
+      }));
+}
+
+void Events::supplyScreenshotIfNeeded() {
+#ifdef EMSCRIPTEN
+  EM_ASM(({
+    if (!Module['screenshot_callback_name']) {
+      return;
+    }
+
+    const callbackName = Module['screenshot_callback_name'];
+    const imgData = Module['canvas'].toDataURL("image/png");
+    const callback = Module[callbackName];
+    delete Module[callbackName];
+    delete Module['screenshot_callback_name'];
+    callback(imgData);
+  }));
+#endif
+}
+
+std::vector&lt;SDL_Event&gt; sdlEvents;
+int Events::pollSDLEvent(SDL_Event *event) {
+  auto result = SDL_PollEvent(event);
+  if (result == 0) {
+    if (!sdlEvents.empty()) {
+      *event = sdlEvents.back();
+      sdlEvents.pop_back();
+      return 1;
+    }
+  }
+  return result;
+}
+
+void Events::registerPushSDLEvent() {
+#ifdef EMSCRIPTEN
+  getSendHandlers().insert(std::make_pair&lt;&gt;(
+          "sdl_key_event", [](const std::string &amp;callback_name, const char *data,
+                              send_callback_fn callback_fn) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>typedef struct SDL_KeyboardEvent
+{
+ Uint32 type;        /<strong>&lt; ::SDL_KEYDOWN or ::SDL_KEYUP */
+ Uint32 windowID;    /</strong>&lt; The window with keyboard focus, if any <em>/
+ Uint8 state;        /*</em>&lt; ::SDL_PRESSED or ::SDL_RELEASED <em>/
+ Uint8 repeat;       /*</em>&lt; Non-zero if this is a key repeat <em>/
+ Uint8 padding2;
+ Uint8 padding3;
+ SDL_Keysym keysym;  /*</em>&lt; The key that was pressed or released */
+} SDL_KeyboardEvent;</p>
+<p>typedef struct SDL_Keysym
+{
+   SDL_Scancode scancode;      /<strong>&lt; SDL physical key code - see ::SDL_Scancode for details */
+   SDL_Keycode sym;            /</strong>&lt; SDL virtual key code - see ::SDL_Keycode for details <em>/
+   Uint16 mod;                 /*</em>&lt; current key modifiers <em>/
+   Uint32 unicode;             /*</em>&lt; \deprecated use SDL_TextInputEvent instead */
+} SDL_Keysym;</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>              auto code = atoi(data);
+
+              SDL_Keysym keysym;
+              keysym.scancode = (SDL_Scancode) code;
+              keysym.sym = (SDL_Keycode) code;
+              keysym.mod = KMOD_NONE;
+              keysym.unicode = 0;
+
+              SDL_Event event;
+              event.key.type = SDL_KEYDOWN;
+              event.key.windowID = 0;
+              event.key.state = SDL_PRESSED;
+              event.key.repeat = 0;
+              event.key.keysym = keysym;
+              sdlEvents.insert(sdlEvents.begin(), event);
+
+              event.key.type = SDL_KEYUP;
+              event.key.state = SDL_RELEASED;
+              sdlEvents.insert(sdlEvents.begin(), event);
+              callback_fn(callback_name, jsonstream());
+          }));
+#endif
+}
+
+void Events::shell_input(char *input_line, int length) {
+#ifdef EMSCRIPTEN
+    EM_ASM_(({
+        Module['ping']('shell_input', $0, $1);
+    }), input_line, length);
+#endif
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

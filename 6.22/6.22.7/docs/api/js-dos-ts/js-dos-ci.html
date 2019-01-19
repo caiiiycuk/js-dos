@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>js-dos-ci.ts</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-3rdparty.html">
+                js-dos-3rdparty.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-ci.html">
+                js-dos-ci.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-events.html">
+                js-dos-events.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-json.html">
+                js-dos-json.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-3rdparty.html">
+                js-dos-3rdparty.c
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-ci.html">
+                js-dos-ci.cpp
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-events.html">
+                js-dos-events.cpp
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-json.html">
+                js-dos-json.cpp
+              </a>
+            
+              
+              <a class="source" href="js-dos-build.html">
+                js-dos-build.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-ci.html">
+                js-dos-ci.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-fs.html">
+                js-dos-fs.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-host.html">
+                js-dos-host.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-module.html">
+                js-dos-module.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-options.html">
+                js-dos-options.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-ui.html">
+                js-dos-ui.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-xhr.html">
+                js-dos-xhr.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos.html">
+                js-dos.ts
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>js-dos-ci.ts</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { Dos } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos"</span>;
+<span class="hljs-keyword">import</span> { DosModule } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-module"</span>;
+<span class="hljs-keyword">import</span> { Xhr } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-xhr"</span>;
+
+<span class="hljs-keyword">interface</span> LowLevelApi {
+    send: <span class="hljs-function">(<span class="hljs-params">event: <span class="hljs-built_in">string</span>, msg?: <span class="hljs-built_in">any</span>, callback?: (<span class="hljs-params">msg: <span class="hljs-built_in">string</span></span>) =&gt; <span class="hljs-built_in">void</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+    ping: <span class="hljs-function">(<span class="hljs-params">msg: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosCommandInteface {
+    <span class="hljs-keyword">public</span> dos: DosModule;
+    <span class="hljs-keyword">private</span> em: <span class="hljs-keyword">typeof</span> Module;
+    <span class="hljs-keyword">private</span> api: LowLevelApi;
+    <span class="hljs-keyword">private</span> onready: <span class="hljs-function">(<span class="hljs-params">ci: DosCommandInteface</span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+
+    <span class="hljs-keyword">private</span> shellInputQueue: <span class="hljs-built_in">string</span>[] = [];
+    <span class="hljs-keyword">private</span> shellInputClients: <span class="hljs-built_in">Array</span>&lt;<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-built_in">void</span>&gt; = [];
+
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params">dos: DosModule, onready: (ci: DosCommandInteface) =&gt; <span class="hljs-built_in">void</span></span>) {
+        <span class="hljs-keyword">this</span>.dos = dos;
+        <span class="hljs-keyword">this</span>.em = (dos <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>);
+        <span class="hljs-keyword">this</span>.api = (dos <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>);
+        <span class="hljs-keyword">this</span>.api.ping = <span class="hljs-function">(<span class="hljs-params">msg: <span class="hljs-built_in">string</span>, ...args: <span class="hljs-built_in">any</span>[]</span>) =&gt;</span> {
+            <span class="hljs-keyword">this</span>.onping(msg, args);
+        };
+        <span class="hljs-keyword">this</span>.onready = onready;
+    }
+
+    <span class="hljs-keyword">public</span> width() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.dos.canvas.width;
+    }
+
+    <span class="hljs-keyword">public</span> height() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.dos.canvas.height;
+    }
+
+    <span class="hljs-keyword">public</span> shell(...cmd: <span class="hljs-built_in">string</span>[]) {
+        <span class="hljs-keyword">if</span> (cmd.length === <span class="hljs-number">0</span>) {
+            <span class="hljs-keyword">return</span>;
+        }
+
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> {
+            <span class="hljs-keyword">this</span>.shellInputClients.push(resolve);
+            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> next of cmd) {
+                <span class="hljs-keyword">this</span>.shellInputQueue.push(next);
+            }
+            <span class="hljs-keyword">this</span>.requestShellInput();
+        });
+    }
+
+    <span class="hljs-keyword">public</span> screenshot() {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve</span>) =&gt;</span> {
+            <span class="hljs-keyword">this</span>.api.send(<span class="hljs-string">"screenshot"</span>, <span class="hljs-string">""</span>, <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> {
+                resolve(data);
+            });
+        });
+    }
+
+    <span class="hljs-keyword">public</span> exit() {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">this</span>.api.send(<span class="hljs-string">"exit"</span>);
+        } <span class="hljs-keyword">catch</span> (e) {
+            <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+        }
+
+        <span class="hljs-keyword">this</span>.dos.error(<span class="hljs-string">"Runtime is still alive!"</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    }
+
+    <span class="hljs-keyword">private</span> sendKeyPress(code: <span class="hljs-built_in">number</span>) {
+        <span class="hljs-keyword">this</span>.api.send(<span class="hljs-string">"sdl_key_event"</span>, code + <span class="hljs-string">""</span>);
+    }
+
+    <span class="hljs-keyword">private</span> requestShellInput() {
+        <span class="hljs-keyword">this</span>.sendKeyPress(<span class="hljs-number">13</span>);
+    }
+
+    <span class="hljs-keyword">private</span> onping(msg: <span class="hljs-built_in">string</span>, args: <span class="hljs-built_in">any</span>[]) {
+        <span class="hljs-keyword">switch</span> (msg) {
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"ready"</span>:
+                <span class="hljs-keyword">this</span>.onready(<span class="hljs-keyword">this</span>);
+                <span class="hljs-keyword">break</span>;
+            <span class="hljs-keyword">case</span> <span class="hljs-string">"shell_input"</span>:
+                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.shellInputQueue.length === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span>;
+                }
+
+                <span class="hljs-keyword">const</span> buffer: <span class="hljs-built_in">number</span> = args[<span class="hljs-number">0</span>];
+                <span class="hljs-keyword">const</span> maxLength: <span class="hljs-built_in">number</span> = args[<span class="hljs-number">1</span>];
+
+                <span class="hljs-keyword">const</span> cmd = <span class="hljs-keyword">this</span>.shellInputQueue.shift();
+                <span class="hljs-keyword">const</span> cmdLength = (<span class="hljs-keyword">this</span>.em <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>).lengthBytesUTF8(cmd) + <span class="hljs-number">1</span>;
+
+                <span class="hljs-keyword">if</span> (cmdLength &gt; maxLength) {
+                    <span class="hljs-keyword">this</span>.dos.onerror(<span class="hljs-string">"Can't execute cmd '"</span> + cmd +
+                        <span class="hljs-string">"', because it's bigger then max cmd length "</span> + maxLength);
+                    <span class="hljs-keyword">return</span>;
+                }
+
+                (<span class="hljs-keyword">this</span>.em <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>).stringToUTF8(cmd, buffer, cmdLength);
+
+                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.shellInputQueue.length === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> resolve of <span class="hljs-keyword">this</span>.shellInputClients) {
+                        resolve();
+                    }
+                    <span class="hljs-keyword">this</span>.shellInputClients = [];
+                } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">this</span>.requestShellInput();
+                }
+            <span class="hljs-keyword">default</span>:</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>do nothing</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        }
+    }
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

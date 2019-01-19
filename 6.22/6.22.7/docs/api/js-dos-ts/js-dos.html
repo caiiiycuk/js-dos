@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Dos</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-3rdparty.html">
+                js-dos-3rdparty.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-ci.html">
+                js-dos-ci.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-events.html">
+                js-dos-events.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-json.html">
+                js-dos-json.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-3rdparty.html">
+                js-dos-3rdparty.c
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-ci.html">
+                js-dos-ci.cpp
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-events.html">
+                js-dos-events.cpp
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-json.html">
+                js-dos-json.cpp
+              </a>
+            
+              
+              <a class="source" href="js-dos-build.html">
+                js-dos-build.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-ci.html">
+                js-dos-ci.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-fs.html">
+                js-dos-fs.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-host.html">
+                js-dos-host.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-module.html">
+                js-dos-module.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-options.html">
+                js-dos-options.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-ui.html">
+                js-dos-ui.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-xhr.html">
+                js-dos-xhr.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos.html">
+                js-dos.ts
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">import</span> { DosCommandInteface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
+<span class="hljs-keyword">import</span> { DosFS } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-fs"</span>;
+<span class="hljs-keyword">import</span> { Host } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-host"</span>;
+<span class="hljs-keyword">import</span> { DosModule } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-module"</span>;
+<span class="hljs-keyword">import</span> { DosOptions } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-options"</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h1 id="dos">Dos</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Dos function is entry point that provides emulation layer.
+As emulation layer js-dos uses <a href="https://github.com/dreamlayers/em-dosbox/#compiling">DosBox ported to emscripten</a>.</p>
+<p><strong>canvas</strong> - is <strong>required</strong>, you should set existing HTMLCanvasElement, it will be used for render dos screen
+<strong>options</strong> - See <a href="js-dos-options.html">DosOptions</a> to understand how you can configure Dos class.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Dos</span>(<span class="hljs-params">canvas: HTMLCanvasElement, options: DosOptions</span>) </span>{
+    <span class="hljs-keyword">const</span> promise = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>&lt;DosRuntime&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">resolve, reject</span>) =&gt; {
+        <span class="hljs-keyword">const</span> <span class="hljs-built_in">module</span> = <span class="hljs-keyword">new</span> DosModule(<span class="hljs-params">canvas, resolve</span>);
+        <span class="hljs-built_in">Object</span>.assign(<span class="hljs-params"><span class="hljs-built_in">module</span>, options</span>);
+
+</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <h2 id="errors">Errors</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Error propagation should support both ways:</p>
+<ol>
+<li>Through reject of promise</li>
+<li>Fire onerror function of DosOptions object</li>
+</ol>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">const</span> onerror = <span class="hljs-built_in">module</span>.onerror;
+        <span class="hljs-built_in">module</span>.onerror = <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> {
+            reject(message);
+
+            <span class="hljs-keyword">const</span> fn = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+                <span class="hljs-keyword">if</span> (onerror) {
+                    onerror(message);
+                    <span class="hljs-built_in">module</span>.onerror = onerror;
+                } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-built_in">module</span>.onerror = <span class="hljs-built_in">module</span>.error;
+                }
+            };
+
+            setTimeout(fn, <span class="hljs-number">1</span>);
+        };
+
+        <span class="hljs-built_in">module</span>.resolve();
+        <span class="hljs-keyword">if</span> (!<span class="hljs-built_in">module</span>.isValid) {
+            <span class="hljs-keyword">return</span>;
+        }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>See <a href="js-dos-host.html">Host</a> to understand resolving of emulation layer (dosbox).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        Host.resolveDosBox(<span class="hljs-built_in">module</span>.wdosboxUrl, <span class="hljs-keyword">module</span>);
+    });
+
+    const dosReadyPromise = (promise as unknown) as DosReadyPromise;
+    dosReadyPromise.ready = (onready) =&gt; {
+        dosReadyPromise.then(<span class="hljs-function">(<span class="hljs-params">runtime: DosRuntime</span>) =&gt;</span> {
+            onready(runtime.fs, runtime.main);
+        });
+    };
+    <span class="hljs-keyword">return</span> dosReadyPromise;
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="dosreadypromise">DosReadyPromise</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Is Promise object with additional method ready. It returned by  Dos function
+when promise is resolved it means that DosBox runtime is ready for use
+and you can start your program</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <h2 id="dosruntime">DosRuntime</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> DosMainFn = <span class="hljs-function">(<span class="hljs-params">args: <span class="hljs-built_in">string</span>[]</span>) =&gt;</span> <span class="hljs-built_in">Promise</span>&lt;DosCommandInteface&gt;;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> DosRuntime {
+    fs: DosFS;
+    main: DosMainFn;
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> DosReadyPromise <span class="hljs-keyword">extends</span> Promise&lt;DosRuntime&gt; {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <h2 id="ready">ready</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>This function is called before running entry point of dosbox
+with it you can change command line arguments that passed to dosbox
+or configure FS layer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    ready: <span class="hljs-function">(<span class="hljs-params">onready: (<span class="hljs-params">fs: DosFS, main: DosMainFn</span>) =&gt; <span class="hljs-built_in">void</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+}
+
+(<span class="hljs-built_in">window</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>).Dos = Dos;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

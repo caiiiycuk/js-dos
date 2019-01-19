@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>js-dos-xhr.ts</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" media="all" href="../docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-3rdparty.html">
+                js-dos-3rdparty.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-ci.html">
+                js-dos-ci.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-events.html">
+                js-dos-events.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/include/js-dos-json.html">
+                js-dos-json.h
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-3rdparty.html">
+                js-dos-3rdparty.c
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-ci.html">
+                js-dos-ci.cpp
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-events.html">
+                js-dos-events.cpp
+              </a>
+            
+              
+              <a class="source" href="../js-dos-cpp/js-dos-json.html">
+                js-dos-json.cpp
+              </a>
+            
+              
+              <a class="source" href="js-dos-build.html">
+                js-dos-build.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-ci.html">
+                js-dos-ci.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-fs.html">
+                js-dos-fs.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-host.html">
+                js-dos-host.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-module.html">
+                js-dos-module.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-options.html">
+                js-dos-options.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-ui.html">
+                js-dos-ui.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos-xhr.html">
+                js-dos-xhr.ts
+              </a>
+            
+              
+              <a class="source" href="js-dos.html">
+                js-dos.ts
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>js-dos-xhr.ts</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">interface</span> XhrOptions {
+    method?: <span class="hljs-built_in">string</span>;
+    success?: <span class="hljs-function">(<span class="hljs-params">response: <span class="hljs-built_in">any</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+    progress?: <span class="hljs-function">(<span class="hljs-params">total: <span class="hljs-built_in">number</span>, loaded: <span class="hljs-built_in">number</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+    fail?: <span class="hljs-function">(<span class="hljs-params">url: <span class="hljs-built_in">string</span>, status: <span class="hljs-built_in">number</span>, message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+    data?: <span class="hljs-built_in">string</span>;
+    responseType?: <span class="hljs-built_in">string</span>;
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> Xhr {
+    <span class="hljs-keyword">private</span> resource: <span class="hljs-built_in">string</span>;
+    <span class="hljs-keyword">private</span> options: XhrOptions;
+    <span class="hljs-keyword">private</span> xhr: XMLHttpRequest;
+    <span class="hljs-keyword">private</span> total: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">private</span> loaded: <span class="hljs-built_in">number</span> = <span class="hljs-number">0</span>;
+
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params">url: <span class="hljs-built_in">string</span>, options: XhrOptions</span>) {
+        <span class="hljs-keyword">this</span>.resource = url;
+        <span class="hljs-keyword">this</span>.options = options;
+        <span class="hljs-keyword">this</span>.options.method = options.method || <span class="hljs-string">"GET"</span>;
+        <span class="hljs-keyword">this</span>.xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();
+        <span class="hljs-keyword">this</span>.xhr.open(<span class="hljs-keyword">this</span>.options.method, url, <span class="hljs-literal">true</span>);
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.method === <span class="hljs-string">"POST"</span>) {
+            <span class="hljs-keyword">this</span>.xhr.setRequestHeader(<span class="hljs-string">"Content-type"</span>, <span class="hljs-string">"application/x-www-form-urlencoded"</span>);
+        }
+        <span class="hljs-keyword">this</span>.xhr.overrideMimeType(<span class="hljs-string">"text/plain; charset=x-user-defined"</span>);
+
+        <span class="hljs-keyword">let</span> progressListner;
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> (progressListner = <span class="hljs-keyword">this</span>.xhr).addEventListener === <span class="hljs-string">"function"</span>) {
+            progressListner.addEventListener(<span class="hljs-string">"progress"</span>, <span class="hljs-function">(<span class="hljs-params">evt</span>) =&gt;</span> {
+                <span class="hljs-keyword">this</span>.total = evt.total;
+                <span class="hljs-keyword">this</span>.loaded = evt.loaded;
+                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.progress) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options.progress(evt.total, evt.loaded);
+                }
+            });
+        }
+
+        <span class="hljs-keyword">let</span> errorListener;
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> (errorListener = <span class="hljs-keyword">this</span>.xhr).addEventListener === <span class="hljs-string">"function"</span>) {
+            errorListener.addEventListener(<span class="hljs-string">"error"</span>, <span class="hljs-function">(<span class="hljs-params">evt</span>) =&gt;</span> {
+                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.fail) {
+                    <span class="hljs-keyword">this</span>.options.fail(<span class="hljs-keyword">this</span>.resource, <span class="hljs-keyword">this</span>.xhr.status, <span class="hljs-string">"connection problem"</span>);
+                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.options.fail;
+                }
+            });
+        }
+        <span class="hljs-keyword">this</span>.xhr.onreadystatechange = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.onReadyStateChange();
+        };
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.responseType) {
+            <span class="hljs-keyword">this</span>.xhr.responseType = <span class="hljs-keyword">this</span>.options.responseType <span class="hljs-keyword">as</span> XMLHttpRequestResponseType;
+        }
+        <span class="hljs-keyword">this</span>.xhr.send(<span class="hljs-keyword">this</span>.options.data);
+    }
+
+    <span class="hljs-keyword">public</span> onReadyStateChange() {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.xhr.readyState === <span class="hljs-number">4</span>) {
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.xhr.status === <span class="hljs-number">200</span>) {
+                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.success) {
+                    <span class="hljs-keyword">const</span> total = <span class="hljs-built_in">Math</span>.max(<span class="hljs-keyword">this</span>.total, <span class="hljs-keyword">this</span>.loaded);
+                    <span class="hljs-keyword">this</span>.options.progress(total, total);
+                    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.options.success(<span class="hljs-keyword">this</span>.xhr.response);
+                }
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.options.fail) {
+                <span class="hljs-keyword">this</span>.options.fail(<span class="hljs-keyword">this</span>.resource, <span class="hljs-keyword">this</span>.xhr.status, <span class="hljs-string">"connection problem"</span>);
+                <span class="hljs-keyword">return</span> <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.options.fail;
+            }
+        }
+    }
+
+    <span class="hljs-keyword">public</span> arrayBufferToString(buffer: <span class="hljs-built_in">ArrayBuffer</span>) {
+        <span class="hljs-keyword">const</span> bufView = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint16Array</span>(buffer);
+        <span class="hljs-keyword">const</span> length = bufView.length;
+        <span class="hljs-keyword">let</span> result = <span class="hljs-string">""</span>;
+        <span class="hljs-keyword">let</span> maxCallSize = <span class="hljs-built_in">Math</span>.pow(<span class="hljs-number">2</span>, <span class="hljs-number">16</span>) - <span class="hljs-number">1</span>;
+        <span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">while</span> (i &lt; length) {
+            <span class="hljs-keyword">if</span> (i + maxCallSize &gt; length) {
+                maxCallSize = length - i;
+            }
+            result += <span class="hljs-built_in">String</span>.fromCharCode.apply(<span class="hljs-literal">null</span>, bufView.subarray(i, i + maxCallSize));
+            i += maxCallSize;
+        }
+        <span class="hljs-keyword">return</span> result;
+    }
+
+}</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
