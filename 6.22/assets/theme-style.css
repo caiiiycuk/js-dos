@@ -886,4 +886,5 @@ img {
 canvas {
   width: 640px;
   max-width: 100%;
+  pointer-events : none;
 }
