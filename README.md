@@ -5,7 +5,7 @@ js-dos 6.22
 
 6.22 is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox.
 
-You can found previous version here [v3](https://github.com/caiiiycuk/js-dos/tree/v3)
+You can found previous version here [v3](https://js-dos.com/index_v3.html)
 
 Bootstrap
 =========
