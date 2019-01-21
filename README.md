@@ -3,15 +3,15 @@ js-dos 6.22
 
 [![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos)
 
-6.22 is brand new version of js-dos, that should solve many problems of previous releases. It under active
-development right now.
+6.22 is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox.
 
-You can get info about previous (stable) version here [v3](https://github.com/caiiiycuk/js-dos/tree/v3)
+You can found previous version here [v3](https://github.com/caiiiycuk/js-dos/tree/v3)
 
-Bootstrapping
-=============
+Bootstrap
+=========
 
-Just type this to bootstrap dosbox with digger in browser:
+The fastest way to start with js-dos 6.22 is too use our bootstrap projec. You can create simple web page that runs
+digger in browser with this commands:
 ```
 npx create-dosbox digger
 cd digger
@@ -32,47 +32,29 @@ npm start
 Building
 ========
 
-Emulation layer (aka dosbox)
-----------------------------
+Building process have two steps:
+* You need to build emulation layer (dosbox)
+* You need to build API
+
+Dosbox
+------
+Project uses dosbox as emulation layer for running dos programs. You should build it before building javascript API. To do this you should have emscripten installed in your system and CMake. Build process should be easy if you familar with cmake, just run this commands:
 ```
 mkdir build
 cd build
-emcmake cmake -GNinja ..
-ninja -j4
+emcmake cmake ..
+make -j4
 ```
 
+JavaScript API
+--------------
 
-Client layer (JavaScript)
-------------------------
+You can build javascript API with gulp, just type gulp.
 ```
 gulp
 ```
 
-Running tests
--------------
+Output will be placed in dist folder. Also in dist folder you can find test page, you open it in browser. All test should pass.
 ```
 firefox dist/test/index.html
 ```
-
-
-Folder structure
-================
-
-/dreamlayers-em-dosbox-em-dosbox-svn-sdl2
-
-Is folder for storing ported version of dosbox. It's came from this repository:
-```
-https://github.com/dreamlayers/em-dosbox/
-commit: 4526ed7fa56fc70a5de7b666f97a097c27b9ee9f
-```
-
-/js-dos-cpp
-
-If folder with sources that extends functionanlity of dosbox
-
-/js-dos-ts
-
-Api layer written is TypedScript
-
-
-
