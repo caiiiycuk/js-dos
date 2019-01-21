@@ -31,6 +31,30 @@ npm intall
 npm start
 ```
 
+How it works
+------------
+
+This script will create simple html page, that have canvas element. This canvas is used as render surface (output window) to dosbox. Also this page have a js-dos inialization script.
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        fs.extract("digger.zip").then(() => {
+            main(["-c", "DIGGER.COM"])
+        });
+    });
+```
+
+It contains this initialization steps:
+1. Dos(canvas) - will return promise that will be resoled when dosbox is ready
+2. ready((fs, main) =>) - will be called when dosbox is ready (**BUT NOT RUNNED**)
+3. fs allows you to do work over dosbox filesystem, and we ask to download and extract "digger.zip"
+4. When archive is extracted we run dosbox, like in shell ```main(["-c", "DIGGER.COM"])``` is equivalent to:
+```
+> dosbox -c DIGGER.COM
+```
+
+Read more how to use js-dos in [**API Reference**](http://js-dos.com/6.22/6.22.7/docs/api/js-dos-ts/js-dos.html)
+
 Building
 ========
 
