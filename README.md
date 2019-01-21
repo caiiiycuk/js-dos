@@ -34,7 +34,7 @@ npm start
 How it works
 ------------
 
-This script will create simple html page, that have canvas element. This canvas is used as render surface (output window) to dosbox. Also this page have a js-dos inialization script.
+Bootstrap script will create simple html page, that have canvas element. This canvas is used as render surface (output window) to dosbox. Also this page have a js-dos inialization script.
 
 ```javascript
     Dos(canvas).ready((fs, main) => {
