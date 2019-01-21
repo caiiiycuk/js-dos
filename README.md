@@ -17,6 +17,8 @@ npx create-dosbox digger
 cd digger
 npm install
 npm start
+--
+firefox 127.0.0.1:8080
 ```
 
 ![Digger in browser](https://github.com/caiiiycuk/create-dosbox/raw/master/digger.gif)
