@@ -10,7 +10,7 @@ You can found previous version here [v3](https://github.com/caiiiycuk/js-dos/tre
 Bootstrap
 =========
 
-The fastest way to start with js-dos 6.22 is too use our bootstrap projec. You can create simple web page that runs
+The fastest way to start with js-dos 6.22 is to use our bootstrap project. You can create simple web page that runs
 digger in browser with this commands:
 ```
 npx create-dosbox digger
@@ -33,8 +33,9 @@ Building
 ========
 
 Building process have two steps:
-* You need to build emulation layer (dosbox)
-* You need to build API
+
+1. You need to build emulation layer (dosbox)
+2. You need to build API
 
 Dosbox
 ------
