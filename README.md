@@ -45,6 +45,7 @@ Bootstrap script will create simple html page, that have canvas element. This ca
 ```
 
 It contains this initialization steps:
+
 1. Dos(canvas) - will return promise that will be resoled when dosbox is ready
 2. ready((fs, main) =>) - will be called when dosbox is ready (**BUT NOT RUNNED**)
 3. fs allows you to do work over dosbox filesystem, and we ask to download and extract "digger.zip"
