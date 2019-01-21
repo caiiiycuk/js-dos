@@ -11,11 +11,21 @@ You can get info about previous (stable) version here [v3](https://github.com/ca
 Bootstrapping
 =============
 
-Just type this to run bootstrap dosbox with digger in browser:
+Just type this to bootstrap dosbox with digger in browser:
 ```
 npx create-dosbox digger
 cd digger
 npm install
+npm start
+```
+
+![Digger in browser](https://github.com/caiiiycuk/create-dosbox/raw/master/digger.gif)
+
+Or if you have archive wiht dos programm you can bootstrap it:
+```
+npx create-dosbox my-app archive.zip
+cd my-app
+npm intall
 npm start
 ```
 
