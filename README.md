@@ -23,7 +23,7 @@ firefox 127.0.0.1:8080
 
 ![Digger in browser](https://github.com/caiiiycuk/create-dosbox/raw/master/digger.gif)
 
-Or if you have archive wiht dos program you can bootstrap it:
+Or if you have **ZIP** archive with dos program you can bootstrap it:
 ```
 npx create-dosbox my-app archive.zip
 cd my-app
