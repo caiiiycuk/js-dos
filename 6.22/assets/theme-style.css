@@ -882,3 +882,8 @@ code .comment {
 img {
   max-width: 100%
 }
+
+canvas {
+  width: 640px;
+  max-width: 100%;
+}
