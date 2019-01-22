@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>FS</title>
+  <title>DosFS</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" media="all" href="../docco.css" />
@@ -117,28 +117,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { Dos } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos"</span>;
-<span class="hljs-keyword">import</span> { DosModule } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-module"</span>;
-<span class="hljs-keyword">import</span> { Xhr } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-xhr"</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <h1 id="fs">FS</h1>
-<p>Api for working with inmemory file system that used by emulation layer</p>
+              <h1 id="dosfs">DosFS</h1>
+<p>API for working with file system of dosbox</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">import</span> { DosModule } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-module"</span>;
+<span class="hljs-keyword">import</span> { Xhr } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-xhr"</span>;
+
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosFS {
     <span class="hljs-keyword">private</span> dos: DosModule;
     <span class="hljs-keyword">private</span> em: <span class="hljs-keyword">typeof</span> Module;
@@ -151,19 +138,38 @@
         </li>
         
         
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="extract">extract</h2>
+<p>download archive by given url and then extract it in cwd (cwd will be mounted as C:)</p>
+<ul>
+<li><code>url</code> - url for downloading archive</li>
+<li><code>type</code> - archive type <strong>only zip is supported</strong></li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> extract(url: <span class="hljs-built_in">string</span>, <span class="hljs-keyword">type</span>: <span class="hljs-built_in">string</span> = <span class="hljs-string">"zip"</span>) {</pre></div></div>
+            
+        </li>
+        
+        
         <li id="section-3">
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p><strong>extract</strong> - downloads url and extract it in cwd (cwd will be mounted as C:),
-supported only zip archive</p>
+              <p>this method will return <code>Promise&lt;void&gt;</code>, that will be resolved
+on success with empty object or rejected</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> extract(url: <span class="hljs-built_in">string</span>, <span class="hljs-keyword">type</span>: <span class="hljs-built_in">string</span> = <span class="hljs-string">"zip"</span>) {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">resolve, reject</span>) =&gt; {
+            <div class="content"><div class='highlight'><pre>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">resolve, reject</span>) =&gt; {
             <span class="hljs-keyword">if</span> (<span class="hljs-params"><span class="hljs-keyword">type</span> !== "zip"</span>) {
                 reject(<span class="hljs-params">"Only ZIP archive is supported"</span>);
                 <span class="hljs-keyword">return</span>;

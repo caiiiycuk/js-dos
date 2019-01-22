@@ -1,12 +1,12 @@
 import * as assert from "assert";
-import { DosCommandInteface } from "../js-dos-ts/js-dos-ci";
+import { DosCommandInterface } from "../js-dos-ts/js-dos-ci";
 import { doThen } from "./do";
 
 // Compare
 // =======
 // Compare image from url, and screenshot from DosBox
 
-export function compareAndExit(imageUrl: string, ci: DosCommandInteface, done: () => void) {
+export function compareAndExit(imageUrl: string, ci: DosCommandInterface, done: () => void) {
     compare(imageUrl, ci, (wrong) => {
         assert.equal(0, wrong);
         ci.exit();
@@ -14,7 +14,7 @@ export function compareAndExit(imageUrl: string, ci: DosCommandInteface, done: (
     });
 }
 
-const compare = (imageUrl: string, ci: DosCommandInteface, callback: (wrong: number) => void) => {
+const compare = (imageUrl: string, ci: DosCommandInterface, callback: (wrong: number) => void) => {
     doThen(ci.screenshot(), (actualUrl: string) => {
         const img = new Image();
         img.onload = () => {

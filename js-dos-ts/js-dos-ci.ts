@@ -7,16 +7,16 @@ interface LowLevelApi {
     ping: (msg: string) => void;
 }
 
-export class DosCommandInteface {
+export class DosCommandInterface {
     public dos: DosModule;
     private em: typeof Module;
     private api: LowLevelApi;
-    private onready: (ci: DosCommandInteface) => void;
+    private onready: (ci: DosCommandInterface) => void;
 
     private shellInputQueue: string[] = [];
     private shellInputClients: Array<() => void> = [];
 
-    constructor(dos: DosModule, onready: (ci: DosCommandInteface) => void) {
+    constructor(dos: DosModule, onready: (ci: DosCommandInterface) => void) {
         this.dos = dos;
         this.em = (dos as any);
         this.api = (dos as any);

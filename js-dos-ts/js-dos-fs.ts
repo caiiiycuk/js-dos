@@ -1,10 +1,8 @@
-import { Dos } from "./js-dos";
+// # DosFS
+// API for working with file system of dosbox
+
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
-
-// FS
-// ==
-// Api for working with inmemory file system that used by emulation layer
 
 export class DosFS {
     private dos: DosModule;
@@ -15,9 +13,13 @@ export class DosFS {
         this.em = dos as any;
     }
 
-    // **extract** - downloads url and extract it in cwd (cwd will be mounted as C:),
-    // supported only zip archive
+    // ## extract
+    // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
+    // * `url` - url for downloading archive
+    // * `type` - archive type **only zip is supported**
     public extract(url: string, type: string = "zip") {
+        // this method will return `Promise<void>`, that will be resolved
+        // on success with empty object or rejected
         return new Promise<void>((resolve, reject) => {
             if (type !== "zip") {
                 reject("Only ZIP archive is supported");

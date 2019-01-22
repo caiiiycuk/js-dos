@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>js-dos-options.ts</title>
+  <title>DosOptions</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" media="all" href="../docco.css" />
@@ -109,12 +109,6 @@
     
     <ul class="sections">
         
-          <li id="title">
-              <div class="annotation">
-                  <h1>js-dos-options.ts</h1>
-              </div>
-          </li>
-        
         
         
         <li id="section-1">
@@ -123,11 +117,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <h1 id="dosoptions">DosOptions</h1>
+<p>Is a options object that you pass to constructor of <a href="js-dos.html">Dos</a>
+class, to configure emulation layer:</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosCommandInteface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
-<span class="hljs-keyword">import</span> { DosFS } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-fs"</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosCommandInterface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
+<span class="hljs-keyword">import</span> { DosFS } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-fs"</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosOptions {</pre></div></div>
             
         </li>
         
@@ -138,9 +137,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <h2 id="dosoptions">DosOptions</h2>
+              <p><code>onprogress</code> - progress event listener, it is fired when loading progress is changed</p>
+<ul>
+<li><code>stage</code> - current loading stage</li>
+<li><code>total</code> - total bytes to download on current stage</li>
+<li><code>loaded</code> - downloaded bytes</li>
+</ul>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onprogress?: <span class="hljs-function">(<span class="hljs-params">stage: <span class="hljs-built_in">string</span>, total: <span class="hljs-built_in">number</span>, loaded: <span class="hljs-built_in">number</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
             
         </li>
         
@@ -151,12 +157,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>Is a options object that you pass to constructor of <a href="js-dos.html">Dos</a>
-class, to configure emulation layer:</p>
+              <p><code>onerror</code> - this function is called when error happens</p>
+<ul>
+<li><code>message</code> - infomation about error</li>
+</ul>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosOptions {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onerror?: <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
             
         </li>
         
@@ -167,9 +175,11 @@ class, to configure emulation layer:</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <h2 id="onprogress">onprogress</h2>
+              <p><code>log</code> - you can provide log function, to override logging, by default js-dos uses console.log as implementation</p>
 
             </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> log?: <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
             
         </li>
         
@@ -180,91 +190,7 @@ class, to configure emulation layer:</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-5">&#182;</a>
               </div>
-              <p>this function is called while js-dos is loading</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onprogress?: <span class="hljs-function">(<span class="hljs-params">stage: <span class="hljs-built_in">string</span>, total: <span class="hljs-built_in">number</span>, loaded: <span class="hljs-built_in">number</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-6">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <h2 id="onerror">onerror</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-7">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-7">&#182;</a>
-              </div>
-              <p>this function is called when error happens</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> onerror?: <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-8">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-8">&#182;</a>
-              </div>
-              <h2 id="log">log</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-9">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-9">&#182;</a>
-              </div>
-              <p> you can provide log function, to override logging, by default js-dos uses console.log as implementation</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">public</span> log?: <span class="hljs-function">(<span class="hljs-params">message: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-10">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-10">&#182;</a>
-              </div>
-              <h2 id="wdosboxurl">wdosboxUrl</h2>
-
-            </div>
-            
-        </li>
-        
-        
-        <li id="section-11">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-11">&#182;</a>
-              </div>
-              <p>you can set alternative url for downloading js-dos script, default is ‘wdosbox.js’</p>
+              <p><code>wdosboxUrl</code> - you can set alternative url for downloading js-dos script, default is ‘wdosbox.js’</p>
 
             </div>
             

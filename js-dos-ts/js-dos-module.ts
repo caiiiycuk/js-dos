@@ -1,5 +1,5 @@
 import { DosRuntime } from "./js-dos";
-import { DosCommandInteface } from "./js-dos-ci";
+import { DosCommandInterface } from "./js-dos-ci";
 import { DosFS } from "./js-dos-fs";
 import { DosOptions } from "./js-dos-options";
 import { DosUi } from "./js-dos-ui";
@@ -7,7 +7,7 @@ import { DosUi } from "./js-dos-ui";
 export class DosModule extends DosOptions {
     public isValid: boolean = false;
     public canvas: HTMLCanvasElement = null;
-    private ci: Promise<DosCommandInteface> = null;
+    private ci: Promise<DosCommandInterface> = null;
     private instance: any;
     private fs: DosFS = null;
     private ui: DosUi = null;
@@ -84,8 +84,8 @@ export class DosModule extends DosOptions {
             }
             args.unshift("-c", "mount c .", "-c", "c:");
             (this as any).callMain(args);
-            return new Promise<DosCommandInteface>((resolve) => {
-                new DosCommandInteface(this, (ci: DosCommandInteface) => {
+            return new Promise<DosCommandInterface>((resolve) => {
+                new DosCommandInterface(this, (ci: DosCommandInterface) => {
                     resolve(ci);
                 });
             });

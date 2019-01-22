@@ -127,7 +127,7 @@
             </div>
             
             <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> { DosRuntime } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos"</span>;
-<span class="hljs-keyword">import</span> { DosCommandInteface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
+<span class="hljs-keyword">import</span> { DosCommandInterface } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ci"</span>;
 <span class="hljs-keyword">import</span> { DosFS } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-fs"</span>;
 <span class="hljs-keyword">import</span> { DosOptions } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-options"</span>;
 <span class="hljs-keyword">import</span> { DosUi } <span class="hljs-keyword">from</span> <span class="hljs-string">"./js-dos-ui"</span>;
@@ -135,7 +135,7 @@
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosModule <span class="hljs-keyword">extends</span> DosOptions {
     <span class="hljs-keyword">public</span> isValid: <span class="hljs-built_in">boolean</span> = <span class="hljs-literal">false</span>;
     <span class="hljs-keyword">public</span> canvas: HTMLCanvasElement = <span class="hljs-literal">null</span>;
-    <span class="hljs-keyword">private</span> ci: <span class="hljs-built_in">Promise</span>&lt;DosCommandInteface&gt; = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">private</span> ci: <span class="hljs-built_in">Promise</span>&lt;DosCommandInterface&gt; = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">private</span> instance: <span class="hljs-built_in">any</span>;
     <span class="hljs-keyword">private</span> fs: DosFS = <span class="hljs-literal">null</span>;
     <span class="hljs-keyword">private</span> ui: DosUi = <span class="hljs-literal">null</span>;
@@ -225,8 +225,8 @@ when runtime will ready</p>
             }
             args.unshift(<span class="hljs-string">"-c"</span>, <span class="hljs-string">"mount c ."</span>, <span class="hljs-string">"-c"</span>, <span class="hljs-string">"c:"</span>);
             (<span class="hljs-keyword">this</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>).callMain(args);
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>&lt;DosCommandInteface&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">resolve</span>) =&gt; {
-                <span class="hljs-keyword">new</span> DosCommandInteface(<span class="hljs-params"><span class="hljs-keyword">this</span>, (<span class="hljs-params">ci: DosCommandInteface</span>) =&gt; {
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>&lt;DosCommandInterface&gt;<span class="hljs-function">(<span class="hljs-params">(<span class="hljs-params">resolve</span>) =&gt; {
+                <span class="hljs-keyword">new</span> DosCommandInterface(<span class="hljs-params"><span class="hljs-keyword">this</span>, (<span class="hljs-params">ci: DosCommandInterface</span>) =&gt; {
                     resolve(<span class="hljs-params">ci</span>);
                 }</span>);
             }</span>);

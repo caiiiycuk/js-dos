@@ -135,16 +135,16 @@
     ping: <span class="hljs-function">(<span class="hljs-params">msg: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>;
 }
 
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosCommandInteface {
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> DosCommandInterface {
     <span class="hljs-keyword">public</span> dos: DosModule;
     <span class="hljs-keyword">private</span> em: <span class="hljs-keyword">typeof</span> Module;
     <span class="hljs-keyword">private</span> api: LowLevelApi;
-    <span class="hljs-keyword">private</span> onready: <span class="hljs-function">(<span class="hljs-params">ci: DosCommandInteface</span>) =&gt;</span> <span class="hljs-built_in">void</span>;
+    <span class="hljs-keyword">private</span> onready: <span class="hljs-function">(<span class="hljs-params">ci: DosCommandInterface</span>) =&gt;</span> <span class="hljs-built_in">void</span>;
 
     <span class="hljs-keyword">private</span> shellInputQueue: <span class="hljs-built_in">string</span>[] = [];
     <span class="hljs-keyword">private</span> shellInputClients: <span class="hljs-built_in">Array</span>&lt;<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-built_in">void</span>&gt; = [];
 
-    <span class="hljs-keyword">constructor</span>(<span class="hljs-params">dos: DosModule, onready: (ci: DosCommandInteface) =&gt; <span class="hljs-built_in">void</span></span>) {
+    <span class="hljs-keyword">constructor</span>(<span class="hljs-params">dos: DosModule, onready: (ci: DosCommandInterface) =&gt; <span class="hljs-built_in">void</span></span>) {
         <span class="hljs-keyword">this</span>.dos = dos;
         <span class="hljs-keyword">this</span>.em = (dos <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>);
         <span class="hljs-keyword">this</span>.api = (dos <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>);
