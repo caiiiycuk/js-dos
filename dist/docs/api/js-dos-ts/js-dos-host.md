@@ -1,6 +1,15 @@
-// # DosHost
-// This class is used to detect and provide information about
-// features that supported in current environment
+
+
+
+
+# DosHost
+This class is used to detect and provide information about
+features that supported in current environment
+
+
+  
+
+```
 
 /* tslint:disable:member-ordering */
 import { Build } from "./js-dos-build";
@@ -17,8 +26,22 @@ class DosHost {
     constructor() {
         this.global.exports = {};
 
-        // Host able to detect is WebAssembly supported or not,
-        // this information is stored in `Host.wasmSupported` variable
+
+```
+
+
+
+
+
+
+
+Host able to detect is WebAssembly supported or not,
+this information is stored in `Host.wasmSupported` variable
+
+
+  
+
+```
         try {
             if (typeof WebAssembly === "object" &&
                 typeof WebAssembly.instantiate === "function" &&
@@ -33,12 +56,40 @@ class DosHost {
             /* do nothing WebAssembly is not supported */
         }
 
-        // Host also provides limited set of polyfills to support legacy browsers
+
+```
+
+
+
+
+
+
+
+Host also provides limited set of polyfills to support legacy browsers
+
+
+  
+
+```
         this.polyfill();
     }
 
-    // Currently polyfill contains implementations for:
-    // `Math.imul`, `Math.fround`, `Math.clz32`, `Math.trunc`
+
+```
+
+
+
+
+
+
+
+Currently polyfill contains implementations for:
+`Math.imul`, `Math.fround`, `Math.clz32`, `Math.trunc`
+
+
+  
+
+```
     /* tslint:disable:no-bitwise */
     /* tslint:disable:only-arrow-functions */
     private polyfill() {
@@ -77,12 +128,40 @@ class DosHost {
         Math.trunc = Math.trunc;
     }
 
-    // ## resolveDosBox
-    // `resolveDosBox` is another important task of DosHost
+
+```
+
+
+
+
+
+
+
+## resolveDosBox
+`resolveDosBox` is another important task of DosHost
+
+
+  
+
+```
     public resolveDosBox(url: string, module: DosModule) {
-        // When dosbox is resolved, WDOSBOX module is set to
-        // global variable `exports.WDOSBOX`. This variable is
-        // used to prevent next loads of same dosbox module.
+
+```
+
+
+
+
+
+
+
+When dosbox is resolved, WDOSBOX module is set to
+global variable `exports.WDOSBOX`. This variable is
+used to prevent next loads of same dosbox module.
+
+
+  
+
+```
         if (this.global.exports.WDOSBOX) {
             module.ondosbox(this.global.exports.WDOSBOX, this.global.exports.instantiateWasm);
             return;
@@ -114,13 +193,41 @@ class DosHost {
         });
     }
 
-    // If dosbox is not yet resolved, then:
+
+```
+
+
+
+
+
+
+
+If dosbox is not yet resolved, then:
+
+
+  
+
+```
     private compileDosBox(url: string, module: DosModule) {
         const buildTotal = Build.wasmSize + Build.jsSize;
         return new Promise((resolve, reject) => {
             const wasmUrl = url.replace(".js", ".wasm.js");
 
-            // 1. Host downloads `wdosbox` asm + js scripts
+
+```
+
+
+
+
+
+
+
+1. Host downloads `wdosbox` asm + js scripts
+
+
+  
+
+```
             new Xhr(wasmUrl, {
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
@@ -133,7 +240,21 @@ class DosHost {
                         ", message: " + message + ", url: " + url);
                 },
                 success: (response: any) => {
-                    // 2. Compile dosbox wasm module
+
+```
+
+
+
+
+
+
+
+2. Compile dosbox wasm module
+
+
+  
+
+```
                     const promise = WebAssembly.compile(response);
                     const onreject = (reason: any) => {
                         reject(reason + "");
@@ -141,7 +262,21 @@ class DosHost {
                     promise.catch(onreject);
                     promise.then((wasmModule) => {
                         this.global.exports.instantiateWasm = (info: any, receiveInstance: any) => {
-                            // 3.  Instaniate it for each new dosbox runtime
+
+```
+
+
+
+
+
+
+
+3.  Instaniate it for each new dosbox runtime
+
+
+  
+
+```
                             return WebAssembly.instantiate(wasmModule, info)
                                 .catch(onreject)
                                 .then((instance) => {
@@ -176,3 +311,10 @@ class DosHost {
 }
 
 export const Host = new DosHost();
+
+
+```
+
+
+
+

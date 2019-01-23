@@ -16,8 +16,16 @@ gulp.task('clean', function () {
         .pipe(clean());
 });
 
-gulp.task("docs", function (cb) {
-    exec('node_modules/docco/bin/docco js-dos-ts/* js-dos-cpp/* js-dos-cpp/include/* -o dist/docs/api -l classic', function (err, stdout, stderr) {
+gulp.task("docco", function (cb) {
+    exec('node_modules/docco/bin/docco js-dos-ts/* js-dos-cpp/* js-dos-cpp/include/* -o dist/docs/api -l plain-markdown', function (err, stdout, stderr) {
+      console.log(stdout);
+      console.log(stderr);
+      cb(err);
+    });
+});
+
+gulp.task("docs", ["docco"], function (cb) {
+    exec('find dist/docs -name "*.html" -exec bash -c \'mv "$1" "${1%.html}".md\' - \'{}\' \\;', function (err, stdout, stderr) {
       console.log(stdout);
       console.log(stderr);
       cb(err);

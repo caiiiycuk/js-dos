@@ -1,24 +1,138 @@
-// # Xhr
-// `Xhr` is small wrapper over XMLHttpRequest, that provides some
-// handy methods
 
-// Xhr is called with url, and XhrOptions object:
+
+
+
+# Xhr
+`Xhr` is small wrapper over XMLHttpRequest, that provides some
+handy methods
+
+
+
+
+
+
+
+
+Xhr is called with url, and XhrOptions object:
+
+
+  
+
+```
 interface XhrOptions {
-    // `method` - "GET" | "POST"
+
+```
+
+
+
+
+
+
+
+`method` - "GET" | "POST"
+
+
+  
+
+```
     method?: string;
-    // `success` - callback when resource is downloaded
+
+```
+
+
+
+
+
+
+
+`success` - callback when resource is downloaded
+
+
+  
+
+```
     success?: (response: any) => void;
-    // `progress` - callback for progress
+
+```
+
+
+
+
+
+
+
+`progress` - callback for progress
+
+
+  
+
+```
     progress?: (total: number, loaded: number) => void;
-    // `fail` - fail callback
+
+```
+
+
+
+
+
+
+
+`fail` - fail callback
+
+
+  
+
+```
     fail?: (url: string, status: number, message: string) => void;
-    // `data` - data for POST request, should typeof `application/x-www-form-urlencoded`
+
+```
+
+
+
+
+
+
+
+`data` - data for POST request, should typeof `application/x-www-form-urlencoded`
+
+
+  
+
+```
     data?: string;
-    // `responseType` - XMLHttpRequestResponseType
+
+```
+
+
+
+
+
+
+
+`responseType` - XMLHttpRequestResponseType
+
+
+  
+
+```
     responseType?: XMLHttpRequestResponseType;
 }
 
-// Class Xhr does not have any public methods
+
+```
+
+
+
+
+
+
+
+Class Xhr does not have any public methods
+
+
+  
+
+```
 export class Xhr {
     private resource: string;
     private options: XhrOptions;
@@ -98,3 +212,10 @@ export class Xhr {
     }
 
 }
+
+
+```
+
+
+
+

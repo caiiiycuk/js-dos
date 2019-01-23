@@ -1,5 +1,14 @@
-// # DosCommandInterface
-// Is abstraction that allows you to control runned instance of js-dos
+
+
+
+
+# DosCommandInterface
+Is abstraction that allows you to control runned instance of js-dos
+
+
+  
+
+```
 import { Dos } from "./js-dos";
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
@@ -23,19 +32,61 @@ export class DosCommandInterface {
         this.onready = onready;
     }
 
-    // * `width()` - return dosbox window width in pixels
+
+```
+
+
+
+
+
+
+
+* `width()` - return dosbox window width in pixels
+
+
+  
+
+```
     public width() {
         return this.dos.canvas.width;
     }
 
-    // * `height()` - return dosbox window height in pixels
+
+```
+
+
+
+
+
+
+
+* `height()` - return dosbox window height in pixels
+
+
+  
+
+```
     public height() {
         return this.dos.canvas.height;
     }
 
-    // * `shell([cmd1, cmd2, ...])` - executes passed commands
-    // in dosbox shell if it's runned, returns Promise that
-    // resolves when commands sequence is executed
+
+```
+
+
+
+
+
+
+
+* `shell([cmd1, cmd2, ...])` - executes passed commands
+in dosbox shell if it's runned, returns Promise that
+resolves when commands sequence is executed
+
+
+  
+
+```
     public shell(...cmd: string[]) {
         if (cmd.length === 0) {
             return;
@@ -50,7 +101,21 @@ export class DosCommandInterface {
         });
     }
 
-    // * `screenshot()` - get screnshot of canvas as ImageData
+
+```
+
+
+
+
+
+
+
+* `screenshot()` - get screnshot of canvas as ImageData
+
+
+  
+
+```
     public screenshot() {
         return new Promise((resolve) => {
             this.api.send("screenshot", "", (data) => {
@@ -59,7 +124,21 @@ export class DosCommandInterface {
         });
     }
 
-    // * `exit()` - immediately exit from runtime
+
+```
+
+
+
+
+
+
+
+* `exit()` - immediately exit from runtime
+
+
+  
+
+```
     public exit() {
         try {
             this.api.send("exit");
@@ -121,3 +200,10 @@ interface LowLevelApi {
     send: (event: string, msg?: any, callback?: (msg: string) => void) => void;
     ping: (msg: string) => void;
 }
+
+
+```
+
+
+
+

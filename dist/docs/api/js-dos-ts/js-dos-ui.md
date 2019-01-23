@@ -1,6 +1,15 @@
-// # JsDosUi
-// Optional ui module for js-dos.
-// This ui will be applied if client did not set `onprogress` in [DosOptions](js-dos-options.html)
+
+
+
+
+# JsDosUi
+Optional ui module for js-dos.
+This ui will be applied if client did not set `onprogress` in [DosOptions](js-dos-options.html)
+
+
+  
+
+```
 
 import { DosModule } from "./js-dos-module";
 
@@ -16,9 +25,23 @@ export class DosUi {
         this.dos = dos;
         this.canvas = dos.canvas;
 
-        // This ui replace canvas element with div .dosbox-container,
-        // that contains original canvas and .dosbox-overlay as children
-        // You can change style of ui by editing css for this two classes
+
+```
+
+
+
+
+
+
+
+This ui replace canvas element with div .dosbox-container,
+that contains original canvas and .dosbox-overlay as children
+You can change style of ui by editing css for this two classes
+
+
+  
+
+```
 
         try {
             if (document.getElementById("js-dos-ui-css") === null) {
@@ -111,7 +134,21 @@ export class DosUi {
         return null;
     }
 
-    // This is css style of ui
+
+```
+
+
+
+
+
+
+
+This is css style of ui
+
+
+  
+
+```
     /* tslint:disable:member-ordering */
     /* tslint:disable:max-line-length */
     private css: string = `
@@ -128,7 +165,21 @@ export class DosUi {
     .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #f80; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; background: #f80; }
     `;
 
-    // This is structure of dosbox-overlay
+
+```
+
+
+
+
+
+
+
+This is structure of dosbox-overlay
+
+
+  
+
+```
     /* tslint:disable:member-ordering */
     /* tslint:disable:max-line-length */
     private overlayHtml: string = `
@@ -143,3 +194,10 @@ export class DosUi {
         </div>
     `;
 }
+
+
+```
+
+
+
+
