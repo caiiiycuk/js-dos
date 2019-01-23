@@ -1,7 +1,6 @@
 // # JsDosUi
 // Optional ui module for js-dos.
 // This ui will be applied if client did not set `onprogress` in [DosOptions](js-dos-options.html)
-
 import { DosModule } from "./js-dos-module";
 
 export class DosUi {
@@ -16,6 +15,7 @@ export class DosUi {
         this.dos = dos;
         this.canvas = dos.canvas;
 
+        // ### How it works
         // This ui replace canvas element with div .dosbox-container,
         // that contains original canvas and .dosbox-overlay as children
         // You can change style of ui by editing css for this two classes
@@ -111,7 +111,7 @@ export class DosUi {
         return null;
     }
 
-    // This is css style of ui
+    // ### Style
     /* tslint:disable:member-ordering */
     /* tslint:disable:max-line-length */
     private css: string = `
@@ -128,7 +128,7 @@ export class DosUi {
     .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #f80; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; background: #f80; }
     `;
 
-    // This is structure of dosbox-overlay
+    // ### Template
     /* tslint:disable:member-ordering */
     /* tslint:disable:max-line-length */
     private overlayHtml: string = `

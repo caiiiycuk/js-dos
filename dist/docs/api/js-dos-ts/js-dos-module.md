@@ -40,6 +40,7 @@ export class DosModule extends DosOptions {
 
 
 
+### logging
 DosModule implements simply logging features:
 `debug`, `info`, `warn`, `error` methods
 
@@ -72,11 +73,7 @@ DosModule implements simply logging features:
 
 
 
-When [Host](js-dos-host.html) is resolved method
-`ondosbox` is called. This method instaniate
-wasm dosbox module with `this` as emscripten
-module object. It means that emscripten will call
-`this.onRuntimeInitialized` when runtime will be ready
+### ondosbox
 
 
   
@@ -87,6 +84,25 @@ module object. It means that emscripten will call
         (this as any).instantiateWasm = instantiateWasm;
         this.instance = new dosbox(this);
     }
+
+```
+
+
+
+
+
+
+
+Method `ondosbox` is called when [Host](js-dos-host.html) is resolved.
+This method instaniate
+wasm dosbox module with `this` as emscripten
+module object. It means that emscripten will call
+`this.onRuntimeInitialized` when runtime will be ready
+
+
+  
+
+```
 
     public resolve() {
         if (!this.wdosboxUrl) {
@@ -117,6 +133,7 @@ module object. It means that emscripten will call
 
 
 
+### sdl defaults
 DosModule overrides defaults for emscripten SDL wrapper
 for maximum performance
 
@@ -137,6 +154,21 @@ for maximum performance
         this.isValid = true;
     }
 
+
+```
+
+
+
+
+
+
+
+### onRuntimeInitialized
+
+
+  
+
+```
     public onRuntimeInitialized() {
         const mainFn = (args: string[]) => {
 
@@ -150,6 +182,7 @@ for maximum performance
 
 When emscripten runtime is initialized and main
 function is called:
+
 * DosModule detach [auto ui](js-dos-ui.ts)
 
 

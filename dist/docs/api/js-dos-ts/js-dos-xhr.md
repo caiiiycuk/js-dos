@@ -13,113 +13,36 @@ handy methods
 
 
 
-Xhr is called with url, and XhrOptions object:
+You can configre Xhr with XhrOptions object:
 
 
   
 
 ```
 interface XhrOptions {
-
-```
-
-
-
-
-
-
-
-`method` - "GET" | "POST"
-
-
-  
-
-```
     method?: string;
-
-```
-
-
-
-
-
-
-
-`success` - callback when resource is downloaded
-
-
-  
-
-```
     success?: (response: any) => void;
-
-```
-
-
-
-
-
-
-
-`progress` - callback for progress
-
-
-  
-
-```
     progress?: (total: number, loaded: number) => void;
-
-```
-
-
-
-
-
-
-
-`fail` - fail callback
-
-
-  
-
-```
     fail?: (url: string, status: number, message: string) => void;
-
-```
-
-
-
-
-
-
-
-`data` - data for POST request, should typeof `application/x-www-form-urlencoded`
-
-
-  
-
-```
     data?: string;
-
-```
-
-
-
-
-
-
-
-`responseType` - XMLHttpRequestResponseType
-
-
-  
-
-```
     responseType?: XMLHttpRequestResponseType;
 }
 
-
 ```
+
+
+
+
+
+
+
+* `method` - "GET" | "POST"
+* `success` - callback when resource is downloaded
+* `progress` - callback for progress
+* `fail` - fail callback
+* `data` - data for POST request, should typeof `application/x-www-form-urlencoded`
+* `responseType` - XMLHttpRequestResponseType
+
 
 
 

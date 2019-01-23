@@ -10,7 +10,6 @@ This ui will be applied if client did not set `onprogress` in [DosOptions](js-do
   
 
 ```
-
 import { DosModule } from "./js-dos-module";
 
 export class DosUi {
@@ -34,6 +33,7 @@ export class DosUi {
 
 
 
+### How it works
 This ui replace canvas element with div .dosbox-container,
 that contains original canvas and .dosbox-overlay as children
 You can change style of ui by editing css for this two classes
@@ -143,7 +143,7 @@ You can change style of ui by editing css for this two classes
 
 
 
-This is css style of ui
+### Style
 
 
   
@@ -174,7 +174,7 @@ This is css style of ui
 
 
 
-This is structure of dosbox-overlay
+### Template
 
 
   

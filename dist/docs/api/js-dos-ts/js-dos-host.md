@@ -35,6 +35,7 @@ class DosHost {
 
 
 
+### WebAssembly
 Host able to detect is WebAssembly supported or not,
 this information is stored in `Host.wasmSupported` variable
 
@@ -65,6 +66,7 @@ this information is stored in `Host.wasmSupported` variable
 
 
 
+### polyfill
 Host also provides limited set of polyfills to support legacy browsers
 
 
@@ -137,7 +139,7 @@ Currently polyfill contains implementations for:
 
 
 
-## resolveDosBox
+### resolveDosBox
 `resolveDosBox` is another important task of DosHost
 
 
@@ -222,7 +224,7 @@ If dosbox is not yet resolved, then:
 
 
 
-1. Host downloads `wdosbox` asm + js scripts
+* Host downloads `wdosbox` asm + js scripts
 
 
   
@@ -249,7 +251,7 @@ If dosbox is not yet resolved, then:
 
 
 
-2. Compile dosbox wasm module
+* Compile dosbox wasm module
 
 
   
@@ -271,7 +273,7 @@ If dosbox is not yet resolved, then:
 
 
 
-3.  Instaniate it for each new dosbox runtime
+*  Instaniate it for each new dosbox runtime
 
 
   

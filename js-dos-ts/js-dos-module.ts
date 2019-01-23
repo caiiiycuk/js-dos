@@ -22,6 +22,7 @@ export class DosModule extends DosOptions {
         this.onready = onready;
     }
 
+    // ### logging
     // DosModule implements simply logging features:
     // `debug`, `info`, `warn`, `error` methods
     public debug(message: string) {
@@ -40,16 +41,17 @@ export class DosModule extends DosOptions {
         this.log("[ERROR] " + message);
     }
 
-    // When [Host](js-dos-host.html) is resolved method
-    // `ondosbox` is called. This method instaniate
-    // wasm dosbox module with `this` as emscripten
-    // module object. It means that emscripten will call
-    // `this.onRuntimeInitialized` when runtime will be ready
+    // ### ondosbox
     public ondosbox(dosbox: any, instantiateWasm: any) {
         this.info("DosBox resolved");
         (this as any).instantiateWasm = instantiateWasm;
         this.instance = new dosbox(this);
     }
+    // Method `ondosbox` is called when [Host](js-dos-host.html) is resolved.
+    // This method instaniate
+    // wasm dosbox module with `this` as emscripten
+    // module object. It means that emscripten will call
+    // `this.onRuntimeInitialized` when runtime will be ready
 
     public resolve() {
         if (!this.wdosboxUrl) {
@@ -71,6 +73,7 @@ export class DosModule extends DosOptions {
             this.onprogress = (stage, total, loaded) => this.ui.onprogress(stage, total, loaded);
         }
 
+        // ### sdl defaults
         // DosModule overrides defaults for emscripten SDL wrapper
         // for maximum performance
         (this as any).SDL = {
@@ -86,10 +89,12 @@ export class DosModule extends DosOptions {
         this.isValid = true;
     }
 
+    // ### onRuntimeInitialized
     public onRuntimeInitialized() {
         const mainFn = (args: string[]) => {
             // When emscripten runtime is initialized and main
             // function is called:
+            //
             // * DosModule detach [auto ui](js-dos-ui.ts)
             if (this.ui !== null) {
                 this.ui.detach();

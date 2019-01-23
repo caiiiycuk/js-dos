@@ -31,10 +31,7 @@ export class DosFS {
 
 
 
-## extract
-download archive by given url and then extract it in cwd (cwd will be mounted as C:)
-* `url` - url for downloading archive
-* `type` - archive type **only zip is supported**
+### extract
 
 
   
@@ -49,6 +46,11 @@ download archive by given url and then extract it in cwd (cwd will be mounted as
 
 
 
+
+download archive by given url and then extract it in cwd (cwd will be mounted as C:)
+
+* `url` - url for downloading archive
+* `type` - archive type **only zip is supported**
 
 this method will return `Promise<void>`, that will be resolved
 on success with empty object or rejected
