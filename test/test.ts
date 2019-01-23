@@ -3,7 +3,7 @@
 
 import * as assert from "assert";
 import { Dos } from "../js-dos-ts/js-dos";
-import { DosCommandInteface } from "../js-dos-ts/js-dos-ci";
+import { DosCommandInterface } from "../js-dos-ts/js-dos-ci";
 import { Host } from "../js-dos-ts/js-dos-host";
 import { DosModule } from "../js-dos-ts/js-dos-module";
 import { DosOptions } from "../js-dos-ts/js-dos-options";
@@ -145,7 +145,7 @@ test("js-dos can run digger.zip", (done) => {
     });
 });
 
-const saveImage = (ci: DosCommandInteface) => {
+const saveImage = (ci: DosCommandInterface) => {
     ci.screenshot().then((data) => {
         const w = window.open("about:blank", "image from canvas");
         w.document.write("<img src='" + data + "' alt='from canvas'/>");
