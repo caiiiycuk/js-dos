@@ -3,8 +3,8 @@ const replaceWithDigger = (el) => {
     
     const canvas = document.createElement("canvas");
     el.replaceWith(canvas);
-    Dos(canvas, { wdosboxUrl: "/6.22/6.22.7/wdosbox.js" }).ready((fs, main) => {
-        fs.extract("/6.22/6.22.7/test/digger.zip").then(() => {
+    Dos(canvas, { wdosboxUrl: "/6.22/current/wdosbox.js" }).ready((fs, main) => {
+        fs.extract("/6.22/current/test/digger.zip").then(() => {
             main(["-c", "DIGGER.COM"])
         });
     });

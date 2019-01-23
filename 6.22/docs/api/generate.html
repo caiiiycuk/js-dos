@@ -10,11 +10,11 @@
 
   <!-- Flatdoc -->
   <script src="/6.22/assets/jquery.min.js"></script>
-  <script src='/6.22/assets/legacy.js'></script>
-  <script src='/6.22/assets/flatdoc.js'></script>
 
   <!-- Flatdoc theme -->
-  <link  href='/6.22/assets/theme-style.css' rel='stylesheet'>
+  <script src='/6.22/assets/legacy.js'></script>
+  <script src='/6.22/assets/flatdoc.js'></script>
+  <link  href='/6.22/assets/theme-style.css' rel='stylesheet'> 
   <script src='/6.22/assets/theme-script.js'></script>
 
   <script src='/6.22/assets/dosify.js'></script>
@@ -26,22 +26,33 @@
 
   <!-- Initializer -->
   <script>
-    const version = "next";
+    $(document).on('flatdoc:ready', function() {
+      $("a").each((index, a) => {
+        const href = a.href;
+        const page = href.substr(href.lastIndexOf('/') + 1);
+        if (page.startsWith('js-dos')) {
+          a.href = "?page=" + page.replace(/\.html$|\.ts$/, '');
+        }
+      });
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const md = urlParams.get('page').replace(/\.html$|\.ts$/, '') + ".md";
 
     Flatdoc.run({
-      fetcher: Flatdoc.file('https://raw.githubusercontent.com/caiiiycuk/js-dos/6.22/README.md')
+      fetcher: Flatdoc.file('../../current/docs/api/js-dos-ts/' + md)
     });
   </script>
 </head>
-<body role='flatdoc' class='no-literate'>
+<body role='flatdoc'>
 
   <div class='header'>
     <div class='left'>
-      <h1>js-dos 6.22</h1>
+        <h1><a href='/'>js-dos 6.22</a></h1>
       <ul>
         <li><a href='https://github.com/caiiiycuk/js-dos'>View on GitHub</a></li>
         <li><a href='https://github.com/caiiiycuk/js-dos/issues'>Issues</a></li>
-        <li><a href='6.22/docs'>API Reference</a></li>
+        <li><a href='..'>API Reference</a></li>
       </ul>
     </div>
     <div class='right'>

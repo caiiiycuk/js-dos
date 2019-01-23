@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>js-dos 6.22,64k demoscene</title>
-  <script src="/6.22/6.22.7/js-dos.js"></script>
+  <script src="/6.22/current/js-dos.js"></script>
   <style>
     canvas {
       width: 640px;
@@ -32,7 +32,7 @@
       const canvas = document.createElement("canvas");
       document.body.appendChild(canvas);
 
-      Dos(canvas, { wdosboxUrl: "/6.22/6.22.7/wdosbox.js" }).ready((fs, main) => {
+      Dos(canvas, { wdosboxUrl: "/6.22/current/wdosbox.js" }).ready((fs, main) => {
         fs.extract("files/" + files[i]).then(() => {
           main(["-c", files[i + 1]])
         });
