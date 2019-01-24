@@ -54,7 +54,7 @@ It contains this initialization steps:
 > dosbox -c DIGGER.COM
 ```
 
-Read more how to use js-dos in [**API Reference**](http://js-dos.com/6.22/6.22.7/docs/api/js-dos-ts/js-dos.html)
+Read more how to use js-dos in [**API Reference**](http://js-dos.com/6.22/docs/)
 
 Building
 ========
