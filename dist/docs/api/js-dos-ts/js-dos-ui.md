@@ -4,7 +4,8 @@
 
 # JsDosUi
 Optional ui module for js-dos.
-This ui will be applied if client did not set `onprogress` in [DosOptions](js-dos-options.html)
+This ui will be applied if client did not set `onprogress` in
+[DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
 
 
   

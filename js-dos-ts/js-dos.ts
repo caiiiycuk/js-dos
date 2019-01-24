@@ -24,8 +24,8 @@ import { DosOptions } from "./js-dos-options";
 // will be rejected.
 //
 // * `canvas`: HTMLCanvasElement - this canvas element is used as window for dosbox
-// * `options`: [DosOptions](js-dos-options.html) - optional configuration object
-//
+// * `options`: [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) -
+// optional configuration object
 export function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
     const promise = new Promise<DosRuntime>((resolve, reject) => {
         const module = new DosModule(canvas, resolve);
@@ -58,7 +58,8 @@ export function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
             return;
         }
 
-        // See [Host](js-dos-host.html) to understand resolving of emulation layer (dosbox).
+        // See [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host)
+        // to understand resolving of emulation layer (dosbox).
         Host.resolveDosBox(module.wdosboxUrl, module);
     });
 
@@ -81,11 +82,12 @@ export type DosMainFn = (args: string[]) => Promise<DosCommandInterface>;
 // Plain promise will be resolved with `DosRuntime` interface, that
 // includes:
 //
-// * `fs`: [DosFS](js-dos-fs.html) - API for working with dosbox filesystem
+// * `fs`: [DosFS](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs) -
+// API for working with dosbox filesystem
 // * `main`: DosMainFn - a function that you should call to actuall start
 // dosbox. It's like a main function in C++, or shell command line. This function
-// will return Promise of [DosCommandInterface](js-dos-ci.html). You can use
-// it to control runned dosbox.
+// will return Promise of [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci).
+// You can use it to control runned dosbox.
 export interface DosRuntime {
     fs: DosFS;
     main: DosMainFn;

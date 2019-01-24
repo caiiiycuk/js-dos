@@ -93,9 +93,9 @@ DosModule implements simply logging features:
 
 
 
-Method `ondosbox` is called when [Host](js-dos-host.html) is resolved.
-This method instaniate
-wasm dosbox module with `this` as emscripten
+Method `ondosbox` is called when
+[Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host) is resolved.
+This method instaniate wasm dosbox module with `this` as emscripten
 module object. It means that emscripten will call
 `this.onRuntimeInitialized` when runtime will be ready
 
@@ -183,7 +183,7 @@ for maximum performance
 When emscripten runtime is initialized and main
 function is called:
 
-* DosModule detach [auto ui](js-dos-ui.ts)
+* DosModule detach [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui)
 
 
   
@@ -218,7 +218,8 @@ function is called:
 
 
 
-* Run dosbox with passed arguments and resolve [DosCommandInterface](js-dos-ci.html)
+* Run dosbox with passed arguments and resolve 
+[DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
 
 
   

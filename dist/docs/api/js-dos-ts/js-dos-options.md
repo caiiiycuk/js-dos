@@ -3,7 +3,8 @@
 
 
 # DosOptions
-Is a options object that you pass to constructor of [Dos](js-dos.html)
+Is a options object that you pass to constructor of
+[Dos](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos)
 class, to configure emulation layer
 
 
@@ -41,7 +42,8 @@ export class DosOptions {
 
 
 progress event listener, it is fired when loading progress is changed
-if this function is not set, then [auto ui](js-dos-ui.html) will be used
+if this function is not set, then 
+[auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui) will be used
 to show progress
 
 * `stage` - current loading stage

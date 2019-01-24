@@ -47,9 +47,9 @@ export class DosModule extends DosOptions {
         (this as any).instantiateWasm = instantiateWasm;
         this.instance = new dosbox(this);
     }
-    // Method `ondosbox` is called when [Host](js-dos-host.html) is resolved.
-    // This method instaniate
-    // wasm dosbox module with `this` as emscripten
+    // Method `ondosbox` is called when
+    // [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host) is resolved.
+    // This method instaniate wasm dosbox module with `this` as emscripten
     // module object. It means that emscripten will call
     // `this.onRuntimeInitialized` when runtime will be ready
 
@@ -95,14 +95,15 @@ export class DosModule extends DosOptions {
             // When emscripten runtime is initialized and main
             // function is called:
             //
-            // * DosModule detach [auto ui](js-dos-ui.ts)
+            // * DosModule detach [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui)
             if (this.ui !== null) {
                 this.ui.detach();
                 this.ui = null;
             }
             // * Mount emscripten FS as drive c:
             args.unshift("-c", "mount c .", "-c", "c:");
-            // * Run dosbox with passed arguments and resolve [DosCommandInterface](js-dos-ci.html)
+            // * Run dosbox with passed arguments and resolve 
+            // [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
             (this as any).callMain(args);
             return new Promise<DosCommandInterface>((resolve) => {
                 new DosCommandInterface(this, (ci: DosCommandInterface) => {
