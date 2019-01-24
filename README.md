@@ -7,8 +7,7 @@ js-dos 6.22
 
 You can found previous version here [v3](https://js-dos.com/index_v3.html)
 
-Bootstrap
-=========
+## Bootstrap
 
 The fastest way to start with js-dos 6.22 is to use our bootstrap project. You can create simple web page that runs
 digger in browser with this commands:
@@ -31,8 +30,7 @@ npm intall
 npm start
 ```
 
-How it works
-------------
+## How it works
 
 Bootstrap script will create simple html page, that have canvas element. This canvas is used as render surface (output window) to dosbox. Also this page have a js-dos inialization script.
 
@@ -46,26 +44,44 @@ Bootstrap script will create simple html page, that have canvas element. This ca
 
 It contains this initialization steps:
 
-1. Dos(canvas) - will return promise that will be resoled when dosbox is ready
-2. ready((fs, main) =>) - will be called when dosbox is ready (**BUT NOT RUNNED**)
-3. fs allows you to do work over dosbox filesystem, and we ask to download and extract "digger.zip"
-4. When archive is extracted we run dosbox, like in shell ```main(["-c", "DIGGER.COM"])``` is equivalent to:
+* `Dos(canvas)` - will return promise that will be resoled when dosbox is ready
+* `ready((fs, main) =>)` - will be called when dosbox is ready to run
+    * `fs` provides [API](https://js-dos.com/docs/generate?js-dos-ds) to work with filesystem, we call `extract` to mount
+    archive contents as C:
+    * `main` provides an entry point to run dosbox like in shell you should pass
+    dosbox command line arguments `main(["-c", "DIGGER.COM"])` means:
 ```
-> dosbox -c DIGGER.COM
+dosbox -c DIGGER.COM
 ```
+
+## API Reference
 
 Read more how to use js-dos in [**API Reference**](http://js-dos.com/6.22/docs/)
 
-Building
-========
+## FAQ
+
+### How to pass command line arguments
+
+Dosbox will be runned with command line arguments that passed in main function:
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        main(["arg1", "arg2", ...])
+    });
+```
+Is equivalent to
+```
+    dosbox arg1 arg2
+```
+
+## Building
 
 Building process have two steps:
 
 1. You need to build emulation layer (dosbox)
 2. You need to build API
 
-Dosbox
-------
+### Dosbox
+
 Project uses dosbox as emulation layer for running dos programs. You should build it before building javascript API. To do this you should have emscripten installed in your system and CMake. Build process should be easy if you familar with cmake, just run this commands:
 ```
 mkdir build
@@ -74,8 +90,7 @@ emcmake cmake ..
 make -j4
 ```
 
-JavaScript API
---------------
+### JavaScript API
 
 You can build javascript API with gulp, just type gulp.
 ```
