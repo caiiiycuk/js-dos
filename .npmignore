@@ -6,7 +6,6 @@ js-dos-cpp
 build
 .vscode
 cmake-build-debug
-test
 .buildconfig
 .travis.yml
 CMakeLists.txt
