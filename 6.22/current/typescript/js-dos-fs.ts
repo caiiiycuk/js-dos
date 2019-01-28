@@ -13,11 +13,13 @@ export class DosFS {
         this.em = dos as any;
     }
 
-    // ## extract
-    // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
-    // * `url` - url for downloading archive
-    // * `type` - archive type **only zip is supported**
+    // ### extract
     public extract(url: string, type: string = "zip") {
+        // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
+        //
+        // * `url` - url for downloading archive
+        // * `type` - archive type **only zip is supported**
+        //
         // this method will return `Promise<void>`, that will be resolved
         // on success with empty object or rejected
         return new Promise<void>((resolve, reject) => {

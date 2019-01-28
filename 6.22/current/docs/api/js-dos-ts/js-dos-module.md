@@ -11,7 +11,9 @@ with additional functionality
 
 ```
 import { DosRuntime } from "./js-dos";
+import { Build } from "./js-dos-build";
 import { DosCommandInterface } from "./js-dos-ci";
+import { jsdosconf } from "./js-dos-conf";
 import { DosFS } from "./js-dos-fs";
 import { DosOptions } from "./js-dos-options";
 import { DosUi } from "./js-dos-ui";
@@ -19,6 +21,7 @@ import { DosUi } from "./js-dos-ui";
 export class DosModule extends DosOptions {
     public isValid: boolean = false;
     public canvas: HTMLCanvasElement = null;
+    public version = Build.version;
     private ci: Promise<DosCommandInterface> = null;
     private instance: any;
     private fs: DosFS = null;
@@ -93,9 +96,9 @@ DosModule implements simply logging features:
 
 
 
-Method `ondosbox` is called when [Host](js-dos-host.html) is resolved.
-This method instaniate
-wasm dosbox module with `this` as emscripten
+Method `ondosbox` is called when
+[Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host) is resolved.
+This method instaniate wasm dosbox module with `this` as emscripten
 module object. It means that emscripten will call
 `this.onRuntimeInitialized` when runtime will be ready
 
@@ -183,7 +186,7 @@ for maximum performance
 When emscripten runtime is initialized and main
 function is called:
 
-* DosModule detach [auto ui](js-dos-ui.ts)
+* DosModule detach [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui)
 
 
   
@@ -193,6 +196,26 @@ function is called:
                 this.ui.detach();
                 this.ui = null;
             }
+
+
+```
+
+
+
+
+
+
+
+* Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
+file to user directory
+
+
+  
+
+```
+            (this as any).FS_createPath("/home/web_user", ".dosbox", true, true);
+            (this as any).FS_createDataFile("/home/web_user/.dosbox/",
+                "dosbox-jsdos.conf", jsdosconf, true, false, false);
 
 ```
 
@@ -208,7 +231,7 @@ function is called:
   
 
 ```
-            args.unshift("-c", "mount c .", "-c", "c:");
+            args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
 
 ```
 
@@ -218,7 +241,8 @@ function is called:
 
 
 
-* Run dosbox with passed arguments and resolve [DosCommandInterface](js-dos-ci.html)
+* Run dosbox with passed arguments and resolve
+[DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
 
 
   

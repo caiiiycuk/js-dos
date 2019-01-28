@@ -2,7 +2,9 @@
 // DosModule is [emscripten module object](https://kripken.github.io/emscripten-site/docs/api_reference/module.html),
 // with additional functionality
 import { DosRuntime } from "./js-dos";
+import { Build } from "./js-dos-build";
 import { DosCommandInterface } from "./js-dos-ci";
+import { jsdosconf } from "./js-dos-conf";
 import { DosFS } from "./js-dos-fs";
 import { DosOptions } from "./js-dos-options";
 import { DosUi } from "./js-dos-ui";
@@ -10,6 +12,7 @@ import { DosUi } from "./js-dos-ui";
 export class DosModule extends DosOptions {
     public isValid: boolean = false;
     public canvas: HTMLCanvasElement = null;
+    public version = Build.version;
     private ci: Promise<DosCommandInterface> = null;
     private instance: any;
     private fs: DosFS = null;
@@ -22,6 +25,7 @@ export class DosModule extends DosOptions {
         this.onready = onready;
     }
 
+    // ### logging
     // DosModule implements simply logging features:
     // `debug`, `info`, `warn`, `error` methods
     public debug(message: string) {
@@ -40,16 +44,17 @@ export class DosModule extends DosOptions {
         this.log("[ERROR] " + message);
     }
 
-    // When [Host](js-dos-host.html) is resolved method
-    // `ondosbox` is called. This method instaniate
-    // wasm dosbox module with `this` as emscripten
-    // module object. It means that emscripten will call
-    // `this.onRuntimeInitialized` when runtime will be ready
+    // ### ondosbox
     public ondosbox(dosbox: any, instantiateWasm: any) {
         this.info("DosBox resolved");
         (this as any).instantiateWasm = instantiateWasm;
         this.instance = new dosbox(this);
     }
+    // Method `ondosbox` is called when
+    // [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host) is resolved.
+    // This method instaniate wasm dosbox module with `this` as emscripten
+    // module object. It means that emscripten will call
+    // `this.onRuntimeInitialized` when runtime will be ready
 
     public resolve() {
         if (!this.wdosboxUrl) {
@@ -71,6 +76,7 @@ export class DosModule extends DosOptions {
             this.onprogress = (stage, total, loaded) => this.ui.onprogress(stage, total, loaded);
         }
 
+        // ### sdl defaults
         // DosModule overrides defaults for emscripten SDL wrapper
         // for maximum performance
         (this as any).SDL = {
@@ -86,18 +92,27 @@ export class DosModule extends DosOptions {
         this.isValid = true;
     }
 
+    // ### onRuntimeInitialized
     public onRuntimeInitialized() {
         const mainFn = (args: string[]) => {
             // When emscripten runtime is initialized and main
             // function is called:
-            // * DosModule detach [auto ui](js-dos-ui.ts)
+            //
+            // * DosModule detach [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui)
             if (this.ui !== null) {
                 this.ui.detach();
                 this.ui = null;
             }
+
+            // * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
+            // file to user directory
+            (this as any).FS_createPath("/home/web_user", ".dosbox", true, true);
+            (this as any).FS_createDataFile("/home/web_user/.dosbox/",
+                "dosbox-jsdos.conf", jsdosconf, true, false, false);
             // * Mount emscripten FS as drive c:
-            args.unshift("-c", "mount c .", "-c", "c:");
-            // * Run dosbox with passed arguments and resolve [DosCommandInterface](js-dos-ci.html)
+            args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
+            // * Run dosbox with passed arguments and resolve
+            // [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
             (this as any).callMain(args);
             return new Promise<DosCommandInterface>((resolve) => {
                 new DosCommandInterface(this, (ci: DosCommandInterface) => {

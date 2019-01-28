@@ -4,7 +4,8 @@
 
 # JsDosUi
 Optional ui module for js-dos.
-This ui will be applied if client did not set `onprogress` in [DosOptions](js-dos-options.html)
+This ui will be applied if client did not set `onprogress` in
+[DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
 
 
   
@@ -70,8 +71,8 @@ You can change style of ui by editing css for this two classes
             this.overlay = this.childById(container, "dosbox-overlay");
             this.loaderMessage = this.childById(this.overlay, "dosbox-loader-message");
 
-            this.hidden = false;
-            this.hide();
+            this.hidden = true;
+            this.show();
         } catch (e) {
             this.onprogress = this.onprogressFallback;
         }

@@ -17,6 +17,7 @@ class DosHost {
     constructor() {
         this.global.exports = {};
 
+        // ### WebAssembly
         // Host able to detect is WebAssembly supported or not,
         // this information is stored in `Host.wasmSupported` variable
         try {
@@ -33,6 +34,7 @@ class DosHost {
             /* do nothing WebAssembly is not supported */
         }
 
+        // ### polyfill
         // Host also provides limited set of polyfills to support legacy browsers
         this.polyfill();
     }
@@ -77,7 +79,7 @@ class DosHost {
         Math.trunc = Math.trunc;
     }
 
-    // ## resolveDosBox
+    // ### resolveDosBox
     // `resolveDosBox` is another important task of DosHost
     public resolveDosBox(url: string, module: DosModule) {
         // When dosbox is resolved, WDOSBOX module is set to
@@ -120,7 +122,7 @@ class DosHost {
         return new Promise((resolve, reject) => {
             const wasmUrl = url.replace(".js", ".wasm.js");
 
-            // 1. Host downloads `wdosbox` asm + js scripts
+            // * Host downloads `wdosbox` asm + js scripts
             new Xhr(wasmUrl, {
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
@@ -133,7 +135,7 @@ class DosHost {
                         ", message: " + message + ", url: " + url);
                 },
                 success: (response: any) => {
-                    // 2. Compile dosbox wasm module
+                    // * Compile dosbox wasm module
                     const promise = WebAssembly.compile(response);
                     const onreject = (reason: any) => {
                         reject(reason + "");
@@ -141,7 +143,7 @@ class DosHost {
                     promise.catch(onreject);
                     promise.then((wasmModule) => {
                         this.global.exports.instantiateWasm = (info: any, receiveInstance: any) => {
-                            // 3.  Instaniate it for each new dosbox runtime
+                            // *  Instaniate it for each new dosbox runtime
                             return WebAssembly.instantiate(wasmModule, info)
                                 .catch(onreject)
                                 .then((instance) => {

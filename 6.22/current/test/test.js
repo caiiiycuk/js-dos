@@ -6,9 +6,9 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22-9d2cf856faaa91e726b1bcc49972c2a95849c30d",
-    wasmSize: 2167540,
-    jsSize: 503536
+    version: "6.22.10 (0e400fc9ed5402d2c6237e5b8510de41f6b495d7)",
+    wasmSize: 2167059,
+    jsSize: 503815
 };
 
 },{}],2:[function(require,module,exports){
@@ -200,6 +200,15 @@ exports.DosCommandInterface = DosCommandInterface;
 
 },{}],3:[function(require,module,exports){
 "use strict";
+// # js-dos default config
+// This is default config for dosbox.
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/* tslint:disable:max-line-length */
+exports.jsdosconf = "\n# This is the configurationfile for DOSBox 0.74. (Please use the latest version of DOSBox)\n# Lines starting with a # are commentlines and are ignored by DOSBox.\n# They are used to (briefly) document the effect of each option.\n\n[sdl]\n#       fullscreen: Start dosbox directly in fullscreen. (Press ALT-Enter to go back)\n#       fulldouble: Use double buffering in fullscreen. It can reduce screen flickering, but it can also result in a slow DOSBox.\n#   fullresolution: What resolution to use for fullscreen: original or fixed size (e.g. 1024x768).\n#                     Using your monitor's native resolution with aspect=true might give the best results.\n#                     If you end up with small window on a large screen, try an output different from surface.\n# windowresolution: Scale the window to this size IF the output device supports hardware scaling.\n#                     (output=surface does not!)\n#           output: What video system to use for output.\n#                   Possible values: surface, overlay, opengl, openglnb.\n#         autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)\n#      sensitivity: Mouse sensitivity.\n#      waitonerror: Wait before closing the console if dosbox has an error.\n#         priority: Priority levels for dosbox. Second entry behind the comma is for when dosbox is not focused/minimized.\n#                     pause is only valid for the second entry.\n#                   Possible values: lowest, lower, normal, higher, highest, pause.\n#       mapperfile: File used to load/save the key/event mappings from. Resetmapper only works with the defaul value.\n#     usescancodes: Avoid usage of symkeys, might not work on all operating systems.\n\nfullscreen=false\nfulldouble=false\nfullresolution=original\nwindowresolution=original\noutput=surface\nautolock=true\nsensitivity=100\nwaitonerror=true\npriority=higher,normal\nmapperfile=mapper-jsdos.map\nusescancodes=true\nvsync=false\n\n[dosbox]\n# language: Select another language file.\n#  machine: The type of machine tries to emulate.\n#           Possible values: hercules, cga, tandy, pcjr, ega, vgaonly, svga_s3, svga_et3000, svga_et4000, svga_paradise, vesa_nolfb, vesa_oldvbe.\n# captures: Directory where things like wave, midi, screenshot get captured.\n#  memsize: Amount of memory DOSBox has in megabytes.\n#             This value is best left at its default to avoid problems with some games,\n#             though few games might require a higher value.\n#             There is generally no speed advantage when raising this value.\n\nlanguage=\nmachine=svga_s3\ncaptures=capture\nmemsize=16\n\n[render]\n# frameskip: How many frames DOSBox skips before drawing one.\n#    aspect: Do aspect correction, if your output method doesn't support scaling this can slow things down!.\n#    scaler: Scaler used to enlarge/enhance low resolution modes.\n#              If 'forced' is appended, then the scaler will be used even if the result might not be desired.\n#            Possible values: none, normal2x, normal3x, advmame2x, advmame3x, advinterp2x, advinterp3x, hq2x, hq3x, 2xsai, super2xsai, supereagle, tv2x, tv3x, rgb2x, rgb3x, scan2x, scan3x.\n\nframeskip=0\naspect=false\nscaler=normal2x\n\n[cpu]\n#      core: CPU Core used in emulation. auto will switch to dynamic if available and appropriate.\n#            Possible values: auto, dynamic, normal, simple.\n#   cputype: CPU Type used in emulation. auto is the fastest choice.\n#            Possible values: auto, 386, 386_slow, 486_slow, pentium_slow, 386_prefetch.\n#    cycles: Amount of instructions DOSBox tries to emulate each millisecond.\n#            Setting this value too high results in sound dropouts and lags.\n#            Cycles can be set in 3 ways:\n#              'auto'          tries to guess what a game needs.\n#                              It usually works, but can fail for certain games.\n#              'fixed #number' will set a fixed amount of cycles. This is what you usually need if 'auto' fails.\n#                              (Example: fixed 4000).\n#              'max'           will allocate as much cycles as your computer is able to handle.\n#\n#            Possible values: auto, fixed, max.\n#   cycleup: Amount of cycles to decrease/increase with keycombo.(CTRL-F11/CTRL-F12)\n# cycledown: Setting it lower than 100 will be a percentage.\n\ncore=auto\ncputype=auto\ncycles=auto\ncycleup=10\ncycledown=20\n\n[mixer]\n#   nosound: Enable silent mode, sound is still emulated though.\n#      rate: Mixer sample rate, setting any device's rate higher than this will probably lower their sound quality.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n# blocksize: Mixer block size, larger blocks might help sound stuttering but sound will also be more lagged.\n#            Possible values: 1024, 2048, 4096, 8192, 512, 256.\n# prebuffer: How many milliseconds of data to keep on top of the blocksize.\n\nnosound=false\nrate=44100\nblocksize=1024\nprebuffer=20\n\n[midi]\n#     mpu401: Type of MPU-401 to emulate.\n#             Possible values: intelligent, uart, none.\n# mididevice: Device that will receive the MIDI data from MPU-401.\n#             Possible values: default, win32, alsa, oss, coreaudio, coremidi, none.\n# midiconfig: Special configuration options for the device driver. This is usually the id of the device you want to use.\n#               See the README/Manual for more details.\n\nmpu401=intelligent\nmididevice=default\nmidiconfig=\n\n[sblaster]\n#  sbtype: Type of Soundblaster to emulate. gb is Gameblaster.\n#          Possible values: sb1, sb2, sbpro1, sbpro2, sb16, gb, none.\n#  sbbase: The IO address of the soundblaster.\n#          Possible values: 220, 240, 260, 280, 2a0, 2c0, 2e0, 300.\n#     irq: The IRQ number of the soundblaster.\n#          Possible values: 7, 5, 3, 9, 10, 11, 12.\n#     dma: The DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n#    hdma: The High DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n# sbmixer: Allow the soundblaster mixer to modify the DOSBox mixer.\n# oplmode: Type of OPL emulation. On 'auto' the mode is determined by sblaster type. All OPL modes are Adlib-compatible, except for 'cms'.\n#          Possible values: auto, cms, opl2, dualopl2, opl3, none.\n#  oplemu: Provider for the OPL emulation. compat might provide better quality (see oplrate as well).\n#          Possible values: default, compat, fast.\n# oplrate: Sample rate of OPL music emulation. Use 49716 for highest quality (set the mixer rate accordingly).\n#          Possible values: 44100, 49716, 48000, 32000, 22050, 16000, 11025, 8000.\n\nsbtype=sb16\nsbbase=220\nirq=7\ndma=1\nhdma=5\nsbmixer=true\noplmode=auto\noplemu=default\noplrate=44100\n\n[gus]\n#      gus: Enable the Gravis Ultrasound emulation.\n#  gusrate: Sample rate of Ultrasound emulation.\n#           Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#  gusbase: The IO base address of the Gravis Ultrasound.\n#           Possible values: 240, 220, 260, 280, 2a0, 2c0, 2e0, 300.\n#   gusirq: The IRQ number of the Gravis Ultrasound.\n#           Possible values: 5, 3, 7, 9, 10, 11, 12.\n#   gusdma: The DMA channel of the Gravis Ultrasound.\n#           Possible values: 3, 0, 1, 5, 6, 7.\n# ultradir: Path to Ultrasound directory. In this directory\n#           there should be a MIDI directory that contains\n#           the patch files for GUS playback. Patch sets used\n#           with Timidity should work fine.\n\ngus=false\ngusrate=44100\ngusbase=240\ngusirq=5\ngusdma=3\nultradir=C:ULTRASND\n\n[speaker]\n# pcspeaker: Enable PC-Speaker emulation.\n#    pcrate: Sample rate of the PC-Speaker sound generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#     tandy: Enable Tandy Sound System emulation. For 'auto', emulation is present only if machine is set to 'tandy'.\n#            Possible values: auto, on, off.\n# tandyrate: Sample rate of the Tandy 3-Voice generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#    disney: Enable Disney Sound Source emulation. (Covox Voice Master and Speech Thing compatible).\n\npcspeaker=true\npcrate=44100\ntandy=auto\ntandyrate=44100\ndisney=true\n\n[joystick]\n# joysticktype: Type of joystick to emulate: auto (default), none,\n#               2axis (supports two joysticks),\n#               4axis (supports one joystick, first joystick used),\n#               4axis_2 (supports one joystick, second joystick used),\n#               fcs (Thrustmaster), ch (CH Flightstick).\n#               none disables joystick emulation.\n#               auto chooses emulation depending on real joystick(s).\n#               (Remember to reset dosbox's mapperfile if you saved it earlier)\n#               Possible values: auto, 2axis, 4axis, 4axis_2, fcs, ch, none.\n#        timed: enable timed intervals for axis. Experiment with this option, if your joystick drifts (away).\n#     autofire: continuously fires as long as you keep the button pressed.\n#       swap34: swap the 3rd and the 4th axis. can be useful for certain joysticks.\n#   buttonwrap: enable button wrapping at the number of emulated buttons.\n\njoysticktype=auto\ntimed=true\nautofire=false\nswap34=false\nbuttonwrap=false\n\n[serial]\n# serial1: set type of device connected to com port.\n#          Can be disabled, dummy, modem, nullmodem, directserial.\n#          Additional parameters must be in the same line in the form of\n#          parameter:value. Parameter for all types is irq (optional).\n#          for directserial: realport (required), rxdelay (optional).\n#                           (realport:COM1 realport:ttyS0).\n#          for modem: listenport (optional).\n#          for nullmodem: server, rxdelay, txdelay, telnet, usedtr,\n#                         transparent, port, inhsocket (all optional).\n#          Example: serial1=modem listenport:5000\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial2: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial3: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial4: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n\nserial1=dummy\nserial2=dummy\nserial3=disabled\nserial4=disabled\n\n[dos]\n#            xms: Enable XMS support.\n#            ems: Enable EMS support.\n#            umb: Enable UMB support.\n# keyboardlayout: Language code of the keyboard layout (or none).\n\nxms=true\nems=true\numb=true\nkeyboardlayout=auto\n\n[ipx]\n# ipx: Enable ipx over UDP/IP emulation.\n\nipx=false\n\n[autoexec]\n# Lines in this section will be run at startup.\n# You can put your MOUNT lines here.\n";
+
+},{}],4:[function(require,module,exports){
+"use strict";
 // # DosFS
 // API for working with file system of dosbox
 
@@ -217,10 +226,7 @@ var DosFS = function () {
         this.dos = dos;
         this.em = dos;
     }
-    // ## extract
-    // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
-    // * `url` - url for downloading archive
-    // * `type` - archive type **only zip is supported**
+    // ### extract
 
 
     _createClass(DosFS, [{
@@ -230,6 +236,11 @@ var DosFS = function () {
 
             var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "zip";
 
+            // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
+            //
+            // * `url` - url for downloading archive
+            // * `type` - archive type **only zip is supported**
+            //
             // this method will return `Promise<void>`, that will be resolved
             // on success with empty object or rejected
             return new Promise(function (resolve, reject) {
@@ -267,7 +278,7 @@ var DosFS = function () {
 
 exports.DosFS = DosFS;
 
-},{"./js-dos-xhr":8}],4:[function(require,module,exports){
+},{"./js-dos-xhr":9}],5:[function(require,module,exports){
 "use strict";
 // # DosHost
 // This class is used to detect and provide information about
@@ -292,6 +303,7 @@ var DosHost = function () {
         this.global = window;
         this.wdosboxPromise = null;
         this.global.exports = {};
+        // ### WebAssembly
         // Host able to detect is WebAssembly supported or not,
         // this information is stored in `Host.wasmSupported` variable
         try {
@@ -304,6 +316,7 @@ var DosHost = function () {
         } catch (error) {}
         /* do nothing WebAssembly is not supported */
 
+        // ### polyfill
         // Host also provides limited set of polyfills to support legacy browsers
         this.polyfill();
     }
@@ -351,7 +364,7 @@ var DosHost = function () {
             }
             Math.trunc = Math.trunc;
         }
-        // ## resolveDosBox
+        // ### resolveDosBox
         // `resolveDosBox` is another important task of DosHost
 
     }, {
@@ -399,7 +412,7 @@ var DosHost = function () {
             var buildTotal = js_dos_build_1.Build.wasmSize + js_dos_build_1.Build.jsSize;
             return new Promise(function (resolve, reject) {
                 var wasmUrl = url.replace(".js", ".wasm.js");
-                // 1. Host downloads `wdosbox` asm + js scripts
+                // * Host downloads `wdosbox` asm + js scripts
                 new js_dos_xhr_1.Xhr(wasmUrl, {
                     responseType: "arraybuffer",
                     progress: function progress(total, loaded) {
@@ -411,7 +424,7 @@ var DosHost = function () {
                         reject("Can't download wasm, code: " + status + ", message: " + message + ", url: " + url);
                     },
                     success: function success(response) {
-                        // 2. Compile dosbox wasm module
+                        // * Compile dosbox wasm module
                         var promise = WebAssembly.compile(response);
                         var onreject = function onreject(reason) {
                             reject(reason + "");
@@ -419,7 +432,7 @@ var DosHost = function () {
                         promise.catch(onreject);
                         promise.then(function (wasmModule) {
                             _this2.global.exports.instantiateWasm = function (info, receiveInstance) {
-                                // 3.  Instaniate it for each new dosbox runtime
+                                // *  Instaniate it for each new dosbox runtime
                                 return WebAssembly.instantiate(wasmModule, info).catch(onreject).then(function (instance) {
                                     receiveInstance(instance, wasmModule);
                                 });
@@ -452,7 +465,7 @@ var DosHost = function () {
 
 exports.Host = new DosHost();
 
-},{"./js-dos-build":1,"./js-dos-xhr":8}],5:[function(require,module,exports){
+},{"./js-dos-build":1,"./js-dos-xhr":9}],6:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -464,7 +477,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var js_dos_build_1 = require("./js-dos-build");
 var js_dos_ci_1 = require("./js-dos-ci");
+var js_dos_conf_1 = require("./js-dos-conf");
 var js_dos_fs_1 = require("./js-dos-fs");
 var js_dos_options_1 = require("./js-dos-options");
 var js_dos_ui_1 = require("./js-dos-ui");
@@ -479,6 +494,7 @@ var DosModule = function (_js_dos_options_1$Dos) {
 
         _this.isValid = false;
         _this.canvas = null;
+        _this.version = js_dos_build_1.Build.version;
         _this.ci = null;
         _this.fs = null;
         _this.ui = null;
@@ -486,6 +502,7 @@ var DosModule = function (_js_dos_options_1$Dos) {
         _this.onready = onready;
         return _this;
     }
+    // ### logging
     // DosModule implements simply logging features:
     // `debug`, `info`, `warn`, `error` methods
 
@@ -510,11 +527,7 @@ var DosModule = function (_js_dos_options_1$Dos) {
         value: function error(message) {
             this.log("[ERROR] " + message);
         }
-        // When [Host](js-dos-host.html) is resolved method
-        // `ondosbox` is called. This method instaniate
-        // wasm dosbox module with `this` as emscripten
-        // module object. It means that emscripten will call
-        // `this.onRuntimeInitialized` when runtime will be ready
+        // ### ondosbox
 
     }, {
         key: "ondosbox",
@@ -523,6 +536,12 @@ var DosModule = function (_js_dos_options_1$Dos) {
             this.instantiateWasm = instantiateWasm;
             this.instance = new dosbox(this);
         }
+        // Method `ondosbox` is called when
+        // [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host) is resolved.
+        // This method instaniate wasm dosbox module with `this` as emscripten
+        // module object. It means that emscripten will call
+        // `this.onRuntimeInitialized` when runtime will be ready
+
     }, {
         key: "resolve",
         value: function resolve() {
@@ -547,6 +566,7 @@ var DosModule = function (_js_dos_options_1$Dos) {
                     return _this2.ui.onprogress(stage, total, loaded);
                 };
             }
+            // ### sdl defaults
             // DosModule overrides defaults for emscripten SDL wrapper
             // for maximum performance
             this.SDL = {
@@ -560,6 +580,8 @@ var DosModule = function (_js_dos_options_1$Dos) {
             };
             this.isValid = true;
         }
+        // ### onRuntimeInitialized
+
     }, {
         key: "onRuntimeInitialized",
         value: function onRuntimeInitialized() {
@@ -568,14 +590,20 @@ var DosModule = function (_js_dos_options_1$Dos) {
             var mainFn = function mainFn(args) {
                 // When emscripten runtime is initialized and main
                 // function is called:
-                // * DosModule detach [auto ui](js-dos-ui.ts)
+                //
+                // * DosModule detach [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui)
                 if (_this3.ui !== null) {
                     _this3.ui.detach();
                     _this3.ui = null;
                 }
+                // * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
+                // file to user directory
+                _this3.FS_createPath("/home/web_user", ".dosbox", true, true);
+                _this3.FS_createDataFile("/home/web_user/.dosbox/", "dosbox-jsdos.conf", js_dos_conf_1.jsdosconf, true, false, false);
                 // * Mount emscripten FS as drive c:
-                args.unshift("-c", "mount c .", "-c", "c:");
-                // * Run dosbox with passed arguments and resolve [DosCommandInterface](js-dos-ci.html)
+                args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
+                // * Run dosbox with passed arguments and resolve
+                // [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
                 _this3.callMain(args);
                 return new Promise(function (resolve) {
                     new js_dos_ci_1.DosCommandInterface(_this3, function (ci) {
@@ -596,7 +624,7 @@ var DosModule = function (_js_dos_options_1$Dos) {
 
 exports.DosModule = DosModule;
 
-},{"./js-dos-ci":2,"./js-dos-fs":3,"./js-dos-options":6,"./js-dos-ui":7}],6:[function(require,module,exports){
+},{"./js-dos-build":1,"./js-dos-ci":2,"./js-dos-conf":3,"./js-dos-fs":4,"./js-dos-options":7,"./js-dos-ui":8}],7:[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -609,11 +637,8 @@ var DosOptions = function DosOptions() {
 
 exports.DosOptions = DosOptions;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
-// # JsDosUi
-// Optional ui module for js-dos.
-// This ui will be applied if client did not set `onprogress` in [DosOptions](js-dos-options.html)
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -625,16 +650,17 @@ var DosUi = function () {
     function DosUi(dos) {
         _classCallCheck(this, DosUi);
 
-        // This is css style of ui
+        // ### Style
         /* tslint:disable:member-ordering */
         /* tslint:disable:max-line-length */
         this.css = "\n    .dosbox-container { position: relative; min-width: 320px; min-height: 200px; display: inline-block; }\n    .dosbox-overlay, .dosbox-loader { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(51, 51, 51, 0.7); }\n    .dosbox-start { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; color: #f80; font-size: 1.5em; text-decoration: underline; cursor: pointer; }\n    .dosbox-overlay a { color: #f80; }\n    .dosbox-powered { position: absolute; right: 1em; bottom: 1em; font-size: 0.8em; color: #9C9C9C; }\n    .dosbox-loader-message { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; margin: 0 0 -3em 0; box-sizing: border-box; color: #f80; font-size: 1.5em; }\n    @-moz-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @-webkit-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } .st-loader { width: 10em; height: 2.5em; position: absolute; top: 50%; left: 50%; margin: -1.25em 0 0 -5em; box-sizing: border-box; }\n    .st-loader:before, .st-loader:after { content: \"\"; display: block; position: absolute; top: 0; bottom: 0; width: 1.25em; box-sizing: border-box; border: 0.25em solid #f80; }\n    .st-loader:before { left: -0.76923em; border-right: 0; }\n    .st-loader:after { right: -0.76923em; border-left: 0; }\n    .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #f80; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; background: #f80; }\n    ";
-        // This is structure of dosbox-overlay
+        // ### Template
         /* tslint:disable:member-ordering */
         /* tslint:disable:max-line-length */
         this.overlayHtml = "\n        <div class=\"dosbox-loader\">\n            <div class=\"st-loader\">\n                <span class=\"equal\"></span>\n            </div>\n            <div class=\"dosbox-loader-message\"></div>\n        </div>\n        <div class=\"dosbox-powered\">\n            Powered by &nbsp;<a href=\"https://js-dos.com\">js-dos.com</a> (6.22)\n        </div>\n    ";
         this.dos = dos;
         this.canvas = dos.canvas;
+        // ### How it works
         // This ui replace canvas element with div .dosbox-container,
         // that contains original canvas and .dosbox-overlay as children
         // You can change style of ui by editing css for this two classes
@@ -659,8 +685,8 @@ var DosUi = function () {
             var container = this.canvas.parentElement;
             this.overlay = this.childById(container, "dosbox-overlay");
             this.loaderMessage = this.childById(this.overlay, "dosbox-loader-message");
-            this.hidden = false;
-            this.hide();
+            this.hidden = true;
+            this.show();
         } catch (e) {
             this.onprogress = this.onprogressFallback;
         }
@@ -732,7 +758,7 @@ var DosUi = function () {
 
 exports.DosUi = DosUi;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 // # Xhr
 // `Xhr` is small wrapper over XMLHttpRequest, that provides some
@@ -743,6 +769,12 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 Object.defineProperty(exports, "__esModule", { value: true });
+// * `method` - "GET" | "POST"
+// * `success` - callback when resource is downloaded
+// * `progress` - callback for progress
+// * `fail` - fail callback
+// * `data` - data for POST request, should typeof `application/x-www-form-urlencoded`
+// * `responseType` - XMLHttpRequestResponseType
 // Class Xhr does not have any public methods
 
 var Xhr = function () {
@@ -830,12 +862,9 @@ var Xhr = function () {
 
 exports.Xhr = Xhr;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
-// # Dos
-// Dos function is entry point that provides emulation layer.
-// As emulation layer js-dos uses [DosBox ported to emscripten](https://github.com/dreamlayers/em-dosbox/#compiling).
-// Example of usage:
+// # Example
 // ```javascript
 // Dos(canvas).ready((fs, main) => {
 //     fs.extract("digger.zip").then(() => {
@@ -843,25 +872,29 @@ exports.Xhr = Xhr;
 //     });
 // });
 // ```
+// Dos function is entry point that provides emulation layer.
+// As emulation layer js-dos uses [DosBox ported to emscripten](https://github.com/dreamlayers/em-dosbox/#compiling).
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var js_dos_host_1 = require("./js-dos-host");
 var js_dos_module_1 = require("./js-dos-module");
-// When you call Dos(canvas, options) js-dos behind the scene will download
+// When you call `Dos(canvas, options)` js-dos behind the scene will download
 // dosbox and prepare it to start. This function will return `Promise<DosReadyPromise>`
 // that will be resolved when dosbox is ready. In case of error promise
 // will be rejected.
 //
 // * `canvas`: HTMLCanvasElement - this canvas element is used as window for dosbox
-// * `options`: [DosOptions](js-dos-options.html) - optional configuration object
-//
+// * `options`: [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) -
+// optional configuration object
 function Dos(canvas, options) {
     var promise = new Promise(function (resolve, reject) {
         var module = new js_dos_module_1.DosModule(canvas, resolve);
         Object.assign(module, options);
-        // Error propagation should support both ways:
-        // 1. Through rejecting of promise
-        // 2. Fire onerror function of DosOptions object
+        // ### Error handling
+        // Error handling should support both ways:
+        //
+        // * Through rejecting of promise
+        // * Fire onerror function of DosOptions object
         var onerror = module.onerror;
         module.onerror = function (message) {
             reject(message);
@@ -879,10 +912,11 @@ function Dos(canvas, options) {
         if (!module.isValid) {
             return;
         }
-        // See [Host](js-dos-host.html) to understand resolving of emulation layer (dosbox).
+        // See [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host)
+        // to understand resolving of emulation layer (dosbox).
         js_dos_host_1.Host.resolveDosBox(module.wdosboxUrl, module);
     });
-    // ## DosReadyPromise
+    // ### DosReadyPromise
     // Is a Promise object with additional method ready.
     // Method `ready` is just a wrapper over `then` method that
     // split resolved object into meaningful parts.
@@ -897,7 +931,7 @@ function Dos(canvas, options) {
 exports.Dos = Dos;
 window.Dos = Dos;
 
-},{"./js-dos-host":4,"./js-dos-module":5}],10:[function(require,module,exports){
+},{"./js-dos-host":5,"./js-dos-module":6}],11:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -1392,7 +1426,7 @@ var objectKeys = Object.keys || function (obj) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"util/":13}],11:[function(require,module,exports){
+},{"util/":14}],12:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1417,14 +1451,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -2015,7 +2049,7 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./support/isBuffer":12,"_process":14,"inherits":11}],14:[function(require,module,exports){
+},{"./support/isBuffer":13,"_process":15,"inherits":12}],15:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2201,7 +2235,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -2265,7 +2299,7 @@ var compare = function compare(imageUrl, ci, callback) {
     });
 };
 
-},{"./do":16,"assert":10}],16:[function(require,module,exports){
+},{"./do":17,"assert":11}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -2310,7 +2344,7 @@ function doReady(promise, fn) {
 }
 exports.doReady = doReady;
 
-},{"assert":10}],17:[function(require,module,exports){
+},{"assert":11}],18:[function(require,module,exports){
 "use strict";
 /* tslint:disable:max-line-length */
 /* tslint:disable:no-console */
@@ -2434,8 +2468,8 @@ test("js-dos can run digger.zip", function (done) {
         do_1.doNext(fs.extract("digger.zip"), function () {
             do_1.doNext(main(["DIGGER.COM"]), function (ci) {
                 var fn = function fn() {
-                    // compareAndExit("digger.png", ci, done);
-                    saveImage(ci);
+                    compare_1.compareAndExit("digger.png", ci, done);
+                    // saveImage(ci);
                 };
                 setTimeout(fn, 5000);
             });
@@ -2449,6 +2483,6 @@ var saveImage = function saveImage(ci) {
     });
 };
 
-},{"../js-dos-ts/js-dos":9,"../js-dos-ts/js-dos-host":4,"./compare":15,"./do":16,"assert":10}]},{},[17])
+},{"../js-dos-ts/js-dos":10,"../js-dos-ts/js-dos-host":5,"./compare":16,"./do":17,"assert":11}]},{},[18])
 
 //# sourceMappingURL=test.js.map

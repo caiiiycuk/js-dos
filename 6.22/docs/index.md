@@ -11,3 +11,4 @@ js-dos have this modules
 * [DosUi](api/generate.html?page=js-dos-ui) - default ui for js-dos
 * [DosXhr](api/generate.html?page=js-dos-xhr) - little wrapper over XMLHttpRequest
 * [DosBuild](api/generate.html?page=js-dos-build) - build info
+* [jsdos.conf](api/generate.html?page=js-dos-conf) - user level config for dosbox
