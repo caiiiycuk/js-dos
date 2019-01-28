@@ -1,1 +1,16 @@
 dreamlayers-em-dosbox-em-dosbox-svn-sdl2
+3rd-party
+.idea
+dist.zip
+js-dos-cpp
+build
+.vscode
+cmake-build-debug
+test
+.buildconfig
+.travis.yml
+CMakeLists.txt
+gulpfile.js
+travis-build.sh
+tsconfig.json
+tslint.json
