@@ -48,8 +48,8 @@ export class DosUi {
             this.overlay = this.childById(container, "dosbox-overlay");
             this.loaderMessage = this.childById(this.overlay, "dosbox-loader-message");
 
-            this.hidden = false;
-            this.hide();
+            this.hidden = true;
+            this.show();
         } catch (e) {
             this.onprogress = this.onprogressFallback;
         }

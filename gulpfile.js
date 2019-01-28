@@ -10,6 +10,7 @@ var getRepoInfo = require('git-repo-info');
 var exec = require('child_process').exec;
 var clean = require('gulp-clean');
 var rename = require('gulp-rename');
+var pjson = require('./package.json');
 
 gulp.task('clean', function () {
     return gulp.src('dist', {read: false})
@@ -40,7 +41,7 @@ gulp.task('generateBuildInfo', function() {
         "// -------------\n" +
         "// gulpfile.js --> generateBuildInfo\n\n" +
         "export const Build = {\n" +
-        "    version: \"" + info.branch + "-" + info.sha + "\",\n" +
+        "    version: \"" + pjson.version + " (" + info.sha + ")\",\n" +
         "    wasmSize: " + fs.statSync("build/wdosbox.wasm")['size'] + ",\n" +
         "    jsSize:  " + fs.statSync("build/wdosbox.js")['size'] + ",\n" +
         "};\n");

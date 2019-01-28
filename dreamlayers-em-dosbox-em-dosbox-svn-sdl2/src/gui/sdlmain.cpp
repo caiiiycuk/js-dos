@@ -335,6 +335,7 @@ bool startup_state_capslock=false;
 #ifdef C_SDLGFX
 
 void GFX_SetTitle(Bit32s cycles,Bits frameskip,bool paused){
+#if 0
 	char title[200]={0};
 	static Bit32s internal_cycles=0;
 	static Bit32s internal_frameskip=0;
@@ -351,6 +352,7 @@ void GFX_SetTitle(Bit32s cycles,Bits frameskip,bool paused){
 	SDL_SetWindowTitle(sdl.window,title); // VERSION is gone...
 #else
 	SDL_WM_SetCaption(title,VERSION);
+#endif
 #endif
 }
 
@@ -2909,7 +2911,7 @@ int main(int argc, char* argv[]) {
 #endif
 
 	/* Display Welcometext in the console */
-	LOG_MSG("DOSBox version %s", VERSION_TEXT);
+	LOG_MSG("DOSBox version %s", getVersion());
 	LOG_MSG("Copyright 2002-2015 DOSBox Team, published under GNU GPL.");
 	LOG_MSG("---");
 

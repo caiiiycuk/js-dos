@@ -71,8 +71,8 @@ You can change style of ui by editing css for this two classes
             this.overlay = this.childById(container, "dosbox-overlay");
             this.loaderMessage = this.childById(this.overlay, "dosbox-loader-message");
 
-            this.hidden = false;
-            this.hide();
+            this.hidden = true;
+            this.show();
         } catch (e) {
             this.onprogress = this.onprogressFallback;
         }
