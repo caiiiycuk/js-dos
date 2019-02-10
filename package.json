@@ -1,6 +1,6 @@
 {
   "name": "js-dos",
-  "version": "6.22.11",
+  "version": "6.22.12",
   "description": "Easiest API to run dos programs in browser",
   "main": "js-dos.js",
   "repository": {

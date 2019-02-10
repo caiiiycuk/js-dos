@@ -3,7 +3,7 @@
 // gulpfile.js --> generateBuildInfo
 
 export const Build = {
-    version: "6.22.11 (18b6e2fa1801619b273ac90a3e11f814339d0fb7)",
+    version: "6.22.12 (8c25124062006c4b89e13e6ec548290f0be6eb70)",
     wasmSize: 2167059,
     jsSize:  503815,
 };

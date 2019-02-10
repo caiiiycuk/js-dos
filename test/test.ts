@@ -103,6 +103,20 @@ test("js-dos can't start without canvas (promise style)", (done) => {
     });
 });
 
+test("js-dos can't start without canvas (ready style)", (done) => {
+    const dos = Dos(null, {
+        wdosboxUrl: "/wdosbox.js",
+    } as DosOptions);
+    const promise = dos.ready((fs, main) => {
+        const fn = () => assert.fail();
+        setTimeout(fn, 1);
+    });
+    doCatch(promise, (message) => {
+        assert.equal("canvas field is required, but not set!", message);
+        done();
+    });
+});
+
 test("js-dos should start with canvas", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
         wdosboxUrl: "/wdosbox.js",

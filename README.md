@@ -73,6 +73,24 @@ Is equivalent to
     dosbox arg1 arg2
 ```
 
+### How to handle errors
+
+You can handle errors by defining `onerror` property, or by using `catch` of promise.
+
+**`onerror`** style
+
+```javascript
+    Dos(canvas, { onerror: (message) => console.error(message); })
+```
+
+**`catch`** style
+
+```javascript
+    Dos(canvas)
+        .ready((fs, main) => ...)
+        .catch((message) => console.error(message));
+```
+
 ## Building
 
 Building process have two steps:
