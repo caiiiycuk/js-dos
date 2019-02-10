@@ -1,4 +1,4 @@
-js-dos 6.22
+[js-dos 6.22](https://js-dos.com)
 ===========
 
 [![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos)
