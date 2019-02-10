@@ -6,7 +6,7 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.10 (0e400fc9ed5402d2c6237e5b8510de41f6b495d7)",
+    version: "6.22.14 (83167dfbe4a9487cc587fefe90166d4ab7cbad49)",
     wasmSize: 2167059,
     jsSize: 503815
 };
@@ -889,6 +889,16 @@ var js_dos_module_1 = require("./js-dos-module");
 function Dos(canvas, options) {
     var promise = new Promise(function (resolve, reject) {
         var module = new js_dos_module_1.DosModule(canvas, resolve);
+        if (!options) {
+            options = {};
+        }
+        if (!options.onerror) {
+            options.onerror = function (message) {
+                /* tslint:disable:no-console */
+                console.error(message);
+                /* tslint:enable:no-console */
+            };
+        }
         Object.assign(module, options);
         // ### Error handling
         // Error handling should support both ways:
@@ -925,6 +935,7 @@ function Dos(canvas, options) {
         dosReadyPromise.then(function (runtime) {
             onready(runtime.fs, runtime.main);
         });
+        return dosReadyPromise;
     };
     return dosReadyPromise;
 }
@@ -2437,6 +2448,21 @@ test("js-dos can't start without canvas (promise style)", function (done) {
     });
     do_1.doThen(dos, function () {
         assert.fail();
+    });
+});
+test("js-dos can't start without canvas (ready style)", function (done) {
+    var dos = js_dos_1.Dos(null, {
+        wdosboxUrl: "/wdosbox.js"
+    });
+    var promise = dos.ready(function (fs, main) {
+        var fn = function fn() {
+            return assert.fail();
+        };
+        setTimeout(fn, 1);
+    });
+    do_1.doCatch(promise, function (message) {
+        assert.equal("canvas field is required, but not set!", message);
+        done();
     });
 });
 test("js-dos should start with canvas", function (done) {

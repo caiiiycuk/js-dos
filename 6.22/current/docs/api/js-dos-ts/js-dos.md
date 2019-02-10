@@ -66,6 +66,19 @@ optional configuration object
 export function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
     const promise = new Promise<DosRuntime>((resolve, reject) => {
         const module = new DosModule(canvas, resolve);
+
+        if (!options) {
+            options = {};
+        }
+
+        if (!options.onerror) {
+            options.onerror = (message: string) => {
+                /* tslint:disable:no-console */
+                console.error(message);
+                /* tslint:enable:no-console */
+            };
+        }
+
         Object.assign(module, options);
 
 
@@ -152,6 +165,7 @@ split resolved object into meaningful parts.
         dosReadyPromise.then((runtime: DosRuntime) => {
             onready(runtime.fs, runtime.main);
         });
+        return dosReadyPromise;
     };
     return dosReadyPromise;
 }
@@ -202,7 +216,7 @@ export interface DosReadyPromise extends Promise<DosRuntime> {
   
 
 ```
-    ready: (onready: (fs: DosFS, main: DosMainFn) => void) => void;
+    ready: (onready: (fs: DosFS, main: DosMainFn) => void) => Promise<DosRuntime>;
 }
 
 (window as any).Dos = Dos;
