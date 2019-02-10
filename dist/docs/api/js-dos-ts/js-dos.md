@@ -67,6 +67,10 @@ export function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
     const promise = new Promise<DosRuntime>((resolve, reject) => {
         const module = new DosModule(canvas, resolve);
 
+        if (!options) {
+            options = {};
+        }
+
         if (!options.onerror) {
             options.onerror = (message: string) => {
                 /* tslint:disable:no-console */
