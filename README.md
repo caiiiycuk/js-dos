@@ -103,10 +103,10 @@ You can
 
 ### How to override dosbox.conf
 
-By default js-dos uses builtin dosbox [config](http://127.0.0.1:8081/6.22/docs/api/generate.html?page=js-dos-conf) file.
+By default js-dos uses builtin dosbox [config](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf) file.
 However you can override it with your config file. To do this you can simply put file named `dosbox.conf` inside root of
 program archive and then pass command line argument to read it `-c dosbox.conf`. Or you can write this file directly from
-javascript with [fs.createFile](http://127.0.0.1:8081/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-createfile).
+javascript with [fs.createFile](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-createfile).
 
 For example, you can add `[autoexec]` section to print dosbox.conf file:
 ```javascript
