@@ -91,7 +91,7 @@ export function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
     return dosReadyPromise;
 }
 
-export type DosMainFn = (args: string[]) => Promise<DosCommandInterface>;
+export type DosMainFn = (args?: string[]) => Promise<DosCommandInterface>;
 
 // Plain promise will be resolved with `DosRuntime` interface, that
 // includes:

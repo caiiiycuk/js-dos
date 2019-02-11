@@ -85,6 +85,91 @@ on success with empty object or rejected
             });
         });
     }
+
+
+```
+
+
+
+
+
+
+
+### createFile
+
+
+  
+
+```
+    public createFile(file: string, body: ArrayBuffer | Uint8Array | string) {
+
+```
+
+
+
+
+
+
+
+allow to create file in FS, you can pass absolute path
+all directories will be created
+
+body can be string or ArrayBuffer or Uint8Array
+
+
+  
+
+```
+
+        if (body instanceof ArrayBuffer) {
+            body = new Uint8Array(body);
+        }
+
+
+```
+
+
+
+
+
+
+
+windows style path are also handler, but **drive letter is ignored**
+if you pass only filename, then file will be writed in root "/" directory
+
+
+  
+
+```
+        file = file.replace(new RegExp("^[a-zA-z]+:"), "") .replace(new RegExp("\\\\", "g"), "/");
+        const parts = file.split("/");
+
+        if (parts.length === 0) {
+            this.dos.onerror("Can't create file '" + file + "', because it's not valid file path");
+            return;
+        }
+
+        const filename = parts[parts.length - 1].trim();
+
+        if (filename.length === 0) {
+            this.dos.onerror("Can't create file '" + file + "', because file name is empty");
+            return;
+        }
+
+        /* i < parts.length - 1, because last part is file name */
+        let path = "/";
+        for (let i = 0; i < parts.length - 1; ++i) {
+            const part = parts[i].trim();
+            if (part.length === 0) {
+                continue;
+            }
+
+            (this.em as any).FS_createPath(path, part, true, true);
+            path = path + "/" + part;
+        }
+
+        (this.em as any).FS_createDataFile(path, filename, body, true, true, true);
+    }
 }
 
 
