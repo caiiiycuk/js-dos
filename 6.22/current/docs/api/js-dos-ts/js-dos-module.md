@@ -173,7 +173,7 @@ for maximum performance
 
 ```
     public onRuntimeInitialized() {
-        const mainFn = (args: string[]) => {
+        const mainFn = (args?: string[]) => {
 
 ```
 
@@ -197,6 +197,10 @@ function is called:
                 this.ui = null;
             }
 
+            if (!args) {
+                args = [];
+            }
+
 
 ```
 
@@ -213,9 +217,7 @@ file to user directory
   
 
 ```
-            (this as any).FS_createPath("/home/web_user", ".dosbox", true, true);
-            (this as any).FS_createDataFile("/home/web_user/.dosbox/",
-                "dosbox-jsdos.conf", jsdosconf, true, false, false);
+            this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", jsdosconf);
 
 ```
 

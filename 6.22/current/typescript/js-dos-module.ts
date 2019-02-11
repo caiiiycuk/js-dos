@@ -94,7 +94,7 @@ export class DosModule extends DosOptions {
 
     // ### onRuntimeInitialized
     public onRuntimeInitialized() {
-        const mainFn = (args: string[]) => {
+        const mainFn = (args?: string[]) => {
             // When emscripten runtime is initialized and main
             // function is called:
             //
@@ -104,11 +104,13 @@ export class DosModule extends DosOptions {
                 this.ui = null;
             }
 
+            if (!args) {
+                args = [];
+            }
+
             // * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
             // file to user directory
-            (this as any).FS_createPath("/home/web_user", ".dosbox", true, true);
-            (this as any).FS_createDataFile("/home/web_user/.dosbox/",
-                "dosbox-jsdos.conf", jsdosconf, true, false, false);
+            this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", jsdosconf);
             // * Mount emscripten FS as drive c:
             args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
             // * Run dosbox with passed arguments and resolve

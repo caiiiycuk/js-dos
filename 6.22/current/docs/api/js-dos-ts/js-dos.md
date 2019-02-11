@@ -170,7 +170,7 @@ split resolved object into meaningful parts.
     return dosReadyPromise;
 }
 
-export type DosMainFn = (args: string[]) => Promise<DosCommandInterface>;
+export type DosMainFn = (args?: string[]) => Promise<DosCommandInterface>;
 
 
 ```

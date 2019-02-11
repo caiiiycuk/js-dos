@@ -6,7 +6,7 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.14 (83167dfbe4a9487cc587fefe90166d4ab7cbad49)",
+    version: "6.22.15 (623130c7558b30de76d7cf5023ef13b860c9bcf0)",
     wasmSize: 2167059,
     jsSize: 503815
 };
@@ -270,6 +270,43 @@ var DosFS = function () {
                     }
                 });
             });
+        }
+        // ### createFile - this method is synchronous
+
+    }, {
+        key: "createFile",
+        value: function createFile(file, body) {
+            // allow to create file in FS, you can pass absolute path
+            // all directories will be created
+            //
+            // body can be string or ArrayBuffer or Uint8Array
+            if (body instanceof ArrayBuffer) {
+                body = new Uint8Array(body);
+            }
+            // windows style path are also handler, but **drive letter is ignored**
+            // if you pass only filename, then file will be writed in root "/" directory
+            file = file.replace(new RegExp("^[a-zA-z]+:"), "").replace(new RegExp("\\\\", "g"), "/");
+            var parts = file.split("/");
+            if (parts.length === 0) {
+                this.dos.onerror("Can't create file '" + file + "', because it's not valid file path");
+                return;
+            }
+            var filename = parts[parts.length - 1].trim();
+            if (filename.length === 0) {
+                this.dos.onerror("Can't create file '" + file + "', because file name is empty");
+                return;
+            }
+            /* i < parts.length - 1, because last part is file name */
+            var path = "/";
+            for (var i = 0; i < parts.length - 1; ++i) {
+                var part = parts[i].trim();
+                if (part.length === 0) {
+                    continue;
+                }
+                this.em.FS_createPath(path, part, true, true);
+                path = path + "/" + part;
+            }
+            this.em.FS_createDataFile(path, filename, body, true, true, true);
         }
     }]);
 
@@ -596,10 +633,12 @@ var DosModule = function (_js_dos_options_1$Dos) {
                     _this3.ui.detach();
                     _this3.ui = null;
                 }
+                if (!args) {
+                    args = [];
+                }
                 // * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
                 // file to user directory
-                _this3.FS_createPath("/home/web_user", ".dosbox", true, true);
-                _this3.FS_createDataFile("/home/web_user/.dosbox/", "dosbox-jsdos.conf", js_dos_conf_1.jsdosconf, true, false, false);
+                _this3.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", js_dos_conf_1.jsdosconf);
                 // * Mount emscripten FS as drive c:
                 args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
                 // * Run dosbox with passed arguments and resolve
@@ -2486,6 +2525,78 @@ test("js-dos can take screenshot of canvas", function (done) {
         });
     });
 });
+suite("js-dos-fs");
+test("js-dos-fs createFile error handling", function (done) {
+    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: function onerror(message) {
+            assert.equal(message, "Can't create file '', because file name is empty");
+            done();
+        }
+    });
+    do_1.doReady(dos, function (fs, main) {
+        fs.createFile("", "");
+    });
+});
+test("js-dos-fs createFile error handling 2", function (done) {
+    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: function onerror(message) {
+            assert.equal(message, "Can't create file '/home/', because file name is empty");
+            done();
+        }
+    });
+    do_1.doReady(dos, function (fs, main) {
+        fs.createFile("/home/", "");
+    });
+});
+test("js-dos-fs can create file", function (done) {
+    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: function onerror(message) {
+            assert.fail();
+        }
+    });
+    do_1.doReady(dos, function (fs, main) {
+        fs.createFile("/wiki/musk", wikiElonMusk);
+        do_1.doNext(main(), function (ci) {
+            do_1.doNext(ci.shell("type wiki\\musk"), function () {
+                compare_1.compareAndExit("elonmusk.png", ci, done);
+            });
+        });
+    });
+});
+test("js-dos-fs can create file (windows path)", function (done) {
+    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: function onerror(message) {
+            assert.fail();
+        }
+    });
+    do_1.doReady(dos, function (fs, main) {
+        fs.createFile("C:\\wiki\\musk", wikiElonMusk);
+        do_1.doNext(main(), function (ci) {
+            do_1.doNext(ci.shell("type wiki\\musk"), function () {
+                compare_1.compareAndExit("elonmusk.png", ci, done);
+            });
+        });
+    });
+});
+suite("js-dos");
+test("js-dos can create and read dosbox.conf", function (done) {
+    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: function onerror(message) {
+            assert.fail();
+        }
+    });
+    do_1.doReady(dos, function (fs, main) {
+        fs.createFile("dosbox.conf", "\n            [autoexec]\n            mount c .\n            c:\n            type dosbox~1.con\n        ");
+        do_1.doNext(main(["-conf", "dosbox.conf"]), function (ci) {
+            compare_1.compareAndExit("dosboxconf.png", ci, done);
+        });
+    });
+});
 test("js-dos can run digger.zip", function (done) {
     var dos = js_dos_1.Dos(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js"
@@ -2508,6 +2619,7 @@ var saveImage = function saveImage(ci) {
         w.document.write("<img src='" + data + "' alt='from canvas'/>");
     });
 };
+var wikiElonMusk = "\nElon Reeve Musk FRS (/\u02C8i\u02D0l\u0252n/; born June 28, 1971) is a\ntechnology entrepreneur and engineer.[10][11][12]\nHe holds South African, Canadian, and U.S. citizenship\nand is the founder, CEO, and lead designer of SpaceX;\n[13] co-founder, CEO, and product architect of Tesla, Inc.;\n[14] co-founder and CEO of Neuralink; and co-founder of PayPal.\nIn December 2016, he was ranked 21st on the Forbes list of\nThe World's Most Powerful People.[15] As of October 2018,\nhe has a net worth of $22.8 billion and is listed by Forbes\nas the 54th-richest person in the world.[16]\nBorn and raised in Pretoria, South Africa, Musk moved to\nCanada when he was 17 to attend Queen's University.\nHe transferred to the University of Pennsylvania two years\nlater, where he received an economics degree from\nthe Wharton School and a degree in physics from the College\nof Arts and Sciences. He began a Ph.D.\nin applied physics and material sciences at Stanford University\nin 1995 but dropped out after two days to pursue\nan entrepreneurial career. He subsequently co-founded Zip2, a\nweb software company, which was acquired by Compaq\nfor $340 million in 1999. Musk then founded X.com, an online bank.\nIt merged with Confinity in 2000 and later that\nyear became PayPal, which was bought by eBay for $1.5 billion\nin October 2002.[17][18][19][20]\n";
 
 },{"../js-dos-ts/js-dos":10,"../js-dos-ts/js-dos-host":5,"./compare":16,"./do":17,"assert":11}]},{},[18])
 
