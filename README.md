@@ -91,6 +91,36 @@ You can handle errors by defining `onerror` property, or by using `catch` of pro
         .catch((message) => console.error(message));
 ```
 
+### How to run command before program (autoexec)
+
+You can
+
+1. Override `dosbox.conf` file and write `[autoexec]` section, as explained in next section
+2. Or you can simply pass additional command line arguments before you program, like:
+   ```
+     main(["-c", "<command>", "-c", "DIGGER.COM"]);
+   ```
+
+### How to override dosbox.conf
+
+By default js-dos uses builtin dosbox [config](http://127.0.0.1:8081/6.22/docs/api/generate.html?page=js-dos-conf) file.
+However you can override it with your config file. To do this you can simply put file named `dosbox.conf` inside root of
+program archive and then pass command line argument to read it `-c dosbox.conf`. Or you can write this file directly from
+javascript with [fs.createFile](http://127.0.0.1:8081/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-createfile).
+
+For example, you can add `[autoexec]` section to print dosbox.conf file:
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        fs.createFile("dosbox.conf", `
+            [autoexec]
+            mount c .
+            c:
+            type dosbox~1.con
+        `);
+        main(["-conf", "dosbox.conf"]);
+    });
+```
+
 ## Building
 
 Building process have two steps:

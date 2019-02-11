@@ -49,7 +49,7 @@ export class DosFS {
         });
     }
 
-    // ### createFile
+    // ### createFile - this method is synchronous
     public createFile(file: string, body: ArrayBuffer | Uint8Array | string) {
         // allow to create file in FS, you can pass absolute path
         // all directories will be created

@@ -95,7 +95,7 @@ on success with empty object or rejected
 
 
 
-### createFile
+### createFile - this method is synchronous
 
 
   
