@@ -54,6 +54,8 @@ It contains this initialization steps:
 dosbox -c DIGGER.COM
 ```
 
+Dos has couple configuration [options](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) that you can pass as second argument.
+
 ## API Reference
 
 Read more how to use js-dos in [**API Reference**](http://js-dos.com/6.22/docs/)
@@ -71,6 +73,14 @@ Dosbox will be runned with command line arguments that passed in main function:
 Is equivalent to
 ```
     dosbox arg1 arg2
+```
+
+### How to change url to wdosbox.js
+
+You can do this by passing `wdosboxUrl` property as second argument:
+
+```javascript
+    Dos(canvas, { wdosboxUrl: "/wdosbox.js" }).ready(...);
 ```
 
 ### How to handle errors
@@ -91,6 +101,8 @@ You can handle errors by defining `onerror` property, or by using `catch` of pro
         .catch((message) => console.error(message));
 ```
 
+**NOTE**: `catch` works only for handling initialization errors
+
 ### How to run command before program (autoexec)
 
 You can
@@ -103,10 +115,10 @@ You can
 
 ### How to override dosbox.conf
 
-By default js-dos uses builtin dosbox [config](http://127.0.0.1:8081/6.22/docs/api/generate.html?page=js-dos-conf) file.
+By default js-dos uses builtin dosbox [config](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf) file.
 However you can override it with your config file. To do this you can simply put file named `dosbox.conf` inside root of
 program archive and then pass command line argument to read it `-c dosbox.conf`. Or you can write this file directly from
-javascript with [fs.createFile](http://127.0.0.1:8081/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-createfile).
+javascript with [fs.createFile](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-createfile).
 
 For example, you can add `[autoexec]` section to print dosbox.conf file:
 ```javascript
@@ -119,6 +131,31 @@ For example, you can add `[autoexec]` section to print dosbox.conf file:
         `);
         main(["-conf", "dosbox.conf"]);
     });
+```
+
+### How to disable js-dos loading UI
+
+By default js-dos will show progress of loading dosbox and extracting archives, but you can disable this feature. To
+do this you need define onprogress handler in [DosOptions](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
+
+```javascript
+    Dos(canvas, { 
+        onprogress: (stage, total, loaded) => {
+            console.log(stage, loaded * 100 / progress + "%");
+        },
+    }).ready(...);
+```
+
+### How to disable logging to console
+
+By default js-dos will log any message using `console.log`, and any error with `console.error`. To disable this you should
+override `log` and `onerror` property
+
+```javascript
+    Dos(canvas, { 
+        log: (message) => { /**/ },
+        onerror: (message) => { /**/ },
+    }).ready(...);
 ```
 
 ## Building
