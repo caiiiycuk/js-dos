@@ -110,8 +110,8 @@ extern "C" void EMSCRIPTEN_KEEPALIVE _send(const char *ckey, const char *data,
 #ifdef EMSCRIPTEN
     EM_ASM_ARGS(
         {
-          var clfield = Pointer_stringify($0);
-          var innerobj = Pointer_stringify($1);
+          var clfield = UTF8ToString($0);
+          var innerobj = UTF8ToString($1);
           if (innerobj.length > 0) {
             innerobj = innerobj.slice(0, -1);
           }
@@ -217,7 +217,7 @@ Ping is opposite to send, it called by c++ to trigger something in javascript
 void ping(const char *event) {
 #ifdef EMSCRIPTEN
   EM_ASM(({
-           const event = Pointer_stringify($0);
+           const event = UTF8ToString($0);
            Module['ping'](event);
          }),
          event);
@@ -278,7 +278,7 @@ void Events::registerScreenshot() {
       "screenshot", [](const std::string &callback_name, const char *data,
                        send_callback_fn callback_fn) {
 #ifdef EMSCRIPTEN
-        EM_ASM((const callbackName = Pointer_stringify($0);
+        EM_ASM((const callbackName = UTF8ToString($0);
                 Module['screenshot_callback_name'] = callbackName;),
                callback_name.c_str());
 #endif
@@ -383,6 +383,7 @@ void Events::shell_input(char *input_line, int length) {
     }), input_line, length);
 #endif
 };
+
 
 ```
 

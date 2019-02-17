@@ -49,10 +49,10 @@ export class DosFS {
         });
     }
 
-    // ### createFile - this method is synchronous
+    // ### createFile
     public createFile(file: string, body: ArrayBuffer | Uint8Array | string) {
-        // allow to create file in FS, you can pass absolute path
-        // all directories will be created
+        // [synchronous] allow to create file in FS, you can pass absolute path.
+        // All directories will be created
         //
         // body can be string or ArrayBuffer or Uint8Array
 
@@ -60,7 +60,7 @@ export class DosFS {
             body = new Uint8Array(body);
         }
 
-        // windows style path are also handler, but **drive letter is ignored**
+        // windows style path are also valid, but **drive letter is ignored**
         // if you pass only filename, then file will be writed in root "/" directory
         file = file.replace(new RegExp("^[a-zA-z]+:"), "") .replace(new RegExp("\\\\", "g"), "/");
         const parts = file.split("/");

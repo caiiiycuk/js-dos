@@ -95,7 +95,7 @@ on success with empty object or rejected
 
 
 
-### createFile - this method is synchronous
+### createFile
 
 
   
@@ -111,8 +111,8 @@ on success with empty object or rejected
 
 
 
-allow to create file in FS, you can pass absolute path
-all directories will be created
+[synchronous] allow to create file in FS, you can pass absolute path.
+All directories will be created
 
 body can be string or ArrayBuffer or Uint8Array
 
@@ -134,7 +134,7 @@ body can be string or ArrayBuffer or Uint8Array
 
 
 
-windows style path are also handler, but **drive letter is ignored**
+windows style path are also valid, but **drive letter is ignored**
 if you pass only filename, then file will be writed in root "/" directory
 
 

@@ -6,9 +6,9 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.15 (ce9f1b10cc3f8eafbeef84ec4646c70015665296)",
-    wasmSize: 2167059,
-    jsSize: 503815
+    version: "6.22.16 (2133515c489ad3d7ba2ac57213c5670d72ad7bb9)",
+    wasmSize: 2167039,
+    jsSize: 503703
 };
 
 },{}],2:[function(require,module,exports){
@@ -271,19 +271,19 @@ var DosFS = function () {
                 });
             });
         }
-        // ### createFile - this method is synchronous
+        // ### createFile
 
     }, {
         key: "createFile",
         value: function createFile(file, body) {
-            // allow to create file in FS, you can pass absolute path
-            // all directories will be created
+            // [synchronous] allow to create file in FS, you can pass absolute path.
+            // All directories will be created
             //
             // body can be string or ArrayBuffer or Uint8Array
             if (body instanceof ArrayBuffer) {
                 body = new Uint8Array(body);
             }
-            // windows style path are also handler, but **drive letter is ignored**
+            // windows style path are also valid, but **drive letter is ignored**
             // if you pass only filename, then file will be writed in root "/" directory
             file = file.replace(new RegExp("^[a-zA-z]+:"), "").replace(new RegExp("\\\\", "g"), "/");
             var parts = file.split("/");
