@@ -1217,7 +1217,7 @@ static bool use_capture_callback = false;
 static void doGFX_CaptureMouse(void);
 
 void GFX_CaptureMouse(void) {
-	if (use_capture_callback) {
+	if (use_capture_callback && !sdl.mouse.autoenable) {
 		if (sdl.mouse.locked) {
 			emscripten_exit_pointerlock();
 		} else {
@@ -2591,7 +2591,7 @@ void Config_Add_SDL() {
 	Pstring->Set_values(renderers);
 #endif	// SDL_VERSION_ATLEAST(2,0,0)
 
-	Pbool = sdl_sec->Add_bool("autolock",Property::Changeable::Always,true);
+	Pbool = sdl_sec->Add_bool("autolock",Property::Changeable::Always,false);
 	Pbool->Set_help("Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)");
 
 	Pint = sdl_sec->Add_int("sensitivity",Property::Changeable::Always,100);

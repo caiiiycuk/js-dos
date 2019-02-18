@@ -208,6 +208,31 @@ test("js-dos-fs can create file (windows path)", (done) => {
 
 suite("js-dos");
 
+test("js-dos should provide user level dosbox.conf", (done) => {
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: (message) => {
+            assert.fail();
+        },
+    });
+
+    doReady(dos, (fs, main) => {
+        fs.createFile("dosbox.conf", `
+        [autoexec]
+        mount c .
+        c:
+        cd HOME
+        cd WEB_USER
+        cd DOSBOX~1
+        type dosbox~1.con
+        `);
+
+        doNext(main(["-conf", "dosbox.conf"]), (ci) => {
+            compareAndExit("jsdos-conf.png", ci, done);
+        });
+    });
+});
+
 test("js-dos can create and read dosbox.conf", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
         wdosboxUrl: "/wdosbox.js",

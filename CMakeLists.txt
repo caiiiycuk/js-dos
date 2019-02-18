@@ -27,7 +27,7 @@ else()
 	add_definitions(-DDEBUG -DEMSCRIPTEN_KEEPALIVE=)
 endif()
 
-add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS)
+add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS -DJSDOS)
 
 include(
 	"${CMAKE_CURRENT_LIST_DIR}/3rd-party/3rd-party.cmake"
