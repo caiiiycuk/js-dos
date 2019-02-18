@@ -31,7 +31,7 @@ fulldouble=false
 fullresolution=original
 windowresolution=original
 output=surface
-autolock=true
+autolock=false
 sensitivity=100
 waitonerror=true
 priority=higher,normal
@@ -245,4 +245,19 @@ ipx=false
 [autoexec]
 # Lines in this section will be run at startup.
 # You can put your MOUNT lines here.
+
+# https://js-dos.com
+# █▀▀▀▀▀█ █  ▄▄▄▀▀█ █▀▀▀▀▀█
+# █ ███ █ ██▄ █ ▀ ▄ █ ███ █
+# █ ▀▀▀ █ ▄██ ▀ ▀▀█ █ ▀▀▀ █
+# ▀▀▀▀▀▀▀ ▀ █▄▀▄▀ █ ▀▀▀▀▀▀▀
+# █▀▄▄█▀▀▄▄ ▀ ▀█▄▄▄▄ ▀▄█▀█▀
+# █▀ ▀ ▀▀▄ █▀ ▄ ▄▀▀▀▄ █▀█▄
+# ▄ ▄▄ █▀▀▄ ▄▀▄▀▀█  ▀▀▄▀▀█▀
+#   ▄▀▀█▀▀ █▀█▀█▀▀▄ ▀██▀█▄
+# ▀▀▀ ▀ ▀ █▄█ ▀█▄▄█▀▀▀█▀▀
+# █▀▀▀▀▀█ ▄▄▄ ▄ ▄ █ ▀ █▄▄▄▄
+# █ ███ █ ▀█▀▀▄▀▀▄████▀▀█▄█
+# █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█ 
+# ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
 `;

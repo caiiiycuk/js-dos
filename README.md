@@ -141,7 +141,7 @@ do this you need define onprogress handler in [DosOptions](http://js-dos.com/6.2
 ```javascript
     Dos(canvas, { 
         onprogress: (stage, total, loaded) => {
-            console.log(stage, loaded * 100 / progress + "%");
+            console.log(stage, loaded * 100 / loaded + "%");
         },
     }).ready(...);
 ```
@@ -157,6 +157,20 @@ override `log` and `onerror` property
         onerror: (message) => { /**/ },
     }).ready(...);
 ```
+
+### Mouse locking
+
+By default dosbox mouse will follow browser cursor. However you can change this behaviour by providing `autolock=true` in 
+dosbox.conf. Then mouse starts follow browser cursor after first click (lock), and you can unlock mouse by pressing `CTRL+F10`.
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        fs.createFile("dosbox.conf", `
+            [sdl]
+            autolock=true
+        `);
+        main(["-conf", "dosbox.conf"]);
+    });
+```    
 
 ## Building
 
