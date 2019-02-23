@@ -13,12 +13,20 @@ class Events {
 private:
     friend class CommandInterface;
 
+    enum Browser {
+        Firefox = 0,
+        Other = 1
+    };
+
+    Browser browser;
+
     Events();
+
+    void fixEventKeyCode(SDL_Event* event);
 
     // C++ --> JS
     // ----------
     // **ready** - triggered when runtime is ready
-private:
     void ready();
 
 public:

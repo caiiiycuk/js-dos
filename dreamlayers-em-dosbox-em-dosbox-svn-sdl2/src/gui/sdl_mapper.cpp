@@ -2702,7 +2702,7 @@ void MAPPER_StartUp(Section * sec) {
 	/* Emscripten generates scancodes from SDL keys,
 	 * so supporting them doesn't seem useful.
 	 */
-#ifndef EMSCRIPTEN
+#if !defined(JSDOS)
 	if (section->Get_bool("usescancodes")) {
 		usescancodes=true;
 

@@ -2,6 +2,7 @@
 #include <js-dos-events.h>
 #include <js-dos-json.h>
 #include <unordered_map>
+
 #include <SDL/SDL_events.h>
 
 #ifdef EMSCRIPTEN
@@ -124,11 +125,20 @@ void ping(const char *event) {
 #endif
 }
 
-Events::Events() {
+Events::Events(): browser(Browser::Other) {
   registerSendFn();
   registerExit();
   registerScreenshot();
   registerPushSDLEvent();
+#ifdef EMSCRIPTEN
+  browser = (Events::Browser) EM_ASM_INT((
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+      return 0; // firefox
+    }
+    return 1; // othters
+  ));
+#endif
+  
 }
 
 void Events::ready() { ping("ready"); }
@@ -141,7 +151,6 @@ void Events::frame() {
   } else if (frameCount == 1) {
     ready();
   } else {
-    ping("frame");
     supplyScreenshotIfNeeded();
   }
 
@@ -186,6 +195,38 @@ void Events::supplyScreenshotIfNeeded() {
 #endif
 }
 
+void Events::fixEventKeyCode(SDL_Event* event) {
+  // event->key.keysum.sym is used to map keys
+  // You can find correct key by logging CreateKeyBind
+
+  // printf("event-in  %d %d \n", event->key.keysym.sym, event->key.keysym.scancode);
+#ifdef EMSCRIPTEN
+  if (browser != Browser::Firefox) {
+    switch ((int)event->key.keysym.sym) {
+      case 186: { // ':'
+        event->key.keysym.sym = 59;
+      } break;
+      case 187: { // '='
+        event->key.keysym.sym = 61;
+      } break;
+      case 189: { // '-'
+        event->key.keysym.sym = 45;
+      } break;
+      default:;
+    }
+  }
+
+  switch ((int)event->key.keysym.sym) {
+    case 39: { // '\''
+      event->key.keysym.sym = 222;
+    } break;
+    default:;
+  }
+
+  // printf("event-out  %d %d \n", event->key.keysym.sym, event->key.keysym.scancode);
+#endif
+}
+
 std::vector<SDL_Event> sdlEvents;
 int Events::pollSDLEvent(SDL_Event *event) {
   auto result = SDL_PollEvent(event);
@@ -193,8 +234,11 @@ int Events::pollSDLEvent(SDL_Event *event) {
     if (!sdlEvents.empty()) {
       *event = sdlEvents.back();
       sdlEvents.pop_back();
-      return 1;
+      result = 1;
     }
+  }
+  if (result > 0 && (event->type == SDL_KEYDOWN || event->type == SDL_KEYUP)) {
+    fixEventKeyCode(event);
   }
   return result;
 }
