@@ -54,11 +54,11 @@ It contains this initialization steps:
 dosbox -c DIGGER.COM
 ```
 
-Dos has couple configuration [options](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) that you can pass as second argument.
+Dos has couple configuration [options](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) that you can pass as second argument `Dos(canvas, options)`.
 
 ## API Reference
 
-Read more how to use js-dos in [**API Reference**](http://js-dos.com/6.22/docs/)
+Read about api provided by js-dos in [**API Reference**](http://js-dos.com/6.22/docs/)
 
 ## FAQ
 
@@ -141,7 +141,7 @@ do this you need define onprogress handler in [DosOptions](http://js-dos.com/6.2
 ```javascript
     Dos(canvas, { 
         onprogress: (stage, total, loaded) => {
-            console.log(stage, loaded * 100 / loaded + "%");
+            console.log(stage, loaded * 100 / total + "%");
         },
     }).ready(...);
 ```
@@ -158,6 +158,19 @@ override `log` and `onerror` property
     }).ready(...);
 ```
 
+### Resizing canvas
+
+You can easily resize canvas by changing **css** (style) properties `width` and `height`.
+Take attention, you **should not** change width and height properties of canvas.
+
+```html
+<canvas width="640" height="320" style="width: 1280px; height: 640px"></canvas>
+```
+
+Rule is simple: `width/height` properties is used by jsdos as native
+resolution of game/program, but css `width/height` is for changing real size.
+So, for giving example resolution will be 640x320, but canvas size will be 1280x640.
+
 ### Mouse locking
 
 By default dosbox mouse will follow browser cursor. However you can change this behaviour by providing `autolock=true` in 
@@ -171,6 +184,11 @@ dosbox.conf. Then mouse starts follow browser cursor after first click (lock), a
         main(["-conf", "dosbox.conf"]);
     });
 ```    
+
+### Multiple dosbox instances on one page
+
+JsDos already support multiple instances, just create new canvas for each jsdos and
+instaniate it normally. Like in this [64k demoscene](/6.22/64k/index.html) example.
 
 ## Building
 
@@ -198,5 +216,5 @@ gulp
 
 Output will be placed in dist folder. Also in dist folder you can find test page, you open it in browser. All test should pass.
 ```
-firefox dist/test/index.html
+firefox dist/test/test.html
 ```

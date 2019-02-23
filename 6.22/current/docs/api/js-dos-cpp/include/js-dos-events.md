@@ -44,7 +44,16 @@ class Events {
 private:
     friend class CommandInterface;
 
+    enum Browser {
+        Firefox = 0,
+        Other = 1
+    };
+
+    Browser browser;
+
     Events();
+
+    void fixEventKeyCode(SDL_Event* event);
 
 
 ```
@@ -71,7 +80,6 @@ C++ --> JS
   
 
 ```
-private:
     void ready();
 
 public:
