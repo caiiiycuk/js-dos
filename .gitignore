@@ -45,6 +45,5 @@ buildconfig
 cmake-build-debug
 travis-build
 build
-package-lock.json
 cmake-build-debug
 build
