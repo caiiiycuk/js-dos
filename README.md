@@ -46,8 +46,7 @@ It contains this initialization steps:
 
 * `Dos(canvas)` - will return promise that will be resoled when dosbox is ready
 * `ready((fs, main) =>)` - will be called when dosbox is ready to run
-    * `fs` provides [API](https://js-dos.com/docs/generate?js-dos-ds) to work with filesystem, we call `extract` to mount
-    archive contents as C:
+    * `fs` provides [API](https://js-dos.com/docs/generate?js-dos-fs) to work with filesystem, we call `extract` to mount archive contents as C:
     * `main` provides an entry point to run dosbox like in shell you should pass
     dosbox command line arguments `main(["-c", "DIGGER.COM"])` means:
 ```
@@ -189,6 +188,37 @@ dosbox.conf. Then mouse starts follow browser cursor after first click (lock), a
 
 JsDos already support multiple instances, just create new canvas for each jsdos and
 instaniate it normally. Like in this [64k demoscene](/6.22/64k/index.html) example.
+
+### Store user progress between sessions
+
+js-dos file system is in memory file system. It means that every file that you exracted,
+or file that created by game (save file, config, etc.) will be lost on browser restart.
+How ever it's possible to create directory in file system that will be synced and stored
+inside [indexed db](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API). 
+This type of folder will store it's content across browser restart. You can create as many
+folders as you want, all of them will be synced.
+
+But, usually only one folder per game needed. So, simplies way to store game progress is
+just extract game archive to different folder (not root `/`). For example:
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        fs.extract("game.zip", "/game").then(() => {
+            main(["-c", "game\\game.exe"])
+        });
+    });
+```
+
+As you can see second argument in [`extract`](https://js-dos.com/docs/generate?js-dos-fs#extract) method is a path where to extract contents archive, and this path will be automatically mount as persistent (because it's not root `/`).
+
+In other words to store game progress just extract game archive into some folder, and that it's.
+
+**NOTE: ** Do not forget to specify correct path to executable in main function.
+
+### Caching js-dos script
+
+No need to cache js-dos scripts, because they are automatically added to indexed db cache, so from every second load js-dos can work in offline mode.
+
 
 ## Building
 
