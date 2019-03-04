@@ -62,6 +62,7 @@ export class DosCommandInterface {
     // * `exit()` - immediately exit from runtime
     public exit() {
         try {
+            this.dos.terminate();
             this.api.send("exit");
         } catch (e) {
             return 0;
@@ -83,6 +84,9 @@ export class DosCommandInterface {
         switch (msg) {
             case "ready":
                 this.onready(this);
+                break;
+            case "frame":
+                this.onframe();
                 break;
             case "shell_input":
                 if (this.shellInputQueue.length === 0) {
@@ -114,6 +118,10 @@ export class DosCommandInterface {
             default:
             /* do nothing */
         }
+    }
+
+    private onframe() {
+        this.dos.tick();
     }
 }
 

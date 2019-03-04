@@ -6,12 +6,157 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.18 (7c3bac92b25189169b3468bfd12782519212d508)",
-    wasmSize: 2167445,
-    jsSize: 503772
+    version: "6.22.19 (5571198f515709ee6898e89a25b33091704ed1be)",
+    wasmSize: 2167869,
+    jsSize: 472944
 };
 
 },{}],2:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+Object.defineProperty(exports, "__esModule", { value: true });
+
+var CacheDb = function () {
+    function CacheDb(version, onready, onerror) {
+        var _this = this;
+
+        _classCallCheck(this, CacheDb);
+
+        this.storeName = "files";
+        this.version = version;
+        this.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+        if (!this.indexedDB) {
+            onerror("Indexed db is not supported on this host");
+            return;
+        }
+        var openRequest = this.indexedDB.open("gpx-bigstorage (" + version + ")", 1);
+        openRequest.onerror = function (event) {
+            onerror("Can't open cache database");
+        };
+        openRequest.onsuccess = function (event) {
+            _this.db = openRequest.result;
+            onready(_this);
+        };
+        openRequest.onupgradeneeded = function (event) {
+            try {
+                _this.db = openRequest.result;
+                _this.db.onerror = function (event) {
+                    onerror("Can't upgrade cache database");
+                };
+                _this.db.createObjectStore(_this.storeName);
+            } catch (e) {
+                onerror("Can't upgrade cache database");
+            }
+        };
+    }
+
+    _createClass(CacheDb, [{
+        key: "put",
+        value: function put(key, data, onflush) {
+            var transaction = this.db.transaction(this.storeName, "readwrite");
+            transaction.oncomplete = function () {
+                return onflush();
+            };
+            transaction.objectStore(this.storeName).put(data, key);
+        }
+    }, {
+        key: "get",
+        value: function get(key, ondata, onerror) {
+            var transaction = this.db.transaction(this.storeName, "readonly");
+            var request = transaction.objectStore(this.storeName).get(key);
+            request.onerror = function () {
+                return onerror("Can't read value for key '" + key + "'");
+            };
+            request.onsuccess = function () {
+                if (request.result) {
+                    ondata(request.result);
+                } else {
+                    onerror("Result is empty for key '" + key + "', result: " + request.result);
+                }
+            };
+        }
+    }, {
+        key: "forEach",
+        value: function forEach(each, onend) {
+            var _this2 = this;
+
+            var transaction = this.db.transaction(this.storeName, "readonly");
+            var request = transaction.objectStore(this.storeName).openCursor();
+            request.onerror = function () {
+                return onerror("Can't open cursor on " + _this2.storeName);
+            };
+            request.onsuccess = function (event) {
+                var cursor = event.target.result;
+                if (cursor) {
+                    each(cursor.key.toString(), cursor.value);
+                    cursor.continue();
+                } else {
+                    onend();
+                }
+            };
+        }
+    }]);
+
+    return CacheDb;
+}();
+
+exports.default = CacheDb;
+
+},{}],3:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+Object.defineProperty(exports, "__esModule", { value: true });
+
+var CacheNoop = function () {
+    function CacheNoop() {
+        _classCallCheck(this, CacheNoop);
+    }
+
+    _createClass(CacheNoop, [{
+        key: "put",
+        value: function put(key, data, onflush) {
+            // nothing
+        }
+    }, {
+        key: "get",
+        value: function get(key, ondata, onerror) {
+            onerror("Cache is not supported on this host");
+        }
+    }, {
+        key: "forEach",
+        value: function forEach(each, onend) {
+            onend();
+        }
+    }]);
+
+    return CacheNoop;
+}();
+
+exports.default = CacheNoop;
+
+},{}],4:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var js_dos_cache_db_1 = require("./js-dos-cache-db");
+var js_dos_cache_noop_1 = require("./js-dos-cache-noop");
+function openCache(module, onready) {
+    new js_dos_cache_db_1.default(module.version, onready, function (msg) {
+        module.log("ERR! Can't initalize cache, cause: " + msg);
+        onready(new js_dos_cache_noop_1.default());
+    });
+}
+exports.default = openCache;
+
+},{"./js-dos-cache-db":2,"./js-dos-cache-noop":3}],5:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -120,6 +265,7 @@ var DosCommandInterface = function () {
         key: "exit",
         value: function exit() {
             try {
+                this.dos.terminate();
                 this.api.send("exit");
             } catch (e) {
                 return 0;
@@ -143,6 +289,9 @@ var DosCommandInterface = function () {
             switch (msg) {
                 case "ready":
                     this.onready(this);
+                    break;
+                case "frame":
+                    this.onframe();
                     break;
                 case "shell_input":
                     if (this.shellInputQueue.length === 0) {
@@ -191,6 +340,11 @@ var DosCommandInterface = function () {
                 /* do nothing */
             }
         }
+    }, {
+        key: "onframe",
+        value: function onframe() {
+            this.dos.tick();
+        }
     }]);
 
     return DosCommandInterface;
@@ -198,7 +352,7 @@ var DosCommandInterface = function () {
 
 exports.DosCommandInterface = DosCommandInterface;
 
-},{}],3:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 // # js-dos default config
 // This is default config for dosbox.
@@ -207,7 +361,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* tslint:disable:max-line-length */
 exports.jsdosconf = "\n# This is the configurationfile for DOSBox 0.74. (Please use the latest version of DOSBox)\n# Lines starting with a # are commentlines and are ignored by DOSBox.\n# They are used to (briefly) document the effect of each option.\n\n[sdl]\n#       fullscreen: Start dosbox directly in fullscreen. (Press ALT-Enter to go back)\n#       fulldouble: Use double buffering in fullscreen. It can reduce screen flickering, but it can also result in a slow DOSBox.\n#   fullresolution: What resolution to use for fullscreen: original or fixed size (e.g. 1024x768).\n#                     Using your monitor's native resolution with aspect=true might give the best results.\n#                     If you end up with small window on a large screen, try an output different from surface.\n# windowresolution: Scale the window to this size IF the output device supports hardware scaling.\n#                     (output=surface does not!)\n#           output: What video system to use for output.\n#                   Possible values: surface, overlay, opengl, openglnb.\n#         autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)\n#      sensitivity: Mouse sensitivity.\n#      waitonerror: Wait before closing the console if dosbox has an error.\n#         priority: Priority levels for dosbox. Second entry behind the comma is for when dosbox is not focused/minimized.\n#                     pause is only valid for the second entry.\n#                   Possible values: lowest, lower, normal, higher, highest, pause.\n#       mapperfile: File used to load/save the key/event mappings from. Resetmapper only works with the defaul value.\n#     usescancodes: Avoid usage of symkeys, might not work on all operating systems.\n\nfullscreen=false\nfulldouble=false\nfullresolution=original\nwindowresolution=original\noutput=surface\nautolock=false\nsensitivity=100\nwaitonerror=true\npriority=higher,normal\nmapperfile=mapper-jsdos.map\nusescancodes=true\nvsync=false\n\n[dosbox]\n# language: Select another language file.\n#  machine: The type of machine tries to emulate.\n#           Possible values: hercules, cga, tandy, pcjr, ega, vgaonly, svga_s3, svga_et3000, svga_et4000, svga_paradise, vesa_nolfb, vesa_oldvbe.\n# captures: Directory where things like wave, midi, screenshot get captured.\n#  memsize: Amount of memory DOSBox has in megabytes.\n#             This value is best left at its default to avoid problems with some games,\n#             though few games might require a higher value.\n#             There is generally no speed advantage when raising this value.\n\nlanguage=\nmachine=svga_s3\ncaptures=capture\nmemsize=16\n\n[render]\n# frameskip: How many frames DOSBox skips before drawing one.\n#    aspect: Do aspect correction, if your output method doesn't support scaling this can slow things down!.\n#    scaler: Scaler used to enlarge/enhance low resolution modes.\n#              If 'forced' is appended, then the scaler will be used even if the result might not be desired.\n#            Possible values: none, normal2x, normal3x, advmame2x, advmame3x, advinterp2x, advinterp3x, hq2x, hq3x, 2xsai, super2xsai, supereagle, tv2x, tv3x, rgb2x, rgb3x, scan2x, scan3x.\n\nframeskip=0\naspect=false\nscaler=normal2x\n\n[cpu]\n#      core: CPU Core used in emulation. auto will switch to dynamic if available and appropriate.\n#            Possible values: auto, dynamic, normal, simple.\n#   cputype: CPU Type used in emulation. auto is the fastest choice.\n#            Possible values: auto, 386, 386_slow, 486_slow, pentium_slow, 386_prefetch.\n#    cycles: Amount of instructions DOSBox tries to emulate each millisecond.\n#            Setting this value too high results in sound dropouts and lags.\n#            Cycles can be set in 3 ways:\n#              'auto'          tries to guess what a game needs.\n#                              It usually works, but can fail for certain games.\n#              'fixed #number' will set a fixed amount of cycles. This is what you usually need if 'auto' fails.\n#                              (Example: fixed 4000).\n#              'max'           will allocate as much cycles as your computer is able to handle.\n#\n#            Possible values: auto, fixed, max.\n#   cycleup: Amount of cycles to decrease/increase with keycombo.(CTRL-F11/CTRL-F12)\n# cycledown: Setting it lower than 100 will be a percentage.\n\ncore=auto\ncputype=auto\ncycles=auto\ncycleup=10\ncycledown=20\n\n[mixer]\n#   nosound: Enable silent mode, sound is still emulated though.\n#      rate: Mixer sample rate, setting any device's rate higher than this will probably lower their sound quality.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n# blocksize: Mixer block size, larger blocks might help sound stuttering but sound will also be more lagged.\n#            Possible values: 1024, 2048, 4096, 8192, 512, 256.\n# prebuffer: How many milliseconds of data to keep on top of the blocksize.\n\nnosound=false\nrate=44100\nblocksize=1024\nprebuffer=20\n\n[midi]\n#     mpu401: Type of MPU-401 to emulate.\n#             Possible values: intelligent, uart, none.\n# mididevice: Device that will receive the MIDI data from MPU-401.\n#             Possible values: default, win32, alsa, oss, coreaudio, coremidi, none.\n# midiconfig: Special configuration options for the device driver. This is usually the id of the device you want to use.\n#               See the README/Manual for more details.\n\nmpu401=intelligent\nmididevice=default\nmidiconfig=\n\n[sblaster]\n#  sbtype: Type of Soundblaster to emulate. gb is Gameblaster.\n#          Possible values: sb1, sb2, sbpro1, sbpro2, sb16, gb, none.\n#  sbbase: The IO address of the soundblaster.\n#          Possible values: 220, 240, 260, 280, 2a0, 2c0, 2e0, 300.\n#     irq: The IRQ number of the soundblaster.\n#          Possible values: 7, 5, 3, 9, 10, 11, 12.\n#     dma: The DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n#    hdma: The High DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n# sbmixer: Allow the soundblaster mixer to modify the DOSBox mixer.\n# oplmode: Type of OPL emulation. On 'auto' the mode is determined by sblaster type. All OPL modes are Adlib-compatible, except for 'cms'.\n#          Possible values: auto, cms, opl2, dualopl2, opl3, none.\n#  oplemu: Provider for the OPL emulation. compat might provide better quality (see oplrate as well).\n#          Possible values: default, compat, fast.\n# oplrate: Sample rate of OPL music emulation. Use 49716 for highest quality (set the mixer rate accordingly).\n#          Possible values: 44100, 49716, 48000, 32000, 22050, 16000, 11025, 8000.\n\nsbtype=sb16\nsbbase=220\nirq=7\ndma=1\nhdma=5\nsbmixer=true\noplmode=auto\noplemu=default\noplrate=44100\n\n[gus]\n#      gus: Enable the Gravis Ultrasound emulation.\n#  gusrate: Sample rate of Ultrasound emulation.\n#           Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#  gusbase: The IO base address of the Gravis Ultrasound.\n#           Possible values: 240, 220, 260, 280, 2a0, 2c0, 2e0, 300.\n#   gusirq: The IRQ number of the Gravis Ultrasound.\n#           Possible values: 5, 3, 7, 9, 10, 11, 12.\n#   gusdma: The DMA channel of the Gravis Ultrasound.\n#           Possible values: 3, 0, 1, 5, 6, 7.\n# ultradir: Path to Ultrasound directory. In this directory\n#           there should be a MIDI directory that contains\n#           the patch files for GUS playback. Patch sets used\n#           with Timidity should work fine.\n\ngus=false\ngusrate=44100\ngusbase=240\ngusirq=5\ngusdma=3\nultradir=C:ULTRASND\n\n[speaker]\n# pcspeaker: Enable PC-Speaker emulation.\n#    pcrate: Sample rate of the PC-Speaker sound generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#     tandy: Enable Tandy Sound System emulation. For 'auto', emulation is present only if machine is set to 'tandy'.\n#            Possible values: auto, on, off.\n# tandyrate: Sample rate of the Tandy 3-Voice generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#    disney: Enable Disney Sound Source emulation. (Covox Voice Master and Speech Thing compatible).\n\npcspeaker=true\npcrate=44100\ntandy=auto\ntandyrate=44100\ndisney=true\n\n[joystick]\n# joysticktype: Type of joystick to emulate: auto (default), none,\n#               2axis (supports two joysticks),\n#               4axis (supports one joystick, first joystick used),\n#               4axis_2 (supports one joystick, second joystick used),\n#               fcs (Thrustmaster), ch (CH Flightstick).\n#               none disables joystick emulation.\n#               auto chooses emulation depending on real joystick(s).\n#               (Remember to reset dosbox's mapperfile if you saved it earlier)\n#               Possible values: auto, 2axis, 4axis, 4axis_2, fcs, ch, none.\n#        timed: enable timed intervals for axis. Experiment with this option, if your joystick drifts (away).\n#     autofire: continuously fires as long as you keep the button pressed.\n#       swap34: swap the 3rd and the 4th axis. can be useful for certain joysticks.\n#   buttonwrap: enable button wrapping at the number of emulated buttons.\n\njoysticktype=auto\ntimed=true\nautofire=false\nswap34=false\nbuttonwrap=false\n\n[serial]\n# serial1: set type of device connected to com port.\n#          Can be disabled, dummy, modem, nullmodem, directserial.\n#          Additional parameters must be in the same line in the form of\n#          parameter:value. Parameter for all types is irq (optional).\n#          for directserial: realport (required), rxdelay (optional).\n#                           (realport:COM1 realport:ttyS0).\n#          for modem: listenport (optional).\n#          for nullmodem: server, rxdelay, txdelay, telnet, usedtr,\n#                         transparent, port, inhsocket (all optional).\n#          Example: serial1=modem listenport:5000\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial2: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial3: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial4: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n\nserial1=dummy\nserial2=dummy\nserial3=disabled\nserial4=disabled\n\n[dos]\n#            xms: Enable XMS support.\n#            ems: Enable EMS support.\n#            umb: Enable UMB support.\n# keyboardlayout: Language code of the keyboard layout (or none).\n\nxms=true\nems=true\numb=true\nkeyboardlayout=auto\n\n[ipx]\n# ipx: Enable ipx over UDP/IP emulation.\n\nipx=false\n\n[autoexec]\n# Lines in this section will be run at startup.\n# You can put your MOUNT lines here.\n\n# https://js-dos.com\n# \u2588\u2580\u2580\u2580\u2580\u2580\u2588 \u2588  \u2584\u2584\u2584\u2580\u2580\u2588 \u2588\u2580\u2580\u2580\u2580\u2580\u2588\n# \u2588 \u2588\u2588\u2588 \u2588 \u2588\u2588\u2584 \u2588 \u2580 \u2584 \u2588 \u2588\u2588\u2588 \u2588\n# \u2588 \u2580\u2580\u2580 \u2588 \u2584\u2588\u2588 \u2580 \u2580\u2580\u2588 \u2588 \u2580\u2580\u2580 \u2588\n# \u2580\u2580\u2580\u2580\u2580\u2580\u2580 \u2580 \u2588\u2584\u2580\u2584\u2580 \u2588 \u2580\u2580\u2580\u2580\u2580\u2580\u2580\n# \u2588\u2580\u2584\u2584\u2588\u2580\u2580\u2584\u2584 \u2580 \u2580\u2588\u2584\u2584\u2584\u2584 \u2580\u2584\u2588\u2580\u2588\u2580\n# \u2588\u2580 \u2580 \u2580\u2580\u2584 \u2588\u2580 \u2584 \u2584\u2580\u2580\u2580\u2584 \u2588\u2580\u2588\u2584\n# \u2584 \u2584\u2584 \u2588\u2580\u2580\u2584 \u2584\u2580\u2584\u2580\u2580\u2588  \u2580\u2580\u2584\u2580\u2580\u2588\u2580\n#   \u2584\u2580\u2580\u2588\u2580\u2580 \u2588\u2580\u2588\u2580\u2588\u2580\u2580\u2584 \u2580\u2588\u2588\u2580\u2588\u2584\n# \u2580\u2580\u2580 \u2580 \u2580 \u2588\u2584\u2588 \u2580\u2588\u2584\u2584\u2588\u2580\u2580\u2580\u2588\u2580\u2580\n# \u2588\u2580\u2580\u2580\u2580\u2580\u2588 \u2584\u2584\u2584 \u2584 \u2584 \u2588 \u2580 \u2588\u2584\u2584\u2584\u2584\n# \u2588 \u2588\u2588\u2588 \u2588 \u2580\u2588\u2580\u2580\u2584\u2580\u2580\u2584\u2588\u2588\u2588\u2588\u2580\u2580\u2588\u2584\u2588\n# \u2588 \u2580\u2580\u2580 \u2588 \u2584\u2580\u2580\u2588\u2580\u2588\u2580\u2584 \u2580\u2580\u2584\u2584\u2588\u2584\u2588 \n# \u2580\u2580\u2580\u2580\u2580\u2580\u2580 \u2580   \u2580\u2580 \u2580  \u2580   \u2580\u2580\u2580\n";
 
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 // # DosFS
 // API for working with file system of dosbox
@@ -217,57 +371,117 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var js_dos_cache_noop_1 = require("./js-dos-cache-noop");
 var js_dos_xhr_1 = require("./js-dos-xhr");
 
 var DosFS = function () {
     function DosFS(dos) {
+        var _this = this;
+
         _classCallCheck(this, DosFS);
 
+        this.syncingPromise = null;
+        this.lastSyncTime = 0;
         this.dos = dos;
         this.em = dos;
+        this.fs = dos.FS;
+        // Sync fs to indexed db periodically
+        this.dos.registerTickListener(function () {
+            if (Date.now() - _this.lastSyncTime < 5000) {
+                return;
+            }
+            _this.lastSyncTime = Date.now();
+            _this.syncFs();
+        });
+        this.dos.registerPauseListener(function () {
+            return _this.syncFs();
+        });
+        this.dos.registerTerminateListener(function () {
+            return _this.syncFs();
+        });
     }
-    // ### extract
-
 
     _createClass(DosFS, [{
+        key: "chdir",
+        value: function chdir(path) {
+            this.fs.chdir(path);
+        }
+        // ### extract
+
+    }, {
         key: "extract",
         value: function extract(url) {
-            var _this = this;
+            var _this2 = this;
 
-            var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "zip";
+            var persistentMount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "/";
+            var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "zip";
 
             // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
             //
             // * `url` - url for downloading archive
+            // * `persistentMount` - is a path to mount archive contents, by default mount point is '/' which
+            // is a MEMFS that is live only in one ssesion. It means that after restart all progress will be erased.
+            // If you set some path (any), then this path will be stored across sessions in indexed db. It means
+            // that progress will be there after browser restart.
             // * `type` - archive type **only zip is supported**
             //
             // this method will return `Promise<void>`, that will be resolved
             // on success with empty object or rejected
+            persistentMount = this.normalizePath(persistentMount);
+            var parts = persistentMount.split("/");
+            this.createPath(parts, 0, parts.length);
+            this.chdir(persistentMount);
+            var extractArchiveInCwd = function extractArchiveInCwd() {
+                return new Promise(function (resolve, reject) {
+                    if (type !== "zip") {
+                        reject("Only ZIP archive is supported");
+                        return;
+                    }
+                    new js_dos_xhr_1.Xhr(url, {
+                        cache: new js_dos_cache_noop_1.default(),
+                        responseType: "arraybuffer",
+                        fail: function fail(msg) {
+                            return reject(msg);
+                        },
+                        progress: function progress(total, loaded) {
+                            return _this2.dos.onprogress("Downloading " + url, total, loaded);
+                        },
+                        success: function success(data) {
+                            var bytes = new Uint8Array(data);
+                            var buffer = _this2.em._malloc(bytes.length);
+                            _this2.em.HEAPU8.set(bytes, buffer);
+                            var retcode = _this2.em._extract_zip(buffer, bytes.length);
+                            _this2.em._free(buffer);
+                            if (retcode === 0) {
+                                _this2.writeOk(persistentMount);
+                                _this2.syncFs().then(resolve).catch(reject);
+                            } else {
+                                reject("Can't extract zip, retcode " + retcode + ", see more info in logs");
+                            }
+                        }
+                    });
+                });
+            };
+            if (persistentMount === "/" || persistentMount.length === 0) {
+                return extractArchiveInCwd();
+            }
             return new Promise(function (resolve, reject) {
-                if (type !== "zip") {
-                    reject("Only ZIP archive is supported");
+                if (_this2.lastSyncTime > 0) {
+                    reject("Can't create persistent mount point, after syncing process starts");
                     return;
                 }
-                new js_dos_xhr_1.Xhr(url, {
-                    responseType: "arraybuffer",
-                    fail: function fail(msg) {
-                        return reject(msg);
-                    },
-                    progress: function progress(total, loaded) {
-                        return _this.dos.onprogress("Downloading " + url, total, loaded);
-                    },
-                    success: function success(data) {
-                        var bytes = new Uint8Array(data);
-                        var buffer = _this.em._malloc(bytes.length);
-                        _this.em.HEAPU8.set(bytes, buffer);
-                        var retcode = _this.em._extract_zip(buffer, bytes.length);
-                        _this.em._free(buffer);
-                        if (retcode === 0) {
-                            resolve();
-                        } else {
-                            reject("Can't extract zip, retcode " + retcode + ", see more info in logs");
-                        }
+                _this2.fs.mount(_this2.fs.filesystems.IDBFS, {}, persistentMount);
+                _this2.fs.syncfs(true, function (err) {
+                    if (err) {
+                        reject("Can't restore FS from indexed db, cause: " + err);
+                        return;
                     }
+                    if (!_this2.readOk(persistentMount)) {
+                        _this2.dos.warn("Indexed db contains broken FS, resetting...");
+                        extractArchiveInCwd().then(resolve).catch(reject);
+                        return;
+                    }
+                    resolve();
                 });
             });
         }
@@ -297,16 +511,71 @@ var DosFS = function () {
                 return;
             }
             /* i < parts.length - 1, because last part is file name */
-            var path = "/";
-            for (var i = 0; i < parts.length - 1; ++i) {
+            var path = this.createPath(parts, 0, parts.length - 1);
+            this.fs.createDataFile(path, filename, body, true, true, true);
+        }
+    }, {
+        key: "createPath",
+        value: function createPath(parts, begin, end) {
+            var path = "";
+            for (var i = begin; i < end; ++i) {
                 var part = parts[i].trim();
                 if (part.length === 0) {
                     continue;
                 }
-                this.em.FS_createPath(path, part, true, true);
+                this.fs.createPath(path, part, true, true);
                 path = path + "/" + part;
             }
-            this.em.FS_createDataFile(path, filename, body, true, true, true);
+            return path;
+        }
+    }, {
+        key: "syncFs",
+        value: function syncFs() {
+            var _this3 = this;
+
+            if (this.syncingPromise) {
+                return this.syncingPromise;
+            }
+            this.syncingPromise = new Promise(function (resolve, reject) {
+                var startedAt = Date.now();
+                _this3.fs.syncfs(false, function (err) {
+                    if (err) {
+                        _this3.dos.error("Can't sync FS to indexed db, cause: " + err);
+                        reject(err);
+                    }
+                    _this3.syncingPromise = null;
+                    _this3.lastSyncTime = Date.now();
+                    resolve();
+                    console.log("========++> FS SYNCED, ms: " + (Date.now() - startedAt));
+                });
+            });
+            return this.syncingPromise;
+        }
+    }, {
+        key: "normalizePath",
+        value: function normalizePath(path) {
+            if (path.length === 0 || path[0] !== "/") {
+                path = "/" + path;
+            }
+            if (path.length > 1 && path.endsWith("/")) {
+                path = path.substr(0, path.length - 1);
+            }
+            return path;
+        }
+    }, {
+        key: "readOk",
+        value: function readOk(path) {
+            try {
+                var readed = this.fs.readFile(path + "/state.fs");
+                return readed[0] === 79 && readed[1] === 70;
+            } catch (_a) {
+                return false;
+            }
+        }
+    }, {
+        key: "writeOk",
+        value: function writeOk(path) {
+            this.createFile(path + "/state.fs", new Uint8Array([79, 70])); // Ok
         }
     }]);
 
@@ -315,7 +584,7 @@ var DosFS = function () {
 
 exports.DosFS = DosFS;
 
-},{"./js-dos-xhr":9}],5:[function(require,module,exports){
+},{"./js-dos-cache-noop":3,"./js-dos-xhr":12}],8:[function(require,module,exports){
 "use strict";
 // # DosHost
 // This class is used to detect and provide information about
@@ -406,7 +675,7 @@ var DosHost = function () {
 
     }, {
         key: "resolveDosBox",
-        value: function resolveDosBox(url, module) {
+        value: function resolveDosBox(url, cache, module) {
             var _this = this;
 
             // When dosbox is resolved, WDOSBOX module is set to
@@ -421,7 +690,7 @@ var DosHost = function () {
                 return;
             }
             if (this.wdosboxPromise === null) {
-                this.wdosboxPromise = this.compileDosBox(url, module);
+                this.wdosboxPromise = this.compileDosBox(url, cache, module);
             }
             this.wdosboxPromise.then(function (instance) {
                 /* leave promise scope */
@@ -443,7 +712,7 @@ var DosHost = function () {
 
     }, {
         key: "compileDosBox",
-        value: function compileDosBox(url, module) {
+        value: function compileDosBox(url, cache, module) {
             var _this2 = this;
 
             var buildTotal = js_dos_build_1.Build.wasmSize + js_dos_build_1.Build.jsSize;
@@ -451,6 +720,7 @@ var DosHost = function () {
                 var wasmUrl = url.replace(".js", ".wasm.js");
                 // * Host downloads `wdosbox` asm + js scripts
                 new js_dos_xhr_1.Xhr(wasmUrl, {
+                    cache: cache,
                     responseType: "arraybuffer",
                     progress: function progress(total, loaded) {
                         if (module.onprogress) {
@@ -475,6 +745,7 @@ var DosHost = function () {
                                 });
                             };
                             new js_dos_xhr_1.Xhr(url, {
+                                cache: cache,
                                 progress: function progress(total, loaded) {
                                     if (module.onprogress) {
                                         module.onprogress("Resolving DosBox", buildTotal, js_dos_build_1.Build.wasmSize + loaded);
@@ -485,8 +756,10 @@ var DosHost = function () {
                                 },
                                 success: function success(response) {
                                     module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                                    response +=
                                     /* tslint:disable:no-eval */
                                     eval.call(window, response);
+                                    /* tslint:enable:no-eval */
                                     resolve(_this2.global.exports.WDOSBOX);
                                 }
                             });
@@ -502,7 +775,7 @@ var DosHost = function () {
 
 exports.Host = new DosHost();
 
-},{"./js-dos-build":1,"./js-dos-xhr":9}],6:[function(require,module,exports){
+},{"./js-dos-build":1,"./js-dos-xhr":12}],9:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -535,16 +808,48 @@ var DosModule = function (_js_dos_options_1$Dos) {
         _this.ci = null;
         _this.fs = null;
         _this.ui = null;
+        _this.tickListeners = [];
+        _this.pauseListeners = [];
+        _this.resumeListeners = [];
+        _this.terminateListeners = [];
         _this.canvas = canvas;
         _this.onready = onready;
+        _this.registerDefaultListeners();
         return _this;
     }
-    // ### logging
-    // DosModule implements simply logging features:
-    // `debug`, `info`, `warn`, `error` methods
-
 
     _createClass(DosModule, [{
+        key: "registerDefaultListeners",
+        value: function registerDefaultListeners() {
+            var _this2 = this;
+
+            var hidden = void 0;
+            var visibilityChange = void 0;
+            if (typeof document.hidden !== "undefined") {
+                hidden = "hidden";
+                visibilityChange = "visibilitychange";
+            } else if (typeof document.mozHidden !== "undefined") {
+                hidden = "mozHidden";
+                visibilityChange = "mozvisibilitychange";
+            } else if (typeof document.msHidden !== "undefined") {
+                hidden = "msHidden";
+                visibilityChange = "msvisibilitychange";
+            } else if (typeof document.webkitHidden !== "undefined") {
+                hidden = "webkitHidden";
+                visibilityChange = "webkitvisibilitychange";
+            }
+            document.addEventListener(visibilityChange, function () {
+                document[hidden] ? _this2.pause() : _this2.resume();
+            }, false);
+            window.addEventListener("beforeunload", function () {
+                _this2.terminate();
+            });
+        }
+        // ### logging
+        // DosModule implements simply logging features:
+        // `debug`, `info`, `warn`, `error` methods
+
+    }, {
         key: "debug",
         value: function debug(message) {
             this.log("[DEBUG] " + message);
@@ -582,7 +887,7 @@ var DosModule = function (_js_dos_options_1$Dos) {
     }, {
         key: "resolve",
         value: function resolve() {
-            var _this2 = this;
+            var _this3 = this;
 
             if (!this.wdosboxUrl) {
                 this.wdosboxUrl = "wdosbox.js";
@@ -600,7 +905,7 @@ var DosModule = function (_js_dos_options_1$Dos) {
             if (!this.onprogress) {
                 this.ui = new js_dos_ui_1.DosUi(this);
                 this.onprogress = function (stage, total, loaded) {
-                    return _this2.ui.onprogress(stage, total, loaded);
+                    return _this3.ui.onprogress(stage, total, loaded);
                 };
             }
             // ### sdl defaults
@@ -622,30 +927,31 @@ var DosModule = function (_js_dos_options_1$Dos) {
     }, {
         key: "onRuntimeInitialized",
         value: function onRuntimeInitialized() {
-            var _this3 = this;
+            var _this4 = this;
 
             var mainFn = function mainFn(args) {
                 // When emscripten runtime is initialized and main
                 // function is called:
                 //
                 // * DosModule detach [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui)
-                if (_this3.ui !== null) {
-                    _this3.ui.detach();
-                    _this3.ui = null;
+                if (_this4.ui !== null) {
+                    _this4.ui.detach();
+                    _this4.ui = null;
                 }
                 if (!args) {
                     args = [];
                 }
+                _this4.fs.chdir("/");
                 // * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
                 // file to user directory
-                _this3.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", js_dos_conf_1.jsdosconf);
+                _this4.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", js_dos_conf_1.jsdosconf);
                 // * Mount emscripten FS as drive c:
                 args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
                 // * Run dosbox with passed arguments and resolve
                 // [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
-                _this3.callMain(args);
+                _this4.callMain(args);
                 return new Promise(function (resolve) {
-                    new js_dos_ci_1.DosCommandInterface(_this3, function (ci) {
+                    new js_dos_ci_1.DosCommandInterface(_this4, function (ci) {
                         resolve(ci);
                     });
                 });
@@ -656,6 +962,163 @@ var DosModule = function (_js_dos_options_1$Dos) {
                 main: mainFn
             });
         }
+        // ### registerTickListener
+        // registred tick listener it will be called each frame
+
+    }, {
+        key: "registerTickListener",
+        value: function registerTickListener(listener) {
+            this.tickListeners.push(listener);
+        }
+        // ### registerPauseListener
+        // registred tick listener it will be called each frame
+
+    }, {
+        key: "registerPauseListener",
+        value: function registerPauseListener(listener) {
+            this.pauseListeners.push(listener);
+        }
+        // ### registerResumeListener
+        // registred tick listener it will be called each frame
+
+    }, {
+        key: "registerResumeListener",
+        value: function registerResumeListener(listener) {
+            this.resumeListeners.push(listener);
+        }
+        // ### registerTerminateListener
+        // registred tick listener it will be called each frame
+
+    }, {
+        key: "registerTerminateListener",
+        value: function registerTerminateListener(listener) {
+            this.terminateListeners.push(listener);
+        }
+        // ### tick
+        // tick is called internally each frame, no need to call
+        // it manually
+
+    }, {
+        key: "tick",
+        value: function tick() {
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this.tickListeners[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var l = _step.value;
+
+                    l();
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+        }
+        // ### pause
+        // pause is called when dosbox tab became inactive
+
+    }, {
+        key: "pause",
+        value: function pause() {
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = this.pauseListeners[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var l = _step2.value;
+
+                    l();
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+        }
+        // ### tick
+        // resume is called when dosbox tab became active
+
+    }, {
+        key: "resume",
+        value: function resume() {
+            var _iteratorNormalCompletion3 = true;
+            var _didIteratorError3 = false;
+            var _iteratorError3 = undefined;
+
+            try {
+                for (var _iterator3 = this.resumeListeners[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                    var l = _step3.value;
+
+                    l();
+                }
+            } catch (err) {
+                _didIteratorError3 = true;
+                _iteratorError3 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                        _iterator3.return();
+                    }
+                } finally {
+                    if (_didIteratorError3) {
+                        throw _iteratorError3;
+                    }
+                }
+            }
+        }
+        // ### tick
+        // terminate is called when dosbox tab is closed
+
+    }, {
+        key: "terminate",
+        value: function terminate() {
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+
+            try {
+                for (var _iterator4 = this.terminateListeners[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                    var l = _step4.value;
+
+                    l();
+                }
+            } catch (err) {
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                        _iterator4.return();
+                    }
+                } finally {
+                    if (_didIteratorError4) {
+                        throw _iteratorError4;
+                    }
+                }
+            }
+        }
     }]);
 
     return DosModule;
@@ -663,7 +1126,7 @@ var DosModule = function (_js_dos_options_1$Dos) {
 
 exports.DosModule = DosModule;
 
-},{"./js-dos-build":1,"./js-dos-ci":2,"./js-dos-conf":3,"./js-dos-fs":4,"./js-dos-options":7,"./js-dos-ui":8}],7:[function(require,module,exports){
+},{"./js-dos-build":1,"./js-dos-ci":5,"./js-dos-conf":6,"./js-dos-fs":7,"./js-dos-options":10,"./js-dos-ui":11}],10:[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -676,7 +1139,7 @@ var DosOptions = function DosOptions() {
 
 exports.DosOptions = DosOptions;
 
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -797,17 +1260,15 @@ var DosUi = function () {
 
 exports.DosUi = DosUi;
 
-},{}],9:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
-// # Xhr
-// `Xhr` is small wrapper over XMLHttpRequest, that provides some
-// handy methods
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var js_dos_cache_noop_1 = require("./js-dos-cache-noop");
 // * `method` - "GET" | "POST"
 // * `success` - callback when resource is downloaded
 // * `progress` - callback for progress
@@ -827,41 +1288,55 @@ var Xhr = function () {
         this.resource = url;
         this.options = options;
         this.options.method = options.method || "GET";
-        this.xhr = new XMLHttpRequest();
-        this.xhr.open(this.options.method, url, true);
-        if (this.options.method === "POST") {
-            this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        }
-        this.xhr.overrideMimeType("text/plain; charset=x-user-defined");
-        var progressListner = void 0;
-        if (typeof (progressListner = this.xhr).addEventListener === "function") {
-            progressListner.addEventListener("progress", function (evt) {
-                _this.total = evt.total;
-                _this.loaded = evt.loaded;
-                if (_this.options.progress) {
-                    return _this.options.progress(evt.total, evt.loaded);
-                }
+        this.cache = options.cache || new js_dos_cache_noop_1.default();
+        if (this.options.method === "GET") {
+            this.cache.get(this.resource, function (data) {
+                _this.options.success(data);
+            }, function () {
+                _this.makeHttpRequest();
             });
         }
-        var errorListener = void 0;
-        if (typeof (errorListener = this.xhr).addEventListener === "function") {
-            errorListener.addEventListener("error", function (evt) {
-                if (_this.options.fail) {
-                    _this.options.fail(_this.resource, _this.xhr.status, "connection problem");
-                    return delete _this.options.fail;
-                }
-            });
-        }
-        this.xhr.onreadystatechange = function () {
-            return _this.onReadyStateChange();
-        };
-        if (this.options.responseType) {
-            this.xhr.responseType = this.options.responseType;
-        }
-        this.xhr.send(this.options.data);
     }
 
     _createClass(Xhr, [{
+        key: "makeHttpRequest",
+        value: function makeHttpRequest() {
+            var _this2 = this;
+
+            this.xhr = new XMLHttpRequest();
+            this.xhr.open(this.options.method, this.resource, true);
+            if (this.options.method === "POST") {
+                this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            }
+            this.xhr.overrideMimeType("text/plain; charset=x-user-defined");
+            var progressListner = void 0;
+            if (typeof (progressListner = this.xhr).addEventListener === "function") {
+                progressListner.addEventListener("progress", function (evt) {
+                    _this2.total = evt.total;
+                    _this2.loaded = evt.loaded;
+                    if (_this2.options.progress) {
+                        return _this2.options.progress(evt.total, evt.loaded);
+                    }
+                });
+            }
+            var errorListener = void 0;
+            if (typeof (errorListener = this.xhr).addEventListener === "function") {
+                errorListener.addEventListener("error", function (evt) {
+                    if (_this2.options.fail) {
+                        _this2.options.fail(_this2.resource, _this2.xhr.status, "connection problem");
+                        return delete _this2.options.fail;
+                    }
+                });
+            }
+            this.xhr.onreadystatechange = function () {
+                return _this2.onReadyStateChange();
+            };
+            if (this.options.responseType) {
+                this.xhr.responseType = this.options.responseType;
+            }
+            this.xhr.send(this.options.data);
+        }
+    }, {
         key: "onReadyStateChange",
         value: function onReadyStateChange() {
             if (this.xhr.readyState === 4) {
@@ -869,6 +1344,9 @@ var Xhr = function () {
                     if (this.options.success) {
                         var total = Math.max(this.total, this.loaded);
                         this.options.progress(total, total);
+                        if (this.options.method === "GET" && this.resource.indexOf("?") < 0) {
+                            this.cache.put(this.resource, this.xhr.response, function () {});
+                        }
                         return this.options.success(this.xhr.response);
                     }
                 } else if (this.options.fail) {
@@ -877,23 +1355,6 @@ var Xhr = function () {
                 }
             }
         }
-    }, {
-        key: "arrayBufferToString",
-        value: function arrayBufferToString(buffer) {
-            var bufView = new Uint16Array(buffer);
-            var length = bufView.length;
-            var result = "";
-            var maxCallSize = Math.pow(2, 16) - 1;
-            var i = 0;
-            while (i < length) {
-                if (i + maxCallSize > length) {
-                    maxCallSize = length - i;
-                }
-                result += String.fromCharCode.apply(null, bufView.subarray(i, i + maxCallSize));
-                i += maxCallSize;
-            }
-            return result;
-        }
     }]);
 
     return Xhr;
@@ -901,7 +1362,7 @@ var Xhr = function () {
 
 exports.Xhr = Xhr;
 
-},{}],10:[function(require,module,exports){
+},{"./js-dos-cache-noop":3}],13:[function(require,module,exports){
 "use strict";
 // # Example
 // ```javascript
@@ -915,6 +1376,8 @@ exports.Xhr = Xhr;
 // As emulation layer js-dos uses [DosBox ported to emscripten](https://github.com/dreamlayers/em-dosbox/#compiling).
 
 Object.defineProperty(exports, "__esModule", { value: true });
+// # Dos
+var js_dos_cache_1 = require("./js-dos-cache");
 var js_dos_host_1 = require("./js-dos-host");
 var js_dos_module_1 = require("./js-dos-module");
 // When you call `Dos(canvas, options)` js-dos behind the scene will download
@@ -961,9 +1424,11 @@ function Dos(canvas, options) {
         if (!module.isValid) {
             return;
         }
-        // See [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host)
-        // to understand resolving of emulation layer (dosbox).
-        js_dos_host_1.Host.resolveDosBox(module.wdosboxUrl, module);
+        js_dos_cache_1.default(module, function (cache) {
+            // See [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host)
+            // to understand resolving of emulation layer (dosbox).
+            js_dos_host_1.Host.resolveDosBox(module.wdosboxUrl, cache, module);
+        });
     });
     // ### DosReadyPromise
     // Is a Promise object with additional method ready.
@@ -981,7 +1446,7 @@ function Dos(canvas, options) {
 exports.Dos = Dos;
 window.Dos = Dos;
 
-},{"./js-dos-host":5,"./js-dos-module":6}],11:[function(require,module,exports){
+},{"./js-dos-cache":4,"./js-dos-host":8,"./js-dos-module":9}],14:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -1476,7 +1941,7 @@ var objectKeys = Object.keys || function (obj) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"util/":14}],12:[function(require,module,exports){
+},{"util/":17}],15:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1501,14 +1966,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -2099,7 +2564,7 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./support/isBuffer":13,"_process":15,"inherits":12}],15:[function(require,module,exports){
+},{"./support/isBuffer":16,"_process":18,"inherits":15}],18:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2285,7 +2750,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -2349,7 +2814,7 @@ var compare = function compare(imageUrl, ci, callback) {
     });
 };
 
-},{"./do":17,"assert":11}],17:[function(require,module,exports){
+},{"./do":20,"assert":14}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -2394,14 +2859,19 @@ function doReady(promise, fn) {
 }
 exports.doReady = doReady;
 
-},{"assert":11}],18:[function(require,module,exports){
+},{"assert":14}],21:[function(require,module,exports){
 "use strict";
 /* tslint:disable:max-line-length */
 /* tslint:disable:no-console */
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 Object.defineProperty(exports, "__esModule", { value: true });
 var assert = require("assert");
 var js_dos_1 = require("../js-dos-ts/js-dos");
+var js_dos_cache_noop_1 = require("../js-dos-ts/js-dos-cache-noop");
 var js_dos_host_1 = require("../js-dos-ts/js-dos-host");
 var compare_1 = require("./compare");
 var do_1 = require("./do");
@@ -2409,7 +2879,7 @@ suite("js-dos-host");
 test("loader should notify about error if wasm is not supported", function (done) {
     var oldValue = js_dos_host_1.Host.wasmSupported;
     js_dos_host_1.Host.wasmSupported = false;
-    js_dos_host_1.Host.resolveDosBox("wrongurl.js", {
+    js_dos_host_1.Host.resolveDosBox("wrongurl.js", new js_dos_cache_noop_1.default(), {
         onerror: function onerror(message) {
             js_dos_host_1.Host.wasmSupported = oldValue;
             assert.equal("WebAssembly is not supported, can't resolve wdosbox", message);
@@ -2418,16 +2888,46 @@ test("loader should notify about error if wasm is not supported", function (done
     });
 });
 test("loader should notify about error, if it can't download wdosbox", function (done) {
-    js_dos_host_1.Host.resolveDosBox("wrongurl.js", {
+    js_dos_host_1.Host.resolveDosBox("wrongurl.js", new js_dos_cache_noop_1.default(), {
         onerror: function onerror(message) {
             assert.equal("Can't download wasm, code: 404, message: connection problem, url: wrongurl.wasm.js", message);
             done();
         }
     });
 });
-test("loader should show progress loading", function (done) {
+test("loader should show progress loading and use cache", function (done) {
+    var isGET = false;
+    var isPUT = false;
+
+    var TestCache = function () {
+        function TestCache() {
+            _classCallCheck(this, TestCache);
+        }
+
+        _createClass(TestCache, [{
+            key: "put",
+            value: function put(key, data, onflush) {
+                isPUT = isPUT || key === "/wdosbox.wasm.js" && data instanceof ArrayBuffer && data.byteLength > 0;
+                onflush();
+            }
+        }, {
+            key: "get",
+            value: function get(key, ondata, onerror) {
+                isGET = isGET || key === "/wdosbox.wasm.js";
+                onerror("not in cache");
+            }
+        }, {
+            key: "forEach",
+            value: function forEach(each, onend) {
+                onend();
+            }
+        }]);
+
+        return TestCache;
+    }();
+
     var lastLoaded = -1;
-    js_dos_host_1.Host.resolveDosBox("/wdosbox.js", {
+    js_dos_host_1.Host.resolveDosBox("/wdosbox.js", new TestCache(), {
         onprogress: function onprogress(stage, total, loaded) {
             console.log(stage, total, loaded);
             assert.equal(true, loaded <= total, loaded + "<=" + total);
@@ -2435,6 +2935,8 @@ test("loader should show progress loading", function (done) {
             lastLoaded = loaded;
         },
         ondosbox: function ondosbox(dosbox, instantiateWasm) {
+            assert.ok(isGET);
+            assert.ok(isPUT);
             done();
         },
         onerror: function onerror(message) {
@@ -2443,7 +2945,7 @@ test("loader should show progress loading", function (done) {
     });
 });
 test("loader should never load twice wdosbox", function (done) {
-    js_dos_host_1.Host.resolveDosBox("/wdosbox.js", {
+    js_dos_host_1.Host.resolveDosBox("/wdosbox.js", new js_dos_cache_noop_1.default(), {
         onprogress: function onprogress(stage, total, loaded) {
             assert.fail();
         },
@@ -2456,7 +2958,7 @@ test("loader should never load twice wdosbox", function (done) {
     });
 });
 test("loader should fire event when wdosbox is loaded", function (done) {
-    js_dos_host_1.Host.resolveDosBox("/wdosbox.js", {
+    js_dos_host_1.Host.resolveDosBox("/wdosbox.js", new js_dos_cache_noop_1.default(), {
         ondosbox: function ondosbox(dosbox, instantiateWasm) {
             assert.ok(dosbox);
             assert.ok(instantiateWasm);
@@ -2582,6 +3084,58 @@ test("js-dos-fs can create file (windows path)", function (done) {
         });
     });
 });
+test("js-dos-fs clearing IDBFS db", function (done) {
+    var request = indexedDB.deleteDatabase("/test");
+    request.onerror = function (event) {
+        console.error(event);
+        assert.fail();
+    };
+    request.onsuccess = function (event) {
+        done();
+    };
+});
+test("js-dos-fs can mount archive on persistent point [empty db]", function (done) {
+    var isOnProgress = false;
+    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: function onerror(message) {
+            assert.fail();
+        },
+        onprogress: function onprogress(stage, total, loaded) {
+            isOnProgress = true;
+        }
+    });
+    do_1.doReady(dos, function (fs, main) {
+        do_1.doNext(fs.extract("digger.zip", "/test"), function () {
+            do_1.doNext(main(), function (ci) {
+                do_1.doNext(ci.shell("dir test"), function () {
+                    assert.ok(isOnProgress);
+                    compare_1.compareAndExit("pesistent-mount.png", ci, done);
+                });
+            });
+        });
+    });
+});
+test("js-dos-fs can mount archive on persistent point [existent db]", function (done) {
+    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: function onerror(message) {
+            assert.fail();
+        },
+        onprogress: function onprogress(stage, total, loaded) {
+            assert.fail();
+        }
+    });
+    do_1.doReady(dos, function (fs, main) {
+        do_1.doNext(fs.extract("digger.zip", "/test"), function () {
+            do_1.doNext(main(), function (ci) {
+                do_1.doNext(ci.shell("dir test"), function () {
+                    compare_1.compareAndExit("pesistent-mount.png", ci, done);
+                });
+            });
+        });
+    });
+});
 suite("js-dos");
 test("js-dos should provide user level dosbox.conf", function (done) {
     var dos = js_dos_1.Dos(document.getElementById("canvas"), {
@@ -2635,6 +3189,6 @@ var saveImage = function saveImage(ci) {
 };
 var wikiElonMusk = "\nElon Reeve Musk FRS (/\u02C8i\u02D0l\u0252n/; born June 28, 1971) is a\ntechnology entrepreneur and engineer.[10][11][12]\nHe holds South African, Canadian, and U.S. citizenship\nand is the founder, CEO, and lead designer of SpaceX;\n[13] co-founder, CEO, and product architect of Tesla, Inc.;\n[14] co-founder and CEO of Neuralink; and co-founder of PayPal.\nIn December 2016, he was ranked 21st on the Forbes list of\nThe World's Most Powerful People.[15] As of October 2018,\nhe has a net worth of $22.8 billion and is listed by Forbes\nas the 54th-richest person in the world.[16]\nBorn and raised in Pretoria, South Africa, Musk moved to\nCanada when he was 17 to attend Queen's University.\nHe transferred to the University of Pennsylvania two years\nlater, where he received an economics degree from\nthe Wharton School and a degree in physics from the College\nof Arts and Sciences. He began a Ph.D.\nin applied physics and material sciences at Stanford University\nin 1995 but dropped out after two days to pursue\nan entrepreneurial career. He subsequently co-founded Zip2, a\nweb software company, which was acquired by Compaq\nfor $340 million in 1999. Musk then founded X.com, an online bank.\nIt merged with Confinity in 2000 and later that\nyear became PayPal, which was bought by eBay for $1.5 billion\nin October 2002.[17][18][19][20]\n";
 
-},{"../js-dos-ts/js-dos":10,"../js-dos-ts/js-dos-host":5,"./compare":16,"./do":17,"assert":11}]},{},[18])
+},{"../js-dos-ts/js-dos":13,"../js-dos-ts/js-dos-cache-noop":3,"../js-dos-ts/js-dos-host":8,"./compare":19,"./do":20,"assert":14}]},{},[21])
 
 //# sourceMappingURL=test.js.map

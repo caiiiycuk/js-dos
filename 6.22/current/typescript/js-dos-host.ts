@@ -4,6 +4,7 @@
 
 /* tslint:disable:member-ordering */
 import { Build } from "./js-dos-build";
+import { ICache } from "./js-dos-cache";
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
 
@@ -81,7 +82,7 @@ class DosHost {
 
     // ### resolveDosBox
     // `resolveDosBox` is another important task of DosHost
-    public resolveDosBox(url: string, module: DosModule) {
+    public resolveDosBox(url: string, cache: ICache, module: DosModule) {
         // When dosbox is resolved, WDOSBOX module is set to
         // global variable `exports.WDOSBOX`. This variable is
         // used to prevent next loads of same dosbox module.
@@ -96,7 +97,7 @@ class DosHost {
         }
 
         if (this.wdosboxPromise === null) {
-            this.wdosboxPromise = this.compileDosBox(url, module);
+            this.wdosboxPromise = this.compileDosBox(url, cache, module);
         }
 
         this.wdosboxPromise.then((instance: any) => {
@@ -117,13 +118,14 @@ class DosHost {
     }
 
     // If dosbox is not yet resolved, then:
-    private compileDosBox(url: string, module: DosModule) {
+    private compileDosBox(url: string, cache: ICache, module: DosModule) {
         const buildTotal = Build.wasmSize + Build.jsSize;
         return new Promise((resolve, reject) => {
             const wasmUrl = url.replace(".js", ".wasm.js");
 
             // * Host downloads `wdosbox` asm + js scripts
             new Xhr(wasmUrl, {
+                cache,
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
                     if (module.onprogress) {
@@ -152,6 +154,7 @@ class DosHost {
                         };
 
                         new Xhr(url, {
+                            cache,
                             progress: (total, loaded) => {
                                 if (module.onprogress) {
                                     module.onprogress("Resolving DosBox", buildTotal, Build.wasmSize + loaded);
@@ -161,11 +164,13 @@ class DosHost {
                                 reject("Can't download wdosbox.js, code: " + status +
                                     ", message: " + message + ", url: " + url);
                             },
-                            success: (response: any) => {
+                            success: (response: string) => {
                                 module.onprogress("Resolving DosBox", buildTotal, buildTotal);
 
+                                response +=
                                 /* tslint:disable:no-eval */
                                 eval.call(window, response);
+                                /* tslint:enable:no-eval */
                                 resolve(this.global.exports.WDOSBOX);
                             },
                         });

@@ -35,6 +35,9 @@ As emulation layer js-dos uses [DosBox ported to emscripten](https://github.com/
 
 ```
 
+import openCache from "./js-dos-cache";
+import CacheDb from "./js-dos-cache-db";
+import CacheNoop from "./js-dos-cache-noop";
 import { DosCommandInterface } from "./js-dos-ci";
 import { DosFS } from "./js-dos-fs";
 import { Host } from "./js-dos-host";
@@ -122,6 +125,7 @@ Error handling should support both ways:
             return;
         }
 
+        openCache(module, (cache) => {
 
 ```
 
@@ -138,7 +142,9 @@ to understand resolving of emulation layer (dosbox).
   
 
 ```
-        Host.resolveDosBox(module.wdosboxUrl, module);
+            Host.resolveDosBox(module.wdosboxUrl, cache, module);
+        });
+
     });
 
 

@@ -28,10 +28,44 @@ export class DosModule extends DosOptions {
     private ui: DosUi = null;
     private onready: (runtime: DosRuntime) => void;
 
+    private tickListeners: Array< () => void > = [];
+    private pauseListeners: Array< () => void > = [];
+    private resumeListeners: Array< () => void > = [];
+    private terminateListeners: Array< () => void > = [];
+
     constructor(canvas: HTMLCanvasElement, onready: (runtime: DosRuntime) => void) {
         super();
         this.canvas = canvas;
         this.onready = onready;
+
+        this.registerDefaultListeners();
+    }
+
+    private registerDefaultListeners() {
+        let hidden: string;
+        let visibilityChange: string;
+
+        if (typeof document.hidden !== "undefined") {
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
+        } else if (typeof (document as any).mozHidden !== "undefined") {
+            hidden = "mozHidden";
+            visibilityChange = "mozvisibilitychange";
+        } else if (typeof (document as any).msHidden !== "undefined") {
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
+        } else if (typeof (document as any).webkitHidden !== "undefined") {
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
+        }
+
+        document.addEventListener(visibilityChange, () => {
+            (document as any)[hidden] ? this.pause() : this.resume();
+        }, false);
+
+        window.addEventListener("beforeunload", () => {
+           this.terminate();
+        });
     }
 
 
@@ -201,6 +235,8 @@ function is called:
                 args = [];
             }
 
+            this.fs.chdir("/");
+
 
 ```
 
@@ -262,6 +298,175 @@ file to user directory
             fs: this.fs,
             main: mainFn,
         });
+    }
+
+
+```
+
+
+
+
+
+
+
+### registerTickListener
+registred tick listener it will be called each frame
+
+
+  
+
+```
+    public registerTickListener(listener: () => void) {
+        this.tickListeners.push(listener);
+    }
+
+
+```
+
+
+
+
+
+
+
+### registerPauseListener
+registred tick listener it will be called each frame
+
+
+  
+
+```
+    public registerPauseListener(listener: () => void) {
+        this.pauseListeners.push(listener);
+    }
+
+
+```
+
+
+
+
+
+
+
+### registerResumeListener
+registred tick listener it will be called each frame
+
+
+  
+
+```
+    public registerResumeListener(listener: () => void) {
+        this.resumeListeners.push(listener);
+    }
+
+
+```
+
+
+
+
+
+
+
+### registerTerminateListener
+registred tick listener it will be called each frame
+
+
+  
+
+```
+    public registerTerminateListener(listener: () => void) {
+        this.terminateListeners.push(listener);
+    }
+
+
+```
+
+
+
+
+
+
+
+### tick
+tick is called internally each frame, no need to call
+it manually
+
+
+  
+
+```
+    public tick() {
+        for (const l of this.tickListeners) {
+            l();
+        }
+    }
+
+
+```
+
+
+
+
+
+
+
+### pause
+pause is called when dosbox tab became inactive
+
+
+  
+
+```
+    public pause() {
+        for (const l of this.pauseListeners) {
+            l();
+        }
+    }
+
+
+```
+
+
+
+
+
+
+
+### tick
+resume is called when dosbox tab became active
+
+
+  
+
+```
+    public resume() {
+        for (const l of this.resumeListeners) {
+            l();
+        }
+    }
+
+
+```
+
+
+
+
+
+
+
+### tick
+terminate is called when dosbox tab is closed
+
+
+  
+
+```
+    public terminate() {
+        for (const l of this.terminateListeners) {
+            l();
+        }
     }
 
 }

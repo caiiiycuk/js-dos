@@ -17,8 +17,8 @@
   <canvas id="jsdos"></canvas>
   <script>
     Dos(document.getElementById("jsdos")).ready((fs, main) => {
-      fs.extract("test/digger.zip").then(() => {
-        main(["DIGGER.COM"])
+      fs.extract("test/digger.zip", "/digger").then(() => {
+        main(["-c", "digger\\DIGGER.COM"])
       });
     });
   </script>

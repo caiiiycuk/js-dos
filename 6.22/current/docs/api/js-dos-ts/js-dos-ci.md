@@ -141,6 +141,7 @@ resolves when commands sequence is executed
 ```
     public exit() {
         try {
+            this.dos.terminate();
             this.api.send("exit");
         } catch (e) {
             return 0;
@@ -162,6 +163,9 @@ resolves when commands sequence is executed
         switch (msg) {
             case "ready":
                 this.onready(this);
+                break;
+            case "frame":
+                this.onframe();
                 break;
             case "shell_input":
                 if (this.shellInputQueue.length === 0) {
@@ -193,6 +197,10 @@ resolves when commands sequence is executed
             default:
             /* do nothing */
         }
+    }
+
+    private onframe() {
+        this.dos.tick();
     }
 }
 

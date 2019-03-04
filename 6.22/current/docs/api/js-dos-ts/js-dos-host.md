@@ -13,6 +13,7 @@ features that supported in current environment
 
 /* tslint:disable:member-ordering */
 import { Build } from "./js-dos-build";
+import { ICache } from "./js-dos-cache";
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
 
@@ -146,7 +147,7 @@ Currently polyfill contains implementations for:
   
 
 ```
-    public resolveDosBox(url: string, module: DosModule) {
+    public resolveDosBox(url: string, cache: ICache, module: DosModule) {
 
 ```
 
@@ -175,7 +176,7 @@ used to prevent next loads of same dosbox module.
         }
 
         if (this.wdosboxPromise === null) {
-            this.wdosboxPromise = this.compileDosBox(url, module);
+            this.wdosboxPromise = this.compileDosBox(url, cache, module);
         }
 
         this.wdosboxPromise.then((instance: any) => {
@@ -210,7 +211,7 @@ If dosbox is not yet resolved, then:
   
 
 ```
-    private compileDosBox(url: string, module: DosModule) {
+    private compileDosBox(url: string, cache: ICache, module: DosModule) {
         const buildTotal = Build.wasmSize + Build.jsSize;
         return new Promise((resolve, reject) => {
             const wasmUrl = url.replace(".js", ".wasm.js");
@@ -231,6 +232,7 @@ If dosbox is not yet resolved, then:
 
 ```
             new Xhr(wasmUrl, {
+                cache,
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
                     if (module.onprogress) {
@@ -287,6 +289,7 @@ If dosbox is not yet resolved, then:
                         };
 
                         new Xhr(url, {
+                            cache,
                             progress: (total, loaded) => {
                                 if (module.onprogress) {
                                     module.onprogress("Resolving DosBox", buildTotal, Build.wasmSize + loaded);
@@ -296,11 +299,13 @@ If dosbox is not yet resolved, then:
                                 reject("Can't download wdosbox.js, code: " + status +
                                     ", message: " + message + ", url: " + url);
                             },
-                            success: (response: any) => {
+                            success: (response: string) => {
                                 module.onprogress("Resolving DosBox", buildTotal, buildTotal);
 
+                                response +=
                                 /* tslint:disable:no-eval */
                                 eval.call(window, response);
+                                /* tslint:enable:no-eval */
                                 resolve(this.global.exports.WDOSBOX);
                             },
                         });
