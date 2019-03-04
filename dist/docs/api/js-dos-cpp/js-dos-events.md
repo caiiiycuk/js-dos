@@ -271,6 +271,7 @@ do nothing
   }
 
   frameCount++;
+  ping("frame");
 }
 
 void Events::registerExit() {

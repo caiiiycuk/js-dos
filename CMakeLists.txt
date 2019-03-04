@@ -16,6 +16,7 @@ if(${EMSCRIPTEN})
 		-s INVOKE_RUN=0 \
 		-s MODULARIZE=1 \
 		-s EXPORT_NAME='WDOSBOX' \
+		-s FORCE_FILESYSTEM=1 \
 		-s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt \
 		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency','FS', 'FS_createPath', 'FS_createPreloadedFile', \
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString']\" \

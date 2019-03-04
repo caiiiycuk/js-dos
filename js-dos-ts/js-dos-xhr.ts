@@ -1,9 +1,13 @@
+import { ICache } from "./js-dos-cache";
+import CacheNoop from "./js-dos-cache-noop";
+
 // # Xhr
 // `Xhr` is small wrapper over XMLHttpRequest, that provides some
 // handy methods
 
 // You can configre Xhr with XhrOptions object:
 interface XhrOptions {
+    cache: ICache;
     method?: string;
     success?: (response: any) => void;
     progress?: (total: number, loaded: number) => void;
@@ -20,6 +24,7 @@ interface XhrOptions {
 
 // Class Xhr does not have any public methods
 export class Xhr {
+    private cache: ICache;
     private resource: string;
     private options: XhrOptions;
     private xhr: XMLHttpRequest;
@@ -30,8 +35,20 @@ export class Xhr {
         this.resource = url;
         this.options = options;
         this.options.method = options.method || "GET";
+        this.cache = options.cache || new CacheNoop();
+
+        if (this.options.method  === "GET") {
+            this.cache.get(this.resource, (data) => {
+                this.options.success(data);
+            }, () => {
+                this.makeHttpRequest();
+            });
+        }
+    }
+
+    private makeHttpRequest() {
         this.xhr = new XMLHttpRequest();
-        this.xhr.open(this.options.method, url, true);
+        this.xhr.open(this.options.method, this.resource, true);
         if (this.options.method === "POST") {
             this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         }
@@ -72,6 +89,11 @@ export class Xhr {
                 if (this.options.success) {
                     const total = Math.max(this.total, this.loaded);
                     this.options.progress(total, total);
+
+                    if (this.options.method === "GET" && this.resource.indexOf("?") < 0) {
+                        this.cache.put(this.resource, this.xhr.response, () => { /**/ });
+                    }
+
                     return this.options.success(this.xhr.response);
                 }
             } else if (this.options.fail) {
@@ -79,22 +101,6 @@ export class Xhr {
                 return delete this.options.fail;
             }
         }
-    }
-
-    private arrayBufferToString(buffer: ArrayBuffer) {
-        const bufView = new Uint16Array(buffer);
-        const length = bufView.length;
-        let result = "";
-        let maxCallSize = Math.pow(2, 16) - 1;
-        let i = 0;
-        while (i < length) {
-            if (i + maxCallSize > length) {
-                maxCallSize = length - i;
-            }
-            result += String.fromCharCode.apply(null, bufView.subarray(i, i + maxCallSize));
-            i += maxCallSize;
-        }
-        return result;
     }
 
 }

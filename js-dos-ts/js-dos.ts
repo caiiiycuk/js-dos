@@ -12,6 +12,9 @@
 
 // # Dos
 
+import openCache from "./js-dos-cache";
+import CacheDb from "./js-dos-cache-db";
+import CacheNoop from "./js-dos-cache-noop";
 import { DosCommandInterface } from "./js-dos-ci";
 import { DosFS } from "./js-dos-fs";
 import { Host } from "./js-dos-host";
@@ -71,9 +74,12 @@ export function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
             return;
         }
 
-        // See [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host)
-        // to understand resolving of emulation layer (dosbox).
-        Host.resolveDosBox(module.wdosboxUrl, module);
+        openCache(module, (cache) => {
+            // See [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host)
+            // to understand resolving of emulation layer (dosbox).
+            Host.resolveDosBox(module.wdosboxUrl, cache, module);
+        });
+
     });
 
 // ### DosReadyPromise

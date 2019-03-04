@@ -3,6 +3,9 @@
 
 import * as assert from "assert";
 import { Dos } from "../js-dos-ts/js-dos";
+import { ICache } from "../js-dos-ts/js-dos-cache";
+import CacheDb from "../js-dos-ts/js-dos-cache-db";
+import CacheNoop from "../js-dos-ts/js-dos-cache-noop";
 import { DosCommandInterface } from "../js-dos-ts/js-dos-ci";
 import { Host } from "../js-dos-ts/js-dos-host";
 import { DosModule } from "../js-dos-ts/js-dos-module";
@@ -15,7 +18,7 @@ suite("js-dos-host");
 test("loader should notify about error if wasm is not supported", (done) => {
     const oldValue = Host.wasmSupported;
     Host.wasmSupported = false;
-    Host.resolveDosBox("wrongurl.js", {
+    Host.resolveDosBox("wrongurl.js", new CacheNoop(), {
         onerror: (message: string) => {
             Host.wasmSupported = oldValue;
             assert.equal("WebAssembly is not supported, can't resolve wdosbox", message);
@@ -25,7 +28,7 @@ test("loader should notify about error if wasm is not supported", (done) => {
 });
 
 test("loader should notify about error, if it can't download wdosbox", (done) => {
-    Host.resolveDosBox("wrongurl.js", {
+    Host.resolveDosBox("wrongurl.js", new CacheNoop(), {
         onerror: (message: string) => {
             assert.equal("Can't download wasm, code: 404, message: connection problem, url: wrongurl.wasm.js", message);
             done();
@@ -33,9 +36,27 @@ test("loader should notify about error, if it can't download wdosbox", (done) =>
     } as DosModule);
 });
 
-test("loader should show progress loading", (done) => {
+test("loader should show progress loading and use cache", (done) => {
+    let isGET = false;
+    let isPUT = false;
+    class TestCache implements ICache {
+        public put(key: string, data: any, onflush: () => void) {
+            isPUT = isPUT || (key === "/wdosbox.wasm.js" && data instanceof ArrayBuffer && (data as ArrayBuffer).byteLength > 0);
+            onflush();
+        }
+
+        public get(key: string, ondata: (data: any) => void, onerror: (msg: string) => void) {
+            isGET = isGET || key === "/wdosbox.wasm.js";
+            onerror("not in cache");
+        }
+
+        public forEach(each: (key: string, value: any) => void, onend: () => void) {
+            onend();
+        }
+    }
+
     let lastLoaded = -1;
-    Host.resolveDosBox("/wdosbox.js", {
+    Host.resolveDosBox("/wdosbox.js", new TestCache(), {
         onprogress: (stage: string, total: number, loaded: number) => {
             console.log(stage, total, loaded);
             assert.equal(true, loaded <= total, loaded + "<=" + total);
@@ -43,6 +64,8 @@ test("loader should show progress loading", (done) => {
             lastLoaded = loaded;
         },
         ondosbox: (dosbox: any, instantiateWasm: any) => {
+            assert.ok(isGET);
+            assert.ok(isPUT);
             done();
         },
         onerror: (message: string) => {
@@ -52,7 +75,7 @@ test("loader should show progress loading", (done) => {
 });
 
 test("loader should never load twice wdosbox", (done) => {
-    Host.resolveDosBox("/wdosbox.js", {
+    Host.resolveDosBox("/wdosbox.js", new CacheNoop(), {
         onprogress: (stage: string, total: number, loaded: number) => {
             assert.fail();
         },
@@ -66,7 +89,7 @@ test("loader should never load twice wdosbox", (done) => {
 });
 
 test("loader should fire event when wdosbox is loaded", (done) => {
-    Host.resolveDosBox("/wdosbox.js", {
+    Host.resolveDosBox("/wdosbox.js", new CacheNoop(), {
         ondosbox: (dosbox: any, instantiateWasm: any) => {
             assert.ok(dosbox);
             assert.ok(instantiateWasm);
@@ -201,6 +224,65 @@ test("js-dos-fs can create file (windows path)", (done) => {
         doNext(main(), (ci) => {
             doNext(ci.shell("type wiki\\musk"), () => {
                 compareAndExit("elonmusk.png", ci, done);
+            });
+        });
+    });
+});
+
+test("js-dos-fs clearing IDBFS db", (done) => {
+    const request = indexedDB.deleteDatabase("/test");
+
+    request.onerror = (event) => {
+        console.error(event);
+        assert.fail();
+    };
+
+    request.onsuccess = (event) => {
+        done();
+    };
+});
+
+test("js-dos-fs can mount archive on persistent point [empty db]", (done) => {
+    let isOnProgress = false;
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: (message) => {
+            assert.fail();
+        },
+        onprogress: (stage: string, total: number, loaded: number) => {
+            isOnProgress = true;
+        },
+    });
+
+    doReady(dos, (fs, main) => {
+        doNext(fs.extract("digger.zip", "/test"), () => {
+            doNext(main(), (ci) => {
+                doNext(ci.shell("dir test"), () => {
+                    assert.ok(isOnProgress);
+                    compareAndExit("pesistent-mount.png", ci, done);
+                });
+            });
+        });
+    });
+});
+
+test("js-dos-fs can mount archive on persistent point [existent db]", (done) => {
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
+        wdosboxUrl: "/wdosbox.js",
+        onerror: (message) => {
+            assert.fail();
+        },
+        onprogress: (stage: string, total: number, loaded: number) => {
+            assert.fail();
+        },
+    });
+
+    doReady(dos, (fs, main) => {
+        doNext(fs.extract("digger.zip", "/test"), () => {
+            doNext(main(), (ci) => {
+                doNext(ci.shell("dir test"), () => {
+                    compareAndExit("pesistent-mount.png", ci, done);
+                });
             });
         });
     });

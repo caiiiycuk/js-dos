@@ -8,7 +8,8 @@
         "interface-name": false,
         "no-unused-expression": false, // should be no-new rule
         "no-shadowed-variable": false,
-        "object-literal-sort-keys": false
+        "object-literal-sort-keys": false,
+        "member-ordering": false
     },
     "rulesDirectory": []
 }

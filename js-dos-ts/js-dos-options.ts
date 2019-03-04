@@ -10,7 +10,7 @@ export class DosOptions {
     // ### onprogress
     public onprogress?: (stage: string, total: number, loaded: number) => void;
     // progress event listener, it is fired when loading progress is changed
-    // if this function is not set, then 
+    // if this function is not set, then
     // [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui) will be used
     // to show progress
     //

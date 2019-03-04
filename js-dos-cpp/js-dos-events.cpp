@@ -155,6 +155,7 @@ void Events::frame() {
   }
 
   frameCount++;
+  ping("frame");
 }
 
 void Events::registerExit() {
