@@ -17,7 +17,7 @@ export default class CacheDb implements ICache {
             return;
         }
 
-        const openRequest = this.indexedDB.open("gpx-bigstorage (" + version + ")", 1);
+        const openRequest = this.indexedDB.open("js-dos-cache (" + version + ")", 1);
         openRequest.onerror = (event) => {
             onerror("Can't open cache database");
         };
