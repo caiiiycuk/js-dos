@@ -222,6 +222,37 @@ In other words to store game progress just extract game archive into some folder
 No need to cache js-dos scripts, because they are automatically added to indexed db cache, so from every second load js-dos can work in offline mode.
 
 
+### Taking screenshot
+
+When your program is runned you can take screenshot with special [CommandInterface.screenshot()](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci). That is returned by main promise:
+```javascript
+Dos(canvas).ready((fs, main) => {
+    fs.extract("digger.zip").then(() => {
+        main(["-c", "DIGGER.COM"]).then((ci) => {
+            ci.screenshot().then((data) => {
+                const w = window.open("about:blank", "image from canvas");
+                w.document.write("<img src='" + data + "' alt='from canvas'/>");
+            });
+        });
+    });
+});
+```
+
+Data is an ImageData from canvas object
+
+### Exiting from js-dos
+
+Sometimes needed to stop execution of dosbox to free resources or whatever. You can do this with [CommandInterface.exit()](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci):
+```javascript
+Dos(canvas).ready((fs, main) => {
+    fs.extract("digger.zip").then(() => {
+        main(["-c", "DIGGER.COM"]).then((ci) => {
+            ci.exit(); // Will stop execution immediately
+        });
+    });
+});
+```
+
 ## Building
 
 Building process have two steps:
