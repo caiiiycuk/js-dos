@@ -112,7 +112,7 @@
 #define DIRENT_HAS_D_TYPE 1
 
 /* Compile for use with Emscripten emterpreter sync. */
-#define EMTERPRETER_SYNC 1
+/* #define EMTERPRETER_SYNC 1 */
 
 /* environ can be included */
 /* #undef ENVIRON_INCLUDED */

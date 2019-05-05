@@ -267,7 +267,6 @@ if you pass only filename, then file will be writed in root "/" directory
                 this.syncingPromise = null;
                 this.lastSyncTime = Date.now();
                 resolve();
-                console.log("========++> FS SYNCED, ms: " + (Date.now() - startedAt));
             });
         });
 
