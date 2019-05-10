@@ -275,7 +275,7 @@ void DBGUI_StartUp(void) {
 	nodelay(dbg.win_main,true);
 	keypad(dbg.win_main,true);
 	#ifndef WIN32
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 	resize_term(50,80);
 #else
 	printf("\e[8;50;80t");

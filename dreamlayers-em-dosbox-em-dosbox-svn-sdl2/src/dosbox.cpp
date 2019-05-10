@@ -24,6 +24,8 @@
 #include <unistd.h>
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
+#else
+#include <emscripten_stub.h>
 #endif
 #include "dosbox.h"
 #include "debug.h"
@@ -136,7 +138,7 @@ Bit32s ticksDone;
 Bit32u ticksScheduled;
 bool ticksLocked;
 
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 #ifdef EMTERPRETER_SYNC
 int nosleep_lock = 0;
 #else
@@ -146,7 +148,7 @@ static int runcount = 0;
 
 static Bitu Normal_Loop(void) {
 	Bits ret;
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 	int ticksEntry = GetTicks();
 #ifdef EMTERPRETER_SYNC
 	/* Normal DOSBox is free to use up all available host CPU time, but
@@ -240,7 +242,7 @@ increaseticks:
 		if (ticksNew > ticksLast) {
 			ticksRemain = ticksNew-ticksLast;
 			ticksLast = ticksNew;
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 			/* Calculations below are meant to be based on the number of ticks
 			 * used by DOSBox. Ticks between two main loop calls include time
 			 * when DOSBox isn't running, so only time from the start of this
@@ -358,7 +360,7 @@ increaseticks:
 #endif
 		} else {
 			ticksAdded = 0;
-#ifndef EMSCRIPTEN
+#ifndef JSDOS
 			SDL_Delay(1);
 #elif defined(EMTERPRETER_SYNC)
 			if (nosleep_lock == 0) {
@@ -382,7 +384,7 @@ void DOSBOX_SetNormalLoop() {
 	loop=Normal_Loop;
 }
 
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 /* Many DOS games display a text mode screen after they exit.
  * This tries to ensure that screen will be visible. In other situations
  * this is used to display the screen to help diagnosis.
@@ -417,7 +419,7 @@ static void em_main_loop(void) {
 #endif
 
 void DOSBOX_RunMachine(void){
-#if defined(EMSCRIPTEN) && !defined(EMTERPRETER_SYNC)
+#if defined(JSDOS) && !defined(EMTERPRETER_SYNC)
 	if (runcount == 0) {
 		runcount = 1;
 	} else if (runcount == 1) {
@@ -434,7 +436,7 @@ void DOSBOX_RunMachine(void){
 	Bitu ret;
 	do {
 		ret=(*loop)();
-#if defined(EMSCRIPTEN) && !defined(EMTERPRETER_SYNC)
+#if defined(JSDOS) && !defined(EMTERPRETER_SYNC)
 		/* These should be very short operations, like interrupts.
 		 * Anything taking a long time will probably run indefinitely,
 		 * making DOSBox appear to hang.
@@ -605,7 +607,7 @@ void DOSBOX_Init(void) {
 #endif
 		"normal", "simple",0 };
 	Pstring = secprop->Add_string("core",Property::Changeable::WhenIdle,
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 		"simple"
 #else
 		"auto"
@@ -672,7 +674,7 @@ void DOSBOX_Init(void) {
 	const char *blocksizes[] = {
 		 "1024", "2048", "4096", "8192", "512", "256", 0};
 	Pint = secprop->Add_int("blocksize",Property::Changeable::OnlyAtStart,
-#if defined(EMSCRIPTEN) && SDL_VERSION_ATLEAST(2,0,0)
+#if defined(JSDOS) && SDL_VERSION_ATLEAST(2,0,0)
 		2048
 #else
 		1024
@@ -682,7 +684,7 @@ void DOSBOX_Init(void) {
 	Pint->Set_help("Mixer block size, larger blocks might help sound stuttering but sound will also be more lagged.");
 
 	Pint = secprop->Add_int("prebuffer",Property::Changeable::OnlyAtStart,
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 		40
 #else
 		20
@@ -904,7 +906,7 @@ void DOSBOX_Init(void) {
 	// Mscdex
 	secprop->AddInitFunction(&MSCDEX_Init);
 	secprop->AddInitFunction(&DRIVES_Init);
-#ifndef EMSCRIPTEN
+#ifndef JSDOS
 	secprop->AddInitFunction(&CDROM_Image_Init);
 #endif
 #if C_IPX

@@ -23,9 +23,10 @@ if(${EMSCRIPTEN})
 		-s NO_EXIT_RUNTIME=1 \
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
 else()
-	set(CMAKE_C_FLAGS "-w -Werror=return-type -O0 -g -ggdb3")
-	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
 	add_definitions(-DDEBUG -DEMSCRIPTEN_KEEPALIVE=)
+
+	include_directories("${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/linux")
 endif()
 
 add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS -DJSDOS)

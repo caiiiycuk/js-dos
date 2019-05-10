@@ -190,7 +190,7 @@ public:
 		}
 		/* Show list of cdroms */
 		if (cmd->FindExist("-cd",false)) {
-#if defined(EMSCRIPTEN) || SDL_VERSION_ATLEAST(2,0,0)
+#if defined(JSDOS) || SDL_VERSION_ATLEAST(2,0,0)
 			WriteOut(MSG_Get("PROGRAM_MOUNT_PHYS_CDROMS_NOT_SUPPORTED"));
 #else
 			int num = SDL_CDNumDrives();

@@ -265,7 +265,7 @@ int CMscdex::AddDrive(Bit16u _drive, char* physicalPath, Bit8u& subUnit)
 	// Get Mounttype and init needed cdrom interface
 	// (physical is unsupported in SDL 2.0)
 	switch (CDROM_GetMountType(physicalPath,forceCD)) {
-#ifndef EMSCRIPTEN
+#ifndef JSDOS
 #if !SDL_VERSION_ATLEAST(2,0,0)
 	case 0x00: {	
 		LOG(LOG_MISC,LOG_NORMAL)("MSCDEX: Mounting physical cdrom: %s"	,physicalPath);
@@ -947,7 +947,7 @@ bool CMscdex::GetChannelControl(Bit8u subUnit, TCtrl& ctrl) {
 static CMscdex* mscdex = 0;
 static PhysPt curReqheaderPtr = 0;
 
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 /* Taken from SDL_cdrom.h */
 #define CD_FPS     75
 #define MSF_TO_FRAMES(M, S, F)     ((M)*60*CD_FPS+(S)*CD_FPS+(F))

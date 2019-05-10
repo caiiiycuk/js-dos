@@ -35,6 +35,8 @@
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #include <emscripten/html5.h>
+#else
+#include <emscripten_stub.h>
 #endif
 
 #include "cross.h"
@@ -385,7 +387,7 @@ static void KillSwitch(bool pressed) {
 	throw 1;
 }
 
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 /* Emscripten pause code works differently, replacing the main loop with
    a pause loop. That way there is no need to emterpretify a bunch of
    mapper functions, and it can also work without Emterpreter. */
@@ -2086,7 +2088,7 @@ static void GUI_StartUp(Section * sec) {
 				}
 			}
 			if (exit_splash) break;
-#if defined(EMSCRIPTEN) && defined(EMTERPRETER_SYNC)
+#if defined(JSDOS) && defined(EMTERPRETER_SYNC)
 			emscripten_sleep_with_yield(1);
 #endif
 

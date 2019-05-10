@@ -22,7 +22,7 @@
 #define _XOPEN_SOURCE_EXTENDED
 #include <stdlib.h>
 #include <locale.h>
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 #define PDC_WIDE
 #define NCURSES_COLOR_T short
 #include <curses.h>

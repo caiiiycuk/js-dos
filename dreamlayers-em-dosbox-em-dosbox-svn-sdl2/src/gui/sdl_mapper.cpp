@@ -27,8 +27,9 @@
 #include <assert.h>
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
+#else
+#include <emscripten_stub.h>
 #endif
-
 #include "SDL/SDL.h"
 #include "SDL/SDL_thread.h"
 #ifdef EMSCRIPTEN
@@ -2634,7 +2635,7 @@ void MAPPER_RunInternal() {
 #endif
 		}
 		BIND_MappingEvents();
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 		emscripten_sleep(1);
 #else
 		SDL_Delay(1);

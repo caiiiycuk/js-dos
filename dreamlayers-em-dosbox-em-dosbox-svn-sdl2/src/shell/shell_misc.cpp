@@ -40,7 +40,7 @@ static void outc(Bit8u c) {
 }
 
 void DOS_Shell::InputCommand(char * line) {
-#if defined(EMSCRIPTEN) && !defined(EMTERPRETER_SYNC)
+#if defined(JSDOS) && !defined(EMTERPRETER_SYNC)
 	if (!strcmp(Files[input_handle]->name, "CON")) {
 		// This can be called during startup, before main loop being used.
 		LOG_MSG("Emulation ended because interactive shell is not supported.");

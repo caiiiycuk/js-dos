@@ -24,7 +24,7 @@
 
 GCC_ATTRIBUTE(noreturn) void E_Exit(const char * message,...) GCC_ATTRIBUTE( __format__(__printf__, 1, 2));
 
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 void em_exit(int exitarg);
 #endif
 
@@ -36,7 +36,7 @@ class Section;
 typedef Bitu (LoopHandler)(void);
 
 void DOSBOX_RunMachine();
-#if defined(EMSCRIPTEN) && defined(EMTERPRETER_SYNC)
+#if defined(JSDOS) && defined(EMTERPRETER_SYNC)
 /* This is for cases where RunMachine is called from code not using
  * emterpreter. There, emscripten_sleep() is prohibited and emulation
  * will be aborted with a timeout error if this takes too long.

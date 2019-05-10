@@ -180,7 +180,7 @@ void E_Exit(const char * format,...) {
 	va_end(msg);
 	strcat(buf,"\n");
 
-#ifdef EMSCRIPTEN
+#ifdef JSDOS
 	puts(buf);
 	em_exit(1);
 #else

@@ -121,7 +121,6 @@ void ping(const char *event) {
          }),
          event);
 #else
-  printf("PING: %s\n", event);
 #endif
 }
 

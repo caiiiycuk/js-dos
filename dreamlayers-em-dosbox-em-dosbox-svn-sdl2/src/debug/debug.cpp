@@ -27,7 +27,7 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
-#if defined(EMSCRIPTEN) && defined(EMTERPRETER_SYNC)
+#if defined(EMSCRIPTEN)
 #include <emscripten.h>
 #endif
 using namespace std;
@@ -1823,7 +1823,7 @@ Bitu DEBUG_Loop(void) {
 	Bit16u oldCS	= SegValue(cs);
 	Bit32u oldEIP	= reg_eip;
 	PIC_runIRQs();
-#if defined(EMSCRIPTEN)
+#if defined(JSDOS)
 #if defined(EMTERPRETER_SYNC)
 	emscripten_sleep_with_yield(1);
 #endif
