@@ -177,7 +177,7 @@ if(${EMSCRIPTEN})
 	add_library(bin-obj OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	add_executable(wdosbox $<TARGET_OBJECTS:bin-obj>)
 	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
-	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s OUTLINING_LIMIT=4096 -s WASM=1  -s BINARYEN_TRAP_MODE=\"clamp\"")
+	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1  -s BINARYEN_TRAP_MODE=\"clamp\"")
 else()
 	add_executable(bin ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	target_link_libraries(bin
