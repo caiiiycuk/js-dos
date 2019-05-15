@@ -22,6 +22,8 @@ export class DosModule extends DosOptions {
     public isValid: boolean = false;
     public canvas: HTMLCanvasElement = null;
     public version = Build.version;
+    public onglobals?: (...args: any[]) => void;
+
     private ci: Promise<DosCommandInterface> = null;
     private instance: any;
     private fs: DosFS = null;

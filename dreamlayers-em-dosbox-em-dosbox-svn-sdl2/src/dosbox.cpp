@@ -146,7 +146,51 @@ static int runcount = 0;
 #endif
 #endif
 
+bool doHeapOperation() {
+    if (ticksLocked) {
+        return false;
+    }
+
+
+#if defined(EMTERPRETER_SYNC) && defined(EMSCRIPTEN)
+    bool isNormalState = EM_ASM_INT((
+       return EmterpreterAsync.state === 0 ? 1 : 0;
+    )) == 1;
+
+    if (!isNormalState) {
+        return false;
+    }
+#endif
+
+    bool heapChanged = false;
+#ifdef EMSCRIPTEN
+    heapChanged = EM_ASM_INT((
+        if (Module.heapOperation !== undefined) {
+            Module.heapOperation();
+            return 1;
+        };
+
+        return 0;
+    )) == 1;
+#endif
+
+    if (heapChanged) {
+        ticksLocked = false;
+        ticksRemain=5;
+        ticksLast = GetTicks();
+        ticksAdded = 0;
+        ticksDone = 0;
+        ticksScheduled = 0;
+    }
+
+    return heapChanged;
+}
+
 static Bitu Normal_Loop(void) {
+	if (doHeapOperation()) {
+		return 0;
+	}
+
 	Bits ret;
 #ifdef JSDOS
 	int ticksEntry = GetTicks();
@@ -408,6 +452,10 @@ void em_exit(int exitarg) {
 }
 
 static void em_main_loop(void) {
+	if (doHeapOperation()) {
+		return;
+	}
+
 	if ((*loop)()) {
 		/* Here, the function which called emscripten_set_main_loop() should
 		 * return, but that call stack is gone, so emulation ends.
