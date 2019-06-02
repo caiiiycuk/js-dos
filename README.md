@@ -7,7 +7,7 @@
 
 You can found previous version here [v3](https://js-dos.com/index_v3.html)
 
-## Bootstrap
+## Bootstrap (NPX)
 
 The fastest way to start with js-dos 6.22 is to use our bootstrap project. You can create simple web page that runs
 digger in browser with this commands:
@@ -46,7 +46,7 @@ It contains this initialization steps:
 
 * `Dos(canvas)` - will return promise that will be resoled when dosbox is ready
 * `ready((fs, main) =>)` - will be called when dosbox is ready to run
-    * `fs` provides [API](https://js-dos.com/docs/generate?js-dos-fs) to work with filesystem, we call `extract` to mount archive contents as C:
+    * `fs` provides [API](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs) to work with filesystem, we call `extract` to mount archive contents as C:
     * `main` provides an entry point to run dosbox like in shell you should pass
     dosbox command line arguments `main(["-c", "DIGGER.COM"])` means:
 ```
@@ -54,6 +54,54 @@ dosbox -c DIGGER.COM
 ```
 
 Dos has couple configuration [options](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) that you can pass as second argument `Dos(canvas, options)`.
+
+## HTML template
+
+You can have same results if just create simple html page:
+
+```html
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Digger js-dos 6.22</title>
+  <script src="https://js-dos.com/6.22/current/js-dos.js"></script>
+  <style>
+    canvas {
+      width: 640px;
+      height: 400px;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="jsdos"></canvas>
+  <script>
+    Dos(document.getElementById("jsdos"), { 
+        wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js" 
+    }).ready((fs, main) => {
+      fs.extract("https://js-dos.com/6.22/current/test/digger.zip").then(() => {
+        main(["-c", "DIGGER.COM"])
+      });
+    });
+  </script>
+</body>
+
+</html>
+```
+
+## Archives
+
+You can obtain latest build using this links:
+
+ - js-dos client api: https://js-dos.com/6.22/current/js-dos.js
+ - dosbox wasm wrapper: https://js-dos.com/6.22/current/wdosbox.js
+ - dosbox wasm file: https://js-dos.com/6.22/current/wdosbox.wasm.js
+
+**NOTE**: do not try to use this links to serve your copy of dosbox. Because this links always pointing to latest
+version, and newest version can have breaking changes. Is better to use npx bootstrap command (above), or download latest
+version from github [releases](https://github.com/caiiiycuk/js-dos/releases) page.
 
 ## API Reference
 
@@ -193,9 +241,9 @@ instaniate it normally. Like in this [64k demoscene](/6.22/64k/index.html) examp
 
 js-dos file system is in memory file system. It means that every file that you exracted,
 or file that created by game (save file, config, etc.) will be lost on browser restart.
-How ever it's possible to create directory in file system that will be synced and stored
+However it's possible to create directory in file system that will be synced and stored
 inside [indexed db](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API). 
-This type of folder will store it's content across browser restart. You can create as many
+This type of folder will store it's content across browser restarts. You can create as many
 folders as you want, all of them will be synced.
 
 But, usually only one folder per game needed. So, simplies way to store game progress is
@@ -204,21 +252,54 @@ just extract game archive to different folder (not root `/`). For example:
 ```javascript
     Dos(canvas).ready((fs, main) => {
         fs.extract("game.zip", "/game").then(() => {
-            main(["-c", "game\\game.exe"])
+            main(["-c", "cd game", "-c", "game.exe"])
         });
     });
 ```
 
-As you can see second argument in [`extract`](https://js-dos.com/docs/generate?js-dos-fs#extract) method is a path where to extract contents archive, and this path will be automatically mount as persistent (because it's not root `/`).
+As you can see second argument in [`extract`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-extract) method is a path where to extract contents archive, and this path will be automatically mount as persistent (because it's not root `/`).
 
-In other words to store game progress just extract game archive into some folder, and that it's.
+In other words to store game progress just extract game archive into some folder, and that is.
 
-**NOTE: ** Do not forget to specify correct path to executable in main function.
+**NOTE 1: ** Some dos games save game progress when you exit them. If you just close browser before exiting game, some games will lost porgress.
+
+**NOTE 2: ** Do not forget to change directory to correct path before running game.
 
 ### Caching js-dos script
 
 No need to cache js-dos scripts, because they are automatically added to indexed db cache, so from every second load js-dos can work in offline mode.
 
+
+### Taking screenshot
+
+When your program is runned you can take screenshot with special [CommandInterface.screenshot()](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci). That is returned by main promise:
+```javascript
+Dos(canvas).ready((fs, main) => {
+    fs.extract("digger.zip").then(() => {
+        main(["-c", "DIGGER.COM"]).then((ci) => {
+            ci.screenshot().then((data) => {
+                const w = window.open("about:blank", "image from canvas");
+                w.document.write("<img src='" + data + "' alt='from canvas'/>");
+            });
+        });
+    });
+});
+```
+
+Data is an ImageData from canvas object
+
+### Exiting from js-dos
+
+Sometimes needed to stop execution of dosbox to free resources or whatever. You can do this with [CommandInterface.exit()](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci):
+```javascript
+Dos(canvas).ready((fs, main) => {
+    fs.extract("digger.zip").then(() => {
+        main(["-c", "DIGGER.COM"]).then((ci) => {
+            ci.exit(); // Will stop execution immediately
+        });
+    });
+});
+```
 
 ## Building
 
