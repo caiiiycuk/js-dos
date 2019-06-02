@@ -39,11 +39,11 @@ void EMSCRIPTEN_KEEPALIVE safe_create_dir(const char *dir)
     }
 }
 
-int EMSCRIPTEN_KEEPALIVE extract_zip(const void *data, zip_uint64_t length)
+extern int EMSCRIPTEN_KEEPALIVE extract_zip(const void *data, zip_uint64_t length)
 {
-    struct zip *za;
-    struct zip_file *zf;
-    struct zip_stat sb;
+    struct zip *zipArchive;
+    struct zip_file *zipFile;
+    struct zip_stat zipStat;
     char buf[100];
     int err;
     int i, len;
@@ -58,52 +58,53 @@ int EMSCRIPTEN_KEEPALIVE extract_zip(const void *data, zip_uint64_t length)
     fwrite(data, length, 1, archive);
     fclose(archive);
 
-    if ((za = zip_open("archive.zip", 0, &err)) == NULL)
+    if ((zipArchive = zip_open("archive.zip", 0, &err)) == NULL)
     {
         zip_error_to_str(buf, sizeof(buf), err, errno);
         fprintf(stderr, "extract-zip: can't open zip archive 'archive.zip': %s\n", buf);
         return 1;
     }
-    for (i = 0; i < zip_get_num_entries(za, 0); i++)
+    for (i = 0; i < zip_get_num_entries(zipArchive, 0); i++)
     {
-        if (zip_stat_index(za, i, 0, &sb) == 0)
+        if (zip_stat_index(zipArchive, i, 0, &zipStat) == 0)
         {
-            len = strlen(sb.name);
-            printf("extracting: '%s', ", sb.name);
-            printf("size: %llu, ", (long long unsigned int) sb.size);
-            printf("mtime: %u\n", (unsigned int)sb.mtime);
-            if (sb.name[len - 1] == '/')
+            len = strlen(zipStat.name);
+            printf("extracting: '%s', ", zipStat.name);
+            printf("size: %llu, ", (long long unsigned int) zipStat.size);
+            printf("mtime: %u\n", (unsigned int)zipStat.mtime);
+            if (zipStat.name[len - 1] == '/')
             {
-                safe_create_dir(sb.name);
+                safe_create_dir(zipStat.name);
             }
             else
             {
-                zf = zip_fopen_index(za, i, 0);
-                if (!zf)
+                zipFile = zip_fopen_index(zipArchive, i, 0);
+                if (!zipFile)
                 {
-                    fprintf(stderr, "boese, boese\n");
+                    fprintf(stderr, "extract-zip: %s\n", zip_strerror(zipArchive));
+                    fprintf(stderr, "extract-zip: Try to repack archive with default zip program\n", zip_strerror(zipArchive));
                     exit(100);
                 }
-                fd = open(sb.name, O_RDWR | O_TRUNC | O_CREAT, 0644);
+                fd = open(zipStat.name, O_RDWR | O_TRUNC | O_CREAT, 0644);
                 if (fd < 0)
                 {
-                    fprintf(stderr, "boese, boese\n");
+                    fprintf(stderr, "extract-zip: %s\n", zip_file_strerror(zipFile));
                     exit(101);
                 }
                 sum = 0;
-                while (sum != sb.size)
+                while (sum != zipStat.size)
                 {
-                    len = zip_fread(zf, buf, 100);
+                    len = zip_fread(zipFile, buf, 100);
                     if (len < 0)
                     {
-                        fprintf(stderr, "boese, boese\n");
+                        fprintf(stderr, "extract-zip: %s\n", zip_file_strerror(zipFile));
                         exit(102);
                     }
                     write(fd, buf, len);
                     sum += len;
                 }
                 close(fd);
-                zip_fclose(zf);
+                zip_fclose(zipFile);
             }
         }
         else
@@ -111,7 +112,7 @@ int EMSCRIPTEN_KEEPALIVE extract_zip(const void *data, zip_uint64_t length)
             printf("File[%s] Line[%d]\n", __FILE__, __LINE__);
         }
     }
-    if (zip_close(za) == -1)
+    if (zip_close(zipArchive) == -1)
     {
         fprintf(stderr, "extract-zip: can't close zip 'archive.zip'\n");
         return 1;

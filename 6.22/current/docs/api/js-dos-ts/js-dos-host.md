@@ -266,6 +266,11 @@ If dosbox is not yet resolved, then:
                     promise.catch(onreject);
                     promise.then((wasmModule) => {
                         this.global.exports.instantiateWasm = (info: any, receiveInstance: any) => {
+                            info.env.globalscall = (...args: any[]) => {
+                                if (module.onglobals) {
+                                    module.onglobals.apply(null, args);
+                                }
+                            };
 
 ```
 

@@ -145,6 +145,11 @@ class DosHost {
                     promise.catch(onreject);
                     promise.then((wasmModule) => {
                         this.global.exports.instantiateWasm = (info: any, receiveInstance: any) => {
+                            info.env.globalscall = (...args: any[]) => {
+                                if (module.onglobals) {
+                                    module.onglobals.apply(null, args);
+                                }
+                            };
                             // *  Instaniate it for each new dosbox runtime
                             return WebAssembly.instantiate(wasmModule, info)
                                 .catch(onreject)

@@ -174,7 +174,6 @@ export class DosFS {
                 this.syncingPromise = null;
                 this.lastSyncTime = Date.now();
                 resolve();
-                console.log("========++> FS SYNCED, ms: " + (Date.now() - startedAt));
             });
         });
 

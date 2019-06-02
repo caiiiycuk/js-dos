@@ -7,7 +7,7 @@
 
 You can found previous version here [v3](https://js-dos.com/index_v3.html)
 
-## Bootstrap
+## Bootstrap (NPX)
 
 The fastest way to start with js-dos 6.22 is to use our bootstrap project. You can create simple web page that runs
 digger in browser with this commands:
@@ -54,6 +54,54 @@ dosbox -c DIGGER.COM
 ```
 
 Dos has couple configuration [options](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) that you can pass as second argument `Dos(canvas, options)`.
+
+## HTML template
+
+You can have same results if just create simple html page:
+
+```html
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Digger js-dos 6.22</title>
+  <script src="https://js-dos.com/6.22/current/js-dos.js"></script>
+  <style>
+    canvas {
+      width: 640px;
+      height: 400px;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="jsdos"></canvas>
+  <script>
+    Dos(document.getElementById("jsdos"), { 
+        wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js" 
+    }).ready((fs, main) => {
+      fs.extract("https://js-dos.com/6.22/current/test/digger.zip").then(() => {
+        main(["-c", "DIGGER.COM"])
+      });
+    });
+  </script>
+</body>
+
+</html>
+```
+
+## Archives
+
+You can obtain latest build using this links:
+
+ - js-dos client api: https://js-dos.com/6.22/current/js-dos.js
+ - dosbox wasm wrapper: https://js-dos.com/6.22/current/wdosbox.js
+ - dosbox wasm file: https://js-dos.com/6.22/current/wdosbox.wasm.js
+
+**NOTE**: do not try to use this links to serve your copy of dosbox. Because this links always pointing to latest
+version, and newest version can have breaking changes. Is better to use npx bootstrap command (above), or download latest
+version from github [releases](https://github.com/caiiiycuk/js-dos/releases) page.
 
 ## API Reference
 

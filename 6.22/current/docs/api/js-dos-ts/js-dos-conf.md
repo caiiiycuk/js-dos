@@ -72,7 +72,7 @@ memsize=16
 
 frameskip=0
 aspect=false
-scaler=normal2x
+scaler=none
 
 [cpu]
 #      core: CPU Core used in emulation. auto will switch to dynamic if available and appropriate.
