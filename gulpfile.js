@@ -87,7 +87,14 @@ gulp.task('test', ['copyAssetsTest'], function () {
         cache: {},
         packageCache: {}
     })
-    .plugin(tsify)
+    .plugin(tsify, {
+        "esModuleInterop": false,
+        "allowSyntheticDefaultImports": true,
+        "strict": false,
+        "forceConsistentCasingInFileNames": false,
+        "resolveJsonModule": true,
+        "isolatedModules": false
+    })
     .transform('babelify', {
         presets: ['es2015'],
         extensions: ['.ts']

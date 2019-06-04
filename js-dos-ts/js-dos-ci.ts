@@ -6,7 +6,7 @@ import { Xhr } from "./js-dos-xhr";
 
 export class DosCommandInterface {
     public dos: DosModule;
-    private em: typeof Module;
+    private em: any; // typeof Module;
     private api: LowLevelApi;
     private onready: (ci: DosCommandInterface) => void;
 
@@ -97,15 +97,17 @@ export class DosCommandInterface {
                 const maxLength: number = args[1];
 
                 const cmd = this.shellInputQueue.shift();
-                const cmdLength = (this.em as any).lengthBytesUTF8(cmd) + 1;
+                const cmdLength = this.em.lengthBytesUTF8(cmd) + 1;
 
                 if (cmdLength > maxLength) {
-                    this.dos.onerror("Can't execute cmd '" + cmd +
-                        "', because it's bigger then max cmd length " + maxLength);
+                    if (this.dos.onerror !== undefined) {
+                        this.dos.onerror("Can't execute cmd '" + cmd +
+                            "', because it's bigger then max cmd length " + maxLength);
+                    }
                     return;
                 }
 
-                (this.em as any).stringToUTF8(cmd, buffer, cmdLength);
+                this.em.stringToUTF8(cmd, buffer, cmdLength);
 
                 if (this.shellInputQueue.length === 0) {
                     for (const resolve of this.shellInputClients) {

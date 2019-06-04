@@ -13,3 +13,5 @@ gulpfile.js
 travis-build.sh
 tsconfig.json
 tslint.json
+6.22*.zip
+dev.js

@@ -22,7 +22,7 @@ class DosHost {
     public wasmSupported = false;
     public global = window as any;
 
-    private wdosboxPromise: Promise<any> = null;
+    private wdosboxPromise: Promise<any> | null = null;
 
     constructor() {
         this.global.exports = {};
@@ -171,7 +171,9 @@ used to prevent next loads of same dosbox module.
         }
 
         if (!this.wasmSupported) {
-            module.onerror("WebAssembly is not supported, can't resolve wdosbox");
+            if (module.onerror !== undefined) {
+                module.onerror("WebAssembly is not supported, can't resolve wdosbox");
+            }
             return;
         }
 
@@ -190,7 +192,9 @@ used to prevent next loads of same dosbox module.
             /* leave promise scope */
             const fn = () => {
                 this.wdosboxPromise = null;
-                module.onerror(message);
+                if (module.onerror !== undefined) {
+                    module.onerror(message);
+                }
             };
             setTimeout(fn, 1);
         });
@@ -305,7 +309,9 @@ If dosbox is not yet resolved, then:
                                     ", message: " + message + ", url: " + url);
                             },
                             success: (response: string) => {
-                                module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                                if (module.onprogress !== undefined) {
+                                    module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                                }
 
                                 response +=
                                 /* tslint:disable:no-eval */

@@ -8,9 +8,9 @@ export class DosUi {
     private canvas: HTMLCanvasElement;
     private dos: DosModule;
 
-    private overlay: HTMLDivElement;
-    private loaderMessage: HTMLDivElement;
-    private hidden: boolean;
+    private overlay: HTMLDivElement | null = null;
+    private loaderMessage: HTMLDivElement | null = null;
+    private hidden: boolean = true;
 
     constructor(dos: DosModule) {
         this.dos = dos;
@@ -29,7 +29,7 @@ export class DosUi {
                 document.head.appendChild(style);
             }
 
-            if (this.canvas.parentElement.className !== "dosbox-container") {
+            if (this.canvas.parentElement !== null && this.canvas.parentElement.className !== "dosbox-container") {
                 const container = document.createElement("div") as HTMLDivElement;
                 container.className = "dosbox-container";
 
@@ -45,7 +45,13 @@ export class DosUi {
             }
 
             const container = this.canvas.parentElement;
+            if (container === null) {
+                throw new Error("Illegal state, container is null");
+            }
             this.overlay = this.childById(container, "dosbox-overlay");
+            if (this.overlay === null) {
+                throw new Error("Illegal state, overlay is null");
+            }
             this.loaderMessage = this.childById(this.overlay, "dosbox-loader-message");
 
             this.hidden = true;
@@ -57,7 +63,9 @@ export class DosUi {
 
     public onprogress(stage: string, total: number, loaded: number) {
         const message = stage + " " + Math.round(loaded * 100 / total * 10) / 10 + "%";
-        this.loaderMessage.innerHTML = message;
+        if (this.loaderMessage !== null) {
+            this.loaderMessage.innerHTML = message;
+        }
         this.dos.info(message);
 
         if (loaded >= total) {
@@ -77,7 +85,9 @@ export class DosUi {
             return;
         }
         this.hidden = true;
-        this.overlay.setAttribute("style", "display: none");
+        if (this.overlay !== null) {
+            this.overlay.setAttribute("style", "display: none");
+        }
     }
 
     public show() {
@@ -85,20 +95,22 @@ export class DosUi {
             return;
         }
         this.hidden = false;
-        this.overlay.setAttribute("style", "display: block");
+        if (this.overlay !== null) {
+            this.overlay.setAttribute("style", "display: block");
+        }
     }
 
     private onprogressFallback(stage: string, total: number, loaded: number) {
         this.dos.info(stage + " " + loaded * 100 / total + "%");
     }
 
-    private childById(parent: Element, className: string) {
+    private childById(parent: Element, className: string): HTMLDivElement | null {
         if (parent === null) {
             return null;
         }
 
         for (let i = 0; i < parent.childElementCount; ++i) {
-            let child = parent.children[i];
+            let child: HTMLElement | null = parent.children[i] as HTMLElement;
             if (child.className === className) {
                 return child as HTMLDivElement;
             }

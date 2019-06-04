@@ -20,14 +20,14 @@ import { DosUi } from "./js-dos-ui";
 
 export class DosModule extends DosOptions {
     public isValid: boolean = false;
-    public canvas: HTMLCanvasElement = null;
+    public canvas: HTMLCanvasElement;
     public version = Build.version;
     public onglobals?: (...args: any[]) => void;
 
-    private ci: Promise<DosCommandInterface> = null;
+    private ci: Promise<DosCommandInterface> | null = null;
     private instance: any;
-    private fs: DosFS = null;
-    private ui: DosUi = null;
+    private fs: DosFS | null = null;
+    private ui: DosUi | null = null;
     private onready: (runtime: DosRuntime) => void;
 
     private tickListeners: Array< () => void > = [];
@@ -61,7 +61,7 @@ export class DosModule extends DosOptions {
             visibilityChange = "webkitvisibilitychange";
         }
 
-        document.addEventListener(visibilityChange, () => {
+        document.addEventListener("visibilityChange", () => {
             (document as any)[hidden] ? this.pause() : this.resume();
         }, false);
 
@@ -88,19 +88,27 @@ DosModule implements simply logging features:
 
 ```
     public debug(message: string) {
-        this.log("[DEBUG] " + message);
+        if (this.log !== undefined) {
+            this.log("[DEBUG] " + message);
+        }
     }
 
     public info(message: string) {
-        this.log("[INFO] " + message);
+        if (this.log !== undefined) {
+            this.log("[INFO] " + message);
+        }
     }
 
     public warn(message: string) {
-        this.log("[WARN] " + message);
+        if (this.log !== undefined) {
+            this.log("[WARN] " + message);
+        }
     }
 
     public error(message: string) {
-        this.log("[ERROR] " + message);
+        if (this.log !== undefined) {
+            this.log("[ERROR] " + message);
+        }
     }
 
 
@@ -154,13 +162,19 @@ module object. It means that emscripten will call
         }
 
         if (!this.canvas) {
-            this.onerror("canvas field is required, but not set!");
+            if (this.onerror !== undefined) {
+                this.onerror("canvas field is required, but not set!");
+            }
             return;
         }
 
         if (!this.onprogress) {
             this.ui = new DosUi(this);
-            this.onprogress = (stage, total, loaded) => this.ui.onprogress(stage, total, loaded);
+            this.onprogress = (stage, total, loaded) => {
+                if (this.ui !== null) {
+                    this.ui.onprogress(stage, total, loaded);
+                }
+            };
         }
 
 
@@ -235,6 +249,12 @@ function is called:
 
             if (!args) {
                 args = [];
+            }
+
+            if (this.fs === null) {
+                return new Promise<DosCommandInterface>((resolve, reject) => {
+                    reject("IllegalState: fs is null");
+                });
             }
 
             this.fs.chdir("/");

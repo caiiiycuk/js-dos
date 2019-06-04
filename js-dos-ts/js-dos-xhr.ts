@@ -27,7 +27,7 @@ export class Xhr {
     private cache: ICache;
     private resource: string;
     private options: XhrOptions;
-    private xhr: XMLHttpRequest;
+    private xhr: XMLHttpRequest | null = null;
     private total: number = 0;
     private loaded: number = 0;
 
@@ -39,7 +39,9 @@ export class Xhr {
 
         if (this.options.method  === "GET") {
             this.cache.get(this.resource, (data) => {
-                this.options.success(data);
+                if (this.options.success !== undefined) {
+                    this.options.success(data);
+                }
             }, () => {
                 this.makeHttpRequest();
             });
@@ -48,7 +50,7 @@ export class Xhr {
 
     private makeHttpRequest() {
         this.xhr = new XMLHttpRequest();
-        this.xhr.open(this.options.method, this.resource, true);
+        this.xhr.open(this.options.method || "GET", this.resource, true);
         if (this.options.method === "POST") {
             this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         }
@@ -69,7 +71,7 @@ export class Xhr {
         if (typeof (errorListener = this.xhr).addEventListener === "function") {
             errorListener.addEventListener("error", (evt) => {
                 if (this.options.fail) {
-                    this.options.fail(this.resource, this.xhr.status, "connection problem");
+                    this.options.fail(this.resource, (this.xhr as XMLHttpRequest).status, "connection problem");
                     return delete this.options.fail;
                 }
             });
@@ -84,20 +86,23 @@ export class Xhr {
     }
 
     private onReadyStateChange() {
-        if (this.xhr.readyState === 4) {
-            if (this.xhr.status === 200) {
+        const xhr = (this.xhr as XMLHttpRequest);
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
                 if (this.options.success) {
                     const total = Math.max(this.total, this.loaded);
-                    this.options.progress(total, total);
-
-                    if (this.options.method === "GET" && this.resource.indexOf("?") < 0) {
-                        this.cache.put(this.resource, this.xhr.response, () => { /**/ });
+                    if (this.options.progress !== undefined) {
+                        this.options.progress(total, total);
                     }
 
-                    return this.options.success(this.xhr.response);
+                    if (this.options.method === "GET" && this.resource.indexOf("?") < 0) {
+                        this.cache.put(this.resource, xhr.response, () => { /**/ });
+                    }
+
+                    return this.options.success(xhr.response);
                 }
             } else if (this.options.fail) {
-                this.options.fail(this.resource, this.xhr.status, "connection problem");
+                this.options.fail(this.resource, xhr.status, "connection problem");
                 return delete this.options.fail;
             }
         }
