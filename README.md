@@ -301,6 +301,28 @@ Dos(canvas).ready((fs, main) => {
 });
 ```
 
+## Using as module
+
+You can use js-dos as module in typescript.
+
+1) Install module package
+
+```sh
+npm install --save js-dos
+```
+
+2) Import Dos module
+
+```ts
+import { Dos } from "js-dos/dist/typescript/js-dos";
+
+new Dos(canvas).ready((fs, main) => {
+    fs.extract("digger.zip").then(() => {
+        main(["-c", "DIGGER.COM"])
+    });
+});
+```
+
 ## Building
 
 Building process have two steps:
