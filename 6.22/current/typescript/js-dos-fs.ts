@@ -7,7 +7,7 @@ import { Xhr } from "./js-dos-xhr";
 
 export class DosFS {
     private dos: DosModule;
-    private em: typeof Module;
+    private em: any; // typeof Module;
     private fs: any;
     private syncingPromise: Promise<void> | null = null;
     private lastSyncTime = 0;
@@ -64,12 +64,16 @@ export class DosFS {
                     cache: new CacheNoop(),
                     responseType: "arraybuffer",
                     fail: (msg) => reject(msg),
-                    progress: (total, loaded) => this.dos.onprogress("Downloading " + url, total, loaded),
+                    progress: (total, loaded) => {
+                        if (this.dos.onprogress !== undefined) {
+                            this.dos.onprogress("Downloading " + url, total, loaded);
+                        }
+                    },
                     success: (data: ArrayBuffer) => {
                         const bytes = new Uint8Array(data);
                         const buffer = this.em._malloc(bytes.length);
                         this.em.HEAPU8.set(bytes, buffer);
-                        const retcode = (this.em as any)._extract_zip(buffer, bytes.length);
+                        const retcode = this.em._extract_zip(buffer, bytes.length);
                         this.em._free(buffer);
 
                         if (retcode === 0) {
@@ -128,14 +132,18 @@ export class DosFS {
         const parts = file.split("/");
 
         if (parts.length === 0) {
-            this.dos.onerror("Can't create file '" + file + "', because it's not valid file path");
+            if (this.dos.onerror !== undefined) {
+                this.dos.onerror("Can't create file '" + file + "', because it's not valid file path");
+            }
             return;
         }
 
         const filename = parts[parts.length - 1].trim();
 
         if (filename.length === 0) {
-            this.dos.onerror("Can't create file '" + file + "', because file name is empty");
+            if (this.dos.onerror !== undefined) {
+                this.dos.onerror("Can't create file '" + file + "', because file name is empty");
+            }
             return;
         }
 

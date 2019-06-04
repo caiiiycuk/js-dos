@@ -142,7 +142,7 @@ to understand resolving of emulation layer (dosbox).
   
 
 ```
-            Host.resolveDosBox(module.wdosboxUrl, cache, module);
+            Host.resolveDosBox(module.wdosboxUrl as string, cache, module);
         });
 
     });

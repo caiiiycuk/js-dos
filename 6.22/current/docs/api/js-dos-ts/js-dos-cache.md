@@ -19,7 +19,9 @@ export interface ICache {
 
 export default function openCache(module: DosModule, onready: (cache: ICache) => void) {
     new CacheDb(module.version, onready, (msg: string) => {
-        module.log("ERR! Can't initalize cache, cause: " + msg);
+        if (module.log !== undefined) {
+            module.log("ERR! Can't initalize cache, cause: " + msg);
+        }
         onready(new CacheNoop());
     });
 }

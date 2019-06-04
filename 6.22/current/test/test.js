@@ -6,8 +6,8 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.20 (a61956c685b01720b85c6a1f1cce0cd1)",
-    jsVersion: "254ae5ceaa80eb9f8ccecb542130a63aad719e88",
+    version: "6.22.21 (84dc1edcab0698b47cc132c1d19ebd13)",
+    jsVersion: "2d6628b0a17b5a4cc5c7a46c0788fbe02604c4f2",
     jsSize: 468455,
     wasmVersion: "d9f429891f4b5026d1dacb873f8f7a2a",
     wasmSize: 2140358
@@ -16,19 +16,12 @@ exports.Build = {
 },{}],2:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 Object.defineProperty(exports, "__esModule", { value: true });
-
-var CacheDb = function () {
+var CacheDb = /** @class */function () {
     function CacheDb(version, onready, onerror) {
         var _this = this;
-
-        _classCallCheck(this, CacheDb);
-
         this.storeName = "files";
+        this.db = null;
         this.version = version;
         this.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
         if (!this.indexedDB) {
@@ -55,93 +48,76 @@ var CacheDb = function () {
             }
         };
     }
-
-    _createClass(CacheDb, [{
-        key: "put",
-        value: function put(key, data, onflush) {
-            var transaction = this.db.transaction(this.storeName, "readwrite");
-            transaction.oncomplete = function () {
-                return onflush();
-            };
-            transaction.objectStore(this.storeName).put(data, key);
+    CacheDb.prototype.put = function (key, data, onflush) {
+        if (this.db === null) {
+            onflush();
+            return;
         }
-    }, {
-        key: "get",
-        value: function get(key, ondata, onerror) {
-            var transaction = this.db.transaction(this.storeName, "readonly");
-            var request = transaction.objectStore(this.storeName).get(key);
-            request.onerror = function () {
-                return onerror("Can't read value for key '" + key + "'");
-            };
-            request.onsuccess = function () {
-                if (request.result) {
-                    ondata(request.result);
-                } else {
-                    onerror("Result is empty for key '" + key + "', result: " + request.result);
-                }
-            };
+        var transaction = this.db.transaction(this.storeName, "readwrite");
+        transaction.oncomplete = function () {
+            return onflush();
+        };
+        transaction.objectStore(this.storeName).put(data, key);
+    };
+    CacheDb.prototype.get = function (key, ondata, onerror) {
+        if (this.db === null) {
+            onerror("db is not initalized");
+            return;
         }
-    }, {
-        key: "forEach",
-        value: function forEach(each, onend) {
-            var _this2 = this;
-
-            var transaction = this.db.transaction(this.storeName, "readonly");
-            var request = transaction.objectStore(this.storeName).openCursor();
-            request.onerror = function () {
-                return onerror("Can't open cursor on " + _this2.storeName);
-            };
-            request.onsuccess = function (event) {
-                var cursor = event.target.result;
-                if (cursor) {
-                    each(cursor.key.toString(), cursor.value);
-                    cursor.continue();
-                } else {
-                    onend();
-                }
-            };
+        var transaction = this.db.transaction(this.storeName, "readonly");
+        var request = transaction.objectStore(this.storeName).get(key);
+        request.onerror = function () {
+            return onerror("Can't read value for key '" + key + "'");
+        };
+        request.onsuccess = function () {
+            if (request.result) {
+                ondata(request.result);
+            } else {
+                onerror("Result is empty for key '" + key + "', result: " + request.result);
+            }
+        };
+    };
+    CacheDb.prototype.forEach = function (each, onend) {
+        if (this.db === null) {
+            onend();
+            return;
         }
-    }]);
-
+        var transaction = this.db.transaction(this.storeName, "readonly");
+        var request = transaction.objectStore(this.storeName).openCursor();
+        request.onerror = function () {
+            return onend();
+        };
+        request.onsuccess = function (event) {
+            var cursor = event.target.result;
+            if (cursor) {
+                each(cursor.key.toString(), cursor.value);
+                cursor.continue();
+            } else {
+                onend();
+            }
+        };
+    };
     return CacheDb;
 }();
-
 exports.default = CacheDb;
 
 },{}],3:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 Object.defineProperty(exports, "__esModule", { value: true });
-
-var CacheNoop = function () {
-    function CacheNoop() {
-        _classCallCheck(this, CacheNoop);
-    }
-
-    _createClass(CacheNoop, [{
-        key: "put",
-        value: function put(key, data, onflush) {
-            // nothing
-        }
-    }, {
-        key: "get",
-        value: function get(key, ondata, onerror) {
-            onerror("Cache is not supported on this host");
-        }
-    }, {
-        key: "forEach",
-        value: function forEach(each, onend) {
-            onend();
-        }
-    }]);
-
+var CacheNoop = /** @class */function () {
+    function CacheNoop() {}
+    CacheNoop.prototype.put = function (key, data, onflush) {
+        // nothing
+    };
+    CacheNoop.prototype.get = function (key, ondata, onerror) {
+        onerror("Cache is not supported on this host");
+    };
+    CacheNoop.prototype.forEach = function (each, onend) {
+        onend();
+    };
     return CacheNoop;
 }();
-
 exports.default = CacheNoop;
 
 },{}],4:[function(require,module,exports){
@@ -152,7 +128,9 @@ var js_dos_cache_db_1 = require("./js-dos-cache-db");
 var js_dos_cache_noop_1 = require("./js-dos-cache-noop");
 function openCache(module, onready) {
     new js_dos_cache_db_1.default(module.version, onready, function (msg) {
-        module.log("ERR! Can't initalize cache, cause: " + msg);
+        if (module.log !== undefined) {
+            module.log("ERR! Can't initalize cache, cause: " + msg);
+        }
         onready(new js_dos_cache_noop_1.default());
     });
 }
@@ -161,197 +139,120 @@ exports.default = openCache;
 },{"./js-dos-cache-db":2,"./js-dos-cache-noop":3}],5:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 Object.defineProperty(exports, "__esModule", { value: true });
-
-var DosCommandInterface = function () {
+var DosCommandInterface = /** @class */function () {
     function DosCommandInterface(dos, onready) {
         var _this = this;
-
-        _classCallCheck(this, DosCommandInterface);
-
         this.shellInputQueue = [];
         this.shellInputClients = [];
         this.dos = dos;
         this.em = dos;
         this.api = dos;
         this.api.ping = function (msg) {
-            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                args[_key - 1] = arguments[_key];
+            var args = [];
+            for (var _i = 1; _i < arguments.length; _i++) {
+                args[_i - 1] = arguments[_i];
             }
-
             _this.onping(msg, args);
         };
         this.onready = onready;
     }
     // * `width()` - return dosbox window width in pixels
-
-
-    _createClass(DosCommandInterface, [{
-        key: "width",
-        value: function width() {
-            return this.dos.canvas.width;
+    DosCommandInterface.prototype.width = function () {
+        return this.dos.canvas.width;
+    };
+    // * `height()` - return dosbox window height in pixels
+    DosCommandInterface.prototype.height = function () {
+        return this.dos.canvas.height;
+    };
+    // * `shell([cmd1, cmd2, ...])` - executes passed commands
+    // in dosbox shell if it's runned, returns Promise that
+    // resolves when commands sequence is executed
+    DosCommandInterface.prototype.shell = function () {
+        var _this = this;
+        var cmd = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            cmd[_i] = arguments[_i];
         }
-        // * `height()` - return dosbox window height in pixels
-
-    }, {
-        key: "height",
-        value: function height() {
-            return this.dos.canvas.height;
+        if (cmd.length === 0) {
+            return;
         }
-        // * `shell([cmd1, cmd2, ...])` - executes passed commands
-        // in dosbox shell if it's runned, returns Promise that
-        // resolves when commands sequence is executed
-
-    }, {
-        key: "shell",
-        value: function shell() {
-            var _this2 = this;
-
-            for (var _len2 = arguments.length, cmd = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                cmd[_key2] = arguments[_key2];
+        return new Promise(function (resolve, reject) {
+            _this.shellInputClients.push(resolve);
+            for (var _i = 0, cmd_1 = cmd; _i < cmd_1.length; _i++) {
+                var next = cmd_1[_i];
+                _this.shellInputQueue.push(next);
             }
-
-            if (cmd.length === 0) {
-                return;
-            }
-            return new Promise(function (resolve, reject) {
-                _this2.shellInputClients.push(resolve);
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = cmd[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var next = _step.value;
-
-                        _this2.shellInputQueue.push(next);
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
+            _this.requestShellInput();
+        });
+    };
+    // * `screenshot()` - get screnshot of canvas as ImageData
+    DosCommandInterface.prototype.screenshot = function () {
+        var _this = this;
+        return new Promise(function (resolve) {
+            _this.api.send("screenshot", "", function (data) {
+                resolve(data);
+            });
+        });
+    };
+    // * `exit()` - immediately exit from runtime
+    DosCommandInterface.prototype.exit = function () {
+        try {
+            this.dos.terminate();
+            this.api.send("exit");
+        } catch (e) {
+            return 0;
+        }
+        this.dos.error("Runtime is still alive!");
+        return -1;
+    };
+    DosCommandInterface.prototype.sendKeyPress = function (code) {
+        this.api.send("sdl_key_event", code + "");
+    };
+    DosCommandInterface.prototype.requestShellInput = function () {
+        this.sendKeyPress(13);
+    };
+    DosCommandInterface.prototype.onping = function (msg, args) {
+        switch (msg) {
+            case "ready":
+                this.onready(this);
+                break;
+            case "frame":
+                this.onframe();
+                break;
+            case "shell_input":
+                if (this.shellInputQueue.length === 0) {
+                    return;
                 }
-
-                _this2.requestShellInput();
-            });
-        }
-        // * `screenshot()` - get screnshot of canvas as ImageData
-
-    }, {
-        key: "screenshot",
-        value: function screenshot() {
-            var _this3 = this;
-
-            return new Promise(function (resolve) {
-                _this3.api.send("screenshot", "", function (data) {
-                    resolve(data);
-                });
-            });
-        }
-        // * `exit()` - immediately exit from runtime
-
-    }, {
-        key: "exit",
-        value: function exit() {
-            try {
-                this.dos.terminate();
-                this.api.send("exit");
-            } catch (e) {
-                return 0;
-            }
-            this.dos.error("Runtime is still alive!");
-            return -1;
-        }
-    }, {
-        key: "sendKeyPress",
-        value: function sendKeyPress(code) {
-            this.api.send("sdl_key_event", code + "");
-        }
-    }, {
-        key: "requestShellInput",
-        value: function requestShellInput() {
-            this.sendKeyPress(13);
-        }
-    }, {
-        key: "onping",
-        value: function onping(msg, args) {
-            switch (msg) {
-                case "ready":
-                    this.onready(this);
-                    break;
-                case "frame":
-                    this.onframe();
-                    break;
-                case "shell_input":
-                    if (this.shellInputQueue.length === 0) {
-                        return;
-                    }
-                    var buffer = args[0];
-                    var maxLength = args[1];
-                    var cmd = this.shellInputQueue.shift();
-                    var cmdLength = this.em.lengthBytesUTF8(cmd) + 1;
-                    if (cmdLength > maxLength) {
+                var buffer = args[0];
+                var maxLength = args[1];
+                var cmd = this.shellInputQueue.shift();
+                var cmdLength = this.em.lengthBytesUTF8(cmd) + 1;
+                if (cmdLength > maxLength) {
+                    if (this.dos.onerror !== undefined) {
                         this.dos.onerror("Can't execute cmd '" + cmd + "', because it's bigger then max cmd length " + maxLength);
-                        return;
                     }
-                    this.em.stringToUTF8(cmd, buffer, cmdLength);
-                    if (this.shellInputQueue.length === 0) {
-                        var _iteratorNormalCompletion2 = true;
-                        var _didIteratorError2 = false;
-                        var _iteratorError2 = undefined;
-
-                        try {
-                            for (var _iterator2 = this.shellInputClients[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                                var resolve = _step2.value;
-
-                                resolve();
-                            }
-                        } catch (err) {
-                            _didIteratorError2 = true;
-                            _iteratorError2 = err;
-                        } finally {
-                            try {
-                                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                    _iterator2.return();
-                                }
-                            } finally {
-                                if (_didIteratorError2) {
-                                    throw _iteratorError2;
-                                }
-                            }
-                        }
-
-                        this.shellInputClients = [];
-                    } else {
-                        this.requestShellInput();
+                    return;
+                }
+                this.em.stringToUTF8(cmd, buffer, cmdLength);
+                if (this.shellInputQueue.length === 0) {
+                    for (var _i = 0, _a = this.shellInputClients; _i < _a.length; _i++) {
+                        var resolve = _a[_i];
+                        resolve();
                     }
-                default:
-                /* do nothing */
-            }
+                    this.shellInputClients = [];
+                } else {
+                    this.requestShellInput();
+                }
+            default:
+            /* do nothing */
         }
-    }, {
-        key: "onframe",
-        value: function onframe() {
-            this.dos.tick();
-        }
-    }]);
-
+    };
+    DosCommandInterface.prototype.onframe = function () {
+        this.dos.tick();
+    };
     return DosCommandInterface;
 }();
-
 exports.DosCommandInterface = DosCommandInterface;
 
 },{}],6:[function(require,module,exports){
@@ -368,20 +269,12 @@ exports.jsdosconf = "\n# This is the configurationfile for DOSBox 0.74. (Please 
 // # DosFS
 // API for working with file system of dosbox
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 Object.defineProperty(exports, "__esModule", { value: true });
 var js_dos_cache_noop_1 = require("./js-dos-cache-noop");
 var js_dos_xhr_1 = require("./js-dos-xhr");
-
-var DosFS = function () {
+var DosFS = /** @class */function () {
     function DosFS(dos) {
         var _this = this;
-
-        _classCallCheck(this, DosFS);
-
         this.syncingPromise = null;
         this.lastSyncTime = 0;
         this.dos = dos;
@@ -402,187 +295,172 @@ var DosFS = function () {
             return _this.syncFs();
         });
     }
-
-    _createClass(DosFS, [{
-        key: "chdir",
-        value: function chdir(path) {
-            this.fs.chdir(path);
+    DosFS.prototype.chdir = function (path) {
+        this.fs.chdir(path);
+    };
+    // ### extract
+    DosFS.prototype.extract = function (url, persistentMount, type) {
+        // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
+        //
+        // * `url` - url for downloading archive
+        // * `persistentMount` - is a path to mount archive contents, by default mount point is '/' which
+        // is a MEMFS that is live only in one ssesion. It means that after restart all progress will be erased.
+        // If you set some path (any), then this path will be stored across sessions in indexed db. It means
+        // that progress will be there after browser restart.
+        // * `type` - archive type **only zip is supported**
+        //
+        // this method will return `Promise<void>`, that will be resolved
+        // on success with empty object or rejected
+        var _this = this;
+        if (persistentMount === void 0) {
+            persistentMount = "/";
         }
-        // ### extract
-
-    }, {
-        key: "extract",
-        value: function extract(url) {
-            var _this2 = this;
-
-            var persistentMount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "/";
-            var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "zip";
-
-            // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
-            //
-            // * `url` - url for downloading archive
-            // * `persistentMount` - is a path to mount archive contents, by default mount point is '/' which
-            // is a MEMFS that is live only in one ssesion. It means that after restart all progress will be erased.
-            // If you set some path (any), then this path will be stored across sessions in indexed db. It means
-            // that progress will be there after browser restart.
-            // * `type` - archive type **only zip is supported**
-            //
-            // this method will return `Promise<void>`, that will be resolved
-            // on success with empty object or rejected
-            persistentMount = this.normalizePath(persistentMount);
-            var parts = persistentMount.split("/");
-            this.createPath(parts, 0, parts.length);
-            this.chdir(persistentMount);
-            var extractArchiveInCwd = function extractArchiveInCwd() {
-                return new Promise(function (resolve, reject) {
-                    if (type !== "zip") {
-                        reject("Only ZIP archive is supported");
-                        return;
-                    }
-                    new js_dos_xhr_1.Xhr(url, {
-                        cache: new js_dos_cache_noop_1.default(),
-                        responseType: "arraybuffer",
-                        fail: function fail(msg) {
-                            return reject(msg);
-                        },
-                        progress: function progress(total, loaded) {
-                            return _this2.dos.onprogress("Downloading " + url, total, loaded);
-                        },
-                        success: function success(data) {
-                            var bytes = new Uint8Array(data);
-                            var buffer = _this2.em._malloc(bytes.length);
-                            _this2.em.HEAPU8.set(bytes, buffer);
-                            var retcode = _this2.em._extract_zip(buffer, bytes.length);
-                            _this2.em._free(buffer);
-                            if (retcode === 0) {
-                                _this2.writeOk(persistentMount);
-                                _this2.syncFs().then(resolve).catch(reject);
-                            } else {
-                                reject("Can't extract zip, retcode " + retcode + ", see more info in logs");
-                            }
-                        }
-                    });
-                });
-            };
-            if (persistentMount === "/" || persistentMount.length === 0) {
-                return extractArchiveInCwd();
-            }
+        if (type === void 0) {
+            type = "zip";
+        }
+        persistentMount = this.normalizePath(persistentMount);
+        var parts = persistentMount.split("/");
+        this.createPath(parts, 0, parts.length);
+        this.chdir(persistentMount);
+        var extractArchiveInCwd = function extractArchiveInCwd() {
             return new Promise(function (resolve, reject) {
-                if (_this2.lastSyncTime > 0) {
-                    reject("Can't create persistent mount point, after syncing process starts");
+                if (type !== "zip") {
+                    reject("Only ZIP archive is supported");
                     return;
                 }
-                _this2.fs.mount(_this2.fs.filesystems.IDBFS, {}, persistentMount);
-                _this2.fs.syncfs(true, function (err) {
-                    if (err) {
-                        reject("Can't restore FS from indexed db, cause: " + err);
-                        return;
+                new js_dos_xhr_1.Xhr(url, {
+                    cache: new js_dos_cache_noop_1.default(),
+                    responseType: "arraybuffer",
+                    fail: function fail(msg) {
+                        return reject(msg);
+                    },
+                    progress: function progress(total, loaded) {
+                        if (_this.dos.onprogress !== undefined) {
+                            _this.dos.onprogress("Downloading " + url, total, loaded);
+                        }
+                    },
+                    success: function success(data) {
+                        var bytes = new Uint8Array(data);
+                        var buffer = _this.em._malloc(bytes.length);
+                        _this.em.HEAPU8.set(bytes, buffer);
+                        var retcode = _this.em._extract_zip(buffer, bytes.length);
+                        _this.em._free(buffer);
+                        if (retcode === 0) {
+                            _this.writeOk(persistentMount);
+                            _this.syncFs().then(resolve).catch(reject);
+                        } else {
+                            reject("Can't extract zip, retcode " + retcode + ", see more info in logs");
+                        }
                     }
-                    if (!_this2.readOk(persistentMount)) {
-                        _this2.dos.warn("Indexed db contains broken FS, resetting...");
-                        extractArchiveInCwd().then(resolve).catch(reject);
-                        return;
-                    }
-                    resolve();
                 });
             });
+        };
+        if (persistentMount === "/" || persistentMount.length === 0) {
+            return extractArchiveInCwd();
         }
-        // ### createFile
-
-    }, {
-        key: "createFile",
-        value: function createFile(file, body) {
-            // [synchronous] allow to create file in FS, you can pass absolute path.
-            // All directories will be created
-            //
-            // body can be string or ArrayBuffer or Uint8Array
-            if (body instanceof ArrayBuffer) {
-                body = new Uint8Array(body);
-            }
-            // windows style path are also valid, but **drive letter is ignored**
-            // if you pass only filename, then file will be writed in root "/" directory
-            file = file.replace(new RegExp("^[a-zA-z]+:"), "").replace(new RegExp("\\\\", "g"), "/");
-            var parts = file.split("/");
-            if (parts.length === 0) {
-                this.dos.onerror("Can't create file '" + file + "', because it's not valid file path");
+        return new Promise(function (resolve, reject) {
+            if (_this.lastSyncTime > 0) {
+                reject("Can't create persistent mount point, after syncing process starts");
                 return;
             }
-            var filename = parts[parts.length - 1].trim();
-            if (filename.length === 0) {
-                this.dos.onerror("Can't create file '" + file + "', because file name is empty");
-                return;
-            }
-            /* i < parts.length - 1, because last part is file name */
-            var path = this.createPath(parts, 0, parts.length - 1);
-            this.fs.createDataFile(path, filename, body, true, true, true);
-        }
-    }, {
-        key: "createPath",
-        value: function createPath(parts, begin, end) {
-            var path = "";
-            for (var i = begin; i < end; ++i) {
-                var part = parts[i].trim();
-                if (part.length === 0) {
-                    continue;
+            _this.fs.mount(_this.fs.filesystems.IDBFS, {}, persistentMount);
+            _this.fs.syncfs(true, function (err) {
+                if (err) {
+                    reject("Can't restore FS from indexed db, cause: " + err);
+                    return;
                 }
-                this.fs.createPath(path, part, true, true);
-                path = path + "/" + part;
-            }
-            return path;
-        }
-    }, {
-        key: "syncFs",
-        value: function syncFs() {
-            var _this3 = this;
-
-            if (this.syncingPromise) {
-                return this.syncingPromise;
-            }
-            this.syncingPromise = new Promise(function (resolve, reject) {
-                var startedAt = Date.now();
-                _this3.fs.syncfs(false, function (err) {
-                    if (err) {
-                        _this3.dos.error("Can't sync FS to indexed db, cause: " + err);
-                        reject(err);
-                    }
-                    _this3.syncingPromise = null;
-                    _this3.lastSyncTime = Date.now();
-                    resolve();
-                });
+                if (!_this.readOk(persistentMount)) {
+                    _this.dos.warn("Indexed db contains broken FS, resetting...");
+                    extractArchiveInCwd().then(resolve).catch(reject);
+                    return;
+                }
+                resolve();
             });
+        });
+    };
+    // ### createFile
+    DosFS.prototype.createFile = function (file, body) {
+        // [synchronous] allow to create file in FS, you can pass absolute path.
+        // All directories will be created
+        //
+        // body can be string or ArrayBuffer or Uint8Array
+        if (body instanceof ArrayBuffer) {
+            body = new Uint8Array(body);
+        }
+        // windows style path are also valid, but **drive letter is ignored**
+        // if you pass only filename, then file will be writed in root "/" directory
+        file = file.replace(new RegExp("^[a-zA-z]+:"), "").replace(new RegExp("\\\\", "g"), "/");
+        var parts = file.split("/");
+        if (parts.length === 0) {
+            if (this.dos.onerror !== undefined) {
+                this.dos.onerror("Can't create file '" + file + "', because it's not valid file path");
+            }
+            return;
+        }
+        var filename = parts[parts.length - 1].trim();
+        if (filename.length === 0) {
+            if (this.dos.onerror !== undefined) {
+                this.dos.onerror("Can't create file '" + file + "', because file name is empty");
+            }
+            return;
+        }
+        /* i < parts.length - 1, because last part is file name */
+        var path = this.createPath(parts, 0, parts.length - 1);
+        this.fs.createDataFile(path, filename, body, true, true, true);
+    };
+    DosFS.prototype.createPath = function (parts, begin, end) {
+        var path = "";
+        for (var i = begin; i < end; ++i) {
+            var part = parts[i].trim();
+            if (part.length === 0) {
+                continue;
+            }
+            this.fs.createPath(path, part, true, true);
+            path = path + "/" + part;
+        }
+        return path;
+    };
+    DosFS.prototype.syncFs = function () {
+        var _this = this;
+        if (this.syncingPromise) {
             return this.syncingPromise;
         }
-    }, {
-        key: "normalizePath",
-        value: function normalizePath(path) {
-            if (path.length === 0 || path[0] !== "/") {
-                path = "/" + path;
-            }
-            if (path.length > 1 && path.endsWith("/")) {
-                path = path.substr(0, path.length - 1);
-            }
-            return path;
+        this.syncingPromise = new Promise(function (resolve, reject) {
+            var startedAt = Date.now();
+            _this.fs.syncfs(false, function (err) {
+                if (err) {
+                    _this.dos.error("Can't sync FS to indexed db, cause: " + err);
+                    reject(err);
+                }
+                _this.syncingPromise = null;
+                _this.lastSyncTime = Date.now();
+                resolve();
+            });
+        });
+        return this.syncingPromise;
+    };
+    DosFS.prototype.normalizePath = function (path) {
+        if (path.length === 0 || path[0] !== "/") {
+            path = "/" + path;
         }
-    }, {
-        key: "readOk",
-        value: function readOk(path) {
-            try {
-                var readed = this.fs.readFile(path + "/state.fs");
-                return readed[0] === 79 && readed[1] === 70;
-            } catch (_a) {
-                return false;
-            }
+        if (path.length > 1 && path.endsWith("/")) {
+            path = path.substr(0, path.length - 1);
         }
-    }, {
-        key: "writeOk",
-        value: function writeOk(path) {
-            this.createFile(path + "/state.fs", new Uint8Array([79, 70])); // Ok
+        return path;
+    };
+    DosFS.prototype.readOk = function (path) {
+        try {
+            var readed = this.fs.readFile(path + "/state.fs");
+            return readed[0] === 79 && readed[1] === 70;
+        } catch (_a) {
+            return false;
         }
-    }]);
-
+    };
+    DosFS.prototype.writeOk = function (path) {
+        this.createFile(path + "/state.fs", new Uint8Array([79, 70])); // Ok
+    };
     return DosFS;
 }();
-
 exports.DosFS = DosFS;
 
 },{"./js-dos-cache-noop":3,"./js-dos-xhr":12}],8:[function(require,module,exports){
@@ -593,19 +471,12 @@ exports.DosFS = DosFS;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 Object.defineProperty(exports, "__esModule", { value: true });
 /* tslint:disable:member-ordering */
 var js_dos_build_1 = require("./js-dos-build");
 var js_dos_xhr_1 = require("./js-dos-xhr");
-
-var DosHost = function () {
+var DosHost = /** @class */function () {
     function DosHost() {
-        _classCallCheck(this, DosHost);
-
         this.wasmSupported = false;
         this.global = window;
         this.wdosboxPromise = null;
@@ -631,171 +502,173 @@ var DosHost = function () {
     // `Math.imul`, `Math.fround`, `Math.clz32`, `Math.trunc`
     /* tslint:disable:no-bitwise */
     /* tslint:disable:only-arrow-functions */
-
-
-    _createClass(DosHost, [{
-        key: "polyfill",
-        value: function polyfill() {
-            if (!Math.imul || Math.imul(0xffffffff, 5) !== -5) {
-                Math.imul = function imul(a, b) {
-                    var ah = a >>> 16;
-                    var al = a & 0xffff;
-                    var bh = b >>> 16;
-                    var bl = b & 0xffff;
-                    return al * bl + (ah * bl + al * bh << 16) | 0;
-                };
-            }
-            Math.imul = Math.imul;
-            if (!Math.fround) {
-                Math.fround = function (x) {
-                    return x;
-                };
-            }
-            Math.fround = Math.fround;
-            if (!Math.clz32) {
-                Math.clz32 = function (x) {
-                    x = x >>> 0;
-                    for (var i = 0; i < 32; i++) {
-                        if (x & 1 << 31 - i) {
-                            return i;
-                        }
-                    }
-                    return 32;
-                };
-            }
-            Math.clz32 = Math.clz32;
-            if (!Math.trunc) {
-                Math.trunc = function (x) {
-                    return x < 0 ? Math.ceil(x) : Math.floor(x);
-                };
-            }
-            Math.trunc = Math.trunc;
+    DosHost.prototype.polyfill = function () {
+        if (!Math.imul || Math.imul(0xffffffff, 5) !== -5) {
+            Math.imul = function imul(a, b) {
+                var ah = a >>> 16;
+                var al = a & 0xffff;
+                var bh = b >>> 16;
+                var bl = b & 0xffff;
+                return al * bl + (ah * bl + al * bh << 16) | 0;
+            };
         }
-        // ### resolveDosBox
-        // `resolveDosBox` is another important task of DosHost
-
-    }, {
-        key: "resolveDosBox",
-        value: function resolveDosBox(url, cache, module) {
-            var _this = this;
-
-            // When dosbox is resolved, WDOSBOX module is set to
-            // global variable `exports.WDOSBOX`. This variable is
-            // used to prevent next loads of same dosbox module.
-            if (this.global.exports.WDOSBOX) {
-                module.ondosbox(this.global.exports.WDOSBOX, this.global.exports.instantiateWasm);
-                return;
-            }
-            if (!this.wasmSupported) {
+        Math.imul = Math.imul;
+        if (!Math.fround) {
+            Math.fround = function (x) {
+                return x;
+            };
+        }
+        Math.fround = Math.fround;
+        if (!Math.clz32) {
+            Math.clz32 = function (x) {
+                x = x >>> 0;
+                for (var i = 0; i < 32; i++) {
+                    if (x & 1 << 31 - i) {
+                        return i;
+                    }
+                }
+                return 32;
+            };
+        }
+        Math.clz32 = Math.clz32;
+        if (!Math.trunc) {
+            Math.trunc = function (x) {
+                return x < 0 ? Math.ceil(x) : Math.floor(x);
+            };
+        }
+        Math.trunc = Math.trunc;
+    };
+    // ### resolveDosBox
+    // `resolveDosBox` is another important task of DosHost
+    DosHost.prototype.resolveDosBox = function (url, cache, module) {
+        var _this = this;
+        // When dosbox is resolved, WDOSBOX module is set to
+        // global variable `exports.WDOSBOX`. This variable is
+        // used to prevent next loads of same dosbox module.
+        if (this.global.exports.WDOSBOX) {
+            module.ondosbox(this.global.exports.WDOSBOX, this.global.exports.instantiateWasm);
+            return;
+        }
+        if (!this.wasmSupported) {
+            if (module.onerror !== undefined) {
                 module.onerror("WebAssembly is not supported, can't resolve wdosbox");
-                return;
             }
-            if (this.wdosboxPromise === null) {
-                this.wdosboxPromise = this.compileDosBox(url, cache, module);
-            }
-            this.wdosboxPromise.then(function (instance) {
-                /* leave promise scope */
-                var fn = function fn() {
-                    _this.wdosboxPromise = null;
-                    module.ondosbox(_this.global.exports.WDOSBOX, _this.global.exports.instantiateWasm);
-                };
-                setTimeout(fn, 1);
-            }, function (message) {
-                /* leave promise scope */
-                var fn = function fn() {
-                    _this.wdosboxPromise = null;
+            return;
+        }
+        if (this.wdosboxPromise === null) {
+            this.wdosboxPromise = this.compileDosBox(url, cache, module);
+        }
+        this.wdosboxPromise.then(function (instance) {
+            /* leave promise scope */
+            var fn = function fn() {
+                _this.wdosboxPromise = null;
+                module.ondosbox(_this.global.exports.WDOSBOX, _this.global.exports.instantiateWasm);
+            };
+            setTimeout(fn, 1);
+        }, function (message) {
+            /* leave promise scope */
+            var fn = function fn() {
+                _this.wdosboxPromise = null;
+                if (module.onerror !== undefined) {
                     module.onerror(message);
-                };
-                setTimeout(fn, 1);
-            });
-        }
-        // If dosbox is not yet resolved, then:
-
-    }, {
-        key: "compileDosBox",
-        value: function compileDosBox(url, cache, module) {
-            var _this2 = this;
-
-            var buildTotal = js_dos_build_1.Build.wasmSize + js_dos_build_1.Build.jsSize;
-            return new Promise(function (resolve, reject) {
-                var wasmUrl = url.replace(".js", ".wasm.js");
-                // * Host downloads `wdosbox` asm + js scripts
-                new js_dos_xhr_1.Xhr(wasmUrl, {
-                    cache: cache,
-                    responseType: "arraybuffer",
-                    progress: function progress(total, loaded) {
-                        if (module.onprogress) {
-                            module.onprogress("Resolving DosBox", buildTotal, loaded);
-                        }
-                    },
-                    fail: function fail(url, status, message) {
-                        reject("Can't download wasm, code: " + status + ", message: " + message + ", url: " + url);
-                    },
-                    success: function success(response) {
-                        // * Compile dosbox wasm module
-                        var promise = WebAssembly.compile(response);
-                        var onreject = function onreject(reason) {
-                            reject(reason + "");
-                        };
-                        promise.catch(onreject);
-                        promise.then(function (wasmModule) {
-                            _this2.global.exports.instantiateWasm = function (info, receiveInstance) {
-                                info.env.globalscall = function () {
-                                    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                                        args[_key] = arguments[_key];
-                                    }
-
-                                    if (module.onglobals) {
-                                        module.onglobals.apply(null, args);
-                                    }
-                                };
-                                // *  Instaniate it for each new dosbox runtime
-                                return WebAssembly.instantiate(wasmModule, info).catch(onreject).then(function (instance) {
-                                    receiveInstance(instance, wasmModule);
-                                });
-                            };
-                            new js_dos_xhr_1.Xhr(url, {
-                                cache: cache,
-                                progress: function progress(total, loaded) {
-                                    if (module.onprogress) {
-                                        module.onprogress("Resolving DosBox", buildTotal, js_dos_build_1.Build.wasmSize + loaded);
-                                    }
-                                },
-                                fail: function fail(url, status, message) {
-                                    reject("Can't download wdosbox.js, code: " + status + ", message: " + message + ", url: " + url);
-                                },
-                                success: function success(response) {
-                                    module.onprogress("Resolving DosBox", buildTotal, buildTotal);
-                                    response +=
-                                    /* tslint:disable:no-eval */
-                                    eval.call(window, response);
-                                    /* tslint:enable:no-eval */
-                                    resolve(_this2.global.exports.WDOSBOX);
-                                }
-                            });
-                        });
+                }
+            };
+            setTimeout(fn, 1);
+        });
+    };
+    // If dosbox is not yet resolved, then:
+    DosHost.prototype.compileDosBox = function (url, cache, module) {
+        var _this = this;
+        var buildTotal = js_dos_build_1.Build.wasmSize + js_dos_build_1.Build.jsSize;
+        return new Promise(function (resolve, reject) {
+            var wasmUrl = url.replace(".js", ".wasm.js");
+            // * Host downloads `wdosbox` asm + js scripts
+            new js_dos_xhr_1.Xhr(wasmUrl, {
+                cache: cache,
+                responseType: "arraybuffer",
+                progress: function progress(total, loaded) {
+                    if (module.onprogress) {
+                        module.onprogress("Resolving DosBox", buildTotal, loaded);
                     }
-                });
+                },
+                fail: function fail(url, status, message) {
+                    reject("Can't download wasm, code: " + status + ", message: " + message + ", url: " + url);
+                },
+                success: function success(response) {
+                    // * Compile dosbox wasm module
+                    var promise = WebAssembly.compile(response);
+                    var onreject = function onreject(reason) {
+                        reject(reason + "");
+                    };
+                    promise.catch(onreject);
+                    promise.then(function (wasmModule) {
+                        _this.global.exports.instantiateWasm = function (info, receiveInstance) {
+                            info.env.globalscall = function () {
+                                var args = [];
+                                for (var _i = 0; _i < arguments.length; _i++) {
+                                    args[_i] = arguments[_i];
+                                }
+                                if (module.onglobals) {
+                                    module.onglobals.apply(null, args);
+                                }
+                            };
+                            // *  Instaniate it for each new dosbox runtime
+                            return WebAssembly.instantiate(wasmModule, info).catch(onreject).then(function (instance) {
+                                receiveInstance(instance, wasmModule);
+                            });
+                        };
+                        new js_dos_xhr_1.Xhr(url, {
+                            cache: cache,
+                            progress: function progress(total, loaded) {
+                                if (module.onprogress) {
+                                    module.onprogress("Resolving DosBox", buildTotal, js_dos_build_1.Build.wasmSize + loaded);
+                                }
+                            },
+                            fail: function fail(url, status, message) {
+                                reject("Can't download wdosbox.js, code: " + status + ", message: " + message + ", url: " + url);
+                            },
+                            success: function success(response) {
+                                if (module.onprogress !== undefined) {
+                                    module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                                }
+                                response +=
+                                /* tslint:disable:no-eval */
+                                eval.call(window, response);
+                                /* tslint:enable:no-eval */
+                                resolve(_this.global.exports.WDOSBOX);
+                            }
+                        });
+                    });
+                }
             });
-        }
-    }]);
-
+        });
+    };
     return DosHost;
 }();
-
 exports.Host = new DosHost();
 
 },{"./js-dos-build":1,"./js-dos-xhr":12}],9:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
+var __extends = undefined && undefined.__extends || function () {
+    var _extendStatics = function extendStatics(d, b) {
+        _extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+            d.__proto__ = b;
+        } || function (d, b) {
+            for (var p in b) {
+                if (b.hasOwnProperty(p)) d[p] = b[p];
+            }
+        };
+        return _extendStatics(d, b);
+    };
+    return function (d, b) {
+        _extendStatics(d, b);
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+}();
 Object.defineProperty(exports, "__esModule", { value: true });
 var js_dos_build_1 = require("./js-dos-build");
 var js_dos_ci_1 = require("./js-dos-ci");
@@ -803,17 +676,11 @@ var js_dos_conf_1 = require("./js-dos-conf");
 var js_dos_fs_1 = require("./js-dos-fs");
 var js_dos_options_1 = require("./js-dos-options");
 var js_dos_ui_1 = require("./js-dos-ui");
-
-var DosModule = function (_js_dos_options_1$Dos) {
-    _inherits(DosModule, _js_dos_options_1$Dos);
-
+var DosModule = /** @class */function (_super) {
+    __extends(DosModule, _super);
     function DosModule(canvas, onready) {
-        _classCallCheck(this, DosModule);
-
-        var _this = _possibleConstructorReturn(this, (DosModule.__proto__ || Object.getPrototypeOf(DosModule)).call(this));
-
+        var _this = _super.call(this) || this;
         _this.isValid = false;
-        _this.canvas = null;
         _this.version = js_dos_build_1.Build.version;
         _this.ci = null;
         _this.fs = null;
@@ -827,341 +694,220 @@ var DosModule = function (_js_dos_options_1$Dos) {
         _this.registerDefaultListeners();
         return _this;
     }
-
-    _createClass(DosModule, [{
-        key: "registerDefaultListeners",
-        value: function registerDefaultListeners() {
-            var _this2 = this;
-
-            var hidden = void 0;
-            var visibilityChange = void 0;
-            if (typeof document.hidden !== "undefined") {
-                hidden = "hidden";
-                visibilityChange = "visibilitychange";
-            } else if (typeof document.mozHidden !== "undefined") {
-                hidden = "mozHidden";
-                visibilityChange = "mozvisibilitychange";
-            } else if (typeof document.msHidden !== "undefined") {
-                hidden = "msHidden";
-                visibilityChange = "msvisibilitychange";
-            } else if (typeof document.webkitHidden !== "undefined") {
-                hidden = "webkitHidden";
-                visibilityChange = "webkitvisibilitychange";
-            }
-            document.addEventListener(visibilityChange, function () {
-                document[hidden] ? _this2.pause() : _this2.resume();
-            }, false);
-            window.addEventListener("beforeunload", function () {
-                _this2.terminate();
-            });
+    DosModule.prototype.registerDefaultListeners = function () {
+        var _this = this;
+        var hidden;
+        var visibilityChange;
+        if (typeof document.hidden !== "undefined") {
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
+        } else if (typeof document.mozHidden !== "undefined") {
+            hidden = "mozHidden";
+            visibilityChange = "mozvisibilitychange";
+        } else if (typeof document.msHidden !== "undefined") {
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
+        } else if (typeof document.webkitHidden !== "undefined") {
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
         }
-        // ### logging
-        // DosModule implements simply logging features:
-        // `debug`, `info`, `warn`, `error` methods
-
-    }, {
-        key: "debug",
-        value: function debug(message) {
+        document.addEventListener("visibilityChange", function () {
+            document[hidden] ? _this.pause() : _this.resume();
+        }, false);
+        window.addEventListener("beforeunload", function () {
+            _this.terminate();
+        });
+    };
+    // ### logging
+    // DosModule implements simply logging features:
+    // `debug`, `info`, `warn`, `error` methods
+    DosModule.prototype.debug = function (message) {
+        if (this.log !== undefined) {
             this.log("[DEBUG] " + message);
         }
-    }, {
-        key: "info",
-        value: function info(message) {
+    };
+    DosModule.prototype.info = function (message) {
+        if (this.log !== undefined) {
             this.log("[INFO] " + message);
         }
-    }, {
-        key: "warn",
-        value: function warn(message) {
+    };
+    DosModule.prototype.warn = function (message) {
+        if (this.log !== undefined) {
             this.log("[WARN] " + message);
         }
-    }, {
-        key: "error",
-        value: function error(message) {
+    };
+    DosModule.prototype.error = function (message) {
+        if (this.log !== undefined) {
             this.log("[ERROR] " + message);
         }
-        // ### ondosbox
-
-    }, {
-        key: "ondosbox",
-        value: function ondosbox(dosbox, instantiateWasm) {
-            this.info("DosBox resolved");
-            this.instantiateWasm = instantiateWasm;
-            this.instance = new dosbox(this);
+    };
+    // ### ondosbox
+    DosModule.prototype.ondosbox = function (dosbox, instantiateWasm) {
+        this.info("DosBox resolved");
+        this.instantiateWasm = instantiateWasm;
+        this.instance = new dosbox(this);
+    };
+    // Method `ondosbox` is called when
+    // [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host) is resolved.
+    // This method instaniate wasm dosbox module with `this` as emscripten
+    // module object. It means that emscripten will call
+    // `this.onRuntimeInitialized` when runtime will be ready
+    DosModule.prototype.resolve = function () {
+        var _this = this;
+        if (!this.wdosboxUrl) {
+            this.wdosboxUrl = "wdosbox.js";
         }
-        // Method `ondosbox` is called when
-        // [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host) is resolved.
-        // This method instaniate wasm dosbox module with `this` as emscripten
-        // module object. It means that emscripten will call
-        // `this.onRuntimeInitialized` when runtime will be ready
-
-    }, {
-        key: "resolve",
-        value: function resolve() {
-            var _this3 = this;
-
-            if (!this.wdosboxUrl) {
-                this.wdosboxUrl = "wdosbox.js";
-            }
-            if (!this.log) {
-                /* tslint:disable:no-console */
-                this.log = function (message) {
-                    return console.log(message);
-                };
-            }
-            if (!this.canvas) {
+        if (!this.log) {
+            /* tslint:disable:no-console */
+            this.log = function (message) {
+                return console.log(message);
+            };
+        }
+        if (!this.canvas) {
+            if (this.onerror !== undefined) {
                 this.onerror("canvas field is required, but not set!");
-                return;
             }
-            if (!this.onprogress) {
-                this.ui = new js_dos_ui_1.DosUi(this);
-                this.onprogress = function (stage, total, loaded) {
-                    return _this3.ui.onprogress(stage, total, loaded);
-                };
-            }
-            // ### sdl defaults
-            // DosModule overrides defaults for emscripten SDL wrapper
-            // for maximum performance
-            this.SDL = {
-                defaults: {
-                    widht: 320,
-                    height: 200,
-                    copyOnLock: false,
-                    discardOnLock: true,
-                    opaqueFrontBuffer: false
+            return;
+        }
+        if (!this.onprogress) {
+            this.ui = new js_dos_ui_1.DosUi(this);
+            this.onprogress = function (stage, total, loaded) {
+                if (_this.ui !== null) {
+                    _this.ui.onprogress(stage, total, loaded);
                 }
             };
-            this.isValid = true;
         }
-        // ### onRuntimeInitialized
-
-    }, {
-        key: "onRuntimeInitialized",
-        value: function onRuntimeInitialized() {
-            var _this4 = this;
-
-            var mainFn = function mainFn(args) {
-                // When emscripten runtime is initialized and main
-                // function is called:
-                //
-                // * DosModule detach [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui)
-                if (_this4.ui !== null) {
-                    _this4.ui.detach();
-                    _this4.ui = null;
-                }
-                if (!args) {
-                    args = [];
-                }
-                _this4.fs.chdir("/");
-                // * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
-                // file to user directory
-                _this4.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", js_dos_conf_1.jsdosconf);
-                // * Mount emscripten FS as drive c:
-                args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
-                // * Run dosbox with passed arguments and resolve
-                // [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
-                _this4.callMain(args);
-                return new Promise(function (resolve) {
-                    new js_dos_ci_1.DosCommandInterface(_this4, function (ci) {
-                        resolve(ci);
-                    });
+        // ### sdl defaults
+        // DosModule overrides defaults for emscripten SDL wrapper
+        // for maximum performance
+        this.SDL = {
+            defaults: {
+                widht: 320,
+                height: 200,
+                copyOnLock: false,
+                discardOnLock: true,
+                opaqueFrontBuffer: false
+            }
+        };
+        this.isValid = true;
+    };
+    // ### onRuntimeInitialized
+    DosModule.prototype.onRuntimeInitialized = function () {
+        var _this = this;
+        var mainFn = function mainFn(args) {
+            // When emscripten runtime is initialized and main
+            // function is called:
+            //
+            // * DosModule detach [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui)
+            if (_this.ui !== null) {
+                _this.ui.detach();
+                _this.ui = null;
+            }
+            if (!args) {
+                args = [];
+            }
+            if (_this.fs === null) {
+                return new Promise(function (resolve, reject) {
+                    reject("IllegalState: fs is null");
                 });
-            };
-            this.fs = new js_dos_fs_1.DosFS(this);
-            this.onready({
-                fs: this.fs,
-                main: mainFn
+            }
+            _this.fs.chdir("/");
+            // * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
+            // file to user directory
+            _this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", js_dos_conf_1.jsdosconf);
+            // * Mount emscripten FS as drive c:
+            args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
+            // * Run dosbox with passed arguments and resolve
+            // [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
+            _this.callMain(args);
+            return new Promise(function (resolve) {
+                new js_dos_ci_1.DosCommandInterface(_this, function (ci) {
+                    resolve(ci);
+                });
             });
+        };
+        this.fs = new js_dos_fs_1.DosFS(this);
+        this.onready({
+            fs: this.fs,
+            main: mainFn
+        });
+    };
+    // ### registerTickListener
+    // registred tick listener it will be called each frame
+    DosModule.prototype.registerTickListener = function (listener) {
+        this.tickListeners.push(listener);
+    };
+    // ### registerPauseListener
+    // registred tick listener it will be called each frame
+    DosModule.prototype.registerPauseListener = function (listener) {
+        this.pauseListeners.push(listener);
+    };
+    // ### registerResumeListener
+    // registred tick listener it will be called each frame
+    DosModule.prototype.registerResumeListener = function (listener) {
+        this.resumeListeners.push(listener);
+    };
+    // ### registerTerminateListener
+    // registred tick listener it will be called each frame
+    DosModule.prototype.registerTerminateListener = function (listener) {
+        this.terminateListeners.push(listener);
+    };
+    // ### tick
+    // tick is called internally each frame, no need to call
+    // it manually
+    DosModule.prototype.tick = function () {
+        for (var _i = 0, _a = this.tickListeners; _i < _a.length; _i++) {
+            var l = _a[_i];
+            l();
         }
-        // ### registerTickListener
-        // registred tick listener it will be called each frame
-
-    }, {
-        key: "registerTickListener",
-        value: function registerTickListener(listener) {
-            this.tickListeners.push(listener);
+    };
+    // ### pause
+    // pause is called when dosbox tab became inactive
+    DosModule.prototype.pause = function () {
+        for (var _i = 0, _a = this.pauseListeners; _i < _a.length; _i++) {
+            var l = _a[_i];
+            l();
         }
-        // ### registerPauseListener
-        // registred tick listener it will be called each frame
-
-    }, {
-        key: "registerPauseListener",
-        value: function registerPauseListener(listener) {
-            this.pauseListeners.push(listener);
+    };
+    // ### tick
+    // resume is called when dosbox tab became active
+    DosModule.prototype.resume = function () {
+        for (var _i = 0, _a = this.resumeListeners; _i < _a.length; _i++) {
+            var l = _a[_i];
+            l();
         }
-        // ### registerResumeListener
-        // registred tick listener it will be called each frame
-
-    }, {
-        key: "registerResumeListener",
-        value: function registerResumeListener(listener) {
-            this.resumeListeners.push(listener);
+    };
+    // ### tick
+    // terminate is called when dosbox tab is closed
+    DosModule.prototype.terminate = function () {
+        for (var _i = 0, _a = this.terminateListeners; _i < _a.length; _i++) {
+            var l = _a[_i];
+            l();
         }
-        // ### registerTerminateListener
-        // registred tick listener it will be called each frame
-
-    }, {
-        key: "registerTerminateListener",
-        value: function registerTerminateListener(listener) {
-            this.terminateListeners.push(listener);
-        }
-        // ### tick
-        // tick is called internally each frame, no need to call
-        // it manually
-
-    }, {
-        key: "tick",
-        value: function tick() {
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = this.tickListeners[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var l = _step.value;
-
-                    l();
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-        }
-        // ### pause
-        // pause is called when dosbox tab became inactive
-
-    }, {
-        key: "pause",
-        value: function pause() {
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-                for (var _iterator2 = this.pauseListeners[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var l = _step2.value;
-
-                    l();
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-        }
-        // ### tick
-        // resume is called when dosbox tab became active
-
-    }, {
-        key: "resume",
-        value: function resume() {
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                for (var _iterator3 = this.resumeListeners[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var l = _step3.value;
-
-                    l();
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
-        }
-        // ### tick
-        // terminate is called when dosbox tab is closed
-
-    }, {
-        key: "terminate",
-        value: function terminate() {
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
-
-            try {
-                for (var _iterator4 = this.terminateListeners[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                    var l = _step4.value;
-
-                    l();
-                }
-            } catch (err) {
-                _didIteratorError4 = true;
-                _iteratorError4 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                        _iterator4.return();
-                    }
-                } finally {
-                    if (_didIteratorError4) {
-                        throw _iteratorError4;
-                    }
-                }
-            }
-        }
-    }]);
-
+    };
     return DosModule;
 }(js_dos_options_1.DosOptions);
-
 exports.DosModule = DosModule;
 
 },{"./js-dos-build":1,"./js-dos-ci":5,"./js-dos-conf":6,"./js-dos-fs":7,"./js-dos-options":10,"./js-dos-ui":11}],10:[function(require,module,exports){
 "use strict";
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 Object.defineProperty(exports, "__esModule", { value: true });
-
-var DosOptions = function DosOptions() {
-  _classCallCheck(this, DosOptions);
-};
-
+var DosOptions = /** @class */function () {
+    function DosOptions() {}
+    return DosOptions;
+}();
 exports.DosOptions = DosOptions;
 
 },{}],11:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 Object.defineProperty(exports, "__esModule", { value: true });
-
-var DosUi = function () {
+var DosUi = /** @class */function () {
     function DosUi(dos) {
-        _classCallCheck(this, DosUi);
-
+        this.overlay = null;
+        this.loaderMessage = null;
+        this.hidden = true;
         // ### Style
         /* tslint:disable:member-ordering */
         /* tslint:disable:max-line-length */
@@ -1183,19 +929,25 @@ var DosUi = function () {
                 style.innerHTML = this.css;
                 document.head.appendChild(style);
             }
-            if (this.canvas.parentElement.className !== "dosbox-container") {
-                var _container = document.createElement("div");
-                _container.className = "dosbox-container";
-                var parent = this.canvas.parentElement;
-                parent.replaceChild(_container, this.canvas);
-                _container.appendChild(this.canvas);
+            if (this.canvas.parentElement !== null && this.canvas.parentElement.className !== "dosbox-container") {
+                var container_1 = document.createElement("div");
+                container_1.className = "dosbox-container";
+                var parent_1 = this.canvas.parentElement;
+                parent_1.replaceChild(container_1, this.canvas);
+                container_1.appendChild(this.canvas);
                 var overlay = document.createElement("div");
                 overlay.className = "dosbox-overlay";
-                _container.appendChild(overlay);
+                container_1.appendChild(overlay);
                 overlay.innerHTML = this.overlayHtml;
             }
             var container = this.canvas.parentElement;
+            if (container === null) {
+                throw new Error("Illegal state, container is null");
+            }
             this.overlay = this.childById(container, "dosbox-overlay");
+            if (this.overlay === null) {
+                throw new Error("Illegal state, overlay is null");
+            }
             this.loaderMessage = this.childById(this.overlay, "dosbox-loader-message");
             this.hidden = true;
             this.show();
@@ -1203,79 +955,65 @@ var DosUi = function () {
             this.onprogress = this.onprogressFallback;
         }
     }
-
-    _createClass(DosUi, [{
-        key: "onprogress",
-        value: function onprogress(stage, total, loaded) {
-            var message = stage + " " + Math.round(loaded * 100 / total * 10) / 10 + "%";
+    DosUi.prototype.onprogress = function (stage, total, loaded) {
+        var message = stage + " " + Math.round(loaded * 100 / total * 10) / 10 + "%";
+        if (this.loaderMessage !== null) {
             this.loaderMessage.innerHTML = message;
-            this.dos.info(message);
-            if (loaded >= total) {
-                this.hide();
-            } else {
-                this.show();
-            }
         }
-    }, {
-        key: "detach",
-        value: function detach() {
+        this.dos.info(message);
+        if (loaded >= total) {
             this.hide();
-            this.onprogress = this.onprogressFallback;
+        } else {
+            this.show();
         }
-    }, {
-        key: "hide",
-        value: function hide() {
-            if (this.hidden) {
-                return;
-            }
-            this.hidden = true;
+    };
+    DosUi.prototype.detach = function () {
+        this.hide();
+        this.onprogress = this.onprogressFallback;
+    };
+    DosUi.prototype.hide = function () {
+        if (this.hidden) {
+            return;
+        }
+        this.hidden = true;
+        if (this.overlay !== null) {
             this.overlay.setAttribute("style", "display: none");
         }
-    }, {
-        key: "show",
-        value: function show() {
-            if (!this.hidden) {
-                return;
-            }
-            this.hidden = false;
+    };
+    DosUi.prototype.show = function () {
+        if (!this.hidden) {
+            return;
+        }
+        this.hidden = false;
+        if (this.overlay !== null) {
             this.overlay.setAttribute("style", "display: block");
         }
-    }, {
-        key: "onprogressFallback",
-        value: function onprogressFallback(stage, total, loaded) {
-            this.dos.info(stage + " " + loaded * 100 / total + "%");
-        }
-    }, {
-        key: "childById",
-        value: function childById(parent, className) {
-            if (parent === null) {
-                return null;
-            }
-            for (var i = 0; i < parent.childElementCount; ++i) {
-                var child = parent.children[i];
-                if (child.className === className) {
-                    return child;
-                }
-                child = this.childById(child, className);
-                if (child !== null) {
-                    return child;
-                }
-            }
+    };
+    DosUi.prototype.onprogressFallback = function (stage, total, loaded) {
+        this.dos.info(stage + " " + loaded * 100 / total + "%");
+    };
+    DosUi.prototype.childById = function (parent, className) {
+        if (parent === null) {
             return null;
         }
-    }]);
-
+        for (var i = 0; i < parent.childElementCount; ++i) {
+            var child = parent.children[i];
+            if (child.className === className) {
+                return child;
+            }
+            child = this.childById(child, className);
+            if (child !== null) {
+                return child;
+            }
+        }
+        return null;
+    };
     return DosUi;
 }();
-
 exports.DosUi = DosUi;
 
 },{}],12:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var js_dos_cache_noop_1 = require("./js-dos-cache-noop");
@@ -1286,13 +1024,10 @@ var js_dos_cache_noop_1 = require("./js-dos-cache-noop");
 // * `data` - data for POST request, should typeof `application/x-www-form-urlencoded`
 // * `responseType` - XMLHttpRequestResponseType
 // Class Xhr does not have any public methods
-
-var Xhr = function () {
+var Xhr = /** @class */function () {
     function Xhr(url, options) {
         var _this = this;
-
-        _classCallCheck(this, Xhr);
-
+        this.xhr = null;
         this.total = 0;
         this.loaded = 0;
         this.resource = url;
@@ -1301,75 +1036,71 @@ var Xhr = function () {
         this.cache = options.cache || new js_dos_cache_noop_1.default();
         if (this.options.method === "GET") {
             this.cache.get(this.resource, function (data) {
-                _this.options.success(data);
+                if (_this.options.success !== undefined) {
+                    _this.options.success(data);
+                }
             }, function () {
                 _this.makeHttpRequest();
             });
         }
     }
-
-    _createClass(Xhr, [{
-        key: "makeHttpRequest",
-        value: function makeHttpRequest() {
-            var _this2 = this;
-
-            this.xhr = new XMLHttpRequest();
-            this.xhr.open(this.options.method, this.resource, true);
-            if (this.options.method === "POST") {
-                this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            }
-            this.xhr.overrideMimeType("text/plain; charset=x-user-defined");
-            var progressListner = void 0;
-            if (typeof (progressListner = this.xhr).addEventListener === "function") {
-                progressListner.addEventListener("progress", function (evt) {
-                    _this2.total = evt.total;
-                    _this2.loaded = evt.loaded;
-                    if (_this2.options.progress) {
-                        return _this2.options.progress(evt.total, evt.loaded);
-                    }
-                });
-            }
-            var errorListener = void 0;
-            if (typeof (errorListener = this.xhr).addEventListener === "function") {
-                errorListener.addEventListener("error", function (evt) {
-                    if (_this2.options.fail) {
-                        _this2.options.fail(_this2.resource, _this2.xhr.status, "connection problem");
-                        return delete _this2.options.fail;
-                    }
-                });
-            }
-            this.xhr.onreadystatechange = function () {
-                return _this2.onReadyStateChange();
-            };
-            if (this.options.responseType) {
-                this.xhr.responseType = this.options.responseType;
-            }
-            this.xhr.send(this.options.data);
+    Xhr.prototype.makeHttpRequest = function () {
+        var _this = this;
+        this.xhr = new XMLHttpRequest();
+        this.xhr.open(this.options.method || "GET", this.resource, true);
+        if (this.options.method === "POST") {
+            this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         }
-    }, {
-        key: "onReadyStateChange",
-        value: function onReadyStateChange() {
-            if (this.xhr.readyState === 4) {
-                if (this.xhr.status === 200) {
-                    if (this.options.success) {
-                        var total = Math.max(this.total, this.loaded);
-                        this.options.progress(total, total);
-                        if (this.options.method === "GET" && this.resource.indexOf("?") < 0) {
-                            this.cache.put(this.resource, this.xhr.response, function () {});
-                        }
-                        return this.options.success(this.xhr.response);
-                    }
-                } else if (this.options.fail) {
-                    this.options.fail(this.resource, this.xhr.status, "connection problem");
-                    return delete this.options.fail;
+        this.xhr.overrideMimeType("text/plain; charset=x-user-defined");
+        var progressListner;
+        if (typeof (progressListner = this.xhr).addEventListener === "function") {
+            progressListner.addEventListener("progress", function (evt) {
+                _this.total = evt.total;
+                _this.loaded = evt.loaded;
+                if (_this.options.progress) {
+                    return _this.options.progress(evt.total, evt.loaded);
                 }
+            });
+        }
+        var errorListener;
+        if (typeof (errorListener = this.xhr).addEventListener === "function") {
+            errorListener.addEventListener("error", function (evt) {
+                if (_this.options.fail) {
+                    _this.options.fail(_this.resource, _this.xhr.status, "connection problem");
+                    return delete _this.options.fail;
+                }
+            });
+        }
+        this.xhr.onreadystatechange = function () {
+            return _this.onReadyStateChange();
+        };
+        if (this.options.responseType) {
+            this.xhr.responseType = this.options.responseType;
+        }
+        this.xhr.send(this.options.data);
+    };
+    Xhr.prototype.onReadyStateChange = function () {
+        var xhr = this.xhr;
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                if (this.options.success) {
+                    var total = Math.max(this.total, this.loaded);
+                    if (this.options.progress !== undefined) {
+                        this.options.progress(total, total);
+                    }
+                    if (this.options.method === "GET" && this.resource.indexOf("?") < 0) {
+                        this.cache.put(this.resource, xhr.response, function () {});
+                    }
+                    return this.options.success(xhr.response);
+                }
+            } else if (this.options.fail) {
+                this.options.fail(this.resource, xhr.status, "connection problem");
+                return delete this.options.fail;
             }
         }
-    }]);
-
+    };
     return Xhr;
 }();
-
 exports.Xhr = Xhr;
 
 },{"./js-dos-cache-noop":3}],13:[function(require,module,exports){
@@ -2874,10 +2605,6 @@ exports.doReady = doReady;
 /* tslint:disable:max-line-length */
 /* tslint:disable:no-console */
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 Object.defineProperty(exports, "__esModule", { value: true });
 var assert = require("assert");
 var js_dos_1 = require("../js-dos-ts/js-dos");
@@ -2908,34 +2635,21 @@ test("loader should notify about error, if it can't download wdosbox", function 
 test("loader should show progress loading and use cache", function (done) {
     var isGET = false;
     var isPUT = false;
-
-    var TestCache = function () {
-        function TestCache() {
-            _classCallCheck(this, TestCache);
-        }
-
-        _createClass(TestCache, [{
-            key: "put",
-            value: function put(key, data, onflush) {
-                isPUT = isPUT || key === "/wdosbox.wasm.js" && data instanceof ArrayBuffer && data.byteLength > 0;
-                onflush();
-            }
-        }, {
-            key: "get",
-            value: function get(key, ondata, onerror) {
-                isGET = isGET || key === "/wdosbox.wasm.js";
-                onerror("not in cache");
-            }
-        }, {
-            key: "forEach",
-            value: function forEach(each, onend) {
-                onend();
-            }
-        }]);
-
+    var TestCache = /** @class */function () {
+        function TestCache() {}
+        TestCache.prototype.put = function (key, data, onflush) {
+            isPUT = isPUT || key === "/wdosbox.wasm.js" && data instanceof ArrayBuffer && data.byteLength > 0;
+            onflush();
+        };
+        TestCache.prototype.get = function (key, ondata, onerror) {
+            isGET = isGET || key === "/wdosbox.wasm.js";
+            onerror("not in cache");
+        };
+        TestCache.prototype.forEach = function (each, onend) {
+            onend();
+        };
         return TestCache;
     }();
-
     var lastLoaded = -1;
     js_dos_host_1.Host.resolveDosBox("/wdosbox.js", new TestCache(), {
         onprogress: function onprogress(stage, total, loaded) {

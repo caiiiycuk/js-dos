@@ -77,7 +77,7 @@ export function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
         openCache(module, (cache) => {
             // See [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host)
             // to understand resolving of emulation layer (dosbox).
-            Host.resolveDosBox(module.wdosboxUrl, cache, module);
+            Host.resolveDosBox(module.wdosboxUrl as string, cache, module);
         });
 
     });
