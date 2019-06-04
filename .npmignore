@@ -16,5 +16,6 @@ tslint.json
 6.22*.zip
 dev.js
 test
-dist/test
+dist/test/ra.zip
+dist/test/ra.html
 cmake-build-*
