@@ -2,11 +2,6 @@
     "files": ["js-dos-ts/js-dos.ts"],
     "compilerOptions": {
         "target": "es5",
-        "lib": [
-          "dom",
-          "dom.iterable",
-          "esnext"
-        ],
         "allowJs": false,
         "skipLibCheck": true,
         "esModuleInterop": true,

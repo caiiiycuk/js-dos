@@ -36,8 +36,6 @@ As emulation layer js-dos uses [DosBox ported to emscripten](https://github.com/
 ```
 
 import openCache from "./js-dos-cache";
-import CacheDb from "./js-dos-cache-db";
-import CacheNoop from "./js-dos-cache-noop";
 import { DosCommandInterface } from "./js-dos-ci";
 import { DosFS } from "./js-dos-fs";
 import { Host } from "./js-dos-host";
@@ -66,7 +64,8 @@ optional configuration object
   
 
 ```
-export default function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
+export type DosFactory = (canvas: HTMLCanvasElement, options?: DosOptions) => DosReadyPromise;
+const Dos: DosFactory = (canvas: HTMLCanvasElement, options?: DosOptions) => {
     const promise = new Promise<DosRuntime>((resolve, reject) => {
         const module = new DosModule(canvas, resolve);
 
@@ -174,7 +173,9 @@ split resolved object into meaningful parts.
         return dosReadyPromise;
     };
     return dosReadyPromise;
-}
+};
+
+export default Dos;
 
 export type DosMainFn = (args?: string[]) => Promise<DosCommandInterface>;
 
