@@ -9,9 +9,7 @@ Is abstraction that allows you to control runned instance of js-dos
   
 
 ```
-import { Dos } from "./js-dos";
 import { DosModule } from "./js-dos-module";
-import { Xhr } from "./js-dos-xhr";
 
 export class DosCommandInterface {
     public dos: DosModule;

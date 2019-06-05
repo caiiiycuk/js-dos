@@ -66,7 +66,7 @@ optional configuration object
   
 
 ```
-export function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
+export default function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
     const promise = new Promise<DosRuntime>((resolve, reject) => {
         const module = new DosModule(canvas, resolve);
 

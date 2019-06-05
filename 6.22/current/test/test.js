@@ -6,8 +6,8 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.24 (6e93fa56ae0e19afd6fc3a369f1948e5)",
-    jsVersion: "b9a1faaeaff4a6840435a2d2bbcb71db511a527f",
+    version: "6.22.25 (731439e3b59c1a12db29c9a4386d16a3)",
+    jsVersion: "5ef1a9e02e40bfd52a96b51368f437dbf30443b5",
     jsSize: 468455,
     wasmVersion: "d9f429891f4b5026d1dacb873f8f7a2a",
     wasmSize: 2140358
@@ -1184,7 +1184,7 @@ function Dos(canvas, options) {
     };
     return dosReadyPromise;
 }
-exports.Dos = Dos;
+exports.default = Dos;
 window.Dos = Dos;
 
 },{"./js-dos-cache":4,"./js-dos-host":8,"./js-dos-module":9}],14:[function(require,module,exports){
@@ -2695,7 +2695,7 @@ test("loader should fire event when wdosbox is loaded", function (done) {
 });
 suite("js-dos");
 test("js-dos can't start without canvas (listener style)", function (done) {
-    js_dos_1.Dos(null, {
+    js_dos_1.default(null, {
         wdosboxUrl: "/wdosbox.js",
         onerror: function onerror(message) {
             assert.equal("canvas field is required, but not set!", message);
@@ -2704,7 +2704,7 @@ test("js-dos can't start without canvas (listener style)", function (done) {
     });
 });
 test("js-dos can't start without canvas (promise style)", function (done) {
-    var dos = js_dos_1.Dos(null, {
+    var dos = js_dos_1.default(null, {
         wdosboxUrl: "/wdosbox.js"
     });
     do_1.doCatch(dos, function (message) {
@@ -2716,7 +2716,7 @@ test("js-dos can't start without canvas (promise style)", function (done) {
     });
 });
 test("js-dos can't start without canvas (ready style)", function (done) {
-    var dos = js_dos_1.Dos(null, {
+    var dos = js_dos_1.default(null, {
         wdosboxUrl: "/wdosbox.js"
     });
     var promise = dos.ready(function (fs, main) {
@@ -2731,7 +2731,7 @@ test("js-dos can't start without canvas (ready style)", function (done) {
     });
 });
 test("js-dos should start with canvas", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js"
     });
     do_1.doReady(dos, function (fs, main) {
@@ -2742,7 +2742,7 @@ test("js-dos should start with canvas", function (done) {
     });
 });
 test("js-dos can take screenshot of canvas", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js"
     });
     do_1.doReady(dos, function (fs, main) {
@@ -2753,7 +2753,7 @@ test("js-dos can take screenshot of canvas", function (done) {
 });
 suite("js-dos-fs");
 test("js-dos-fs createFile error handling", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js",
         onerror: function onerror(message) {
             assert.equal(message, "Can't create file '', because file name is empty");
@@ -2765,7 +2765,7 @@ test("js-dos-fs createFile error handling", function (done) {
     });
 });
 test("js-dos-fs createFile error handling 2", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js",
         onerror: function onerror(message) {
             assert.equal(message, "Can't create file '/home/', because file name is empty");
@@ -2777,7 +2777,7 @@ test("js-dos-fs createFile error handling 2", function (done) {
     });
 });
 test("js-dos-fs can create file", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js",
         onerror: function onerror(message) {
             assert.fail();
@@ -2793,7 +2793,7 @@ test("js-dos-fs can create file", function (done) {
     });
 });
 test("js-dos-fs can create file (windows path)", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js",
         onerror: function onerror(message) {
             assert.fail();
@@ -2820,7 +2820,7 @@ test("js-dos-fs clearing IDBFS db", function (done) {
 });
 test("js-dos-fs can mount archive on persistent point [empty db]", function (done) {
     var isOnProgress = false;
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js",
         onerror: function onerror(message) {
             assert.fail();
@@ -2841,7 +2841,7 @@ test("js-dos-fs can mount archive on persistent point [empty db]", function (don
     });
 });
 test("js-dos-fs can mount archive on persistent point [existent db]", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js",
         onerror: function onerror(message) {
             assert.fail();
@@ -2862,7 +2862,7 @@ test("js-dos-fs can mount archive on persistent point [existent db]", function (
 });
 suite("js-dos");
 test("js-dos should provide user level dosbox.conf", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js",
         onerror: function onerror(message) {
             assert.fail();
@@ -2876,7 +2876,7 @@ test("js-dos should provide user level dosbox.conf", function (done) {
     });
 });
 test("js-dos can create and read dosbox.conf", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js",
         onerror: function onerror(message) {
             assert.fail();
@@ -2890,7 +2890,7 @@ test("js-dos can create and read dosbox.conf", function (done) {
     });
 });
 test("js-dos can run digger.zip", function (done) {
-    var dos = js_dos_1.Dos(document.getElementById("canvas"), {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
         wdosboxUrl: "/wdosbox.js"
     });
     do_1.doReady(dos, function (fs, main) {
