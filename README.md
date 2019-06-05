@@ -53,7 +53,7 @@ It contains this initialization steps:
 dosbox -c DIGGER.COM
 ```
 
-Dos has couple configuration [options](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) that you can pass as second argument `Dos(canvas, options)`.
+Dos has couple configuration [options](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) that you can pass as second argument `Dos(canvas, options)`.
 
 ## HTML template
 
@@ -103,9 +103,38 @@ You can obtain latest build using this links:
 version, and newest version can have breaking changes. Is better to use npx bootstrap command (above), or download latest
 version from github [releases](https://github.com/caiiiycuk/js-dos/releases) page.
 
+
+## Npm module
+
+You can use js-dos as npm module.
+
+1) Install module package
+
+```sh
+npm install --save js-dos
+```
+
+2) Import Dos module with require
+
+```js
+require("js-dos");
+```
+
+This code will automatically inject Dos function into window object. js-dos module also includes typescript sources.
+In typescript environment you can use it with typechecking:
+
+```ts
+import { DosFactory } from "js-dos";
+require("js-dos");
+
+const Dos = (window as any).Dos as DosFactory;
+```
+
+See example of React component in FAQ section
+
 ## API Reference
 
-Read about api provided by js-dos in [**API Reference**](http://js-dos.com/6.22/docs/)
+Read about api provided by js-dos in [**API Reference**](https://js-dos.com/6.22/docs/)
 
 ## FAQ
 
@@ -162,10 +191,10 @@ You can
 
 ### How to override dosbox.conf
 
-By default js-dos uses builtin dosbox [config](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf) file.
+By default js-dos uses builtin dosbox [config](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf) file.
 However you can override it with your config file. To do this you can simply put file named `dosbox.conf` inside root of
 program archive and then pass command line argument to read it `-c dosbox.conf`. Or you can write this file directly from
-javascript with [fs.createFile](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-createfile).
+javascript with [fs.createFile](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-createfile).
 
 For example, you can add `[autoexec]` section to print dosbox.conf file:
 ```javascript
@@ -183,7 +212,7 @@ For example, you can add `[autoexec]` section to print dosbox.conf file:
 ### How to disable js-dos loading UI
 
 By default js-dos will show progress of loading dosbox and extracting archives, but you can disable this feature. To
-do this you need define onprogress handler in [DosOptions](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
+do this you need define onprogress handler in [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
 
 ```javascript
     Dos(canvas, { 
@@ -272,7 +301,7 @@ No need to cache js-dos scripts, because they are automatically added to indexed
 
 ### Taking screenshot
 
-When your program is runned you can take screenshot with special [CommandInterface.screenshot()](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci). That is returned by main promise:
+When your program is runned you can take screenshot with special [CommandInterface.screenshot()](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci). That is returned by main promise:
 ```javascript
 Dos(canvas).ready((fs, main) => {
     fs.extract("digger.zip").then(() => {
@@ -290,7 +319,7 @@ Data is an ImageData from canvas object
 
 ### Exiting from js-dos
 
-Sometimes needed to stop execution of dosbox to free resources or whatever. You can do this with [CommandInterface.exit()](http://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci):
+Sometimes needed to stop execution of dosbox to free resources or whatever. You can do this with [CommandInterface.exit()](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci):
 ```javascript
 Dos(canvas).ready((fs, main) => {
     fs.extract("digger.zip").then(() => {
@@ -301,27 +330,44 @@ Dos(canvas).ready((fs, main) => {
 });
 ```
 
-## Using as module
+### React component (typescript)
 
-You can use js-dos as module in typescript.
-
-1) Install module package
-
-```sh
-npm install --save js-dos
-```
-
-2) Import Dos module
+This comonent is only demostrate how you can use js-dos with React framework.
 
 ```ts
-import { Dos } from "js-dos/dist/typescript/js-dos";
+import React, { useRef, useEffect } from "react";
 
-new Dos(canvas).ready((fs, main) => {
-    fs.extract("digger.zip").then(() => {
-        main(["-c", "DIGGER.COM"])
-    });
-});
+import { DosFactory } from "js-dos";
+require("js-dos");
+const Dos = (window as any).Dos as DosFactory;
+
+
+const JsDos: React.FC = () => {
+    const ref = useRef<HTMLCanvasElement>(null);
+
+    useEffect(() => {
+        if (ref !== null) {
+            const ciPromise = Dos(ref.current as HTMLCanvasElement, {
+                wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js",
+            }).then((runtime) => {
+                return runtime.fs.extract("https://js-dos.com/6.22/current/test/digger.zip").then(() => {
+                    return runtime.main(["-c", "DIGGER.COM"]);
+                });
+            });
+
+            return () => {
+                ciPromise.then(ci => ci.exit());
+            };
+        }
+    }, [ref]);
+
+    return <canvas ref={ref} />;
+}
+
+export default JsDos;
 ```
+
+Then you can use it as simple html tag ```<JsDos />```
 
 ## Building
 
