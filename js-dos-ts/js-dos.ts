@@ -29,7 +29,7 @@ import { DosOptions } from "./js-dos-options";
 // * `canvas`: HTMLCanvasElement - this canvas element is used as window for dosbox
 // * `options`: [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) -
 // optional configuration object
-export function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
+export default function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
     const promise = new Promise<DosRuntime>((resolve, reject) => {
         const module = new DosModule(canvas, resolve);
 

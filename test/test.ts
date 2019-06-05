@@ -2,7 +2,7 @@
 /* tslint:disable:no-console */
 
 import * as assert from "assert";
-import { Dos } from "../js-dos-ts/js-dos";
+import Dos from "../js-dos-ts/js-dos";
 import { ICache } from "../js-dos-ts/js-dos-cache";
 import CacheDb from "../js-dos-ts/js-dos-cache-db";
 import CacheNoop from "../js-dos-ts/js-dos-cache-noop";
