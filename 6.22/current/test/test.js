@@ -6,8 +6,8 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.25 (731439e3b59c1a12db29c9a4386d16a3)",
-    jsVersion: "5ef1a9e02e40bfd52a96b51368f437dbf30443b5",
+    version: "6.22.26 (b53649c78614e3e09a480ad91bcb435c)",
+    jsVersion: "f794eec561a2b37dec17e279aefbc8e76c0b9e70",
     jsSize: 468455,
     wasmVersion: "d9f429891f4b5026d1dacb873f8f7a2a",
     wasmSize: 2140358
@@ -1121,15 +1121,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var js_dos_cache_1 = require("./js-dos-cache");
 var js_dos_host_1 = require("./js-dos-host");
 var js_dos_module_1 = require("./js-dos-module");
-// When you call `Dos(canvas, options)` js-dos behind the scene will download
-// dosbox and prepare it to start. This function will return `Promise<DosReadyPromise>`
-// that will be resolved when dosbox is ready. In case of error promise
-// will be rejected.
-//
-// * `canvas`: HTMLCanvasElement - this canvas element is used as window for dosbox
-// * `options`: [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) -
-// optional configuration object
-function Dos(canvas, options) {
+var Dos = function Dos(canvas, options) {
     var promise = new Promise(function (resolve, reject) {
         var module = new js_dos_module_1.DosModule(canvas, resolve);
         if (!options) {
@@ -1183,7 +1175,7 @@ function Dos(canvas, options) {
         return dosReadyPromise;
     };
     return dosReadyPromise;
-}
+};
 exports.default = Dos;
 window.Dos = Dos;
 

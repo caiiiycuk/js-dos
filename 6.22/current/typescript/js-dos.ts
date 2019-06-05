@@ -13,8 +13,6 @@
 // # Dos
 
 import openCache from "./js-dos-cache";
-import CacheDb from "./js-dos-cache-db";
-import CacheNoop from "./js-dos-cache-noop";
 import { DosCommandInterface } from "./js-dos-ci";
 import { DosFS } from "./js-dos-fs";
 import { Host } from "./js-dos-host";
@@ -29,7 +27,8 @@ import { DosOptions } from "./js-dos-options";
 // * `canvas`: HTMLCanvasElement - this canvas element is used as window for dosbox
 // * `options`: [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) -
 // optional configuration object
-export default function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
+export type DosFactory = (canvas: HTMLCanvasElement, options?: DosOptions) => DosReadyPromise;
+const Dos: DosFactory = (canvas: HTMLCanvasElement, options?: DosOptions) => {
     const promise = new Promise<DosRuntime>((resolve, reject) => {
         const module = new DosModule(canvas, resolve);
 
@@ -95,7 +94,9 @@ export default function Dos(canvas: HTMLCanvasElement, options?: DosOptions) {
         return dosReadyPromise;
     };
     return dosReadyPromise;
-}
+};
+
+export default Dos;
 
 export type DosMainFn = (args?: string[]) => Promise<DosCommandInterface>;
 
