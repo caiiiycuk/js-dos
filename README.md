@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos)
 
-6.22 is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox.
+6.22 is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox. Try our <a href="https://dosify.me">demo app</a>.
 
 You can found previous version here [v3](https://js-dos.com/index_v3.html)
 
