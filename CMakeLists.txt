@@ -13,6 +13,7 @@ if(${EMSCRIPTEN})
 		-s SAFE_HEAP=0 \
 		-s TOTAL_MEMORY=67108864 \
 		-s ALLOW_MEMORY_GROWTH=1 \
+		-s MALLOC=emmalloc \
 		-s INVOKE_RUN=0 \
 		-s MODULARIZE=1 \
 		-s EXPORT_NAME='WDOSBOX' \
