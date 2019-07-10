@@ -13,6 +13,7 @@ if(${EMSCRIPTEN})
 		-s SAFE_HEAP=0 \
 		-s TOTAL_MEMORY=67108864 \
 		-s ALLOW_MEMORY_GROWTH=1 \
+		-s TOTAL_STACK=1MB \
 		-s MALLOC=emmalloc \
 		-s INVOKE_RUN=0 \
 		-s MODULARIZE=1 \
@@ -23,6 +24,7 @@ if(${EMSCRIPTEN})
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString']\" \
 		-s NO_EXIT_RUNTIME=1 \
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
+	add_definitions(-DEMSCRIPTEN)		
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
 	add_definitions(-DDEBUG -DEMSCRIPTEN_KEEPALIVE=)
