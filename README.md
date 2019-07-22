@@ -7,7 +7,7 @@
 
 You can found previous version here [v3](https://js-dos.com/index_v3.html)
 
-**IMPORTANT: Please use version 6.22.28 because 6.22.29 is experemental and some test shows that it is slow in chrome.**
+**IMPORTANT: Please use version 6.22.28 because 6.22.29 is experemental and some tests shows that it is slow in chrome.**
 
 ## Bootstrap (NPX)
 
