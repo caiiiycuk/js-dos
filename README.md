@@ -7,6 +7,8 @@
 
 You can found previous version here [v3](https://js-dos.com/index_v3.html)
 
+**IMPORTANT: Please use version 6.22.28 because 6.22.29 is experemental and some test shows that it is slow in chrome.**
+
 ## Bootstrap (NPX)
 
 The fastest way to start with js-dos 6.22 is to use our bootstrap project. You can create simple web page that runs
