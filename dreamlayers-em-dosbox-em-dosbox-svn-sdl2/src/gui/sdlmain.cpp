@@ -2089,7 +2089,7 @@ static void GUI_StartUp(Section * sec) {
 			}
 			if (exit_splash) break;
 #if defined(JSDOS) && defined(EMTERPRETER_SYNC)
-			emscripten_sleep_with_yield(1);
+			emscripten_sleep(1);
 #endif
 
 			if (ct<1) {

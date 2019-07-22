@@ -19,12 +19,14 @@ if(${EMSCRIPTEN})
 		-s MODULARIZE=1 \
 		-s EXPORT_NAME='WDOSBOX' \
 		-s FORCE_FILESYSTEM=1 \
-		-s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt \
+		-s ASYNCIFY \ 
 		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency','FS', 'FS_createPath', 'FS_createPreloadedFile', \
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString']\" \
 		-s NO_EXIT_RUNTIME=1 \
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
 	add_definitions(-DEMSCRIPTEN)		
+# -s ASYNCIFY_IGNORE_INDIRECT \	
+# -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt \	
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
 	add_definitions(-DDEBUG -DEMSCRIPTEN_KEEPALIVE=)
@@ -181,7 +183,7 @@ if(${EMSCRIPTEN})
 	add_library(bin-obj OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	add_executable(wdosbox $<TARGET_OBJECTS:bin-obj>)
 	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
-	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1  -s BINARYEN_TRAP_MODE=\"clamp\"")
+	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1")
 else()
 	add_executable(bin ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	target_link_libraries(bin
