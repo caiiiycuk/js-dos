@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>js-dos 6.22,64k demoscene</title>
+  <script src="/6.22/latest-fastcomp/js-dos.js"></script>
+  <style>
+    canvas {
+      width: 640px;
+      height: 400px;
+      pointer-events : none;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    const files = [
+      "mzesolvr.zip", "mzesolvr.com",
+      "lensophile.zip", "lensop~1\\lensop~1.com",
+      "hall.zip", "hall.com",
+      "skin.zip", "skin.com",
+      "last-terminal-final.zip", "lastterm.com",
+      "tctronic.zip", "TCTRONIC.COM",
+      "you.zip", "you.com",
+      "atraktor_function2016.zip", "atraktor\\atraktor.com", 
+      "quatro.zip", "quatro.com",
+    ];
+
+    for (let i = 0; i < files.length; i = i + 2) {
+      const canvas = document.createElement("canvas");
+      document.body.appendChild(canvas);
+
+      Dos(canvas, { wdosboxUrl: "/6.22/latest-fastcomp/wdosbox.js" }).ready((fs, main) => {
+        fs.extract("files/" + files[i]).then(() => {
+          main(["-c", files[i + 1]])
+        });
+      });
+    };
+
+    (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
+  </script>
+</body>
+
+</html>
