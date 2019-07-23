@@ -6,11 +6,11 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.29 (e54c8c8bec01ad1a072f1b0f430cc492)",
-    jsVersion: "0465870325e768eb26cc06b00d920fc94314efc7",
-    jsSize: 197174,
-    wasmVersion: "c22105169b59875d7b46cd156a6e7c17",
-    wasmSize: 2851969
+    version: "6.22.30 (a7b59eaf2e131f1b5328a04f3c33a613)",
+    jsVersion: "7a9b47b1c3ba95d95d4d2bb58b9248ae603f7479",
+    jsSize: 502767,
+    wasmVersion: "8ec72e090a255b8554388f6b0d12602c",
+    wasmSize: 2297225
 };
 
 },{}],2:[function(require,module,exports){

@@ -28,7 +28,7 @@
       "quatro.zip", "quatro.com",
     ];
 
-    for (let i = 0; i < files.length; i = i + 2) {
+    const runGame = (i) => {
       const canvas = document.createElement("canvas");
       document.body.appendChild(canvas);
 
@@ -39,8 +39,18 @@
       });
     };
 
+    const match = /game=(\d+)/.exec(window.location.search.substring(1));
+    if (match != null) {
+      const game = match[1];
+      runGame(game * 2);
+    } else {
+      for (let i = 0; i < files.length; i = i + 2) {
+        runGame(i);
+      };
+    }
+
     (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})()
-  </script>
+</script>
 </body>
 
 </html>
