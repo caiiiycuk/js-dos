@@ -1825,7 +1825,7 @@ Bitu DEBUG_Loop(void) {
 	PIC_runIRQs();
 #if defined(JSDOS)
 #if defined(EMTERPRETER_SYNC)
-	emscripten_sleep(1);
+	emscripten_sleep_with_yield(1);
 #endif
 #else
 	SDL_Delay(1);

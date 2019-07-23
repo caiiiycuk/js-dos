@@ -1548,7 +1548,7 @@ private:
 /* Emscripten won't allow a sync fetch:
  * https://kripken.github.io/emscripten-site/docs/api_reference/fetch.html#synchronous-fetches
  * The program instead waits for these to be called, looping and calling
- * emscripten_sleep().
+ * emscripten_sleep_with_yield().
  */
 bool WGET::fetchsuccess = false, WGET::fetchdone = false;
 void WGET::downloadSucceeded(emscripten_fetch_t *fetch) {
@@ -1598,7 +1598,7 @@ void WGET::Run(void) {
 		attr.onerror = downloadFailed;
 		fetchdone = false;
 		emscripten_fetch_t *fetch = emscripten_fetch(&attr, url.c_str());
-		while (!fetchdone) emscripten_sleep(10);
+		while (!fetchdone) emscripten_sleep_with_yield(10);
 		if (fetchsuccess) {
 			Bit16u fhandle;
 			if (!DOS_CreateFile(outname.c_str(),OPEN_WRITE,&fhandle)) {

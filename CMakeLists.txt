@@ -1,32 +1,40 @@
 cmake_minimum_required(VERSION 3.6)
 
+set(ASYNCIFY OFF)
+set(EMTERPRETIFY ON)
+
 if(${EMSCRIPTEN})
+	set(OPT_FLAG "-O3")
 	set(USE_PORTS "-s USE_ZLIB=1")
-	set(CMAKE_C_FLAGS "-Oz -w -Werror=return-type ${USE_PORTS}")
+	set(CMAKE_C_FLAGS "${OPT_FLAG} -w -Werror=return-type ${USE_PORTS}")
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} ${USE_PORTS}")
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \
 		${USE_PORTS} \
-		-Oz \
+		${OPT_FLAG} \
+		-s TOTAL_STACK=1MB \
+		-s MALLOC=emmalloc \	
 		--emit-symbol-map \
 		-s EXIT_RUNTIME=1 \
 		-s ASSERTIONS=0 \
 		-s SAFE_HEAP=0 \
 		-s TOTAL_MEMORY=67108864 \
 		-s ALLOW_MEMORY_GROWTH=1 \
-		-s TOTAL_STACK=1MB \
-		-s MALLOC=emmalloc \
 		-s INVOKE_RUN=0 \
 		-s MODULARIZE=1 \
 		-s EXPORT_NAME='WDOSBOX' \
 		-s FORCE_FILESYSTEM=1 \
-		-s ASYNCIFY \ 
 		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency','FS', 'FS_createPath', 'FS_createPreloadedFile', \
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString']\" \
 		-s NO_EXIT_RUNTIME=1 \
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
 	add_definitions(-DEMSCRIPTEN)		
-# -s ASYNCIFY_IGNORE_INDIRECT \	
-# -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt \	
+
+	if(ASYNCIFY)
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASYNCIFY")
+		# -s ASYNCIFY_IGNORE_INDIRECT \	
+	elseif(EMTERPRETIFY)
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt")
+	endif()
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
 	add_definitions(-DDEBUG -DEMSCRIPTEN_KEEPALIVE=)
@@ -35,7 +43,13 @@ else()
 endif()
 
 add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS -DJSDOS)
-add_definitions(-DEMTERPRETER_SYNC)
+
+if(ASYNCIFY)
+	add_definitions(-DEMTERPRETER_SYNC -DASYNCIFY -Demscripten_sleep_with_yield=emscripten_sleep)
+elseif(EMTERPRETIFY)
+	add_definitions(-DEMTERPRETER_SYNC)
+endif()
+
 
 include(
 	"${CMAKE_CURRENT_LIST_DIR}/3rd-party/3rd-party.cmake"
