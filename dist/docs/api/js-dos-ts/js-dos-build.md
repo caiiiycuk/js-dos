@@ -20,11 +20,11 @@ gulpfile.js --> generateBuildInfo
 ```
 
 export const Build = {
-    version: "6.22.30 (a7b59eaf2e131f1b5328a04f3c33a613)",
-    jsVersion: "7a9b47b1c3ba95d95d4d2bb58b9248ae603f7479",
-    jsSize:  502767,
-    wasmVersion: "8ec72e090a255b8554388f6b0d12602c",
-    wasmSize: 2297225,
+    version: "6.22.31 (d0c777fff2df3c2553a8b769a86eca06)",
+    jsVersion: "b0eefc097d2c5270a1a463700335826f156460ea",
+    jsSize:  196977,
+    wasmVersion: "03ff8f9208bc11b041bebc7cce39e56d",
+    wasmSize: 1810179,
 };
 
 
