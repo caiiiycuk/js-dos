@@ -369,6 +369,13 @@ export default JsDos;
 
 Then you can use it as simple html tag ```<JsDos />```
 
+### Keyboard in iframe
+
+Normally when you use js-dos in iframe keyboard should work. But remember that iframe must be focused
+to receive keyboard events. By default when you click on iframe it recives focus, but if you use 
+mouse event listener with prevent default at the end, then iframe will not recieve focus. You can solve
+this problem by calling `iframe.focus()` function.
+
 ## Building
 
 Building process have two steps:
