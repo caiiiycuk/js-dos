@@ -12,7 +12,7 @@ if(${EMSCRIPTEN})
 		${USE_PORTS} \
 		${OPT_FLAG} \
 		-s TOTAL_STACK=1MB \
-		-s MALLOC=emmalloc \	
+		-s MALLOC=emmalloc \
 		--emit-symbol-map \
 		-s EXIT_RUNTIME=1 \
 		-s ASSERTIONS=0 \
