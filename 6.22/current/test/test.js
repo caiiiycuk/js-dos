@@ -6,8 +6,8 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.31 (d0c777fff2df3c2553a8b769a86eca06)",
-    jsVersion: "b0eefc097d2c5270a1a463700335826f156460ea",
+    version: "6.22.32 (b41b4a60d500f0255d9de52283a44732)",
+    jsVersion: "eb4d0b7c1dbef664e89bcae806ae531f2cd1a712",
     jsSize: 196977,
     wasmVersion: "03ff8f9208bc11b041bebc7cce39e56d",
     wasmSize: 1810179
@@ -205,6 +205,31 @@ var DosCommandInterface = /** @class */function () {
         }
         this.dos.error("Runtime is still alive!");
         return -1;
+    };
+    // * `simulateKeyEvent(keyCode, pressed)` - allows to simulate key press OR release on js-dos canvas
+    DosCommandInterface.prototype.simulateKeyEvent = function (keyCode, pressed) {
+        var name = pressed ? "keydown" : "keyup";
+        var event = document.createEvent("KeyboardEvent");
+        var getter = {
+            get: function get() {
+                return this.keyCodeVal;
+            }
+        };
+        // Chromium Hack
+        Object.defineProperty(event, "keyCode", getter);
+        Object.defineProperty(event, "which", getter);
+        Object.defineProperty(event, "charCode", getter);
+        event.initKeyboardEvent ? event.initKeyboardEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, keyCode) : event.initKeyEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, 0);
+        event.keyCodeVal = keyCode;
+        this.dos.canvas && this.dos.canvas.dispatchEvent(event);
+    };
+    // * `simulateKeyPress(keyCode)` - allows to simulate key press AND release on js-dos canvas
+    DosCommandInterface.prototype.simulateKeyPress = function (keyCode) {
+        var _this = this;
+        this.simulateKeyEvent(keyCode, true);
+        setTimeout(function () {
+            return _this.simulateKeyEvent(keyCode, false);
+        }, 100);
     };
     DosCommandInterface.prototype.sendKeyPress = function (code) {
         this.api.send("sdl_key_event", code + "");
@@ -911,7 +936,7 @@ var DosUi = /** @class */function () {
         // ### Style
         /* tslint:disable:member-ordering */
         /* tslint:disable:max-line-length */
-        this.css = "\n    .dosbox-container { position: relative; min-width: 320px; min-height: 200px; display: inline-block; }\n    .dosbox-overlay, .dosbox-loader { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(51, 51, 51, 0.7); }\n    .dosbox-start { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; color: #f80; font-size: 1.5em; text-decoration: underline; cursor: pointer; }\n    .dosbox-overlay a { color: #f80; }\n    .dosbox-powered { position: absolute; right: 1em; bottom: 1em; font-size: 0.8em; color: #9C9C9C; }\n    .dosbox-loader-message { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; margin: 0 0 -3em 0; box-sizing: border-box; color: #f80; font-size: 1.5em; }\n    @-moz-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @-webkit-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } .st-loader { width: 10em; height: 2.5em; position: absolute; top: 50%; left: 50%; margin: -1.25em 0 0 -5em; box-sizing: border-box; }\n    .st-loader:before, .st-loader:after { content: \"\"; display: block; position: absolute; top: 0; bottom: 0; width: 1.25em; box-sizing: border-box; border: 0.25em solid #f80; }\n    .st-loader:before { left: -0.76923em; border-right: 0; }\n    .st-loader:after { right: -0.76923em; border-left: 0; }\n    .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #f80; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; background: #f80; }\n    ";
+        this.css = "\n    .dosbox-container { position: relative; min-width: 320px; min-height: 200px; display: inline-block; }\n    .dosbox-overlay, .dosbox-loader { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(51, 51, 51, 0.7); }\n    .dosbox-start { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; color: #fff; font-size: 1.5em; text-decoration: underline; cursor: pointer; }\n    .dosbox-overlay a { color: #fff; }\n    .dosbox-powered { position: absolute; right: 1em; bottom: 1em; font-size: 0.8em; color: #9C9C9C; }\n    .dosbox-loader-message { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; margin: 0 0 -3em 0; box-sizing: border-box; color: #fff; font-size: 1.5em; }\n    @-moz-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @-webkit-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } .st-loader { width: 10em; height: 2.5em; position: absolute; top: 50%; left: 50%; margin: -1.25em 0 0 -5em; box-sizing: border-box; }\n    .st-loader:before, .st-loader:after { content: \"\"; display: block; position: absolute; top: 0; bottom: 0; width: 1.25em; box-sizing: border-box; border: 0.25em solid #fff; }\n    .st-loader:before { left: -0.76923em; border-right: 0; }\n    .st-loader:after { right: -0.76923em; border-left: 0; }\n    .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #fff; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; background: #fff; }\n    ";
         // ### Template
         /* tslint:disable:member-ordering */
         /* tslint:disable:max-line-length */
@@ -2891,6 +2916,22 @@ test("js-dos can run digger.zip", function (done) {
                 var fn = function fn() {
                     compare_1.compareAndExit("digger.png", ci, done);
                     // saveImage(ci);
+                };
+                setTimeout(fn, 5000);
+            });
+        });
+    });
+});
+test("js-dos can simulate key events", function (done) {
+    var dos = js_dos_1.default(document.getElementById("canvas"), {
+        wdosboxUrl: "/wdosbox.js"
+    });
+    do_1.doReady(dos, function (fs, main) {
+        do_1.doNext(fs.extract("digger.zip"), function () {
+            do_1.doNext(main(["DIGGER.COM"]), function (ci) {
+                ci.simulateKeyPress(37); // left arrow
+                var fn = function fn() {
+                    compare_1.compareAndExit("digger-end.png", ci, done);
                 };
                 setTimeout(fn, 5000);
             });

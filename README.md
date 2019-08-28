@@ -376,6 +376,20 @@ to receive keyboard events. By default when you click on iframe it recives focus
 mouse event listener with prevent default at the end, then iframe will not recieve focus. You can solve
 this problem by calling `iframe.focus()` function.
 
+### Simulating keyboard events
+
+You can easily simulate key press and release using [CommandInterface.simulateKeyEvent(keyCode: number, pressed: boolean)](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci). Or you can use shortcut for single event `simulateKeyPress(keyCode: number)`, like in example:
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        fs.extract("digger.zip").then(() => {
+            main(["-c", "DIGGER.COM"]).then((ci) => {
+                ci.simulateKeyPress(37); // left arrow
+            })
+        });
+    });
+```
+
 ## Building
 
 Building process have two steps:
