@@ -355,6 +355,25 @@ test("js-dos can run digger.zip", (done) => {
     });
 });
 
+test("js-dos can simulate key events", (done) => {
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
+        wdosboxUrl: "/wdosbox.js",
+    });
+
+    doReady(dos, (fs, main) => {
+        doNext(fs.extract("digger.zip"), () => {
+            doNext(main(["DIGGER.COM"]), (ci) => {
+                ci.simulateKeyPress(37); // left arrow
+                const fn = () => {
+                    compareAndExit("digger-end.png", ci, done);
+                };
+
+                setTimeout(fn, 5000);
+            });
+        });
+    });
+});
+
 const saveImage = (ci: DosCommandInterface) => {
     ci.screenshot().then((data) => {
         const w = window.open("about:blank", "image from canvas");

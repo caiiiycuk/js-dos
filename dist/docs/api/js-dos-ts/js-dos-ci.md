@@ -149,6 +149,77 @@ resolves when commands sequence is executed
         return -1;
     }
 
+
+```
+
+
+
+
+
+
+
+* `simulateKeyEvent(keyCode, pressed)` - allows to simulate key press OR release on js-dos canvas
+
+
+  
+
+```
+    public simulateKeyEvent(keyCode: number, pressed: boolean): void {
+        const name = pressed ? "keydown" : "keyup";
+        const event = document.createEvent("KeyboardEvent") as any;
+        const getter: any = {
+            get() {
+                return this.keyCodeVal;
+            },
+        };
+
+
+```
+
+
+
+
+
+
+
+Chromium Hack
+
+
+  
+
+```
+        Object.defineProperty(event, "keyCode", getter);
+        Object.defineProperty(event, "which", getter);
+        Object.defineProperty(event, "charCode", getter);
+
+        event.initKeyboardEvent
+        ? event.initKeyboardEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, keyCode)
+        : event.initKeyEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, 0);
+
+        event.keyCodeVal = keyCode;
+        this.dos.canvas && this.dos.canvas.dispatchEvent(event);
+    }
+
+
+```
+
+
+
+
+
+
+
+* `simulateKeyPress(keyCode)` - allows to simulate key press AND release on js-dos canvas
+
+
+  
+
+```
+    public simulateKeyPress(keyCode: number): void {
+        this.simulateKeyEvent(keyCode, true);
+        setTimeout(() => this.simulateKeyEvent(keyCode, false), 100);
+    }
+
     private sendKeyPress(code: number) {
         this.api.send("sdl_key_event", code + "");
     }

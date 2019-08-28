@@ -18,7 +18,10 @@
   <script>
     Dos(document.getElementById("jsdos")).ready((fs, main) => {
       fs.extract("test/digger.zip").then(() => {
-        main(["-c", "DIGGER.COM"]).then((ci) => window.Module = ci.dos);
+        main(["-c", "DIGGER.COM"]).then((ci) => {
+          window.Module = ci.dos;
+          window.ci = ci;
+        });
       });
     });
   </script>
