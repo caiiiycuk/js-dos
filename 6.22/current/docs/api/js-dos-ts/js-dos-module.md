@@ -13,9 +13,9 @@ with additional functionality
 import { DosRuntime } from "./js-dos";
 import { Build } from "./js-dos-build";
 import { DosCommandInterface } from "./js-dos-ci";
-import { jsdosconf } from "./js-dos-conf";
+import getJsDosConfig from "./js-dos-conf";
 import { DosFS } from "./js-dos-fs";
-import { DosOptions } from "./js-dos-options";
+import { DosBoxConfigDefaults, DosOptions, DosBoxConfig } from "./js-dos-options";
 import { DosUi } from "./js-dos-ui";
 
 export class DosModule extends DosOptions {
@@ -275,7 +275,7 @@ file to user directory
   
 
 ```
-            this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", jsdosconf);
+            this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", getJsDosConfig(this));
 
 ```
 

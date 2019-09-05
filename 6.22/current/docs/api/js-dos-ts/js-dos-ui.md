@@ -11,6 +11,7 @@ This ui will be applied if client did not set `onprogress` in
   
 
 ```
+import * as DosDom from "./js-dos-dom";
 import { DosModule } from "./js-dos-module";
 
 export class DosUi {
@@ -45,23 +46,16 @@ You can change style of ui by editing css for this two classes
 ```
 
         try {
-            if (document.getElementById("js-dos-ui-css") === null) {
-                const style = document.createElement("style") as HTMLStyleElement;
-                style.id = "js-dos-ui-css";
-                style.innerHTML = this.css;
-                document.head.appendChild(style);
-            }
+            DosDom.applyCss("js-dos-ui-css", this.css);
 
             if (this.canvas.parentElement !== null && this.canvas.parentElement.className !== "dosbox-container") {
-                const container = document.createElement("div") as HTMLDivElement;
-                container.className = "dosbox-container";
+                const container = DosDom.createDiv("dosbox-container");
 
                 const parent = this.canvas.parentElement;
                 parent.replaceChild(container, this.canvas);
                 container.appendChild(this.canvas);
 
-                const overlay = document.createElement("div") as HTMLDivElement;
-                overlay.className = "dosbox-overlay";
+                const overlay = DosDom.createDiv("dosbox-overlay");
                 container.appendChild(overlay);
 
                 overlay.innerHTML = this.overlayHtml;

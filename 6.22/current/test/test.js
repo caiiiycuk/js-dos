@@ -6,8 +6,8 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.32 (b41b4a60d500f0255d9de52283a44732)",
-    jsVersion: "eb4d0b7c1dbef664e89bcae806ae531f2cd1a712",
+    version: "6.22.33 (f4423f98f23ae8f2bd689442f95fc29e)",
+    jsVersion: "59875851282d50e241d418337cfa413f093cf347",
     jsSize: 196977,
     wasmVersion: "03ff8f9208bc11b041bebc7cce39e56d",
     wasmSize: 1810179
@@ -282,14 +282,53 @@ exports.DosCommandInterface = DosCommandInterface;
 
 },{}],6:[function(require,module,exports){
 "use strict";
-// # js-dos default config
-// This is default config for dosbox.
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var js_dos_options_1 = require("./js-dos-options");
+// # js-dos default config
+// This is default config for dosbox that applies for all runs.
+// It's configurable through [options](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
+function getJsDosConfig(config) {
+    var conf = jsdosconf;
+    function update(placeholder) {
+        conf = conf.replace("%" + placeholder + "%", (config[placeholder] || js_dos_options_1.DosBoxConfigDefaults[placeholder]) + "");
+    }
+    Object.keys(js_dos_options_1.DosBoxConfigDefaults).forEach(function (name) {
+        return update(name);
+    });
+    return conf;
+}
+exports.default = getJsDosConfig;
 /* tslint:disable:max-line-length */
-exports.jsdosconf = "\n# This is the configurationfile for DOSBox 0.74. (Please use the latest version of DOSBox)\n# Lines starting with a # are commentlines and are ignored by DOSBox.\n# They are used to (briefly) document the effect of each option.\n\n[sdl]\n#       fullscreen: Start dosbox directly in fullscreen. (Press ALT-Enter to go back)\n#       fulldouble: Use double buffering in fullscreen. It can reduce screen flickering, but it can also result in a slow DOSBox.\n#   fullresolution: What resolution to use for fullscreen: original or fixed size (e.g. 1024x768).\n#                     Using your monitor's native resolution with aspect=true might give the best results.\n#                     If you end up with small window on a large screen, try an output different from surface.\n# windowresolution: Scale the window to this size IF the output device supports hardware scaling.\n#                     (output=surface does not!)\n#           output: What video system to use for output.\n#                   Possible values: surface, overlay, opengl, openglnb.\n#         autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)\n#      sensitivity: Mouse sensitivity.\n#      waitonerror: Wait before closing the console if dosbox has an error.\n#         priority: Priority levels for dosbox. Second entry behind the comma is for when dosbox is not focused/minimized.\n#                     pause is only valid for the second entry.\n#                   Possible values: lowest, lower, normal, higher, highest, pause.\n#       mapperfile: File used to load/save the key/event mappings from. Resetmapper only works with the defaul value.\n#     usescancodes: Avoid usage of symkeys, might not work on all operating systems.\n\nfullscreen=false\nfulldouble=false\nfullresolution=original\nwindowresolution=original\noutput=surface\nautolock=false\nsensitivity=100\nwaitonerror=true\npriority=higher,normal\nmapperfile=mapper-jsdos.map\nusescancodes=true\nvsync=false\n\n[dosbox]\n# language: Select another language file.\n#  machine: The type of machine tries to emulate.\n#           Possible values: hercules, cga, tandy, pcjr, ega, vgaonly, svga_s3, svga_et3000, svga_et4000, svga_paradise, vesa_nolfb, vesa_oldvbe.\n# captures: Directory where things like wave, midi, screenshot get captured.\n#  memsize: Amount of memory DOSBox has in megabytes.\n#             This value is best left at its default to avoid problems with some games,\n#             though few games might require a higher value.\n#             There is generally no speed advantage when raising this value.\n\nlanguage=\nmachine=svga_s3\ncaptures=capture\nmemsize=16\n\n[render]\n# frameskip: How many frames DOSBox skips before drawing one.\n#    aspect: Do aspect correction, if your output method doesn't support scaling this can slow things down!.\n#    scaler: Scaler used to enlarge/enhance low resolution modes.\n#              If 'forced' is appended, then the scaler will be used even if the result might not be desired.\n#            Possible values: none, normal2x, normal3x, advmame2x, advmame3x, advinterp2x, advinterp3x, hq2x, hq3x, 2xsai, super2xsai, supereagle, tv2x, tv3x, rgb2x, rgb3x, scan2x, scan3x.\n\nframeskip=0\naspect=false\nscaler=none\n\n[cpu]\n#      core: CPU Core used in emulation. auto will switch to dynamic if available and appropriate.\n#            Possible values: auto, dynamic, normal, simple.\n#   cputype: CPU Type used in emulation. auto is the fastest choice.\n#            Possible values: auto, 386, 386_slow, 486_slow, pentium_slow, 386_prefetch.\n#    cycles: Amount of instructions DOSBox tries to emulate each millisecond.\n#            Setting this value too high results in sound dropouts and lags.\n#            Cycles can be set in 3 ways:\n#              'auto'          tries to guess what a game needs.\n#                              It usually works, but can fail for certain games.\n#              'fixed #number' will set a fixed amount of cycles. This is what you usually need if 'auto' fails.\n#                              (Example: fixed 4000).\n#              'max'           will allocate as much cycles as your computer is able to handle.\n#\n#            Possible values: auto, fixed, max.\n#   cycleup: Amount of cycles to decrease/increase with keycombo.(CTRL-F11/CTRL-F12)\n# cycledown: Setting it lower than 100 will be a percentage.\n\ncore=auto\ncputype=auto\ncycles=auto\ncycleup=10\ncycledown=20\n\n[mixer]\n#   nosound: Enable silent mode, sound is still emulated though.\n#      rate: Mixer sample rate, setting any device's rate higher than this will probably lower their sound quality.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n# blocksize: Mixer block size, larger blocks might help sound stuttering but sound will also be more lagged.\n#            Possible values: 1024, 2048, 4096, 8192, 512, 256.\n# prebuffer: How many milliseconds of data to keep on top of the blocksize.\n\nnosound=false\nrate=44100\nblocksize=1024\nprebuffer=20\n\n[midi]\n#     mpu401: Type of MPU-401 to emulate.\n#             Possible values: intelligent, uart, none.\n# mididevice: Device that will receive the MIDI data from MPU-401.\n#             Possible values: default, win32, alsa, oss, coreaudio, coremidi, none.\n# midiconfig: Special configuration options for the device driver. This is usually the id of the device you want to use.\n#               See the README/Manual for more details.\n\nmpu401=intelligent\nmididevice=default\nmidiconfig=\n\n[sblaster]\n#  sbtype: Type of Soundblaster to emulate. gb is Gameblaster.\n#          Possible values: sb1, sb2, sbpro1, sbpro2, sb16, gb, none.\n#  sbbase: The IO address of the soundblaster.\n#          Possible values: 220, 240, 260, 280, 2a0, 2c0, 2e0, 300.\n#     irq: The IRQ number of the soundblaster.\n#          Possible values: 7, 5, 3, 9, 10, 11, 12.\n#     dma: The DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n#    hdma: The High DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n# sbmixer: Allow the soundblaster mixer to modify the DOSBox mixer.\n# oplmode: Type of OPL emulation. On 'auto' the mode is determined by sblaster type. All OPL modes are Adlib-compatible, except for 'cms'.\n#          Possible values: auto, cms, opl2, dualopl2, opl3, none.\n#  oplemu: Provider for the OPL emulation. compat might provide better quality (see oplrate as well).\n#          Possible values: default, compat, fast.\n# oplrate: Sample rate of OPL music emulation. Use 49716 for highest quality (set the mixer rate accordingly).\n#          Possible values: 44100, 49716, 48000, 32000, 22050, 16000, 11025, 8000.\n\nsbtype=sb16\nsbbase=220\nirq=7\ndma=1\nhdma=5\nsbmixer=true\noplmode=auto\noplemu=default\noplrate=44100\n\n[gus]\n#      gus: Enable the Gravis Ultrasound emulation.\n#  gusrate: Sample rate of Ultrasound emulation.\n#           Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#  gusbase: The IO base address of the Gravis Ultrasound.\n#           Possible values: 240, 220, 260, 280, 2a0, 2c0, 2e0, 300.\n#   gusirq: The IRQ number of the Gravis Ultrasound.\n#           Possible values: 5, 3, 7, 9, 10, 11, 12.\n#   gusdma: The DMA channel of the Gravis Ultrasound.\n#           Possible values: 3, 0, 1, 5, 6, 7.\n# ultradir: Path to Ultrasound directory. In this directory\n#           there should be a MIDI directory that contains\n#           the patch files for GUS playback. Patch sets used\n#           with Timidity should work fine.\n\ngus=false\ngusrate=44100\ngusbase=240\ngusirq=5\ngusdma=3\nultradir=C:ULTRASND\n\n[speaker]\n# pcspeaker: Enable PC-Speaker emulation.\n#    pcrate: Sample rate of the PC-Speaker sound generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#     tandy: Enable Tandy Sound System emulation. For 'auto', emulation is present only if machine is set to 'tandy'.\n#            Possible values: auto, on, off.\n# tandyrate: Sample rate of the Tandy 3-Voice generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#    disney: Enable Disney Sound Source emulation. (Covox Voice Master and Speech Thing compatible).\n\npcspeaker=true\npcrate=44100\ntandy=auto\ntandyrate=44100\ndisney=true\n\n[joystick]\n# joysticktype: Type of joystick to emulate: auto (default), none,\n#               2axis (supports two joysticks),\n#               4axis (supports one joystick, first joystick used),\n#               4axis_2 (supports one joystick, second joystick used),\n#               fcs (Thrustmaster), ch (CH Flightstick).\n#               none disables joystick emulation.\n#               auto chooses emulation depending on real joystick(s).\n#               (Remember to reset dosbox's mapperfile if you saved it earlier)\n#               Possible values: auto, 2axis, 4axis, 4axis_2, fcs, ch, none.\n#        timed: enable timed intervals for axis. Experiment with this option, if your joystick drifts (away).\n#     autofire: continuously fires as long as you keep the button pressed.\n#       swap34: swap the 3rd and the 4th axis. can be useful for certain joysticks.\n#   buttonwrap: enable button wrapping at the number of emulated buttons.\n\njoysticktype=auto\ntimed=true\nautofire=false\nswap34=false\nbuttonwrap=false\n\n[serial]\n# serial1: set type of device connected to com port.\n#          Can be disabled, dummy, modem, nullmodem, directserial.\n#          Additional parameters must be in the same line in the form of\n#          parameter:value. Parameter for all types is irq (optional).\n#          for directserial: realport (required), rxdelay (optional).\n#                           (realport:COM1 realport:ttyS0).\n#          for modem: listenport (optional).\n#          for nullmodem: server, rxdelay, txdelay, telnet, usedtr,\n#                         transparent, port, inhsocket (all optional).\n#          Example: serial1=modem listenport:5000\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial2: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial3: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial4: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n\nserial1=dummy\nserial2=dummy\nserial3=disabled\nserial4=disabled\n\n[dos]\n#            xms: Enable XMS support.\n#            ems: Enable EMS support.\n#            umb: Enable UMB support.\n# keyboardlayout: Language code of the keyboard layout (or none).\n\nxms=true\nems=true\numb=true\nkeyboardlayout=auto\n\n[ipx]\n# ipx: Enable ipx over UDP/IP emulation.\n\nipx=false\n\n[autoexec]\n# Lines in this section will be run at startup.\n# You can put your MOUNT lines here.\n\n# https://js-dos.com\n# \u2588\u2580\u2580\u2580\u2580\u2580\u2588 \u2588  \u2584\u2584\u2584\u2580\u2580\u2588 \u2588\u2580\u2580\u2580\u2580\u2580\u2588\n# \u2588 \u2588\u2588\u2588 \u2588 \u2588\u2588\u2584 \u2588 \u2580 \u2584 \u2588 \u2588\u2588\u2588 \u2588\n# \u2588 \u2580\u2580\u2580 \u2588 \u2584\u2588\u2588 \u2580 \u2580\u2580\u2588 \u2588 \u2580\u2580\u2580 \u2588\n# \u2580\u2580\u2580\u2580\u2580\u2580\u2580 \u2580 \u2588\u2584\u2580\u2584\u2580 \u2588 \u2580\u2580\u2580\u2580\u2580\u2580\u2580\n# \u2588\u2580\u2584\u2584\u2588\u2580\u2580\u2584\u2584 \u2580 \u2580\u2588\u2584\u2584\u2584\u2584 \u2580\u2584\u2588\u2580\u2588\u2580\n# \u2588\u2580 \u2580 \u2580\u2580\u2584 \u2588\u2580 \u2584 \u2584\u2580\u2580\u2580\u2584 \u2588\u2580\u2588\u2584\n# \u2584 \u2584\u2584 \u2588\u2580\u2580\u2584 \u2584\u2580\u2584\u2580\u2580\u2588  \u2580\u2580\u2584\u2580\u2580\u2588\u2580\n#   \u2584\u2580\u2580\u2588\u2580\u2580 \u2588\u2580\u2588\u2580\u2588\u2580\u2580\u2584 \u2580\u2588\u2588\u2580\u2588\u2584\n# \u2580\u2580\u2580 \u2580 \u2580 \u2588\u2584\u2588 \u2580\u2588\u2584\u2584\u2588\u2580\u2580\u2580\u2588\u2580\u2580\n# \u2588\u2580\u2580\u2580\u2580\u2580\u2588 \u2584\u2584\u2584 \u2584 \u2584 \u2588 \u2580 \u2588\u2584\u2584\u2584\u2584\n# \u2588 \u2588\u2588\u2588 \u2588 \u2580\u2588\u2580\u2580\u2584\u2580\u2580\u2584\u2588\u2588\u2588\u2588\u2580\u2580\u2588\u2584\u2588\n# \u2588 \u2580\u2580\u2580 \u2588 \u2584\u2580\u2580\u2588\u2580\u2588\u2580\u2584 \u2580\u2580\u2584\u2584\u2588\u2584\u2588 \n# \u2580\u2580\u2580\u2580\u2580\u2580\u2580 \u2580   \u2580\u2580 \u2580  \u2580   \u2580\u2580\u2580\n";
+var jsdosconf = "\n# This is the configurationfile for DOSBox 0.74. (Please use the latest version of DOSBox)\n# Lines starting with a # are commentlines and are ignored by DOSBox.\n# They are used to (briefly) document the effect of each option.\n\n[sdl]\n#       fullscreen: Start dosbox directly in fullscreen. (Press ALT-Enter to go back)\n#       fulldouble: Use double buffering in fullscreen. It can reduce screen flickering, but it can also result in a slow DOSBox.\n#   fullresolution: What resolution to use for fullscreen: original or fixed size (e.g. 1024x768).\n#                     Using your monitor's native resolution with aspect=true might give the best results.\n#                     If you end up with small window on a large screen, try an output different from surface.\n# windowresolution: Scale the window to this size IF the output device supports hardware scaling.\n#                     (output=surface does not!)\n#           output: What video system to use for output.\n#                   Possible values: surface, overlay, opengl, openglnb.\n#         autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)\n#      sensitivity: Mouse sensitivity.\n#      waitonerror: Wait before closing the console if dosbox has an error.\n#         priority: Priority levels for dosbox. Second entry behind the comma is for when dosbox is not focused/minimized.\n#                     pause is only valid for the second entry.\n#                   Possible values: lowest, lower, normal, higher, highest, pause.\n#       mapperfile: File used to load/save the key/event mappings from. Resetmapper only works with the defaul value.\n#     usescancodes: Avoid usage of symkeys, might not work on all operating systems.\n\nfullscreen=false\nfulldouble=false\nfullresolution=original\nwindowresolution=original\noutput=surface\nautolock=false\nsensitivity=100\nwaitonerror=true\npriority=higher,normal\nmapperfile=mapper-jsdos.map\nusescancodes=true\nvsync=false\n\n[dosbox]\n# language: Select another language file.\n#  machine: The type of machine tries to emulate.\n#           Possible values: hercules, cga, tandy, pcjr, ega, vgaonly, svga_s3, svga_et3000, svga_et4000, svga_paradise, vesa_nolfb, vesa_oldvbe.\n# captures: Directory where things like wave, midi, screenshot get captured.\n#  memsize: Amount of memory DOSBox has in megabytes.\n#             This value is best left at its default to avoid problems with some games,\n#             though few games might require a higher value.\n#             There is generally no speed advantage when raising this value.\n\nlanguage=\nmachine=svga_s3\ncaptures=capture\nmemsize=16\n\n[render]\n# frameskip: How many frames DOSBox skips before drawing one.\n#    aspect: Do aspect correction, if your output method doesn't support scaling this can slow things down!.\n#    scaler: Scaler used to enlarge/enhance low resolution modes.\n#              If 'forced' is appended, then the scaler will be used even if the result might not be desired.\n#            Possible values: none, normal2x, normal3x, advmame2x, advmame3x, advinterp2x, advinterp3x, hq2x, hq3x, 2xsai, super2xsai, supereagle, tv2x, tv3x, rgb2x, rgb3x, scan2x, scan3x.\n\nframeskip=0\naspect=false\nscaler=none\n\n[cpu]\n#      core: CPU Core used in emulation. auto will switch to dynamic if available and appropriate.\n#            Possible values: auto, dynamic, normal, simple.\n#   cputype: CPU Type used in emulation. auto is the fastest choice.\n#            Possible values: auto, 386, 386_slow, 486_slow, pentium_slow, 386_prefetch.\n#    cycles: Amount of instructions DOSBox tries to emulate each millisecond.\n#            Setting this value too high results in sound dropouts and lags.\n#            Cycles can be set in 3 ways:\n#              'auto'          tries to guess what a game needs.\n#                              It usually works, but can fail for certain games.\n#              'fixed #number' will set a fixed amount of cycles. This is what you usually need if 'auto' fails.\n#                              (Example: fixed 4000).\n#              'max'           will allocate as much cycles as your computer is able to handle.\n#\n#            Possible values: auto, fixed, max.\n#   cycleup: Amount of cycles to decrease/increase with keycombo.(CTRL-F11/CTRL-F12)\n# cycledown: Setting it lower than 100 will be a percentage.\n\ncore=auto\ncputype=auto\ncycles=%cycles%\ncycleup=10\ncycledown=20\n\n[mixer]\n#   nosound: Enable silent mode, sound is still emulated though.\n#      rate: Mixer sample rate, setting any device's rate higher than this will probably lower their sound quality.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n# blocksize: Mixer block size, larger blocks might help sound stuttering but sound will also be more lagged.\n#            Possible values: 1024, 2048, 4096, 8192, 512, 256.\n# prebuffer: How many milliseconds of data to keep on top of the blocksize.\n\nnosound=false\nrate=44100\nblocksize=1024\nprebuffer=20\n\n[midi]\n#     mpu401: Type of MPU-401 to emulate.\n#             Possible values: intelligent, uart, none.\n# mididevice: Device that will receive the MIDI data from MPU-401.\n#             Possible values: default, win32, alsa, oss, coreaudio, coremidi, none.\n# midiconfig: Special configuration options for the device driver. This is usually the id of the device you want to use.\n#               See the README/Manual for more details.\n\nmpu401=intelligent\nmididevice=default\nmidiconfig=\n\n[sblaster]\n#  sbtype: Type of Soundblaster to emulate. gb is Gameblaster.\n#          Possible values: sb1, sb2, sbpro1, sbpro2, sb16, gb, none.\n#  sbbase: The IO address of the soundblaster.\n#          Possible values: 220, 240, 260, 280, 2a0, 2c0, 2e0, 300.\n#     irq: The IRQ number of the soundblaster.\n#          Possible values: 7, 5, 3, 9, 10, 11, 12.\n#     dma: The DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n#    hdma: The High DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n# sbmixer: Allow the soundblaster mixer to modify the DOSBox mixer.\n# oplmode: Type of OPL emulation. On 'auto' the mode is determined by sblaster type. All OPL modes are Adlib-compatible, except for 'cms'.\n#          Possible values: auto, cms, opl2, dualopl2, opl3, none.\n#  oplemu: Provider for the OPL emulation. compat might provide better quality (see oplrate as well).\n#          Possible values: default, compat, fast.\n# oplrate: Sample rate of OPL music emulation. Use 49716 for highest quality (set the mixer rate accordingly).\n#          Possible values: 44100, 49716, 48000, 32000, 22050, 16000, 11025, 8000.\n\nsbtype=sb16\nsbbase=220\nirq=7\ndma=1\nhdma=5\nsbmixer=true\noplmode=auto\noplemu=default\noplrate=44100\n\n[gus]\n#      gus: Enable the Gravis Ultrasound emulation.\n#  gusrate: Sample rate of Ultrasound emulation.\n#           Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#  gusbase: The IO base address of the Gravis Ultrasound.\n#           Possible values: 240, 220, 260, 280, 2a0, 2c0, 2e0, 300.\n#   gusirq: The IRQ number of the Gravis Ultrasound.\n#           Possible values: 5, 3, 7, 9, 10, 11, 12.\n#   gusdma: The DMA channel of the Gravis Ultrasound.\n#           Possible values: 3, 0, 1, 5, 6, 7.\n# ultradir: Path to Ultrasound directory. In this directory\n#           there should be a MIDI directory that contains\n#           the patch files for GUS playback. Patch sets used\n#           with Timidity should work fine.\n\ngus=false\ngusrate=44100\ngusbase=240\ngusirq=5\ngusdma=3\nultradir=C:ULTRASND\n\n[speaker]\n# pcspeaker: Enable PC-Speaker emulation.\n#    pcrate: Sample rate of the PC-Speaker sound generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#     tandy: Enable Tandy Sound System emulation. For 'auto', emulation is present only if machine is set to 'tandy'.\n#            Possible values: auto, on, off.\n# tandyrate: Sample rate of the Tandy 3-Voice generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#    disney: Enable Disney Sound Source emulation. (Covox Voice Master and Speech Thing compatible).\n\npcspeaker=true\npcrate=44100\ntandy=auto\ntandyrate=44100\ndisney=true\n\n[joystick]\n# joysticktype: Type of joystick to emulate: auto (default), none,\n#               2axis (supports two joysticks),\n#               4axis (supports one joystick, first joystick used),\n#               4axis_2 (supports one joystick, second joystick used),\n#               fcs (Thrustmaster), ch (CH Flightstick).\n#               none disables joystick emulation.\n#               auto chooses emulation depending on real joystick(s).\n#               (Remember to reset dosbox's mapperfile if you saved it earlier)\n#               Possible values: auto, 2axis, 4axis, 4axis_2, fcs, ch, none.\n#        timed: enable timed intervals for axis. Experiment with this option, if your joystick drifts (away).\n#     autofire: continuously fires as long as you keep the button pressed.\n#       swap34: swap the 3rd and the 4th axis. can be useful for certain joysticks.\n#   buttonwrap: enable button wrapping at the number of emulated buttons.\n\njoysticktype=auto\ntimed=true\nautofire=false\nswap34=false\nbuttonwrap=false\n\n[serial]\n# serial1: set type of device connected to com port.\n#          Can be disabled, dummy, modem, nullmodem, directserial.\n#          Additional parameters must be in the same line in the form of\n#          parameter:value. Parameter for all types is irq (optional).\n#          for directserial: realport (required), rxdelay (optional).\n#                           (realport:COM1 realport:ttyS0).\n#          for modem: listenport (optional).\n#          for nullmodem: server, rxdelay, txdelay, telnet, usedtr,\n#                         transparent, port, inhsocket (all optional).\n#          Example: serial1=modem listenport:5000\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial2: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial3: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial4: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n\nserial1=dummy\nserial2=dummy\nserial3=disabled\nserial4=disabled\n\n[dos]\n#            xms: Enable XMS support.\n#            ems: Enable EMS support.\n#            umb: Enable UMB support.\n# keyboardlayout: Language code of the keyboard layout (or none).\n\nxms=true\nems=true\numb=true\nkeyboardlayout=auto\n\n[ipx]\n# ipx: Enable ipx over UDP/IP emulation.\n\nipx=false\n\n[autoexec]\n# Lines in this section will be run at startup.\n# You can put your MOUNT lines here.\n\n# https://js-dos.com\n# \u2588\u2580\u2580\u2580\u2580\u2580\u2588 \u2588  \u2584\u2584\u2584\u2580\u2580\u2588 \u2588\u2580\u2580\u2580\u2580\u2580\u2588\n# \u2588 \u2588\u2588\u2588 \u2588 \u2588\u2588\u2584 \u2588 \u2580 \u2584 \u2588 \u2588\u2588\u2588 \u2588\n# \u2588 \u2580\u2580\u2580 \u2588 \u2584\u2588\u2588 \u2580 \u2580\u2580\u2588 \u2588 \u2580\u2580\u2580 \u2588\n# \u2580\u2580\u2580\u2580\u2580\u2580\u2580 \u2580 \u2588\u2584\u2580\u2584\u2580 \u2588 \u2580\u2580\u2580\u2580\u2580\u2580\u2580\n# \u2588\u2580\u2584\u2584\u2588\u2580\u2580\u2584\u2584 \u2580 \u2580\u2588\u2584\u2584\u2584\u2584 \u2580\u2584\u2588\u2580\u2588\u2580\n# \u2588\u2580 \u2580 \u2580\u2580\u2584 \u2588\u2580 \u2584 \u2584\u2580\u2580\u2580\u2584 \u2588\u2580\u2588\u2584\n# \u2584 \u2584\u2584 \u2588\u2580\u2580\u2584 \u2584\u2580\u2584\u2580\u2580\u2588  \u2580\u2580\u2584\u2580\u2580\u2588\u2580\n#   \u2584\u2580\u2580\u2588\u2580\u2580 \u2588\u2580\u2588\u2580\u2588\u2580\u2580\u2584 \u2580\u2588\u2588\u2580\u2588\u2584\n# \u2580\u2580\u2580 \u2580 \u2580 \u2588\u2584\u2588 \u2580\u2588\u2584\u2584\u2588\u2580\u2580\u2580\u2588\u2580\u2580\n# \u2588\u2580\u2580\u2580\u2580\u2580\u2588 \u2584\u2584\u2584 \u2584 \u2584 \u2588 \u2580 \u2588\u2584\u2584\u2584\u2584\n# \u2588 \u2588\u2588\u2588 \u2588 \u2580\u2588\u2580\u2580\u2584\u2580\u2580\u2584\u2588\u2588\u2588\u2588\u2580\u2580\u2588\u2584\u2588\n# \u2588 \u2580\u2580\u2580 \u2588 \u2584\u2580\u2580\u2588\u2580\u2588\u2580\u2584 \u2580\u2580\u2584\u2584\u2588\u2584\u2588 \n# \u2580\u2580\u2580\u2580\u2580\u2580\u2580 \u2580   \u2580\u2580 \u2580  \u2580   \u2580\u2580\u2580\n";
 
-},{}],7:[function(require,module,exports){
+},{"./js-dos-options":11}],7:[function(require,module,exports){
+"use strict";
+// # DosDom
+// Simple API to work with DOM
+
+Object.defineProperty(exports, "__esModule", { value: true });
+// ### applyCss - add new css style if no html element with id exists
+function applyCss(id, css) {
+    if (document.getElementById(id) === null) {
+        var style = document.createElement("style");
+        style.id = id;
+        style.innerHTML = css;
+        document.head.appendChild(style);
+    }
+}
+exports.applyCss = applyCss;
+// ### createDiv - typesafe shortcut for creating HTMLDivElement
+function createDiv(className) {
+    var el = document.createElement("div");
+    if (className !== undefined) {
+        el.className = className;
+    }
+    return el;
+}
+exports.createDiv = createDiv;
+
+},{}],8:[function(require,module,exports){
 "use strict";
 // # DosFS
 // API for working with file system of dosbox
@@ -488,7 +527,7 @@ var DosFS = /** @class */function () {
 }();
 exports.DosFS = DosFS;
 
-},{"./js-dos-cache-noop":3,"./js-dos-xhr":12}],8:[function(require,module,exports){
+},{"./js-dos-cache-noop":3,"./js-dos-xhr":13}],9:[function(require,module,exports){
 "use strict";
 // # DosHost
 // This class is used to detect and provide information about
@@ -672,7 +711,7 @@ var DosHost = /** @class */function () {
 }();
 exports.Host = new DosHost();
 
-},{"./js-dos-build":1,"./js-dos-xhr":12}],9:[function(require,module,exports){
+},{"./js-dos-build":1,"./js-dos-xhr":13}],10:[function(require,module,exports){
 "use strict";
 
 var __extends = undefined && undefined.__extends || function () {
@@ -839,7 +878,7 @@ var DosModule = /** @class */function (_super) {
             _this.fs.chdir("/");
             // * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
             // file to user directory
-            _this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", js_dos_conf_1.jsdosconf);
+            _this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", js_dos_conf_1.default(_this));
             // * Mount emscripten FS as drive c:
             args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
             // * Run dosbox with passed arguments and resolve
@@ -914,20 +953,60 @@ var DosModule = /** @class */function (_super) {
 }(js_dos_options_1.DosOptions);
 exports.DosModule = DosModule;
 
-},{"./js-dos-build":1,"./js-dos-ci":5,"./js-dos-conf":6,"./js-dos-fs":7,"./js-dos-options":10,"./js-dos-ui":11}],10:[function(require,module,exports){
+},{"./js-dos-build":1,"./js-dos-ci":5,"./js-dos-conf":6,"./js-dos-fs":8,"./js-dos-options":11,"./js-dos-ui":12}],11:[function(require,module,exports){
 "use strict";
+// # DosOptions
+// Is a options object that you pass to constructor of
+// [Dos](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos)
+// class, to configure emulation layer
 
-Object.defineProperty(exports, "__esModule", { value: true });
-var DosOptions = /** @class */function () {
-    function DosOptions() {}
-    return DosOptions;
+var __extends = undefined && undefined.__extends || function () {
+    var _extendStatics = function extendStatics(d, b) {
+        _extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
+            d.__proto__ = b;
+        } || function (d, b) {
+            for (var p in b) {
+                if (b.hasOwnProperty(p)) d[p] = b[p];
+            }
+        };
+        return _extendStatics(d, b);
+    };
+    return function (d, b) {
+        _extendStatics(d, b);
+        function __() {
+            this.constructor = d;
+        }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
 }();
+Object.defineProperty(exports, "__esModule", { value: true });
+var DosBoxConfig = /** @class */function () {
+    function DosBoxConfig() {}
+    return DosBoxConfig;
+}();
+exports.DosBoxConfig = DosBoxConfig;
+// tslint:disable-next-line:max-classes-per-file
+var DosOptions = /** @class */function (_super) {
+    __extends(DosOptions, _super);
+    function DosOptions() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return DosOptions;
+}(DosBoxConfig);
 exports.DosOptions = DosOptions;
+exports.DosBoxConfigDefaults = {
+    cycles: "auto"
+};
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+// # JsDosUi
+// Optional ui module for js-dos.
+// This ui will be applied if client did not set `onprogress` in
+// [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
+var DosDom = require("./js-dos-dom");
 var DosUi = /** @class */function () {
     function DosUi(dos) {
         this.overlay = null;
@@ -948,20 +1027,13 @@ var DosUi = /** @class */function () {
         // that contains original canvas and .dosbox-overlay as children
         // You can change style of ui by editing css for this two classes
         try {
-            if (document.getElementById("js-dos-ui-css") === null) {
-                var style = document.createElement("style");
-                style.id = "js-dos-ui-css";
-                style.innerHTML = this.css;
-                document.head.appendChild(style);
-            }
+            DosDom.applyCss("js-dos-ui-css", this.css);
             if (this.canvas.parentElement !== null && this.canvas.parentElement.className !== "dosbox-container") {
-                var container_1 = document.createElement("div");
-                container_1.className = "dosbox-container";
+                var container_1 = DosDom.createDiv("dosbox-container");
                 var parent_1 = this.canvas.parentElement;
                 parent_1.replaceChild(container_1, this.canvas);
                 container_1.appendChild(this.canvas);
-                var overlay = document.createElement("div");
-                overlay.className = "dosbox-overlay";
+                var overlay = DosDom.createDiv("dosbox-overlay");
                 container_1.appendChild(overlay);
                 overlay.innerHTML = this.overlayHtml;
             }
@@ -1037,7 +1109,7 @@ var DosUi = /** @class */function () {
 }();
 exports.DosUi = DosUi;
 
-},{}],12:[function(require,module,exports){
+},{"./js-dos-dom":7}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -1128,7 +1200,7 @@ var Xhr = /** @class */function () {
 }();
 exports.Xhr = Xhr;
 
-},{"./js-dos-cache-noop":3}],13:[function(require,module,exports){
+},{"./js-dos-cache-noop":3}],14:[function(require,module,exports){
 "use strict";
 // # Example
 // ```javascript
@@ -1204,7 +1276,7 @@ var Dos = function Dos(canvas, options) {
 exports.default = Dos;
 window.Dos = Dos;
 
-},{"./js-dos-cache":4,"./js-dos-host":8,"./js-dos-module":9}],14:[function(require,module,exports){
+},{"./js-dos-cache":4,"./js-dos-host":9,"./js-dos-module":10}],15:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -1699,7 +1771,7 @@ var objectKeys = Object.keys || function (obj) {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"util/":17}],15:[function(require,module,exports){
+},{"util/":18}],16:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -1724,14 +1796,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -2322,7 +2394,7 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./support/isBuffer":16,"_process":18,"inherits":15}],18:[function(require,module,exports){
+},{"./support/isBuffer":17,"_process":19,"inherits":16}],19:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -2508,7 +2580,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -2572,7 +2644,7 @@ var compare = function compare(imageUrl, ci, callback) {
     });
 };
 
-},{"./do":20,"assert":14}],20:[function(require,module,exports){
+},{"./do":21,"assert":15}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -2617,7 +2689,7 @@ function doReady(promise, fn) {
 }
 exports.doReady = doReady;
 
-},{"assert":14}],21:[function(require,module,exports){
+},{"assert":15}],22:[function(require,module,exports){
 "use strict";
 /* tslint:disable:max-line-length */
 /* tslint:disable:no-console */
@@ -2946,6 +3018,6 @@ var saveImage = function saveImage(ci) {
 };
 var wikiElonMusk = "\nElon Reeve Musk FRS (/\u02C8i\u02D0l\u0252n/; born June 28, 1971) is a\ntechnology entrepreneur and engineer.[10][11][12]\nHe holds South African, Canadian, and U.S. citizenship\nand is the founder, CEO, and lead designer of SpaceX;\n[13] co-founder, CEO, and product architect of Tesla, Inc.;\n[14] co-founder and CEO of Neuralink; and co-founder of PayPal.\nIn December 2016, he was ranked 21st on the Forbes list of\nThe World's Most Powerful People.[15] As of October 2018,\nhe has a net worth of $22.8 billion and is listed by Forbes\nas the 54th-richest person in the world.[16]\nBorn and raised in Pretoria, South Africa, Musk moved to\nCanada when he was 17 to attend Queen's University.\nHe transferred to the University of Pennsylvania two years\nlater, where he received an economics degree from\nthe Wharton School and a degree in physics from the College\nof Arts and Sciences. He began a Ph.D.\nin applied physics and material sciences at Stanford University\nin 1995 but dropped out after two days to pursue\nan entrepreneurial career. He subsequently co-founded Zip2, a\nweb software company, which was acquired by Compaq\nfor $340 million in 1999. Musk then founded X.com, an online bank.\nIt merged with Confinity in 2000 and later that\nyear became PayPal, which was bought by eBay for $1.5 billion\nin October 2002.[17][18][19][20]\n";
 
-},{"../js-dos-ts/js-dos":13,"../js-dos-ts/js-dos-cache-noop":3,"../js-dos-ts/js-dos-host":8,"./compare":19,"./do":20,"assert":14}]},{},[21])
+},{"../js-dos-ts/js-dos":14,"../js-dos-ts/js-dos-cache-noop":3,"../js-dos-ts/js-dos-host":9,"./compare":20,"./do":21,"assert":15}]},{},[22])
 
 //# sourceMappingURL=test.js.map

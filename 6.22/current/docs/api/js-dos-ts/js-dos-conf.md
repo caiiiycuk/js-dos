@@ -2,16 +2,50 @@
 
 
 
-# js-dos default config
-This is default config for dosbox.
 
 
   
 
 ```
+import { DosBoxConfig, DosBoxConfigDefaults } from "./js-dos-options";
+
+
+```
+
+
+
+
+
+
+
+# js-dos default config
+This is default config for dosbox that applies for all runs.
+
+
+
+
+
+
+
+
+It's configurable through [options](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
+
+
+  
+
+```
+export default function getJsDosConfig(config: DosBoxConfig): string {
+    let conf = jsdosconf;
+    function update(placeholder: string) {
+        conf = conf.replace("%" + placeholder + "%",
+            ((config as any)[placeholder] || (DosBoxConfigDefaults as any)[placeholder]) + "");
+    }
+    Object.keys(DosBoxConfigDefaults).forEach((name) => update(name));
+    return conf;
+}
 
 /* tslint:disable:max-line-length */
-export const jsdosconf = `
+const jsdosconf = `
 # This is the configurationfile for DOSBox 0.74. (Please use the latest version of DOSBox)
 # Lines starting with a # are commentlines and are ignored by DOSBox.
 # They are used to (briefly) document the effect of each option.
@@ -94,7 +128,7 @@ scaler=none
 
 core=auto
 cputype=auto
-cycles=auto
+cycles=%cycles%
 cycleup=10
 cycledown=20
 
