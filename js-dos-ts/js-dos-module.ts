@@ -4,9 +4,9 @@
 import { DosRuntime } from "./js-dos";
 import { Build } from "./js-dos-build";
 import { DosCommandInterface } from "./js-dos-ci";
-import { jsdosconf } from "./js-dos-conf";
+import getJsDosConfig from "./js-dos-conf";
 import { DosFS } from "./js-dos-fs";
-import { DosOptions } from "./js-dos-options";
+import { DosBoxConfigDefaults, DosOptions, DosBoxConfig } from "./js-dos-options";
 import { DosUi } from "./js-dos-ui";
 
 export class DosModule extends DosOptions {
@@ -168,7 +168,7 @@ export class DosModule extends DosOptions {
 
             // * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
             // file to user directory
-            this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", jsdosconf);
+            this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", getJsDosConfig(this));
             // * Mount emscripten FS as drive c:
             args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
             // * Run dosbox with passed arguments and resolve
