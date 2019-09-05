@@ -26,7 +26,7 @@ Or if you have **ZIP** archive with dos program you can bootstrap it:
 ```
 npx create-dosbox my-app archive.zip
 cd my-app
-npm intall
+npm install
 npm start
 ```
 
@@ -192,7 +192,15 @@ You can
 ### How to override dosbox.conf
 
 By default js-dos uses builtin dosbox [config](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf) file.
-However you can override it with your config file. To do this you can simply put file named `dosbox.conf` inside root of
+You have option to change frequently used parameters through [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options). For example, you can change `cycles` (amount of instructions DOSBox tries to emulate each millisecond):
+
+```javascript
+    Dos(canvas, { cycles: 1000, }) // also can be "auto", "max"
+        .ready((fs, main) => ...)
+        .catch((message) => console.error(message));
+```
+
+To change other parameters you can override it with your config file. To do this you can simply put file named `dosbox.conf` inside root of
 program archive and then pass command line argument to read it `-c dosbox.conf`. Or you can write this file directly from
 javascript with [fs.createFile](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-createfile).
 
@@ -208,6 +216,11 @@ For example, you can add `[autoexec]` section to print dosbox.conf file:
         main(["-conf", "dosbox.conf"]);
     });
 ```
+
+### If game working too fast
+
+In that case you need decrease amount of `cycles` per second, you can do it through configuration option. Please read
+section above.
 
 ### How to disable js-dos loading UI
 
@@ -264,7 +277,7 @@ dosbox.conf. Then mouse starts follow browser cursor after first click (lock), a
 ### Multiple dosbox instances on one page
 
 JsDos already support multiple instances, just create new canvas for each jsdos and
-instaniate it normally. Like in this [64k demoscene](/6.22/64k/index.html) example.
+instaniate it normally. Like in this [64k demoscene](https://js-dos.com/6.22/64k/index.html) example.
 
 ### Store user progress between sessions
 
