@@ -34,6 +34,22 @@ CommandInterface::CommandInterface(): m_events(new Events()) {
 
 
 
+export whole SDL
+
+
+  
+
+```
+    Module['SDL'] = SDL;
+
+```
+
+
+
+
+
+
+
 ios.iframe.fix
 
 

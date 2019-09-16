@@ -8,6 +8,8 @@
 CommandInterface::CommandInterface(): m_events(new Events()) {
 #ifdef EMSCRIPTEN
   EM_ASM(({
+    // export whole SDL
+    Module['SDL'] = SDL;
     // ios.iframe.fix
     Module['canvas'].addEventListener('touchstart', function(event) {}, true);
     // ios.swipe.fix

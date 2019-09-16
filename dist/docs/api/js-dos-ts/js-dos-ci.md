@@ -11,6 +11,10 @@ Is abstraction that allows you to control runned instance of js-dos
 ```
 import { DosModule } from "./js-dos-module";
 
+export interface DosKeyEventConsumer {
+    onPress(keyCode: number): void;
+    onRelease(keyCode: number): void;
+}
 export class DosCommandInterface {
     public dos: DosModule;
     private em: any; // typeof Module;
@@ -20,6 +24,10 @@ export class DosCommandInterface {
     private shellInputQueue: string[] = [];
     private shellInputClients: Array<() => void> = [];
     private onstdout?: (data: string) => void = undefined;
+    private keyEventConsumer: DosKeyEventConsumer = {
+        onPress: (keyCode) => this.simulateKeyEvent(keyCode, true),
+        onRelease: (keyCode) => this.simulateKeyEvent(keyCode, false),
+    };
 
     constructor(dos: DosModule, onready: (ci: DosCommandInterface) => void) {
         this.dos = dos;
@@ -260,6 +268,18 @@ Chromium Hack
     public simulateKeyPress(keyCode: number): void {
         this.simulateKeyEvent(keyCode, true);
         setTimeout(() => this.simulateKeyEvent(keyCode, false), 100);
+    }
+
+    public getParentDiv(): HTMLDivElement | null {
+        if (this.dos.canvas.parentElement instanceof HTMLDivElement) {
+            return this.dos.canvas.parentElement;
+        }
+
+        return null;
+    }
+
+    public getKeyEventConsumer(): DosKeyEventConsumer {
+        return this.keyEventConsumer;
     }
 
     private sendKeyPress(code: number) {

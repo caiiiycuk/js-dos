@@ -19,6 +19,9 @@ import { Host } from "./js-dos-host";
 import { DosModule } from "./js-dos-module";
 import { DosOptions } from "./js-dos-options";
 
+import Move from "./controller/move";
+import Qwerty from "./controller/qwerty";
+
 // When you call `Dos(canvas, options)` js-dos behind the scene will download
 // dosbox and prepare it to start. This function will return `Promise<DosReadyPromise>`
 // that will be resolved when dosbox is ready. In case of error promise
@@ -120,3 +123,7 @@ export interface DosReadyPromise extends Promise<DosRuntime> {
 }
 
 (window as any).Dos = Dos;
+(window as any).DosController = {
+    Qwerty,
+    Move,
+};

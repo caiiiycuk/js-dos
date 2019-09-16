@@ -3,12 +3,21 @@
 
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>js-dos 6.22, Digger example</title>
   <script src="js-dos.js"></script>
   <style>
-    body, canvas, .dosbox-container {
+    html, body, canvas, .dosbox-container {
       width: 100%;
       height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    canvas {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
     }
   </style>
 </head>
@@ -18,13 +27,15 @@
   <script>
     Dos(document.getElementById("jsdos"), {
       wdosboxUrl: "/wdosbox.js",
-      cycles: 1000,
+      cycles: 750,
     }).ready(function (fs, main) {
       fs.extract("test/digger.zip").then(function () {
         main(["-c", "DIGGER.COM"]).then(function (ci) {
           window.Module = ci.dos;
           window.ci = ci;
-          // ci.createKeyboardLayout();
+
+          DosController.Qwerty(ci.getParentDiv(), ci.getKeyEventConsumer());
+          DosController.Move(ci.getParentDiv(), ci.getKeyEventConsumer());
         });
       });
     });
