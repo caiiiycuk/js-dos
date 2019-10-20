@@ -1,7 +1,7 @@
 [js-dos 6.22](https://js-dos.com)
 ===========
 
-[![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos)
+[![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos) [![By Me A Coffee](/bmc.png)](https://www.buymeacoffee.com/caiiiycuk)
 
 6.22 is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox. Try our <a href="https://dosify.me">demo app</a>.
 
@@ -195,7 +195,8 @@ By default js-dos uses builtin dosbox [config](https://js-dos.com/6.22/docs/api/
 You have option to change frequently used parameters through [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options). For example, you can change `cycles` (amount of instructions DOSBox tries to emulate each millisecond):
 
 ```javascript
-    Dos(canvas, { cycles: 1000, }) // also can be "auto", "max"
+    Dos(canvas, { cycles: 1000, }) // also can be "auto", "max" 
+                                   // look to DosOptions for other paramters
         .ready((fs, main) => ...)
         .catch((message) => console.error(message));
 ```
@@ -262,9 +263,13 @@ So, for giving example resolution will be 640x320, but canvas size will be 1280x
 
 ### Mouse locking
 
-By default dosbox mouse will follow browser cursor. However you can change this behaviour by providing `autolock=true` in 
-dosbox.conf. Then mouse starts follow browser cursor after first click (lock), and you can unlock mouse by pressing `CTRL+F10`.
+By default dosbox mouse will follow browser cursor without locking. It means that js-dos will not take exclusive control over mouse pointer. However you can change this behaviour by providing `autolock=true` in 
+`dosbox.conf` or through [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options). Then js-dos will take exclusive control and lock mouse inside js-dos container (you can't leave it). This will happen after first click, and you can unlock mouse by pressing `CTRL+F10` or `ESC`.
 ```javascript
+    Dos(canvas, { autolock: true }).ready((fs, main) => {
+        main([...]);
+    });
+// OR
     Dos(canvas).ready((fs, main) => {
         fs.createFile("dosbox.conf", `
             [sdl]
