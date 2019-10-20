@@ -13,7 +13,7 @@ class, to configure emulation layer
 ```
 
 export class DosBoxConfig {
-    public cycles?: string;
+    public cycles?: number | string;
 
 ```
 
@@ -31,6 +31,22 @@ export class DosBoxConfig {
              'fixed #number' will set a fixed amount of cycles. This is what you usually need if 'auto' fails.
                              (Example: fixed 4000).
              'max'           will allocate as much cycles as your computer is able to handle.
+
+
+  
+
+```
+    public autolock?: boolean;
+
+```
+
+
+
+
+
+
+
+   autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)
 
 
   
@@ -175,6 +191,7 @@ you can set alternative url for downloading js-dos script, default is 'wdosbox.j
 
 export const DosBoxConfigDefaults: DosBoxConfig = {
     cycles: "auto",
+    autolock: false,
 };
 
 

@@ -1215,17 +1215,36 @@ dosurface:
 }
 
 #ifdef EMSCRIPTEN
-static bool use_capture_callback = false;
+static bool canUsePointerLock = false;
 static void doGFX_CaptureMouse(void);
 
 void GFX_CaptureMouse(void) {
-	if (use_capture_callback && !sdl.mouse.autoenable) {
-		if (sdl.mouse.locked) {
+	if (canUsePointerLock) {
+		EmscriptenPointerlockChangeEvent lastChangeEvent;
+		auto haveLockInfo = emscripten_get_pointerlock_status(&lastChangeEvent) == EMSCRIPTEN_RESULT_SUCCESS;
+		if (!haveLockInfo) {
+			printf("ERR! Can't get pointer lock info disabling pointer lock\n");
+			canUsePointerLock = false;
+			return;
+		}
+
+		auto isLocked = lastChangeEvent.isActive;
+
+		if (isLocked != sdl.mouse.locked) {
+			doGFX_CaptureMouse();
+			return;
+		}
+
+		if (isLocked) {
 			emscripten_exit_pointerlock();
 		} else {
 			//This only raises a request. A callback will notify when pointer
 			// lock starts. The user may need to confirm a browser dialog.
-			emscripten_request_pointerlock(NULL, true);
+			auto lockRequested = emscripten_request_pointerlock("#canvas", true) == EMSCRIPTEN_RESULT_DEFERRED;
+			if (!lockRequested) {
+				printf("ERR! Can't request pointer lock\n");
+				canUsePointerLock = false;
+			}
 		}
 	} else {
 		doGFX_CaptureMouse();
@@ -1282,20 +1301,6 @@ static void CaptureMouse(bool pressed) {
 		return;
 	GFX_CaptureMouse();
 }
-
-#ifdef EMSCRIPTEN
-EM_BOOL em_pointerlock_callback(int eventType,
-                          const EmscriptenPointerlockChangeEvent *keyEvent,
-                          void *userData) {
-	if (eventType == EMSCRIPTEN_EVENT_POINTERLOCKCHANGE) {
-		if ((!keyEvent->isActive && sdl.mouse.locked) ||
-			(keyEvent->isActive && !sdl.mouse.locked)) {
-			doGFX_CaptureMouse();
-		}
-	}
-	return false;
-}
-#endif
 
 #if defined (WIN32)
 STICKYKEYS stick_keys = {sizeof(STICKYKEYS), 0};
@@ -1895,6 +1900,14 @@ static void GUI_StartUp(Section * sec) {
 
 	sdl.mouse.autoenable=section->Get_bool("autolock");
 	if (!sdl.mouse.autoenable) SDL_ShowCursor(SDL_DISABLE);
+#ifdef EMSCRIPTEN
+	canUsePointerLock = sdl.mouse.autoenable;
+	if (sdl.mouse.autoenable) {
+		// because request is always deferred
+		// need to ask at start
+		GFX_CaptureMouse();
+	}
+#endif
 	sdl.mouse.autolock=false;
 	sdl.mouse.sensitivity=section->Get_int("sensitivity");
 	std::string output=section->Get_string("output");
@@ -2905,14 +2918,13 @@ int main(int argc, char* argv[]) {
 		canvasStyle.imageRendering = "crisp-edges";
 		canvasStyle.imageRendering = "pixelated";
 	);
-	if (emscripten_set_pointerlockchange_callback(NULL, NULL, true,
-	                                              em_pointerlock_callback)
-	    == EMSCRIPTEN_RESULT_SUCCESS) {
-		use_capture_callback = true;
-	}
+	// register no-op callbacks for defered events
+	emscripten_set_mousedown_callback("#canvas", NULL, false, [](int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData) {
+		return 0;
+	});
 #endif
 
-	/* Display Welcometext in the console */
+	/* Display Welcome text in the console */
 	LOG_MSG("DOSBox version %s", getVersion());
 	LOG_MSG("Copyright 2002-2015 DOSBox Team, published under GNU GPL.");
 	LOG_MSG("---");

@@ -4,7 +4,7 @@
 // class, to configure emulation layer
 
 export class DosBoxConfig {
-    public cycles?: string;
+    public cycles?: number | string;
 //    cycles: Amount of instructions DOSBox tries to emulate each millisecond.
 //            Setting this value too high results in sound dropouts and lags.
 //            Cycles can be set in 3 ways:
@@ -13,6 +13,8 @@ export class DosBoxConfig {
 //              'fixed #number' will set a fixed amount of cycles. This is what you usually need if 'auto' fails.
 //                              (Example: fixed 4000).
 //              'max'           will allocate as much cycles as your computer is able to handle.
+    public autolock?: boolean;
+//    autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)
 }
 
 // tslint:disable-next-line:max-classes-per-file
@@ -47,4 +49,5 @@ export class DosOptions extends DosBoxConfig {
 
 export const DosBoxConfigDefaults: DosBoxConfig = {
     cycles: "auto",
+    autolock: false,
 };
