@@ -1218,18 +1218,20 @@ dosurface:
 static bool canUsePointerLock = false;
 static void doGFX_CaptureMouse(void);
 
+bool isPointerLocked() {
+	EmscriptenPointerlockChangeEvent lastChangeEvent;
+	auto haveLockInfo = emscripten_get_pointerlock_status(&lastChangeEvent) == EMSCRIPTEN_RESULT_SUCCESS;
+	if (!haveLockInfo) {
+		printf("ERR! Can't get pointer lock info disabling pointer lock\n");
+		return false;
+	}
+
+	return lastChangeEvent.isActive;
+}
+
 void GFX_CaptureMouse(void) {
 	if (canUsePointerLock) {
-		EmscriptenPointerlockChangeEvent lastChangeEvent;
-		auto haveLockInfo = emscripten_get_pointerlock_status(&lastChangeEvent) == EMSCRIPTEN_RESULT_SUCCESS;
-		if (!haveLockInfo) {
-			printf("ERR! Can't get pointer lock info disabling pointer lock\n");
-			canUsePointerLock = false;
-			return;
-		}
-
-		auto isLocked = lastChangeEvent.isActive;
-
+		bool isLocked = isPointerLocked();
 		if (isLocked != sdl.mouse.locked) {
 			doGFX_CaptureMouse();
 			return;
@@ -1237,14 +1239,6 @@ void GFX_CaptureMouse(void) {
 
 		if (isLocked) {
 			emscripten_exit_pointerlock();
-		} else {
-			//This only raises a request. A callback will notify when pointer
-			// lock starts. The user may need to confirm a browser dialog.
-			auto lockRequested = emscripten_request_pointerlock("#canvas", true) == EMSCRIPTEN_RESULT_DEFERRED;
-			if (!lockRequested) {
-				printf("ERR! Can't request pointer lock\n");
-				canUsePointerLock = false;
-			}
 		}
 	} else {
 		doGFX_CaptureMouse();
@@ -1902,11 +1896,6 @@ static void GUI_StartUp(Section * sec) {
 	if (!sdl.mouse.autoenable) SDL_ShowCursor(SDL_DISABLE);
 #ifdef EMSCRIPTEN
 	canUsePointerLock = sdl.mouse.autoenable;
-	if (sdl.mouse.autoenable) {
-		// because request is always deferred
-		// need to ask at start
-		GFX_CaptureMouse();
-	}
 #endif
 	sdl.mouse.autolock=false;
 	sdl.mouse.sensitivity=section->Get_int("sensitivity");
@@ -2920,8 +2909,20 @@ int main(int argc, char* argv[]) {
 	);
 	// register no-op callbacks for defered events
 	emscripten_set_mousedown_callback("#canvas", NULL, false, [](int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData) {
+		if (canUsePointerLock && !isPointerLocked()) {
+			emscripten_request_pointerlock("#canvas", false);
+		}
 		return 0;
 	});
+	emscripten_set_pointerlockchange_callback("#document", NULL, false, 
+		[](int eventType, const EmscriptenPointerlockChangeEvent *pointerlockChangeEvent, void *userData) -> EM_BOOL {
+			if (canUsePointerLock) {
+				GFX_CaptureMouse();
+				return true;
+			}
+			return false;
+		});
+#
 #endif
 
 	/* Display Welcome text in the console */
