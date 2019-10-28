@@ -6,8 +6,8 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.36 (ae0ccc95b30d8b671c0fd81d1997a695)",
-    jsVersion: "e458350f35a2c3a331959275d81894133a4cdcf5",
+    version: "6.22.37 (2b23342d2ba488bb3653b8506b7e2667)",
+    jsVersion: "353e9136ae42c6641ab325375f89ac2f17245287",
     jsSize: 199660,
     wasmVersion: "eb83536935802be3c617c911dfce7e28",
     wasmSize: 1809140
@@ -164,6 +164,12 @@ var DosCommandInterface = /** @class */function () {
     // * `height()` - return dosbox window height in pixels
     DosCommandInterface.prototype.height = function () {
         return this.dos.canvas.height;
+    };
+    // * `fullscreen()` - enters fullscreen mode
+    // This function can be called anywhere, but for web security reasons its associated request can only be raised
+    // inside the event handler for a user-generated event (for example a key, mouse or touch press/release).
+    DosCommandInterface.prototype.fullscreen = function () {
+        this.dos.canvas.requestFullscreen();
     };
     // * `shell([cmd1, cmd2, ...])` - executes passed commands
     // in dosbox shell if it's runned, returns Promise that

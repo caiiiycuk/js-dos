@@ -279,6 +279,24 @@ By default dosbox mouse will follow browser cursor without locking. It means tha
     });
 ```    
 
+### Fullscreen
+
+JsDos provides very basic support for entering fullscreen mode. You can request to enter
+fullscreen mode using [CommandInterface.fullscreen()](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci). 
+
+```js
+<button onclick="ci.fullscreen()">Fullscreen</button>
+<script>
+    Dos(canvas).ready((fs, main) => {
+        main([...]).then((ci) => {
+            window.ci = ci;
+        });
+    });
+</script>
+```
+
+**NOTE:** This function can be called anywhere, but for web security reasons its associated request can only be raised inside the event handler for a user-generated event (for example a key, mouse or touch press/release).
+
 ### Multiple dosbox instances on one page
 
 JsDos already support multiple instances, just create new canvas for each jsdos and
