@@ -31,6 +31,13 @@ export class DosCommandInterface {
         return this.dos.canvas.height;
     }
 
+    // * `fullscreen()` - enters fullscreen mode
+    // This function can be called anywhere, but for web security reasons its associated request can only be raised
+    // inside the event handler for a user-generated event (for example a key, mouse or touch press/release).
+    public fullscreen() {
+        this.dos.canvas.requestFullscreen()
+    }
+
     // * `shell([cmd1, cmd2, ...])` - executes passed commands
     // in dosbox shell if it's runned, returns Promise that
     // resolves when commands sequence is executed
