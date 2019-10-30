@@ -50,6 +50,15 @@ usually need if 'auto' fails. (Example: fixed 4000).
 
 
 
+
+
+
+
+
+
+### autolock
+
+
   
 
 ```
@@ -63,7 +72,7 @@ usually need if 'auto' fails. (Example: fixed 4000).
 
 
 
-   autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)
+   Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)
 
    By default dosbox mouse will follow browser cursor without locking.
    It means that js-dos will not take exclusive control over mouse pointer.

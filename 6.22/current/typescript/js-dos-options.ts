@@ -16,8 +16,10 @@ export class DosBoxConfig {
 // usually need if 'auto' fails. (Example: fixed 4000).
 //    * `max` - will allocate as much cycles as your computer is able to handle.
 //
+
+// ### autolock
     public autolock?: boolean;
-//    autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)
+//    Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)
 //
 //    By default dosbox mouse will follow browser cursor without locking.
 //    It means that js-dos will not take exclusive control over mouse pointer.
