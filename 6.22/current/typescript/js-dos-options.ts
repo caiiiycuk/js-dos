@@ -56,8 +56,12 @@ export class DosOptions extends DosBoxConfig {
 
     // ### wdosboxUrl
     public wdosboxUrl?: string;
-    // you can set alternative url for downloading js-dos script, default is 'wdosbox.js'
-
+    // you can set alternative url for downloading js-dos script, default is 'wdosbox.js'.
+    // Additionaly you can change which variant of js-dos script to use:
+    //
+    // * `wdosbox.js` - default variant. This version compiled with latest emscripten and in theory should work best
+    // * `wdosbox-emterp.js` - This version compiled with legacy fastcomp backend, can be useful in rare cases
+    // * `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs using it
 }
 
 export const DosBoxConfigDefaults: DosBoxConfig = {

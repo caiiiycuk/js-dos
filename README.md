@@ -454,3 +454,10 @@ Output will be placed in dist folder. Also in dist folder you can find test page
 ```
 firefox dist/test/test.html
 ```
+
+Additionaly you can run same tests on other variants of js-dos (emterp, nosync). BUT, not all tests will pass.
+
+```
+firefox dist/test/test-emterp.html
+firefox dist/test/test-nosync.html
+```

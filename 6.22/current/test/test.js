@@ -6,11 +6,11 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.37 (2b23342d2ba488bb3653b8506b7e2667)",
-    jsVersion: "353e9136ae42c6641ab325375f89ac2f17245287",
+    version: "6.22.37 (38872638970331277a118a30c14def7b)",
+    jsVersion: "f62950dd830bae25c052b14f0bb3362c0bb632d6",
     jsSize: 199660,
-    wasmVersion: "eb83536935802be3c617c911dfce7e28",
-    wasmSize: 1809140
+    wasmVersion: "ab1e5dfd0a5aa35a0ba806d5e2c8b3eb",
+    wasmSize: 1809135
 };
 
 },{}],2:[function(require,module,exports){
@@ -658,7 +658,7 @@ var DosHost = /** @class */function () {
                 responseType: "arraybuffer",
                 progress: function progress(total, loaded) {
                     if (module.onprogress) {
-                        module.onprogress("Resolving DosBox", buildTotal, loaded);
+                        module.onprogress("Resolving DosBox", buildTotal, Math.min(js_dos_build_1.Build.wasmSize, loaded));
                     }
                 },
                 fail: function fail(url, status, message) {
@@ -691,7 +691,7 @@ var DosHost = /** @class */function () {
                             cache: cache,
                             progress: function progress(total, loaded) {
                                 if (module.onprogress) {
-                                    module.onprogress("Resolving DosBox", buildTotal, js_dos_build_1.Build.wasmSize + loaded);
+                                    module.onprogress("Resolving DosBox", buildTotal, Math.min(buildTotal, js_dos_build_1.Build.wasmSize + loaded));
                                 }
                             },
                             fail: function fail(url, status, message) {
@@ -2708,6 +2708,7 @@ var js_dos_cache_noop_1 = require("../js-dos-ts/js-dos-cache-noop");
 var js_dos_host_1 = require("../js-dos-ts/js-dos-host");
 var compare_1 = require("./compare");
 var do_1 = require("./do");
+var wdosboxUrl = window.wdosboxUrl;
 suite("js-dos-host");
 test("loader should notify about error if wasm is not supported", function (done) {
     var oldValue = js_dos_host_1.Host.wasmSupported;
@@ -2734,11 +2735,11 @@ test("loader should show progress loading and use cache", function (done) {
     var TestCache = /** @class */function () {
         function TestCache() {}
         TestCache.prototype.put = function (key, data, onflush) {
-            isPUT = isPUT || key === "/wdosbox.wasm.js" && data instanceof ArrayBuffer && data.byteLength > 0;
+            isPUT = isPUT || key === wdosboxUrl.replace(".js", ".wasm.js") && data instanceof ArrayBuffer && data.byteLength > 0;
             onflush();
         };
         TestCache.prototype.get = function (key, ondata, onerror) {
-            isGET = isGET || key === "/wdosbox.wasm.js";
+            isGET = isGET || key === wdosboxUrl.replace(".js", ".wasm.js");
             onerror("not in cache");
         };
         TestCache.prototype.forEach = function (each, onend) {
@@ -2747,11 +2748,11 @@ test("loader should show progress loading and use cache", function (done) {
         return TestCache;
     }();
     var lastLoaded = -1;
-    js_dos_host_1.Host.resolveDosBox("/wdosbox.js", new TestCache(), {
+    js_dos_host_1.Host.resolveDosBox(wdosboxUrl, new TestCache(), {
         onprogress: function onprogress(stage, total, loaded) {
             console.log(stage, total, loaded);
-            assert.equal(true, loaded <= total, loaded + "<=" + total);
-            assert.equal(true, lastLoaded <= loaded, lastLoaded + "<=" + loaded);
+            assert.equal(true, loaded <= total, "onprgoress: " + loaded + "<=" + total);
+            assert.equal(true, lastLoaded <= loaded, "endprogress: " + lastLoaded + "<=" + loaded);
             lastLoaded = loaded;
         },
         ondosbox: function ondosbox(dosbox, instantiateWasm) {
@@ -2765,7 +2766,7 @@ test("loader should show progress loading and use cache", function (done) {
     });
 });
 test("loader should never load twice wdosbox", function (done) {
-    js_dos_host_1.Host.resolveDosBox("/wdosbox.js", new js_dos_cache_noop_1.default(), {
+    js_dos_host_1.Host.resolveDosBox(wdosboxUrl, new js_dos_cache_noop_1.default(), {
         onprogress: function onprogress(stage, total, loaded) {
             assert.fail();
         },
@@ -2778,7 +2779,7 @@ test("loader should never load twice wdosbox", function (done) {
     });
 });
 test("loader should fire event when wdosbox is loaded", function (done) {
-    js_dos_host_1.Host.resolveDosBox("/wdosbox.js", new js_dos_cache_noop_1.default(), {
+    js_dos_host_1.Host.resolveDosBox(wdosboxUrl, new js_dos_cache_noop_1.default(), {
         ondosbox: function ondosbox(dosbox, instantiateWasm) {
             assert.ok(dosbox);
             assert.ok(instantiateWasm);
@@ -2792,7 +2793,7 @@ test("loader should fire event when wdosbox is loaded", function (done) {
 suite("js-dos");
 test("js-dos can't start without canvas (listener style)", function (done) {
     js_dos_1.default(null, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl: wdosboxUrl,
         onerror: function onerror(message) {
             assert.equal("canvas field is required, but not set!", message);
             done();
@@ -2801,7 +2802,7 @@ test("js-dos can't start without canvas (listener style)", function (done) {
 });
 test("js-dos can't start without canvas (promise style)", function (done) {
     var dos = js_dos_1.default(null, {
-        wdosboxUrl: "/wdosbox.js"
+        wdosboxUrl: wdosboxUrl
     });
     do_1.doCatch(dos, function (message) {
         assert.equal("canvas field is required, but not set!", message);
@@ -2813,7 +2814,7 @@ test("js-dos can't start without canvas (promise style)", function (done) {
 });
 test("js-dos can't start without canvas (ready style)", function (done) {
     var dos = js_dos_1.default(null, {
-        wdosboxUrl: "/wdosbox.js"
+        wdosboxUrl: wdosboxUrl
     });
     var promise = dos.ready(function (fs, main) {
         var fn = function fn() {
@@ -2828,7 +2829,7 @@ test("js-dos can't start without canvas (ready style)", function (done) {
 });
 test("js-dos should start with canvas", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js"
+        wdosboxUrl: wdosboxUrl
     });
     do_1.doReady(dos, function (fs, main) {
         do_1.doNext(main([]), function (ci) {
@@ -2839,7 +2840,7 @@ test("js-dos should start with canvas", function (done) {
 });
 test("js-dos can take screenshot of canvas", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js"
+        wdosboxUrl: wdosboxUrl
     });
     do_1.doReady(dos, function (fs, main) {
         do_1.doNext(main([]), function (ci) {
@@ -2850,7 +2851,7 @@ test("js-dos can take screenshot of canvas", function (done) {
 suite("js-dos-fs");
 test("js-dos-fs createFile error handling", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl: wdosboxUrl,
         onerror: function onerror(message) {
             assert.equal(message, "Can't create file '', because file name is empty");
             done();
@@ -2862,7 +2863,7 @@ test("js-dos-fs createFile error handling", function (done) {
 });
 test("js-dos-fs createFile error handling 2", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl: wdosboxUrl,
         onerror: function onerror(message) {
             assert.equal(message, "Can't create file '/home/', because file name is empty");
             done();
@@ -2874,7 +2875,7 @@ test("js-dos-fs createFile error handling 2", function (done) {
 });
 test("js-dos-fs can create file", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl: wdosboxUrl,
         onerror: function onerror(message) {
             assert.fail();
         }
@@ -2890,7 +2891,7 @@ test("js-dos-fs can create file", function (done) {
 });
 test("js-dos-fs can create file (windows path)", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl: wdosboxUrl,
         onerror: function onerror(message) {
             assert.fail();
         }
@@ -2917,7 +2918,7 @@ test("js-dos-fs clearing IDBFS db", function (done) {
 test("js-dos-fs can mount archive on persistent point [empty db]", function (done) {
     var isOnProgress = false;
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl: wdosboxUrl,
         onerror: function onerror(message) {
             assert.fail();
         },
@@ -2938,7 +2939,7 @@ test("js-dos-fs can mount archive on persistent point [empty db]", function (don
 });
 test("js-dos-fs can mount archive on persistent point [existent db]", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl: wdosboxUrl,
         onerror: function onerror(message) {
             assert.fail();
         },
@@ -2959,7 +2960,7 @@ test("js-dos-fs can mount archive on persistent point [existent db]", function (
 suite("js-dos");
 test("js-dos should provide user level dosbox.conf", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl: wdosboxUrl,
         onerror: function onerror(message) {
             assert.fail();
         }
@@ -2973,7 +2974,7 @@ test("js-dos should provide user level dosbox.conf", function (done) {
 });
 test("js-dos can create and read dosbox.conf", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl: wdosboxUrl,
         onerror: function onerror(message) {
             assert.fail();
         }
@@ -2987,7 +2988,7 @@ test("js-dos can create and read dosbox.conf", function (done) {
 });
 test("js-dos can run digger.zip", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js"
+        wdosboxUrl: wdosboxUrl
     });
     do_1.doReady(dos, function (fs, main) {
         do_1.doNext(fs.extract("digger.zip"), function () {
@@ -3003,7 +3004,7 @@ test("js-dos can run digger.zip", function (done) {
 });
 test("js-dos can simulate key events", function (done) {
     var dos = js_dos_1.default(document.getElementById("canvas"), {
-        wdosboxUrl: "/wdosbox.js"
+        wdosboxUrl: wdosboxUrl
     });
     do_1.doReady(dos, function (fs, main) {
         do_1.doNext(fs.extract("digger.zip"), function () {
