@@ -1,6 +1,6 @@
 {
   "name": "js-dos",
-  "version": "6.22.37",
+  "version": "6.22.38",
   "description": "Easiest API to run dos programs in browser",
   "main": "dist/js-dos.js",
   "types": "dist/typescript/js-dos.ts",

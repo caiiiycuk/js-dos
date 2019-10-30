@@ -61,7 +61,9 @@ export class DosOptions extends DosBoxConfig {
     //
     // * `wdosbox.js` - default variant. This version compiled with latest emscripten and in theory should work best
     // * `wdosbox-emterp.js` - This version compiled with legacy fastcomp backend, can be useful in rare cases
-    // * `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs using it
+    // (e.g. if you have problems with default version)
+    // * `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs/shell
+    // emulation using it
 }
 
 export const DosBoxConfigDefaults: DosBoxConfig = {
