@@ -98,6 +98,8 @@ You can obtain latest build using this links:
  - js-dos client api: https://js-dos.com/6.22/current/js-dos.js
  - dosbox wasm wrapper: https://js-dos.com/6.22/current/wdosbox.js
  - dosbox wasm file: https://js-dos.com/6.22/current/wdosbox.wasm.js
+ - dosbox wasm-emterp file: https://js-dos.com/6.22/current/wdosbox-emterp.wasm.js
+ - dosbox wasm-nosync file: https://js-dos.com/6.22/current/wdosbox-nosync.wasm.js
 
 **NOTE**: do not try to use this links to serve your copy of dosbox. Because this links always pointing to latest
 version, and newest version can have breaking changes. Is better to use npx bootstrap command (above), or download latest
@@ -157,6 +159,18 @@ You can do this by passing `wdosboxUrl` property as second argument:
 
 ```javascript
     Dos(canvas, { wdosboxUrl: "/wdosbox.js" }).ready(...);
+```
+
+### Changing dosbox variant
+
+By changing wdosboxUrl (see above) you can select different dosbox variants: 
+
+* `wdosbox.js` - default variant. This version compiled with latest emscripten and in theory should work best.
+* `wdosbox-emterp.js` - This version compiled with legacy fastcomp backend, can be useful in rare cases (e.g. if you have problem with default version).
+* `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs/shell emulation using it.
+
+```javascript
+    Dos(canvas, { wdosboxUrl: "/wdosbox-nosync.js" }).ready(...);
 ```
 
 ### How to handle errors
@@ -269,7 +283,9 @@ By default dosbox mouse will follow browser cursor without locking. It means tha
     Dos(canvas, { autolock: true }).ready((fs, main) => {
         main([...]);
     });
-// OR
+```
+** OR **
+```javascript
     Dos(canvas).ready((fs, main) => {
         fs.createFile("dosbox.conf", `
             [sdl]
@@ -453,4 +469,11 @@ gulp
 Output will be placed in dist folder. Also in dist folder you can find test page, you open it in browser. All test should pass.
 ```
 firefox dist/test/test.html
+```
+
+Additionaly you can run same tests on other variants of js-dos (emterp, nosync). BUT, not all tests will pass.
+
+```
+firefox dist/test/test-emterp.html
+firefox dist/test/test-nosync.html
 ```

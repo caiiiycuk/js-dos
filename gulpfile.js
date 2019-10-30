@@ -54,16 +54,17 @@ gulp.task('generateBuildInfo', function() {
 })
 
 gulp.task('copyAssets', function () {
-    return gulp.src(['test/index.html', 'build/wdosbox.js', 'build/wdosbox.js.symbols'])
+    return gulp.src(['test/index.html', 'build/wdosbox.js', 'build/wdosbox.js.symbols',
+                     'build/wdosbox-nosync.js', 'build/wdosbox-nosync.js.symbols',
+                     'build-emterp/wdosbox-emterp.js', 'build-emterp/wdosbox-emterp.js.symobls'])
         .pipe(gulp.dest('dist'));
 });
 
 gulp.task('copyWasm', function () {
-    return gulp.src('build/wdosbox.wasm')
-        .pipe(rename("wdosbox.wasm.js"))
+    return gulp.src(['build/wdosbox.wasm', 'build/wdosbox-nosync.wasm', 'build-emterp/wdosbox-emterp.wasm'])
+        .pipe(rename({extname: ".wasm.js"}))
         .pipe(gulp.dest('dist'));
 });
-
 gulp.task('copyTypeScript', function() {
     return gulp.src('js-dos-ts/*')
         .pipe(gulp.dest('dist/typescript')); 

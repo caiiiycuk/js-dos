@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.6)
 
-set(ASYNCIFY ON)
-set(EMTERPRETIFY OFF)
-
 if(${EMSCRIPTEN})
 	set(OPT_FLAG "-Oz")
 	set(USE_PORTS "-s USE_ZLIB=1")
@@ -24,17 +21,10 @@ if(${EMSCRIPTEN})
 		-s EXPORT_NAME='WDOSBOX' \
 		-s FORCE_FILESYSTEM=1 \
 		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency','FS', 'FS_createPath', 'FS_createPreloadedFile', \
-			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString']\" \
+			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString', 'callMain']\" \
 		-s NO_EXIT_RUNTIME=1 \
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
 	add_definitions(-DEMSCRIPTEN)		
-
-	if(ASYNCIFY)
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s ASYNCIFY -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
-		# -s ASYNCIFY_IGNORE_INDIRECT \	
-	elseif(EMTERPRETIFY)
-		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt")
-	endif()
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
 	add_definitions(-DDEBUG -DEMSCRIPTEN_KEEPALIVE=)
@@ -43,13 +33,6 @@ else()
 endif()
 
 add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS -DJSDOS)
-
-if(ASYNCIFY)
-	add_definitions(-DEMTERPRETER_SYNC -DASYNCIFY -Demscripten_sleep_with_yield=emscripten_sleep)
-elseif(EMTERPRETIFY)
-	add_definitions(-DEMTERPRETER_SYNC)
-endif()
-
 
 include(
 	"${CMAKE_CURRENT_LIST_DIR}/3rd-party/3rd-party.cmake"
@@ -194,10 +177,31 @@ set(SOURCES
 )
 
 if(${EMSCRIPTEN})
-	add_library(bin-obj OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
-	add_executable(wdosbox $<TARGET_OBJECTS:bin-obj>)
+	add_library(bin-asyncify OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
+    target_compile_definitions(bin-asyncify PUBLIC -DEMTERPRETER_SYNC -DASYNCIFY -Demscripten_sleep_with_yield=emscripten_sleep)
+	add_executable(wdosbox $<TARGET_OBJECTS:bin-asyncify>)
 	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
-	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1")
+	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
+	add_executable(dosbox $<TARGET_OBJECTS:bin-asyncify>)
+	set_target_properties(dosbox PROPERTIES SUFFIX .js)
+	set_target_properties(dosbox PROPERTIES LINK_FLAGS "-s WASM=0 -s ASYNCIFY -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
+
+	add_library(bin-emterp OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
+    target_compile_definitions(bin-emterp PUBLIC -DEMTERPRETER_SYNC)
+	add_executable(wdosbox-emterp $<TARGET_OBJECTS:bin-emterp>)
+	set_target_properties(wdosbox-emterp PROPERTIES SUFFIX .js)
+	set_target_properties(wdosbox-emterp PROPERTIES LINK_FLAGS "-s WASM=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt")
+	add_executable(dosbox-emterp $<TARGET_OBJECTS:bin-emterp>)
+	set_target_properties(dosbox-emterp PROPERTIES SUFFIX .js)
+	set_target_properties(dosbox-emterp PROPERTIES LINK_FLAGS "-s WASM=0 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/emterpretify.txt")
+
+	add_library(bin-nosync OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
+	add_executable(wdosbox-nosync $<TARGET_OBJECTS:bin-nosync>)
+	set_target_properties(wdosbox-nosync PROPERTIES SUFFIX .js)
+	set_target_properties(wdosbox-nosync PROPERTIES LINK_FLAGS "-s WASM=1")
+	add_executable(dosbox-nosync $<TARGET_OBJECTS:bin-nosync>)
+	set_target_properties(dosbox-nosync PROPERTIES SUFFIX .js)
+	set_target_properties(dosbox-nosync PROPERTIES LINK_FLAGS "-s WASM=0")
 else()
 	add_executable(bin ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	target_link_libraries(bin

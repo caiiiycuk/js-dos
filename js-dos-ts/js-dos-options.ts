@@ -4,22 +4,22 @@
 // class, to configure emulation layer
 
 export class DosBoxConfig {
+// ### cycles
     public cycles?: number | string;
-//    cycles: Amount of instructions DOSBox tries to emulate each millisecond.
-//            Setting this value too high results in sound dropouts and lags.
+//    Amount of instructions DOSBox tries to emulate each millisecond.
+//    Setting this value too high results in sound dropouts and lags.
 //
-//            Cycles can be set in 3 ways:
+//    Cycles can be set in 3 ways:
 //
-//              'auto'          tries to guess what a game needs.
-//                              It usually works, but can fail for certain games.
+//    * `auto` - tries to guess what a game needs. It usually works, but can fail for certain games.
+//    * `fixed #number` - will set a fixed amount of cycles. This is what you 
+// usually need if 'auto' fails. (Example: fixed 4000).
+//    * `max` - will allocate as much cycles as your computer is able to handle.
 //
-//              'fixed #number' will set a fixed amount of cycles. This is what you usually need if 'auto' fails.
-//                              (Example: fixed 4000).
-//
-//              'max'           will allocate as much cycles as your computer is able to handle.
-//
+
+// ### autolock
     public autolock?: boolean;
-//    autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)
+//    Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)
 //
 //    By default dosbox mouse will follow browser cursor without locking.
 //    It means that js-dos will not take exclusive control over mouse pointer.
@@ -56,8 +56,14 @@ export class DosOptions extends DosBoxConfig {
 
     // ### wdosboxUrl
     public wdosboxUrl?: string;
-    // you can set alternative url for downloading js-dos script, default is 'wdosbox.js'
-
+    // you can set alternative url for downloading js-dos script, default is `wdosbox.js`.
+    // Additionaly you can change which variant of js-dos script to use:
+    //
+    // * `wdosbox.js` - default variant. This version compiled with latest emscripten and in theory should work best
+    // * `wdosbox-emterp.js` - This version compiled with legacy fastcomp backend, can be useful in rare cases
+    // (e.g. if you have problems with default version)
+    // * `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs/shell
+    // emulation using it
 }
 
 export const DosBoxConfigDefaults: DosBoxConfig = {

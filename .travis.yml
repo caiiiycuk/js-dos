@@ -7,14 +7,22 @@ script:
   - cd travis-build
   - git clone https://github.com/emscripten-core/emsdk.git
   - cd emsdk
-  - ./emsdk install latest-upstream
-  - ./emsdk activate latest-upstream
+  - ./emsdk install latest
+  - ./emsdk install latest-fastcomp
+  - ./emsdk activate latest
   - source ./emsdk_env.sh
   - cd ..
   - emcmake cmake ..
-  - make
+  - make wdosbox wdosbox-nosync
   - mkdir ../build
   - cp wdosbox.* ../build
+  - rm -rf ./*
+  - ./emsdk/emsdk activate latest-fastcomp
+  - emcc --clear-ports
+  - emcmake cmake ..
+  - make wdosbox-emterp
+  - mkdir ../build-emterp
+  - cp wdosbox* ../build-enterp
   - source /etc/environment
   - nvm use 11.8
   - npm install -g gulp

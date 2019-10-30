@@ -133,7 +133,7 @@ class DosHost {
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
                     if (module.onprogress) {
-                        module.onprogress("Resolving DosBox", buildTotal, loaded);
+                        module.onprogress("Resolving DosBox", buildTotal, Math.min(Build.wasmSize, loaded));
                     }
                 },
                 fail: (url: string, status: number, message: string) => {
@@ -166,7 +166,8 @@ class DosHost {
                             cache,
                             progress: (total, loaded) => {
                                 if (module.onprogress) {
-                                    module.onprogress("Resolving DosBox", buildTotal, Build.wasmSize + loaded);
+                                    module.onprogress("Resolving DosBox", buildTotal,
+                                        Math.min(buildTotal, Build.wasmSize + loaded));
                                 }
                             },
                             fail: (url: string, status: number, message: string) => {

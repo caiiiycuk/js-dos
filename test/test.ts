@@ -13,6 +13,7 @@ import { DosOptions } from "../js-dos-ts/js-dos-options";
 import { compareAndExit } from "./compare";
 import { doCatch, doNext, doReady, doThen } from "./do";
 
+const wdosboxUrl: string = (window as any).wdosboxUrl;
 suite("js-dos-host");
 
 test("loader should notify about error if wasm is not supported", (done) => {
@@ -41,12 +42,12 @@ test("loader should show progress loading and use cache", (done) => {
     let isPUT = false;
     class TestCache implements ICache {
         public put(key: string, data: any, onflush: () => void) {
-            isPUT = isPUT || (key === "/wdosbox.wasm.js" && data instanceof ArrayBuffer && (data as ArrayBuffer).byteLength > 0);
+            isPUT = isPUT || (key === wdosboxUrl.replace(".js", ".wasm.js") && data instanceof ArrayBuffer && (data as ArrayBuffer).byteLength > 0);
             onflush();
         }
 
         public get(key: string, ondata: (data: any) => void, onerror: (msg: string) => void) {
-            isGET = isGET || key === "/wdosbox.wasm.js";
+            isGET = isGET || key === wdosboxUrl.replace(".js", ".wasm.js");
             onerror("not in cache");
         }
 
@@ -56,11 +57,11 @@ test("loader should show progress loading and use cache", (done) => {
     }
 
     let lastLoaded = -1;
-    Host.resolveDosBox("/wdosbox.js", new TestCache(), {
+    Host.resolveDosBox(wdosboxUrl, new TestCache(), {
         onprogress: (stage: string, total: number, loaded: number) => {
             console.log(stage, total, loaded);
-            assert.equal(true, loaded <= total, loaded + "<=" + total);
-            assert.equal(true, lastLoaded <= loaded, lastLoaded + "<=" + loaded);
+            assert.equal(true, loaded <= total, "onprgoress: " + loaded + "<=" + total);
+            assert.equal(true, lastLoaded <= loaded, "endprogress: " + lastLoaded + "<=" + loaded);
             lastLoaded = loaded;
         },
         ondosbox: (dosbox: any, instantiateWasm: any) => {
@@ -75,7 +76,7 @@ test("loader should show progress loading and use cache", (done) => {
 });
 
 test("loader should never load twice wdosbox", (done) => {
-    Host.resolveDosBox("/wdosbox.js", new CacheNoop(), {
+    Host.resolveDosBox(wdosboxUrl, new CacheNoop(), {
         onprogress: (stage: string, total: number, loaded: number) => {
             assert.fail();
         },
@@ -89,7 +90,7 @@ test("loader should never load twice wdosbox", (done) => {
 });
 
 test("loader should fire event when wdosbox is loaded", (done) => {
-    Host.resolveDosBox("/wdosbox.js", new CacheNoop(), {
+    Host.resolveDosBox(wdosboxUrl, new CacheNoop(), {
         ondosbox: (dosbox: any, instantiateWasm: any) => {
             assert.ok(dosbox);
             assert.ok(instantiateWasm);
@@ -105,7 +106,7 @@ suite("js-dos");
 
 test("js-dos can't start without canvas (listener style)", (done) => {
     Dos(null, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
         onerror: (message: string) => {
             assert.equal("canvas field is required, but not set!", message);
             done();
@@ -115,7 +116,7 @@ test("js-dos can't start without canvas (listener style)", (done) => {
 
 test("js-dos can't start without canvas (promise style)", (done) => {
     const dos = Dos(null, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
     } as DosOptions);
     doCatch(dos, (message) => {
         assert.equal("canvas field is required, but not set!", message);
@@ -128,7 +129,7 @@ test("js-dos can't start without canvas (promise style)", (done) => {
 
 test("js-dos can't start without canvas (ready style)", (done) => {
     const dos = Dos(null, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
     } as DosOptions);
     const promise = dos.ready((fs, main) => {
         const fn = () => assert.fail();
@@ -142,7 +143,7 @@ test("js-dos can't start without canvas (ready style)", (done) => {
 
 test("js-dos should start with canvas", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
     });
     doReady(dos, (fs, main) => {
         doNext(main([]), (ci) => {
@@ -154,7 +155,7 @@ test("js-dos should start with canvas", (done) => {
 
 test("js-dos can take screenshot of canvas", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
     });
     doReady(dos, (fs, main) => {
         doNext(main([]), (ci) => {
@@ -167,7 +168,7 @@ suite("js-dos-fs");
 
 test("js-dos-fs createFile error handling", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
         onerror: (message) => {
             assert.equal(message, "Can't create file '', because file name is empty");
             done();
@@ -181,7 +182,7 @@ test("js-dos-fs createFile error handling", (done) => {
 
 test("js-dos-fs createFile error handling 2", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
         onerror: (message) => {
             assert.equal(message, "Can't create file '/home/', because file name is empty");
             done();
@@ -195,7 +196,7 @@ test("js-dos-fs createFile error handling 2", (done) => {
 
 test("js-dos-fs can create file", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
         onerror: (message) => {
             assert.fail();
         },
@@ -213,7 +214,7 @@ test("js-dos-fs can create file", (done) => {
 
 test("js-dos-fs can create file (windows path)", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
         onerror: (message) => {
             assert.fail();
         },
@@ -245,7 +246,7 @@ test("js-dos-fs clearing IDBFS db", (done) => {
 test("js-dos-fs can mount archive on persistent point [empty db]", (done) => {
     let isOnProgress = false;
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
         onerror: (message) => {
             assert.fail();
         },
@@ -268,7 +269,7 @@ test("js-dos-fs can mount archive on persistent point [empty db]", (done) => {
 
 test("js-dos-fs can mount archive on persistent point [existent db]", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
         onerror: (message) => {
             assert.fail();
         },
@@ -292,7 +293,7 @@ suite("js-dos");
 
 test("js-dos should provide user level dosbox.conf", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
         onerror: (message) => {
             assert.fail();
         },
@@ -317,7 +318,7 @@ test("js-dos should provide user level dosbox.conf", (done) => {
 
 test("js-dos can create and read dosbox.conf", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
         onerror: (message) => {
             assert.fail();
         },
@@ -338,7 +339,7 @@ test("js-dos can create and read dosbox.conf", (done) => {
 
 test("js-dos can run digger.zip", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
     });
 
     doReady(dos, (fs, main) => {
@@ -357,7 +358,7 @@ test("js-dos can run digger.zip", (done) => {
 
 test("js-dos can simulate key events", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        wdosboxUrl: "/wdosbox.js",
+        wdosboxUrl,
     });
 
     doReady(dos, (fs, main) => {

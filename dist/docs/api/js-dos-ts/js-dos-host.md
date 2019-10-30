@@ -240,7 +240,7 @@ If dosbox is not yet resolved, then:
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
                     if (module.onprogress) {
-                        module.onprogress("Resolving DosBox", buildTotal, loaded);
+                        module.onprogress("Resolving DosBox", buildTotal, Math.min(Build.wasmSize, loaded));
                     }
                 },
                 fail: (url: string, status: number, message: string) => {
@@ -301,7 +301,8 @@ If dosbox is not yet resolved, then:
                             cache,
                             progress: (total, loaded) => {
                                 if (module.onprogress) {
-                                    module.onprogress("Resolving DosBox", buildTotal, Build.wasmSize + loaded);
+                                    module.onprogress("Resolving DosBox", buildTotal,
+                                        Math.min(buildTotal, Build.wasmSize + loaded));
                                 }
                             },
                             fail: (url: string, status: number, message: string) => {
