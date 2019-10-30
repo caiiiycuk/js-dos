@@ -4,19 +4,17 @@
 // class, to configure emulation layer
 
 export class DosBoxConfig {
+// ### cycles
     public cycles?: number | string;
-//    cycles: Amount of instructions DOSBox tries to emulate each millisecond.
+//    Amount of instructions DOSBox tries to emulate each millisecond.
 //    Setting this value too high results in sound dropouts and lags.
 //
 //    Cycles can be set in 3 ways:
 //
-//              * `auto`          tries to guess what a game needs.
-//                              It usually works, but can fail for certain games.
-//
-//              * `fixed #number` will set a fixed amount of cycles. This is what you usually need if 'auto' fails.
-//                              (Example: fixed 4000).
-//
-//              * `max`           will allocate as much cycles as your computer is able to handle.
+//    * `auto` - tries to guess what a game needs. It usually works, but can fail for certain games.
+//    * `fixed #number` - will set a fixed amount of cycles. This is what you 
+// usually need if 'auto' fails. (Example: fixed 4000).
+//    * `max` - will allocate as much cycles as your computer is able to handle.
 //
     public autolock?: boolean;
 //    autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)
