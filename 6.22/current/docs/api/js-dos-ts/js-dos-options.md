@@ -24,17 +24,17 @@ export class DosBoxConfig {
 
 
    cycles: Amount of instructions DOSBox tries to emulate each millisecond.
-           Setting this value too high results in sound dropouts and lags.
+   Setting this value too high results in sound dropouts and lags.
 
-           Cycles can be set in 3 ways:
+   Cycles can be set in 3 ways:
 
-             'auto'          tries to guess what a game needs.
+             * `auto`          tries to guess what a game needs.
                              It usually works, but can fail for certain games.
 
-             'fixed #number' will set a fixed amount of cycles. This is what you usually need if 'auto' fails.
+             * `fixed #number` will set a fixed amount of cycles. This is what you usually need if 'auto' fails.
                              (Example: fixed 4000).
 
-             'max'           will allocate as much cycles as your computer is able to handle.
+             * `max`           will allocate as much cycles as your computer is able to handle.
 
 
 
@@ -193,7 +193,7 @@ you can provide log function, to override logging, by default js-dos uses consol
 
 
 
-you can set alternative url for downloading js-dos script, default is 'wdosbox.js'.
+you can set alternative url for downloading js-dos script, default is `wdosbox.js`.
 Additionaly you can change which variant of js-dos script to use:
 
 * `wdosbox.js` - default variant. This version compiled with latest emscripten and in theory should work best
