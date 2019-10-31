@@ -6,8 +6,8 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.39 (ce0b4d29ae3d09b9d06353c4e59e5526)",
-    jsVersion: "0ac8d6ed5a2ccb8b40df4538ab5823b58c5edef4",
+    version: "6.22.40 (91667f47d30c4f4507f90bf32147479e)",
+    jsVersion: "a63bb8c59aed7c08bd7c4812df3d340640c230fc",
     wasmJsSize: 199660,
     wasmVersion: "ab1e5dfd0a5aa35a0ba806d5e2c8b3eb",
     wasmSize: 1809135,
