@@ -17,7 +17,7 @@
   <canvas id="jsdos"></canvas>
   <script>
     Dos(document.getElementById("jsdos"), {
-      wdosboxUrl: "", 
+      wdosboxUrl: "/wdosbox.js", 
       cycles: 1000,
     }).ready((fs, main) => {
       fs.extract("test/digger.zip").then(() => {

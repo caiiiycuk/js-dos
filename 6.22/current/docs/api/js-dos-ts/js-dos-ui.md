@@ -14,6 +14,7 @@ This ui will be applied if client did not set `onprogress` in
 import * as DosDom from "./js-dos-dom";
 import { DosModule } from "./js-dos-module";
 
+const maxStageLength = 32;
 export class DosUi {
     private canvas: HTMLCanvasElement;
     private dos: DosModule;
@@ -79,6 +80,10 @@ You can change style of ui by editing css for this two classes
     }
 
     public onprogress(stage: string, total: number, loaded: number) {
+        if (stage.length > maxStageLength) {
+            stage = "…" + stage.substr(-maxStageLength);
+        }
+
         const message = stage + " " + Math.round(loaded * 100 / total * 10) / 10 + "%";
         if (this.loaderMessage !== null) {
             this.loaderMessage.innerHTML = message;

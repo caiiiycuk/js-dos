@@ -6,11 +6,12 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.38 (4e5c30d285294adc0f9332460249b7d3)",
-    jsVersion: "3140a1c193a98193602c66e8094056dc3bb16b8f",
-    jsSize: 199660,
+    version: "6.22.38 (b9b69cad0e8627c71a9a2f187f770f3c)",
+    jsVersion: "0ac8d6ed5a2ccb8b40df4538ab5823b58c5edef4",
+    wasmJsSize: 199660,
     wasmVersion: "ab1e5dfd0a5aa35a0ba806d5e2c8b3eb",
-    wasmSize: 1809135
+    wasmSize: 1809135,
+    jsSize: 6352779
 };
 
 },{}],2:[function(require,module,exports){
@@ -619,12 +620,6 @@ var DosHost = /** @class */function () {
             module.ondosbox(this.global.exports.WDOSBOX, this.global.exports.instantiateWasm);
             return;
         }
-        if (!this.wasmSupported) {
-            if (module.onerror !== undefined) {
-                module.onerror("WebAssembly is not supported, can't resolve wdosbox");
-            }
-            return;
-        }
         if (this.wdosboxPromise === null) {
             this.wdosboxPromise = this.compileDosBox(url, cache, module);
         }
@@ -648,9 +643,73 @@ var DosHost = /** @class */function () {
     };
     // If dosbox is not yet resolved, then:
     DosHost.prototype.compileDosBox = function (url, cache, module) {
+        var fromIndex = url.lastIndexOf("/");
+        var wIndex = url.indexOf("w", fromIndex);
+        var isWasmUrl = wIndex === fromIndex + 1 && wIndex >= 0;
+        if (this.wasmSupported && isWasmUrl) {
+            return this.compileWasmDosBox(url, cache, module);
+        } else {
+            if (module.log) {
+                module.log("[WARN] Using js version of dosbox, perfomance can be lower then expected");
+                module.log("[DEBUG] Wasm supported: " + this.wasmSupported + ", url: " + url);
+            }
+            // fallback to js version if wasm not supported
+            if (isWasmUrl) {
+                url = url.substr(0, wIndex) + url.substr(wIndex + 1);
+            }
+            return this.compileJsDosBox(url, cache, module);
+        }
+    };
+    DosHost.prototype.compileJsDosBox = function (url, cache, module) {
         var _this = this;
-        var buildTotal = js_dos_build_1.Build.wasmSize + js_dos_build_1.Build.jsSize;
         return new Promise(function (resolve, reject) {
+            var buildTotal = js_dos_build_1.Build.jsSize;
+            var memUrl = url.replace(".js", ".js.mem");
+            // * Host download `dosbox`js + mem file
+            new js_dos_xhr_1.Xhr(memUrl, {
+                cache: cache,
+                responseType: "arraybuffer",
+                fail: function fail(url, status, message) {
+                    reject("Can't download mem file, code: " + status + ", message: " + message + ", url: " + url);
+                },
+                success: function success(memResponse) {
+                    new js_dos_xhr_1.Xhr(url, {
+                        cache: cache,
+                        progress: function progress(total, loaded) {
+                            if (module.onprogress) {
+                                module.onprogress("Resolving DosBox", buildTotal, Math.min(buildTotal, loaded));
+                            }
+                        },
+                        fail: function fail(url, status, message) {
+                            reject("Can't download wdosbox.js, code: " + status + ", message: " + message + ", url: " + url);
+                        },
+                        success: function success(response) {
+                            if (module.onprogress !== undefined) {
+                                module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                            }
+                            response +=
+                            /* tslint:disable:no-eval */
+                            eval.call(_this, response);
+                            /* tslint:enable:no-eval */
+                            var wdosbox = _this.global.exports.WDOSBOX;
+                            _this.global.exports.WDOSBOX = function (Module) {
+                                Module.memoryInitializerRequest = {
+                                    status: 200,
+                                    response: memResponse
+                                };
+                                return new wdosbox(Module);
+                            };
+                            resolve(_this.global.exports.WDOSBOX);
+                        }
+                    });
+                }
+            });
+        });
+    };
+    DosHost.prototype.compileWasmDosBox = function (url, cache, module) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            var buildTotal = js_dos_build_1.Build.wasmSize + js_dos_build_1.Build.wasmJsSize;
             var wasmUrl = url.replace(".js", ".wasm.js");
             // * Host downloads `wdosbox` asm + js scripts
             new js_dos_xhr_1.Xhr(wasmUrl, {
@@ -1014,6 +1073,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // This ui will be applied if client did not set `onprogress` in
 // [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
 var DosDom = require("./js-dos-dom");
+var maxStageLength = 32;
 var DosUi = /** @class */function () {
     function DosUi(dos) {
         this.overlay = null;
@@ -1060,6 +1120,9 @@ var DosUi = /** @class */function () {
         }
     }
     DosUi.prototype.onprogress = function (stage, total, loaded) {
+        if (stage.length > maxStageLength) {
+            stage = "…" + stage.substr(-maxStageLength);
+        }
         var message = stage + " " + Math.round(loaded * 100 / total * 10) / 10 + "%";
         if (this.loaderMessage !== null) {
             this.loaderMessage.innerHTML = message;
@@ -2710,13 +2773,13 @@ var compare_1 = require("./compare");
 var do_1 = require("./do");
 var wdosboxUrl = window.wdosboxUrl;
 suite("js-dos-host");
-test("loader should notify about error if wasm is not supported", function (done) {
+test("loader should fallback to js if wasm is not supported", function (done) {
     var oldValue = js_dos_host_1.Host.wasmSupported;
     js_dos_host_1.Host.wasmSupported = false;
     js_dos_host_1.Host.resolveDosBox("wrongurl.js", new js_dos_cache_noop_1.default(), {
         onerror: function onerror(message) {
             js_dos_host_1.Host.wasmSupported = oldValue;
-            assert.equal("WebAssembly is not supported, can't resolve wdosbox", message);
+            assert.equal("Can\'t download mem file, code: 404, message: connection problem, url: rongurl.js.mem", message);
             done();
         }
     });
@@ -2782,7 +2845,6 @@ test("loader should fire event when wdosbox is loaded", function (done) {
     js_dos_host_1.Host.resolveDosBox(wdosboxUrl, new js_dos_cache_noop_1.default(), {
         ondosbox: function ondosbox(dosbox, instantiateWasm) {
             assert.ok(dosbox);
-            assert.ok(instantiateWasm);
             done();
         },
         onerror: function onerror(message) {
