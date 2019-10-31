@@ -8,7 +8,6 @@ script:
   - git clone https://github.com/emscripten-core/emsdk.git
   - cd emsdk
   - ./emsdk install latest
-  - ./emsdk install latest-fastcomp
   - ./emsdk activate latest
   - source ./emsdk_env.sh
   - cd ..
@@ -17,12 +16,16 @@ script:
   - mkdir ../build
   - cp wdosbox.* ../build
   - rm -rf ./*
-  - ./emsdk/emsdk activate latest-fastcomp
-  - emcc --clear-ports
+  - git clone https://github.com/emscripten-core/emsdk.git
+  - cd emsdk
+  - ./emsdk install latest-fastcomp
+  - ./emsdk activate latest-fastcomp
+  - source ./emsdk_env.sh
+  - cd ..
   - emcmake cmake ..
   - make wdosbox-emterp
   - mkdir ../build-emterp
-  - cp wdosbox* ../build-enterp
+  - cp wdosbox.* ../build-emterp
   - source /etc/environment
   - nvm use 11.8
   - npm install -g gulp

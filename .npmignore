@@ -14,6 +14,7 @@ travis-build.sh
 tsconfig.json
 tslint.json
 6.22*.zip
+udnefined.zip
 dev.js
 /test
 /dist/test/ra.html
