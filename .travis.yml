@@ -14,7 +14,7 @@ script:
   - emcmake cmake ..
   - make wdosbox wdosbox-nosync
   - mkdir ../build
-  - cp wdosbox.* ../build
+  - cp wdosbox* ../build
   - rm -rf ./*
   - git clone https://github.com/emscripten-core/emsdk.git
   - cd emsdk
@@ -25,7 +25,7 @@ script:
   - emcmake cmake ..
   - make wdosbox-emterp
   - mkdir ../build-emterp
-  - cp wdosbox.* ../build-emterp
+  - cp wdosbox* ../build-emterp
   - source /etc/environment
   - nvm use 11.8
   - npm install -g gulp
