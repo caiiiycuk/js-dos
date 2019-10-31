@@ -12,9 +12,10 @@ script:
   - source ./emsdk_env.sh
   - cd ..
   - emcmake cmake ..
-  - make wdosbox wdosbox-nosync
+  - make wdosbox wdosbox-nosync dosbox dosbox-nosync
   - mkdir ../build
   - cp wdosbox* ../build
+  - cp dosbox* ../build
   - rm -rf ./*
   - git clone https://github.com/emscripten-core/emsdk.git
   - cd emsdk
@@ -23,9 +24,10 @@ script:
   - source ./emsdk_env.sh
   - cd ..
   - emcmake cmake ..
-  - make wdosbox-emterp
+  - make wdosbox-emterp dosbox-emterp
   - mkdir ../build-emterp
   - cp wdosbox* ../build-emterp
+  - cp dosbox* ../build-emterp
   - source /etc/environment
   - nvm use 11.8
   - npm install -g gulp

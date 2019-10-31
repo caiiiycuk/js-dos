@@ -47,16 +47,21 @@ gulp.task('generateBuildInfo', function() {
         "export const Build = {\n" +
         "    version: \"" + pjson.version + " (" + md5Version + ")\",\n" +
         "    jsVersion: \"" + info.sha + "\",\n" +
-        "    jsSize:  " + fs.statSync("build/wdosbox.js")['size'] + ",\n" +
+        "    wasmJsSize:  " + fs.statSync("build/wdosbox.js")['size'] + ",\n" +
         "    wasmVersion: \"" + wasmHash + "\",\n" +
         "    wasmSize: " + fs.statSync("build/wdosbox.wasm")['size'] + ",\n" +
+        "    jsSize:  " + fs.statSync("build/dosbox.js")['size'] + ",\n" +
         "};\n");
 })
 
 gulp.task('copyAssets', function () {
     return gulp.src(['test/index.html', 'build/wdosbox.js', 'build/wdosbox.js.symbols',
                      'build/wdosbox-nosync.js', 'build/wdosbox-nosync.js.symbols',
-                     'build-emterp/wdosbox-emterp.js', 'build-emterp/wdosbox-emterp.js.symobls'])
+                     'build-emterp/wdosbox-emterp.js', 'build-emterp/wdosbox-emterp.js.symobls',
+                     'build/dosbox.js', 'build/dosbox.js.mem', 'build/dosbox.js.symbols',
+                     'build-emterp/dosbox-emterp.js', 'build-emterp/dosbox-emterp.js.mem', 'build-emterp/dosbox-emterp.js.symbols',
+                     'build/dosbox-nosync.js', 'build/dosbox-nosync.js.mem', 'build/dosbox-nosync.js.symbols',
+                    ])
         .pipe(gulp.dest('dist'));
 });
 

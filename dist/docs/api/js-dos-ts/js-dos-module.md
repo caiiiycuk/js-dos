@@ -15,7 +15,7 @@ import { Build } from "./js-dos-build";
 import { DosCommandInterface } from "./js-dos-ci";
 import getJsDosConfig from "./js-dos-conf";
 import { DosFS } from "./js-dos-fs";
-import { DosBoxConfigDefaults, DosOptions, DosBoxConfig } from "./js-dos-options";
+import { DosOptions } from "./js-dos-options";
 import { DosUi } from "./js-dos-ui";
 
 export class DosModule extends DosOptions {
@@ -131,6 +131,7 @@ DosModule implements simply logging features:
         (this as any).instantiateWasm = instantiateWasm;
         this.instance = new dosbox(this);
     }
+
 
 ```
 

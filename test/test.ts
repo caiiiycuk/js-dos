@@ -16,13 +16,13 @@ import { doCatch, doNext, doReady, doThen } from "./do";
 const wdosboxUrl: string = (window as any).wdosboxUrl;
 suite("js-dos-host");
 
-test("loader should notify about error if wasm is not supported", (done) => {
+test("loader should fallback to js if wasm is not supported", (done) => {
     const oldValue = Host.wasmSupported;
     Host.wasmSupported = false;
     Host.resolveDosBox("wrongurl.js", new CacheNoop(), {
         onerror: (message: string) => {
             Host.wasmSupported = oldValue;
-            assert.equal("WebAssembly is not supported, can't resolve wdosbox", message);
+            assert.equal("Can\'t download mem file, code: 404, message: connection problem, url: rongurl.js.mem", message);
             done();
         },
     } as DosModule);
@@ -93,7 +93,6 @@ test("loader should fire event when wdosbox is loaded", (done) => {
     Host.resolveDosBox(wdosboxUrl, new CacheNoop(), {
         ondosbox: (dosbox: any, instantiateWasm: any) => {
             assert.ok(dosbox);
-            assert.ok(instantiateWasm);
             done();
         },
         onerror: (message: string) => {

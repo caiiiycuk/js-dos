@@ -91,13 +91,6 @@ class DosHost {
             return;
         }
 
-        if (!this.wasmSupported) {
-            if (module.onerror !== undefined) {
-                module.onerror("WebAssembly is not supported, can't resolve wdosbox");
-            }
-            return;
-        }
-
         if (this.wdosboxPromise === null) {
             this.wdosboxPromise = this.compileDosBox(url, cache, module);
         }
@@ -123,8 +116,82 @@ class DosHost {
 
     // If dosbox is not yet resolved, then:
     private compileDosBox(url: string, cache: ICache, module: DosModule) {
-        const buildTotal = Build.wasmSize + Build.jsSize;
+        const fromIndex = url.lastIndexOf("/");
+        const wIndex = url.indexOf("w", fromIndex);
+        const isWasmUrl = wIndex === fromIndex + 1 && wIndex >= 0;
+
+        if (this.wasmSupported && isWasmUrl) {
+            return this.compileWasmDosBox(url, cache, module);
+        } else {
+            if (module.log) {
+                module.log("[WARN] Using js version of dosbox, perfomance can be lower then expected");
+                module.log("[DEBUG] Wasm supported: " + this.wasmSupported + ", url: " + url);
+            }
+
+            // fallback to js version if wasm not supported
+            if (isWasmUrl) {
+                url = url.substr(0, wIndex) + url.substr(wIndex + 1);
+            }
+            return this.compileJsDosBox(url, cache, module);
+        }
+    }
+
+    private compileJsDosBox(url: string, cache: ICache, module: DosModule): Promise<any> {
         return new Promise((resolve, reject) => {
+            const buildTotal = Build.jsSize;
+            const memUrl = url.replace(".js", ".js.mem");
+
+            // * Host download `dosbox`js + mem file
+            new Xhr(memUrl, {
+                cache,
+                responseType: "arraybuffer",
+                fail: (url: string, status: number, message: string) => {
+                    reject("Can't download mem file, code: " + status +
+                        ", message: " + message + ", url: " + url);
+                },
+                success: (memResponse: any) => {
+                    new Xhr(url, {
+                        cache,
+                        progress: (total, loaded) => {
+                            if (module.onprogress) {
+                                module.onprogress("Resolving DosBox", buildTotal,
+                                    Math.min(buildTotal, loaded));
+                            }
+                        },
+                        fail: (url: string, status: number, message: string) => {
+                            reject("Can't download wdosbox.js, code: " + status +
+                                ", message: " + message + ", url: " + url);
+                        },
+                        success: (response: string) => {
+                            if (module.onprogress !== undefined) {
+                                module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                            }
+
+                            response +=
+                            /* tslint:disable:no-eval */
+                                eval.call(this, response);
+                            /* tslint:enable:no-eval */
+
+                            const wdosbox = this.global.exports.WDOSBOX;
+                            this.global.exports.WDOSBOX = (Module: any) => {
+                                Module.memoryInitializerRequest = {
+                                    status: 200,
+                                    response: memResponse,
+                                };
+                                return new wdosbox(Module);
+                            };
+                            resolve(this.global.exports.WDOSBOX);
+                        },
+                    });
+
+                },
+            });
+        });
+    }
+
+    private compileWasmDosBox(url: string, cache: ICache, module: DosModule): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const buildTotal = Build.wasmSize + Build.wasmJsSize;
             const wasmUrl = url.replace(".js", ".wasm.js");
 
             // * Host downloads `wdosbox` asm + js scripts

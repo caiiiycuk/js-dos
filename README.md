@@ -93,13 +93,11 @@ You can have same results if just create simple html page:
 
 ## Archives
 
-You can obtain latest build using this links:
+You can obtain latest build using this links ([versions](http://js-dos.com/#js-dos-622-faq-changing-dosbox-variant)):
 
- - js-dos client api: https://js-dos.com/6.22/current/js-dos.js
- - dosbox wasm wrapper: https://js-dos.com/6.22/current/wdosbox.js
- - dosbox wasm file: https://js-dos.com/6.22/current/wdosbox.wasm.js
- - dosbox wasm-emterp file: https://js-dos.com/6.22/current/wdosbox-emterp.wasm.js
- - dosbox wasm-nosync file: https://js-dos.com/6.22/current/wdosbox-nosync.wasm.js
+ - default version: https://js-dos.com/6.22/current/wdosbox.js
+ - emterpreter version: https://js-dos.com/6.22/current/wdosbox-emterp.wasm.js
+ - nosync version: https://js-dos.com/6.22/current/wdosbox-nosync.wasm.js
 
 **NOTE**: do not try to use this links to serve your copy of dosbox. Because this links always pointing to latest
 version, and newest version can have breaking changes. Is better to use npx bootstrap command (above), or download latest
@@ -168,6 +166,11 @@ By changing wdosboxUrl (see above) you can select different dosbox variants:
 * `wdosbox.js` - default variant. This version compiled with latest emscripten and in theory should work best.
 * `wdosbox-emterp.js` - This version compiled with legacy fastcomp backend, can be useful in rare cases (e.g. if you have problem with default version).
 * `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs/shell emulation using it.
+* `dosbox.js` - same as wdosbox.js but compiled as javascript (not wasm)
+* `dosbox-emterp.js` - same as wdosbox-emterp.js but javascript (not wasm)
+* `dosbox-nosync.js` - same as wdosbox-nosync.js but javascript (not wasm)
+
+Take in account even if you use wasm version of dosbox it will be automatically fallbacked by javascript version if wasm can't start
 
 ```javascript
     Dos(canvas, { wdosboxUrl: "/wdosbox-nosync.js" }).ready(...);
@@ -453,10 +456,17 @@ Building process have two steps:
 
 Project uses dosbox as emulation layer for running dos programs. You should build it before building javascript API. To do this you should have emscripten installed in your system and CMake. Build process should be easy if you familar with cmake, just run this commands:
 ```
+// set to llvm backend
 mkdir build
 cd build
 emcmake cmake ..
-make -j4
+make wdosbox dosbox wdosbox-sync dosbox-sync
+
+// set to fastcomp backend
+mkdir build-emterp
+cd build-emterp
+emcmake cmake ..
+make wdosbox-emterp dosbox-emterp
 ```
 
 ### JavaScript API
@@ -474,6 +484,9 @@ firefox dist/test/test.html
 Additionaly you can run same tests on other variants of js-dos (emterp, nosync). BUT, not all tests will pass.
 
 ```
+firefox dist/test/test-js.html
 firefox dist/test/test-emterp.html
+firefox dist/test/test-js-emterp.html
 firefox dist/test/test-nosync.html
+firefox dist/test/test-js-nosync.html
 ```

@@ -222,6 +222,12 @@ Additionaly you can change which variant of js-dos script to use:
 (e.g. if you have problems with default version)
 * `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs/shell
 emulation using it
+* `dosbox.js` - same as wdosbox.js but compiled as javascript (not wasm)
+* `dosbox-emterp.js` - same as wdosbox-emterp.js but javascript (not wasm)
+* `dosbox-nosync.js` - same as wdosbox-nosync.js but javascript (not wasm)
+
+Take in account even if you use wasm version of dosbox it will be automatically fallbacked
+to javascript version if wasm can't start
 
 
   
