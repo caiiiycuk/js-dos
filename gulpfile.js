@@ -57,7 +57,7 @@ gulp.task('generateBuildInfo', function() {
 gulp.task('copyAssets', function () {
     return gulp.src(['test/index.html', 'build/wdosbox.js', 'build/wdosbox.js.symbols',
                      'build/wdosbox-nosync.js', 'build/wdosbox-nosync.js.symbols',
-                     'build-emterp/wdosbox-emterp.js', 'build-emterp/wdosbox-emterp.js.symobls',
+                     'build-emterp/wdosbox-emterp.js', 'build-emterp/wdosbox-emterp.js.symbols',
                      'build/dosbox.js', 'build/dosbox.js.mem', 'build/dosbox.js.symbols',
                      'build-emterp/dosbox-emterp.js', 'build-emterp/dosbox-emterp.js.mem', 'build-emterp/dosbox-emterp.js.symbols',
                      'build/dosbox-nosync.js', 'build/dosbox-nosync.js.mem', 'build/dosbox-nosync.js.symbols',
