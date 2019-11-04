@@ -6,8 +6,8 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Build = {
-    version: "6.22.42 (22e74537c360a8c8fb059017e1cd6933)",
-    jsVersion: "45a6329f88e9ca90a5d67a97abd136d4a9c11e1d",
+    version: "6.22.43 (278d3da5c5d03f3d9e7b209c2818d482)",
+    jsVersion: "e24867b00be6f93d69ff452f7f6bdc9571a234fa",
     wasmJsSize: 199660,
     wasmVersion: "ab1e5dfd0a5aa35a0ba806d5e2c8b3eb",
     wasmSize: 1809135,
@@ -665,43 +665,26 @@ var DosHost = /** @class */function () {
         return new Promise(function (resolve, reject) {
             var buildTotal = js_dos_build_1.Build.jsSize;
             var memUrl = url.replace(".js", ".js.mem");
-            // * Host download `dosbox`js + mem file
-            new js_dos_xhr_1.Xhr(memUrl, {
+            // * Host download `dosbox`js
+            new js_dos_xhr_1.Xhr(url, {
                 cache: cache,
-                responseType: "arraybuffer",
-                fail: function fail(url, status, message) {
-                    reject("Can't download mem file, code: " + status + ", message: " + message + ", url: " + url);
+                progress: function progress(total, loaded) {
+                    if (module.onprogress) {
+                        module.onprogress("Resolving DosBox", buildTotal, Math.min(buildTotal, loaded));
+                    }
                 },
-                success: function success(memResponse) {
-                    new js_dos_xhr_1.Xhr(url, {
-                        cache: cache,
-                        progress: function progress(total, loaded) {
-                            if (module.onprogress) {
-                                module.onprogress("Resolving DosBox", buildTotal, Math.min(buildTotal, loaded));
-                            }
-                        },
-                        fail: function fail(url, status, message) {
-                            reject("Can't download wdosbox.js, code: " + status + ", message: " + message + ", url: " + url);
-                        },
-                        success: function success(response) {
-                            if (module.onprogress !== undefined) {
-                                module.onprogress("Resolving DosBox", buildTotal, buildTotal);
-                            }
-                            response +=
-                            /* tslint:disable:no-eval */
-                            eval.call(_this, response);
-                            /* tslint:enable:no-eval */
-                            var wdosbox = _this.global.exports.WDOSBOX;
-                            _this.global.exports.WDOSBOX = function (Module) {
-                                Module.memoryInitializerRequest = {
-                                    status: 200,
-                                    response: memResponse
-                                };
-                                return new wdosbox(Module);
-                            };
-                            resolve(_this.global.exports.WDOSBOX);
-                        }
-                    });
+                fail: function fail(url, status, message) {
+                    reject("Can't download dosbox.js, code: " + status + ", message: " + message + ", url: " + url);
+                },
+                success: function success(response) {
+                    if (module.onprogress !== undefined) {
+                        module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                    }
+                    response +=
+                    /* tslint:disable:no-eval */
+                    eval.call(_this, response);
+                    /* tslint:enable:no-eval */
+                    resolve(_this.global.exports.WDOSBOX);
                 }
             });
         });
@@ -2779,7 +2762,7 @@ test("loader should fallback to js if wasm is not supported", function (done) {
     js_dos_host_1.Host.resolveDosBox("wrongurl.js", new js_dos_cache_noop_1.default(), {
         onerror: function onerror(message) {
             js_dos_host_1.Host.wasmSupported = oldValue;
-            assert.equal("Can\'t download mem file, code: 404, message: connection problem, url: rongurl.js.mem", message);
+            assert.equal("Can\'t download dosbox.js, code: 404, message: connection problem, url: rongurl.js", message);
             done();
         }
     });
