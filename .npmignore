@@ -4,6 +4,7 @@ dreamlayers-em-dosbox-em-dosbox-svn-sdl2
 dist.zip
 js-dos-cpp
 build
+build-emterp
 .vscode
 cmake-build-debug
 .buildconfig
