@@ -24,7 +24,7 @@ script:
   - source ./emsdk_env.sh
   - cd ..
   - emcmake cmake ..
-  - make wdosbox-emterp dosbox-emterp dosbox-nosycn
+  - make wdosbox-emterp dosbox-emterp dosbox-nosync
   - mkdir ../build-emterp
   - cp wdosbox* ../build-emterp
   - cp dosbox* ../build-emterp
