@@ -273,12 +273,21 @@ You can easily resize canvas by changing **css** (style) properties `width` and 
 Take attention, you **should not** change width and height properties of canvas.
 
 ```html
-<canvas width="640" height="320" style="width: 1280px; height: 640px"></canvas>
+<style>
+    canvas {
+        width: 1280px; 
+        height: 640px;
+    }
+</style>
+<canvas width="640" height="320"></canvas>
 ```
 
 Rule is simple: `width/height` properties is used by jsdos as native
 resolution of game/program, but css `width/height` is for changing real size.
 So, for giving example resolution will be 640x320, but canvas size will be 1280x640.
+
+**NOTE**: Currently style attribute inside canvas tag **`<canvas style="...">` will not affect canvas size** because it's under js-dos/emscripten control, and 
+when dosbox changes video mode this attribute is vanished. 
 
 ### Mouse locking
 
