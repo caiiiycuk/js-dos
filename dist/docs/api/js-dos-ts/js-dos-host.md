@@ -257,54 +257,35 @@ fallback to js version if wasm not supported
 
 
 
-* Host download `dosbox`js + mem file
+* Host download `dosbox`js
 
 
   
 
 ```
-            new Xhr(memUrl, {
+            new Xhr(url, {
                 cache,
-                responseType: "arraybuffer",
+                progress: (total, loaded) => {
+                    if (module.onprogress) {
+                        module.onprogress("Resolving DosBox", buildTotal,
+                        Math.min(buildTotal, loaded));
+                    }
+                },
                 fail: (url: string, status: number, message: string) => {
-                    reject("Can't download mem file, code: " + status +
+                    reject("Can't download dosbox.js, code: " + status +
                         ", message: " + message + ", url: " + url);
                 },
-                success: (memResponse: any) => {
-                    new Xhr(url, {
-                        cache,
-                        progress: (total, loaded) => {
-                            if (module.onprogress) {
-                                module.onprogress("Resolving DosBox", buildTotal,
-                                    Math.min(buildTotal, loaded));
-                            }
-                        },
-                        fail: (url: string, status: number, message: string) => {
-                            reject("Can't download wdosbox.js, code: " + status +
-                                ", message: " + message + ", url: " + url);
-                        },
-                        success: (response: string) => {
-                            if (module.onprogress !== undefined) {
-                                module.onprogress("Resolving DosBox", buildTotal, buildTotal);
-                            }
+                success: (response: string) => {
+                    if (module.onprogress !== undefined) {
+                        module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                    }
 
-                            response +=
-                            /* tslint:disable:no-eval */
-                                eval.call(this, response);
-                            /* tslint:enable:no-eval */
+                    response +=
+                        /* tslint:disable:no-eval */
+                        eval.call(this, response);
+                        /* tslint:enable:no-eval */
 
-                            const wdosbox = this.global.exports.WDOSBOX;
-                            this.global.exports.WDOSBOX = (Module: any) => {
-                                Module.memoryInitializerRequest = {
-                                    status: 200,
-                                    response: memResponse,
-                                };
-                                return new wdosbox(Module);
-                            };
-                            resolve(this.global.exports.WDOSBOX);
-                        },
-                    });
-
+                    resolve(this.global.exports.WDOSBOX);
                 },
             });
         });

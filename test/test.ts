@@ -22,7 +22,7 @@ test("loader should fallback to js if wasm is not supported", (done) => {
     Host.resolveDosBox("wrongurl.js", new CacheNoop(), {
         onerror: (message: string) => {
             Host.wasmSupported = oldValue;
-            assert.equal("Can\'t download mem file, code: 404, message: connection problem, url: rongurl.js.mem", message);
+            assert.equal("Can\'t download dosbox.js, code: 404, message: connection problem, url: rongurl.js", message);
             done();
         },
     } as DosModule);
