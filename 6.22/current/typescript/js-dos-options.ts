@@ -64,7 +64,7 @@ export class DosOptions extends DosBoxConfig {
     // (e.g. if you have problems with default version)
     // * `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs/shell
     // emulation using it
-    // * `dosbox.js` - same as wdosbox-emterp.js because default version can't be compiled to asm.js
+    // * `dosbox.js` - same as dosbox-emterp.js because default version can't be compiled to asm.js
     // * `dosbox-emterp.js` - same as wdosbox-emterp.js but javascript (asm.js)
     // * `dosbox-nosync.js` - same as wdosbox-nosync.js but javascript (asm.js)
     //
