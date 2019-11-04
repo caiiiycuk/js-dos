@@ -166,11 +166,13 @@ By changing wdosboxUrl (see above) you can select different dosbox variants:
 * `wdosbox.js` - default variant. This version compiled with latest emscripten and in theory should work best.
 * `wdosbox-emterp.js` - This version compiled with legacy fastcomp backend, can be useful in rare cases (e.g. if you have problem with default version).
 * `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs/shell emulation using it.
-* `dosbox.js` - same as wdosbox.js but compiled as javascript (not wasm)
-* `dosbox-emterp.js` - same as wdosbox-emterp.js but javascript (not wasm)
-* `dosbox-nosync.js` - same as wdosbox-nosync.js but javascript (not wasm)
+* `dosbox.js` - same as dosbox-emterp.js because default version can't be compiled to asm.js
+* `dosbox-emterp.js` - same as wdosbox-emterp.js but javascript (asm.js)
+* `dosbox-nosync.js` - same as wdosbox-nosync.js but javascript (asm.js)
 
 Take in account even if you use wasm version of dosbox it will be automatically fallbacked by javascript version if wasm can't start
+
+Default version have limitation and can't be compiled to asm.js, dosbox-emterp.js will be used as fallback for `wdosbox.js`
 
 ```javascript
     Dos(canvas, { wdosboxUrl: "/wdosbox-nosync.js" }).ready(...);

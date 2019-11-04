@@ -58,10 +58,20 @@ gulp.task('copyAssets', function () {
     return gulp.src(['test/index.html', 'build/wdosbox.js', 'build/wdosbox.js.symbols',
                      'build/wdosbox-nosync.js', 'build/wdosbox-nosync.js.symbols',
                      'build-emterp/wdosbox-emterp.js', 'build-emterp/wdosbox-emterp.js.symbols',
-                     'build/dosbox.js', 'build/dosbox.js.mem', 'build/dosbox.js.symbols',
                      'build-emterp/dosbox-emterp.js', 'build-emterp/dosbox-emterp.js.mem', 'build-emterp/dosbox-emterp.js.symbols',
-                     'build/dosbox-nosync.js', 'build/dosbox-nosync.js.mem', 'build/dosbox-nosync.js.symbols',
+                     'build-emterp/dosbox-nosync.js', 'build-emterp/dosbox-nosync.js.mem', 'build-emterp/dosbox-nosync.js.symbols',
                     ])
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('rewriteDefaultVersion', function() {
+    return gulp.src(['build-emterp/dosbox-emterp.js', 'build-emterp/dosbox-emterp.js.mem', 'build-emterp/dosbox-emterp.js.symbols'])
+        .pipe(rename(function (path) {
+            path.basename = 'dosbox';
+            if (path.extname !== '.js') {
+                path.basename += ".js";
+            }
+        }))
         .pipe(gulp.dest('dist'));
 });
 
@@ -113,7 +123,8 @@ gulp.task('test', ['copyAssetsTest'], function () {
     .pipe(gulp.dest('dist/test'));
 })
 
-gulp.task('default', ['test', 'generateBuildInfo', 'copyWasm', 'copyAssets', 'copyTypeScript', 'docs', 'copyPackageJson'], function () {
+gulp.task('default', ['test', 'generateBuildInfo', 'copyWasm', 'copyAssets', 'rewriteDefaultVersion',
+    'copyTypeScript', 'docs', 'copyPackageJson'], function () {
     return browserify({
         basedir: '.',
         debug: true,
