@@ -222,7 +222,7 @@ static Bitu Normal_Loop(void) {
 			 * exception. Timeout must not be triggered when the browser is
 			 * running slow overall or the page is in the background.
 			 */
-			LOG_MSG("1. Emulation aborted due to nested emulation timeout.");
+			LOG_MSG("[SYNC] Emulation aborted due to nested emulation timeout.");
 			em_exit(1);
 		}
 	}
@@ -495,8 +495,8 @@ void DOSBOX_RunMachine(void){
 		 * Anything taking a long time will probably run indefinitely,
 		 * making DOSBox appear to hang.
 		 */
-		if (GetTicks() - ticksStart > 1000) {
-			LOG_MSG("2. Emulation aborted due to nested emulation timeout.");
+		if (GetTicks() - ticksStart > 2000) {
+			LOG_MSG("[NOSYNC] Emulation aborted due to nested emulation timeout (%d).", GetTicks() - ticksStart);
 			em_exit(1);
 			break;
 		}

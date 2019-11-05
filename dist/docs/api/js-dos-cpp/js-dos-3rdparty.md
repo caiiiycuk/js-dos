@@ -82,7 +82,7 @@ extern int EMSCRIPTEN_KEEPALIVE extract_zip(const void *data, zip_uint64_t lengt
                 if (!zipFile)
                 {
                     fprintf(stderr, "extract-zip: %s\n", zip_strerror(zipArchive));
-                    fprintf(stderr, "extract-zip: Try to repack archive with default zip program\n", zip_strerror(zipArchive));
+                    fprintf(stderr, "extract-zip: Try to repack archive with default zip program, error: '%s'\n", zip_strerror(zipArchive));
                     exit(100);
                 }
                 fd = open(zipStat.name, O_RDWR | O_TRUNC | O_CREAT, 0644);

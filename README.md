@@ -456,6 +456,10 @@ You can easily simulate key press and release using [CommandInterface.simulateKe
     });
 ```
 
+## Supported browsers
+
+Using babel notation: `> 0.25%, not dead, ie >= 11`
+
 ## Building
 
 Building process have two steps:

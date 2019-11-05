@@ -141,12 +141,12 @@ class DosHost {
             const buildTotal = Build.jsSize;
             const memUrl = url.replace(".js", ".js.mem");
 
-            // * Host download `dosbox`js
+            // * Host download `dosbox.js`
             new Xhr(url, {
                 cache,
                 progress: (total, loaded) => {
                     if (module.onprogress) {
-                        module.onprogress("Resolving DosBox", buildTotal,
+                        module.onprogress("Resolving DosBox (" + url + ")", buildTotal,
                         Math.min(buildTotal, loaded));
                     }
                 },
@@ -156,7 +156,7 @@ class DosHost {
                 },
                 success: (response: string) => {
                     if (module.onprogress !== undefined) {
-                        module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                        module.onprogress("Resolving DosBox (" + url + ")", buildTotal, buildTotal);
                     }
 
                     response +=
@@ -181,7 +181,8 @@ class DosHost {
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
                     if (module.onprogress) {
-                        module.onprogress("Resolving DosBox", buildTotal, Math.min(Build.wasmSize, loaded));
+                        module.onprogress("Resolving DosBox (" + url + ")",
+                            buildTotal, Math.min(Build.wasmSize, loaded));
                     }
                 },
                 fail: (url: string, status: number, message: string) => {

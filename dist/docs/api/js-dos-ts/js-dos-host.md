@@ -257,7 +257,7 @@ fallback to js version if wasm not supported
 
 
 
-* Host download `dosbox`js
+* Host download `dosbox.js`
 
 
   
@@ -267,7 +267,7 @@ fallback to js version if wasm not supported
                 cache,
                 progress: (total, loaded) => {
                     if (module.onprogress) {
-                        module.onprogress("Resolving DosBox", buildTotal,
+                        module.onprogress("Resolving DosBox (" + url + ")", buildTotal,
                         Math.min(buildTotal, loaded));
                     }
                 },
@@ -277,7 +277,7 @@ fallback to js version if wasm not supported
                 },
                 success: (response: string) => {
                     if (module.onprogress !== undefined) {
-                        module.onprogress("Resolving DosBox", buildTotal, buildTotal);
+                        module.onprogress("Resolving DosBox (" + url + ")", buildTotal, buildTotal);
                     }
 
                     response +=
@@ -316,7 +316,8 @@ fallback to js version if wasm not supported
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
                     if (module.onprogress) {
-                        module.onprogress("Resolving DosBox", buildTotal, Math.min(Build.wasmSize, loaded));
+                        module.onprogress("Resolving DosBox (" + url + ")",
+                            buildTotal, Math.min(Build.wasmSize, loaded));
                     }
                 },
                 fail: (url: string, status: number, message: string) => {

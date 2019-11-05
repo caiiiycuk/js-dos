@@ -9,7 +9,7 @@ const char* getVersion() {
         version = new char[256];
         EM_ASM_ARGS(({
             const version = Module['version'];
-            const versionLength = Module['lengthBytesUTF8'](version) + 1;
+            let versionLength = Module['lengthBytesUTF8'](version) + 1;
 
             if (versionLength > 256) {
                 versionLength = 256;

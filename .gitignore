@@ -47,3 +47,4 @@ travis-build
 build
 cmake-build-debug
 build
+build-emterp
