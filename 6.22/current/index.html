@@ -17,11 +17,11 @@
   <canvas id="jsdos"></canvas>
   <script>
     Dos(document.getElementById("jsdos"), {
-      wdosboxUrl: "/wdosbox.js", 
+      wdosboxUrl: "/wdosbox.js",
       cycles: 1000,
-    }).ready((fs, main) => {
-      fs.extract("test/digger.zip").then(() => {
-        main(["-c", "DIGGER.COM"]).then((ci) => {
+    }).ready(function (fs, main) {
+      fs.extract("test/digger.zip").then(function () {
+        main(["-c", "DIGGER.COM"]).then(function (ci) {
           window.Module = ci.dos;
           window.ci = ci;
           // ci.createKeyboardLayout();
