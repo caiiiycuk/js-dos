@@ -1,7 +1,7 @@
 [js-dos 6.22](https://js-dos.com)
 ===========
 
-[![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos) [![Buy Me A Coffee](https://img.shields.io/badge/%E2%98%95-Buy%20me%20a%20coffee-blue)](https://www.buymeacoffee.com/caiiiycuk)
+[![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos) [![Donate](https://img.shields.io/badge/%E2%98%95-Donate-orange)](https://www.buymeacoffee.com/caiiiycuk)
 
 6.22 is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox. Try our <a href="https://dosify.me">demo app</a>.
 
