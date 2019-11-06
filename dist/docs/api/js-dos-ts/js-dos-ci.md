@@ -19,6 +19,7 @@ export class DosCommandInterface {
 
     private shellInputQueue: string[] = [];
     private shellInputClients: Array<() => void> = [];
+    private onstdout?: (data: string) => void = undefined;
 
     constructor(dos: DosModule, onready: (ci: DosCommandInterface) => void) {
         this.dos = dos;
@@ -87,6 +88,26 @@ inside the event handler for a user-generated event (for example a key, mouse or
 ```
     public fullscreen() {
         this.dos.canvas.requestFullscreen()
+    }
+
+
+```
+
+
+
+
+
+
+
+* `listenStdout()` - redirect everything that printed by dosbox into
+console to passed function
+
+
+  
+
+```
+    public listenStdout(onstdout: (data: string) => void) {
+        this.onstdout = onstdout;
     }
 
 
@@ -286,6 +307,13 @@ Chromium Hack
                 } else {
                     this.requestShellInput();
                 }
+                break;
+            case "write_stdout":
+                const data: string = args[0];
+                if (this.onstdout) {
+                    this.onstdout(data);
+                }
+                break;
             default:
             /* do nothing */
         }
@@ -294,6 +322,7 @@ Chromium Hack
     private onframe() {
         this.dos.tick();
     }
+
 }
 
 interface LowLevelApi {

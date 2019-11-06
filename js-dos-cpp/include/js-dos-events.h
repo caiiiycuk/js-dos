@@ -36,6 +36,9 @@ public:
     // when dos shell is running  we can provide shell commands using this
     void shell_input(char *input_line, int length);
 
+    // **write_stdout* - triggered when emulated program writes to stdout
+    void write_stdout(const char * data, size_t count);
+
     // JS --> C++
     // ----------
 

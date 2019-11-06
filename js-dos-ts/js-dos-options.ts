@@ -76,6 +76,6 @@ export class DosOptions extends DosBoxConfig {
 }
 
 export const DosBoxConfigDefaults: DosBoxConfig = {
-    cycles: "auto",
+    cycles: "max",
     autolock: false,
 };
