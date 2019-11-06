@@ -1,7 +1,7 @@
 // # DosModule
 // DosModule is [emscripten module object](https://kripken.github.io/emscripten-site/docs/api_reference/module.html),
 // with additional functionality
-import { DosRuntime } from "./js-dos";
+import Dos, { DosRuntime } from "./js-dos";
 import { Build } from "./js-dos-build";
 import { DosCommandInterface } from "./js-dos-ci";
 import getJsDosConfig from "./js-dos-conf";
@@ -14,8 +14,8 @@ export class DosModule extends DosOptions {
     public canvas: HTMLCanvasElement;
     public version = Build.version;
     public onglobals?: (...args: any[]) => void;
+    public ci: Promise<DosCommandInterface>;
 
-    private ci: Promise<DosCommandInterface> | null = null;
     private instance: any;
     private fs: DosFS | null = null;
     private ui: DosUi | null = null;
@@ -26,10 +26,15 @@ export class DosModule extends DosOptions {
     private resumeListeners: Array< () => void > = [];
     private terminateListeners: Array< () => void > = [];
 
+    private ciResolveFn: (ci: DosCommandInterface) => void = () => {};
+
     constructor(canvas: HTMLCanvasElement, onready: (runtime: DosRuntime) => void) {
         super();
         this.canvas = canvas;
         this.onready = onready;
+        this.ci = new Promise<DosCommandInterface>((resolve) => {
+            this.ciResolveFn = resolve;
+        });
 
         this.registerDefaultListeners();
     }
@@ -172,14 +177,13 @@ export class DosModule extends DosOptions {
             this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", getJsDosConfig(this));
             // * Mount emscripten FS as drive c:
             args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
-            // * Run dosbox with passed arguments and resolve
             // [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
-            (this as any).callMain(args);
-            return new Promise<DosCommandInterface>((resolve) => {
-                new DosCommandInterface(this, (ci: DosCommandInterface) => {
-                    resolve(ci);
-                });
+            new DosCommandInterface(this, (ci: DosCommandInterface) => {
+                this.ciResolveFn(ci);
             });
+            // * Run dosbox with passed arguments and resolve
+            (this as any).callMain(args);
+            return this.ci;
         };
         this.fs = new DosFS(this);
         this.onready({

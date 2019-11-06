@@ -7,13 +7,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.46 (03ad3367ca532862ee62fe547bc44adc)",
-  jsVersion: "5ae989bd9d333308b815405959532e10d14531e0",
-  wasmJsSize: 199658,
-  wasmVersion: "509327cadb3a1a56e3ce3541d1a54f89",
-  wasmSize: 1809154,
+  version: "6.22.47 (f46cb33e80ac49dac8a6962777818749)",
+  jsVersion: "94834629e5662e02d71e6046bb3f34a15285c51b",
+  wasmJsSize: 199778,
+  wasmVersion: "69c3be525f3290f3e69512ede0ba8831",
+  wasmSize: 1809313,
   jsSize: 6651975,
-  buildSeed: 1572970518499
+  buildSeed: 1573052351842
 };
 
 },{}],2:[function(require,module,exports){
@@ -206,6 +206,7 @@ function () {
 
     this.shellInputQueue = [];
     this.shellInputClients = [];
+    this.onstdout = undefined;
     this.dos = dos;
     this.em = dos;
     this.api = dos;
@@ -238,6 +239,12 @@ function () {
 
   DosCommandInterface.prototype.fullscreen = function () {
     this.dos.canvas.requestFullscreen();
+  }; // * `listenStdout()` - redirect everything that printed by dosbox into
+  // console to passed function
+
+
+  DosCommandInterface.prototype.listenStdout = function (onstdout) {
+    this.onstdout = onstdout;
   }; // * `shell([cmd1, cmd2, ...])` - executes passed commands
   // in dosbox shell if it's runned, returns Promise that
   // resolves when commands sequence is executed
@@ -369,6 +376,17 @@ function () {
         } else {
           this.requestShellInput();
         }
+
+        break;
+
+      case "write_stdout":
+        var data = args[0];
+
+        if (this.onstdout) {
+          this.onstdout(data);
+        }
+
+        break;
 
       default:
       /* do nothing */
@@ -1078,15 +1096,20 @@ function (_super) {
 
     _this.isValid = false;
     _this.version = js_dos_build_1.Build.version;
-    _this.ci = null;
     _this.fs = null;
     _this.ui = null;
     _this.tickListeners = [];
     _this.pauseListeners = [];
     _this.resumeListeners = [];
     _this.terminateListeners = [];
+
+    _this.ciResolveFn = function () {};
+
     _this.canvas = canvas;
     _this.onready = onready;
+    _this.ci = new Promise(function (resolve) {
+      _this.ciResolveFn = resolve;
+    });
 
     _this.registerDefaultListeners();
 
@@ -1239,16 +1262,15 @@ function (_super) {
       _this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", js_dos_conf_1.default(_this)); // * Mount emscripten FS as drive c:
 
 
-      args.unshift("-userconf", "-c", "mount c .", "-c", "c:"); // * Run dosbox with passed arguments and resolve
-      // [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
+      args.unshift("-userconf", "-c", "mount c .", "-c", "c:"); // [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
+
+      new js_dos_ci_1.DosCommandInterface(_this, function (ci) {
+        _this.ciResolveFn(ci);
+      }); // * Run dosbox with passed arguments and resolve
 
       _this.callMain(args);
 
-      return new Promise(function (resolve) {
-        new js_dos_ci_1.DosCommandInterface(_this, function (ci) {
-          resolve(ci);
-        });
-      });
+      return _this.ci;
     };
 
     this.fs = new js_dos_fs_1.DosFS(this);
@@ -1386,7 +1408,7 @@ function (_super) {
 
 exports.DosOptions = DosOptions;
 exports.DosBoxConfigDefaults = {
-  cycles: "auto",
+  cycles: "max",
   autolock: false
 };
 

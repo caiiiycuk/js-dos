@@ -239,7 +239,7 @@ for wdosbox.js
 }
 
 export const DosBoxConfigDefaults: DosBoxConfig = {
-    cycles: "auto",
+    cycles: "max",
     autolock: false,
 };
 
