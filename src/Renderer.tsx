@@ -7,8 +7,8 @@ import 'prismjs/themes/prism.css';
 import 'prismjs/themes/prism-tomorrow.css';
 import { IconNames } from '@blueprintjs/icons';
 
-export default function Renderer() {
-  const url = "https://js-dos.com/6.22/current/test" + window.location.pathname + ".html";
+export default function Renderer(props: { path: string }) {
+  const url = "https://js-dos.com/6.22/current/test/" + props.path + ".html";
 
   const [frameKey, setFrameKey] = useState<number>(0);
   const [content, setContent] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export default function Renderer() {
       const proxy = iframe.contentWindow;
       proxy.document.write(frameContent);
       iframe.focus();
-      
+
       setProxy(proxy);
     }
   }, [frameKey]);
@@ -86,7 +86,7 @@ export default function Renderer() {
   }
 
   function doSetVariant(value: string) {
-    const newContent = (content + "").replace(/wdosboxUrl:.*/, 
+    const newContent = (content + "").replace(/wdosboxUrl:.*/,
       "wdosboxUrl: \"https://js-dos.com/6.22/current/" + value + "\",");
     setWdosboxUrl(value);
     setContent(newContent);
@@ -116,8 +116,18 @@ export default function Renderer() {
         border: "none",
         height: "400px",
       }} />
-    <Navbar style={{ position: "relative" }}>
-      <NavbarGroup>
+    <Navbar style={{
+      width: "100%",
+      display: "flex",
+      justifyContent: "space-between",
+      height: "auto",
+      paddingTop: "5px",
+      paddingBottom: "5px",
+    }}>
+      <NavbarGroup style={{
+        flexWrap: "wrap",
+        height: "auto",
+      }}>
         <NavbarHeading>Variant</NavbarHeading>
         <HTMLSelect options={["wdosbox.js", "wdosbox-emterp.js", "wdosbox-nosync.js",
           "dosbox-emterp.js", "dosbox-nosync.js"]} value={wdosboxUrl}
@@ -132,7 +142,9 @@ export default function Renderer() {
           <NumericInput value={cycles} stepSize={100} majorStepSize={1000}
             fill={true} onValueChange={doSetCycles}></NumericInput>
         </div>
-        <ButtonGroup style={{ position: "absolute", right: "1em" }}>
+      </NavbarGroup>
+      <NavbarGroup>
+        <ButtonGroup>
           <Button text="Fullscreen" icon={IconNames.FULLSCREEN} onClick={enterFullscreen}></Button>
           <Button icon={IconNames.REFRESH} onClick={reload}
             intent={content !== frameContent ? Intent.DANGER : Intent.NONE}>
