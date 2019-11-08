@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import Editor from 'react-simple-code-editor';
-import { Spinner, Intent, Divider, ButtonGroup, Button, Navbar, NavbarHeading, NavbarGroup, HTMLSelect, NavbarDivider, Checkbox, Alignment, NumericInput } from "@blueprintjs/core";
+import { Spinner, Intent, ButtonGroup, Button, Navbar, NavbarHeading, NavbarGroup, HTMLSelect, NavbarDivider, Checkbox, Alignment, NumericInput } from "@blueprintjs/core";
 import { highlight, languages } from 'prismjs';
 
 import 'prismjs/themes/prism.css';
@@ -8,7 +8,7 @@ import 'prismjs/themes/prism-tomorrow.css';
 import { IconNames } from '@blueprintjs/icons';
 
 export default function Renderer() {
-  const url = window.location.href + ".html";
+  const url = "https://js-dos.com/6.22/current/test" + window.location.pathname + ".html";
 
   const [frameKey, setFrameKey] = useState<number>(0);
   const [content, setContent] = useState<string | null>(null);
@@ -18,11 +18,17 @@ export default function Renderer() {
 
   const [cycles, setCycles] = useState<number>(1000);
   const [wdosboxUrl, setWdosboxUrl] = useState<string>("wdosbox.js");
+  const [autolock, setAutolock] = useState<boolean>(false);
+
+  const [proxy, setProxy] = useState(null);
 
   const iframeCallback = useCallback((iframe) => {
     if (iframe !== null && frameContent != null) {
-      iframe.contentWindow.document.write(frameContent);
+      const proxy = iframe.contentWindow;
+      proxy.document.write(frameContent);
       iframe.focus();
+      
+      setProxy(proxy);
     }
   }, [frameKey]);
 
@@ -86,6 +92,16 @@ export default function Renderer() {
     setContent(newContent);
   }
 
+  function doSetAutolock(value: boolean) {
+    const newContent = (content + "").replace(/autolock:.*/, "autolock: " + value + ",");
+    setAutolock(value);
+    setContent(newContent);
+  }
+
+  function enterFullscreen() {
+    (proxy as any).ci.fullscreen();
+  }
+
   return <div style={{
     display: "flex",
     flexDirection: "column",
@@ -95,6 +111,7 @@ export default function Renderer() {
       tabIndex={1}
       key={"iframe_" + frameKey}
       ref={iframeCallback}
+      allowFullScreen
       style={{
         border: "none",
         height: "400px",
@@ -106,7 +123,8 @@ export default function Renderer() {
           "dosbox-emterp.js", "dosbox-nosync.js"]} value={wdosboxUrl}
           onChange={(ev) => doSetVariant(ev.currentTarget.value)}></HTMLSelect>
         <NavbarDivider></NavbarDivider>
-        <Checkbox checked={false} label="Mouselock" large={true}
+        <Checkbox checked={autolock} label="Mouselock" large={true}
+          onChange={(ev) => doSetAutolock(ev.currentTarget.checked)}
           style={{ marginBottom: 0 }} alignIndicator={Alignment.RIGHT}></Checkbox>
         <NavbarDivider></NavbarDivider>
         <NavbarHeading>Cycles</NavbarHeading>
@@ -115,6 +133,7 @@ export default function Renderer() {
             fill={true} onValueChange={doSetCycles}></NumericInput>
         </div>
         <ButtonGroup style={{ position: "absolute", right: "1em" }}>
+          <Button text="Fullscreen" icon={IconNames.FULLSCREEN} onClick={enterFullscreen}></Button>
           <Button icon={IconNames.REFRESH} onClick={reload}
             intent={content !== frameContent ? Intent.DANGER : Intent.NONE}>
           </Button>
