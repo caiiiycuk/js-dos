@@ -132,6 +132,22 @@ const Dos = (window as any).Dos as DosFactory;
 
 See example of React component in FAQ section
 
+## Demo
+
+### Examples
+
+All examples are interactive, read more in [**Examples**](https://js-dos.com/6.22/examples/?digger) sections.
+
+### Clients
+You can found real use of js-dos on certain websites about dos games.
+
+|[![JS-DOS Games](/games-logo.png)](https://js-dos.com/games/)|[![Dos Games Archive](/dga-logo.png)](https://www.dosgamesarchive.com/play-online/)|[![Emupedia](/emupedia-logo.png)](https://emupedia.net/beta/emuos/)|
+|-|-|
+|[JS-DOS Games](https://js-dos.com/games/)|[Dos Games Archive](https://www.dosgamesarchive.com/play-online/)|[Emupedia](https://emupedia.net/beta/emuos/)|
+
+Please open issue on github if you want to add link for another site that uses js-dos.
+
+
 ## API Reference
 
 Read about api provided by js-dos in [**API Reference**](https://js-dos.com/6.22/docs/)
