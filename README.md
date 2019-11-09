@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/caiiiycuk/js-dos.svg?branch=6.22)](https://travis-ci.org/caiiiycuk/js-dos) [![Donate](https://img.shields.io/badge/%E2%98%95-Donate-orange)](https://www.buymeacoffee.com/caiiiycuk)
 
-6.22 is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox. Try our <a href="https://dosify.me">demo app</a>.
+6.22 is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox. Try our live <a href="https://js-dos.com/#js-dos-622-demo">examples</a>.
 
 You can found previous version here [v3](https://js-dos.com/index_v3.html)
 
@@ -137,6 +137,9 @@ See example of React component in FAQ section
 ### Examples
 
 All examples are interactive, read more in [**Examples**](https://js-dos.com/6.22/examples/?digger) sections.
+
+### Demo app
+<a href="https://dosify.me">Demo app</a> that allows try js-dos box with your game archive.
 
 ### Clients
 You can found real use of js-dos on certain websites about dos games.
