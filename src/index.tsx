@@ -13,6 +13,8 @@ const path = window.location.search;
 
 switch (path) {
     case "?digger":
+    case "?arkanoid":
+    case "?dhry2":
         ReactDOM.render(<Renderer path={path.substr(1)} />, document.getElementById('root'));
     break;
 
