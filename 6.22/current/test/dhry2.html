@@ -4,11 +4,14 @@
 <head>
   <meta charset="utf-8">
   <title>js-dos 6.22, Digger example</title>
-  <script src="/js-dos.js"></script>
+  <script src="https://js-dos.com/6.22/current/js-dos.js"></script>
   <style>
-    body, canvas, .dosbox-container {
+    html, body, canvas, .dosbox-container {
       width: 100%;
       height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
     }
   </style>
 </head>
@@ -17,9 +20,11 @@
   <canvas id="jsdos"></canvas>
   <script>
     Dos(document.getElementById("jsdos"), {
-      wdosboxUrl: "/wdosbox.js",
+      wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js",
+      cycles: "max",
+      autolock: "false",
     }).ready(function (fs, main) {
-      fs.extract("/test/dhry2.zip").then(function () {
+      fs.extract("https://js-dos.com/6.22/current/test/dhry2.zip").then(function () {
         main(["-c", "DHRY2OD.EXE"]).then(function (ci) {
           const oneRunMSecs = /Microseconds for one run through Dhrystone:\s+([0-9.]+)/;
           const dhrystonesPerSec = /Dhrystones per Second:\s+([0-9.]+)/;
