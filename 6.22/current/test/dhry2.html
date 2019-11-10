@@ -3,24 +3,72 @@
 
 <head>
   <meta charset="utf-8">
-  <title>js-dos 6.22, Digger example</title>
-  <script src="https://js-dos.com/6.22/current/js-dos.js"></script>
+  <title>js-dos 6.22, Dhrystone Benchmark</title>
+  <script src="/js-dos.js"></script>
   <style>
-    html, body, canvas, .dosbox-container {
+    html,
+    body,
+    canvas,
+    .dosbox-container {
       width: 100%;
       height: 100%;
       margin: 0;
       padding: 0;
       overflow: hidden;
     }
+
+    #results {
+      visibility: hidden;
+      position: absolute; 
+      left: 0; 
+      right: 0; 
+      top: 0; 
+      bottom: 0;
+      display: flex;
+
+      color: white;
+      font-size: 2em;
+      background:rgba(0.2, 0.2, 0.2, 0.8);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    #pctype {
+      font-size: 1.1em;
+      color:greenyellow;
+    }
+
+    #social {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #vk {
+      padding-left: 10px;
+    }
   </style>
+  <script type="text/javascript" src="https://vk.com/js/api/share.js?93"
+   charset="windows-1251"></script>
 </head>
 
 <body>
   <canvas id="jsdos"></canvas>
+  <div id="results">
+    <p>Your emulated PC is <span id="pctype"></span></p>
+    <p>Microseconds for one run through Dhrystone: <span id="oneRunMSecs"></span></p>
+    <p>Dhrystone per Second: <span id="dhrystonesPerSec"></span></p>
+    <p>VAX MIPS rating: <span id="vaxMips"></span></p>
+    <div id="social">
+      <a id="tweet" href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="" data-show-count="false">Tweet</a>
+      <div id="vk" href="#"></div>
+    </div>
+  </div>
   <script>
     Dos(document.getElementById("jsdos"), {
-      wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js",
+      wdosboxUrl: "/wdosbox.js",
       cycles: "max",
       autolock: "false",
     }).ready(function (fs, main) {
@@ -41,7 +89,27 @@
               result['dhrystonesPerSec'] = Number.parseFloat(dhrystonesPerSecMatch[1]);
             } else if (vaxMipsMatch) {
               result['vaxMips'] = Number.parseFloat(vaxMipsMatch[1]);
-              console.log(result);
+
+              document.getElementById("results").style.visibility = "visible";
+              document.getElementById("oneRunMSecs").innerHTML = result["oneRunMSecs"];
+              document.getElementById("dhrystonesPerSec").innerHTML = result["dhrystonesPerSec"];
+              document.getElementById("vaxMips").innerHTML = result["vaxMips"];
+              document.getElementById("pctype").innerHTML = getComparablePc(result['vaxMips']);
+
+              var message = "#jsdos Your emulated PC is " + getComparablePc(result['vaxMips']).trim() + "! Check your PC! ";
+              document.getElementById("tweet").dataset.text = message;
+              var twitterScript = document.createElement('script');
+              twitterScript.src = 'https://platform.twitter.com/widgets.js';
+              document.body.appendChild(twitterScript);
+
+              document.getElementById('vk').innerHTML = VK.Share.button({
+                url: 'https://js-dos.com/6.22/current/test/dhry2.html',
+                noparse: true,
+                title: message,
+              }, {
+                type: 'round_nocount',
+              }); 
+
               setTimeout(function () {
                 ci.exit();
               }, 1000)
@@ -50,6 +118,86 @@
         });
       });
     });
+
+    function getComparablePc(mips) {
+      var index = 0;
+      while ((index * 2 + 1) < results.length) {
+        if (results[index * 2 + 1] >= mips) {
+          break;
+        }
+
+        index++;
+      }
+
+      index = Math.min((results.length / 2 - 1), index);
+      return results[index * 2];
+    }
+
+    // Reuslts from 
+    // http://www.roylongbottom.org.uk/dhrystone%20results.htm
+    var results = [
+      "AMD 80386      ", 13.7,
+      "IBM 486D2      ", 22.4,
+      "80486 DX2      ", 35.3,
+      "IBM 486BL      ", 40.9,
+      "AMD 5X86       ", 84.5,
+      "Pentium        ", 87.1,
+      "Cyrix P150     ", 160,
+      "Pentium        ", 122,
+      "Cyrix PP166    ", 180,
+      "IBM 6x86       ", 188,
+      "Pentium        ", 181,
+      "Pentium        ", 189,
+      "Cyrix PR233    ", 232,
+      "Pentium        ", 269,
+      "Pentium MMX    ", 276,
+      "AMD K6         ", 289,
+      "Pentium Pro    ", 312,
+      "Celeron A      ", 484,
+      "Pentium II     ", 477,
+      "AMD K62        ", 606,
+      "AMD K63        ", 645,
+      "Pentium II     ", 713,
+      "Celeron A      ", 720,
+      "Pentium III    ", 722,
+      "Pentium III    ", 959,
+      "Athlon         ", 942,
+      "Duron          ", 999,
+      "Pentium III    ", 1595,
+      "PIII Tualatin  ", 1907,
+      "Pentium 4      ", 1843,
+      "Athlon Tbird   ", 1659,
+      "Duron          ", 1674,
+      "Celeron M      ", 2273,
+      "Atom           ", 1828,
+      "Pentium 4      ", 2003,
+      "Atom           ", 1948,
+      "P4 Xeon        ", 2265,
+      "Atom Z8300     ", 2686,
+      "Athlon 4       ", 2830,
+      "Pentium M      ", 3933,
+      "Ath4 Barton    ", 3172,
+      "Pentium 4E     ", 3553,
+      "Athlon XP      ", 3700,
+      "Turion 64 M    ", 3742,
+      "Pentium 4      ", 4012,
+      "Opteron        ", 3985,
+      "Core 2 Duo M   ", 4952,
+      "Athlon XP      ", 4160,
+      "Athlon 64      ", 4288,
+      "Pentium 4      ", 4227,
+      "Athlon 64      ", 4462,
+      "Celeron C2 M   ", 5275,
+      "Core 2 Duo 1 CP", 6446,
+      "Core i5 2467M  ", 4752,
+      "Phenom II 1 CP ", 7615,
+      "Core i7 930    ", 8684,
+      "Core i7 860    ", 9978,
+      "Core i7 3930K  ", 11197,
+      "Core i7 4820K  ", 11867,
+      "Core i7 4820K  ", 11978,
+      "Core i7 3930K  ", 13877,
+    ];
   </script>
 </body>
 
