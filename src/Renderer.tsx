@@ -1,13 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import Editor from 'react-simple-code-editor';
-import { Spinner, Intent, ButtonGroup, Button, Navbar, NavbarHeading, NavbarGroup, HTMLSelect, NavbarDivider, Checkbox, Alignment, NumericInput } from "@blueprintjs/core";
+import { Spinner, Intent, ButtonGroup, Button, Navbar, NavbarHeading, NavbarGroup, HTMLSelect, NavbarDivider, Checkbox, Alignment, Classes } from "@blueprintjs/core";
 import { highlight, languages } from 'prismjs';
 
 import 'prismjs/themes/prism.css';
 import 'prismjs/themes/prism-tomorrow.css';
 import { IconNames } from '@blueprintjs/icons';
 
-export default function Renderer(props: { path: string }) {
+export default function Renderer(props: { path: string, cycles: string, autolock: boolean }) {
   const url = "https://js-dos.com/6.22/current/test/" + props.path + ".html";
 
   const [frameKey, setFrameKey] = useState<number>(0);
@@ -16,9 +16,9 @@ export default function Renderer(props: { path: string }) {
   const [request, setRequest] = useState<XMLHttpRequest | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const [cycles, setCycles] = useState<number>(1000);
+  const [cycles, setCycles] = useState<string>(props.cycles);
   const [wdosboxUrl, setWdosboxUrl] = useState<string>("wdosbox.js");
-  const [autolock, setAutolock] = useState<boolean>(false);
+  const [autolock, setAutolock] = useState<boolean>(props.autolock);
 
   const [proxy, setProxy] = useState(null);
 
@@ -47,8 +47,10 @@ export default function Renderer(props: { path: string }) {
       xmlRequest.onreadystatechange = () => {
         if (xmlRequest.readyState === 4) {
           if (xmlRequest.status === 200) {
-            setContent(xmlRequest.responseText);
-            setFrameConent(xmlRequest.responseText);
+            const content = transformContent(xmlRequest.responseText, wdosboxUrl, cycles, autolock)
+              .replace(/.*js-dos\.js.*/, "  <script src=\"https://js-dos.com/6.22/current/js-dos.js\"></script>");
+            setContent(content);
+            setFrameConent(content);
             setFrameKey(frameKey + 1);
           } else {
             setError("Wrong response code: " + xmlRequest.status);
@@ -79,23 +81,31 @@ export default function Renderer(props: { path: string }) {
     setFrameKey(frameKey + 1);
   }
 
-  function doSetCycles(value: number) {
-    const newContent = (content + "").replace(/cycles:.*/, "cycles: " + value + ",");
+  function transformContent(content: string | null, variant: string, cycles: string, autolock: boolean) {
+    if (!Number.parseInt(cycles)) {
+      cycles = "\"" + cycles + "\"";
+    }
+    const newContent = (content + "")
+      .replace(/autolock:.*/, "autolock: " + autolock + ",")
+      .replace(/cycles:.*/, "cycles: " + cycles + ",")
+      .replace(/wdosboxUrl:.*/, "wdosboxUrl: \"https://js-dos.com/6.22/current/" + variant + "\",");
+
+    return newContent;
+  }
+
+  function doSetCycles(value: string) {
     setCycles(value);
-    setContent(newContent);
+    setContent(transformContent(content, wdosboxUrl, value, autolock));
   }
 
   function doSetVariant(value: string) {
-    const newContent = (content + "").replace(/wdosboxUrl:.*/,
-      "wdosboxUrl: \"https://js-dos.com/6.22/current/" + value + "\",");
     setWdosboxUrl(value);
-    setContent(newContent);
+    setContent(transformContent(content, value, cycles, autolock));
   }
 
   function doSetAutolock(value: boolean) {
-    const newContent = (content + "").replace(/autolock:.*/, "autolock: " + value + ",");
     setAutolock(value);
-    setContent(newContent);
+    setContent(transformContent(content, wdosboxUrl, cycles, value));
   }
 
   function enterFullscreen() {
@@ -104,17 +114,34 @@ export default function Renderer(props: { path: string }) {
 
   return <div style={{
     display: "flex",
+    justifyContent: "center",
     flexDirection: "column",
     height: "100%",
   }}>
+    <Navbar>
+      <NavbarGroup >
+        <NavbarHeading>
+          <a href="https://js-dos.com">js-dos 6.22</a>
+        </NavbarHeading>
+        <NavbarDivider>
+        </NavbarDivider>
+        <NavbarHeading>
+          <a href="https://js-dos.com/6.22/examples">Examples</a>
+        </NavbarHeading>
+      </NavbarGroup>
+    </Navbar>
     <iframe title="frame"
       tabIndex={1}
       key={"iframe_" + frameKey}
       ref={iframeCallback}
       allowFullScreen
       style={{
+        flexShrink: 0,
+        flexGrow: 0,
+        alignSelf: "center",
         border: "none",
-        height: "400px",
+        width: "64vh",
+        height: "40vh",
       }} />
     <Navbar style={{
       width: "100%",
@@ -139,8 +166,8 @@ export default function Renderer(props: { path: string }) {
         <NavbarDivider></NavbarDivider>
         <NavbarHeading>Cycles</NavbarHeading>
         <div style={{ width: "100px" }}>
-          <NumericInput value={cycles} stepSize={100} majorStepSize={1000}
-            fill={true} onValueChange={doSetCycles}></NumericInput>
+          <input className={Classes.INPUT}
+            value={cycles} dir="auto" onChange={(e) => doSetCycles(e.currentTarget.value)} />
         </div>
       </NavbarGroup>
       <NavbarGroup>

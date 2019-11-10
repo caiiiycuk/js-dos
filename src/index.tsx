@@ -13,9 +13,13 @@ const path = window.location.search;
 
 switch (path) {
     case "?digger":
+        ReactDOM.render(<Renderer path={path.substr(1)} cycles="1000" autolock={false} />, document.getElementById('root'));
+    break;
     case "?arkanoid":
+        ReactDOM.render(<Renderer path={path.substr(1)} cycles="1000" autolock={true} />, document.getElementById('root'));
+    break;
     case "?dhry2":
-        ReactDOM.render(<Renderer path={path.substr(1)} />, document.getElementById('root'));
+        ReactDOM.render(<Renderer path={path.substr(1)} cycles="max" autolock={false} />, document.getElementById('root'));
     break;
 
     default:
