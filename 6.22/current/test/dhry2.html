@@ -97,7 +97,7 @@
               document.getElementById("vaxMips").innerHTML = result["vaxMips"];
               document.getElementById("pctype").innerHTML = getComparablePc(result['vaxMips']);
 
-              var message = "#jsdos Your emulated PC is " + getComparablePc(result['vaxMips']).trim() + "! Check your PC! ";
+              var message = "#jsdos Your emulated PC is " + getComparablePc(result['vaxMips']).trim() + "! Test your PC! ";
               document.getElementById("tweet").dataset.text = message;
               var twitterScript = document.createElement('script');
               twitterScript.src = 'https://platform.twitter.com/widgets.js';
