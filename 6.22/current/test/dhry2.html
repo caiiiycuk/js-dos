@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <title>js-dos 6.22, Dhrystone Benchmark</title>
-  <script src="/js-dos.js"></script>
+  <script src="../js-dos.js"></script>
   <style>
     html,
     body,
@@ -32,6 +32,7 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      text-align: center;
     }
 
     #pctype {
@@ -62,13 +63,13 @@
     <p>Dhrystone per Second: <span id="dhrystonesPerSec"></span></p>
     <p>VAX MIPS rating: <span id="vaxMips"></span></p>
     <div id="social">
-      <a id="tweet" href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="" data-show-count="false">Tweet</a>
+      <a id="tweet" href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="" data-url="https://js-dos.com/6.22/current/test/dhry2.html" data-show-count="false">Tweet</a>
       <div id="vk" href="#"></div>
     </div>
   </div>
   <script>
     Dos(document.getElementById("jsdos"), {
-      wdosboxUrl: "/wdosbox.js",
+      wdosboxUrl: "../wdosbox.js",
       cycles: "max",
       autolock: "false",
     }).ready(function (fs, main) {
