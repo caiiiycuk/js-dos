@@ -136,7 +136,7 @@ See example of React component in FAQ section
 
 ### Examples
 
-All examples are interactive, read more in [**Examples**](https://js-dos.com/6.22/examples/?digger) sections.
+All examples are interactive, read more in [**Examples**](https://js-dos.com/6.22/examples/) sections.
 
 ### Demo app
 <a href="https://dosify.me">Demo app</a> that allows try js-dos box with your game archive.
