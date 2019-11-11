@@ -93,8 +93,9 @@ You can have same results if just create simple html page:
 
 ## Archives
 
-You can obtain latest build using this links ([versions](http://js-dos.com/#js-dos-622-faq-changing-dosbox-variant)):
+You can obtain latest build using this ([versions](http://js-dos.com/#js-dos-622-faq-changing-dosbox-variant)):
 
+ - js-dos api: https://js-dos.com/6.22/current/js-dos.js
  - default version: https://js-dos.com/6.22/current/wdosbox.js
  - emterpreter version: https://js-dos.com/6.22/current/wdosbox-emterp.wasm.js
  - nosync version: https://js-dos.com/6.22/current/wdosbox-nosync.wasm.js
@@ -188,6 +189,9 @@ By changing wdosboxUrl (see above) you can select different dosbox variants:
 * `dosbox.js` - same as dosbox-emterp.js because default version can't be compiled to asm.js
 * `dosbox-emterp.js` - same as wdosbox-emterp.js but javascript (asm.js)
 * `dosbox-nosync.js` - same as wdosbox-nosync.js but javascript (asm.js)
+
+Also you can choose from profiling version of implementation: `wdosbox-profiling.js`,
+`wdosbox-emterp-profiling.js`, `wdosbox-nosync-profiling.js`.
 
 Take in account even if you use wasm version of dosbox it will be automatically fallbacked by javascript version if wasm can't start
 

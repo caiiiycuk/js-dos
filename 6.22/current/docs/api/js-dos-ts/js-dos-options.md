@@ -226,6 +226,9 @@ emulation using it
 * `dosbox-emterp.js` - same as wdosbox-emterp.js but javascript (asm.js)
 * `dosbox-nosync.js` - same as wdosbox-nosync.js but javascript (asm.js)
 
+Also you can choose from profiling version of implementation: `wdosbox-profiling.js`,
+`wdosbox-emterp-profiling.js`, `wdosbox-nosync-profiling.js`
+
 Take in account even if you use wasm version of dosbox it will be automatically fallbacked
 to javascript version if wasm can't start.
 
