@@ -156,8 +156,11 @@ export default function Renderer(props: { path: string, cycles: string, autolock
         height: "auto",
       }}>
         <NavbarHeading>Variant</NavbarHeading>
-        <HTMLSelect options={["wdosbox.js", "wdosbox-emterp.js", "wdosbox-nosync.js",
-          "dosbox-emterp.js", "dosbox-nosync.js"]} value={wdosboxUrl}
+        <HTMLSelect options={[
+          "wdosbox.js", "wdosbox-emterp.js", "wdosbox-nosync.js",
+          "dosbox-emterp.js", "dosbox-nosync.js", 
+          "wdosbox-profiling.js", "wdosbox-emterp-profiling.js", "wdosbox-nosync-profiling.js",
+        ]} value={wdosboxUrl}
           onChange={(ev) => doSetVariant(ev.currentTarget.value)}></HTMLSelect>
         <NavbarDivider></NavbarDivider>
         <Checkbox checked={autolock} label="Mouselock" large={true}
