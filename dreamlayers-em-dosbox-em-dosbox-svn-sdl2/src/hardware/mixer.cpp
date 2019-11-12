@@ -27,6 +27,9 @@
 #include <sys/types.h>
 #include <math.h>
 
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
 #if defined (WIN32)
 //Midi listing
 #ifndef WIN32_LEAN_AND_MEAN
@@ -438,6 +441,19 @@ static void MIXER_MixData(Bitu needed) {
 	mixer.done = needed;
 }
 
+namespace {
+    void MIXER_PushNewAudio() {
+#ifdef EMSCRIPTEN
+        // we need to push new audio immediately because
+        // there is no way to push audio on emscripten_sleep
+        // in asyncify
+        EM_ASM(({
+    		SDL.audio.queueNewAudioData();
+    	}));
+#endif
+    }
+}
+
 static void MIXER_Mix(void) {
 	SDL_LockAudio();
 	MIXER_MixData(mixer.needed);
@@ -445,6 +461,7 @@ static void MIXER_Mix(void) {
 	mixer.needed+=(mixer.tick_counter >> TICK_SHIFT);
 	mixer.tick_counter &= TICK_MASK;
 	SDL_UnlockAudio();
+    MIXER_PushNewAudio();
 }
 
 static void MIXER_Mix_NoSound(void) {
@@ -465,6 +482,7 @@ static void MIXER_Mix_NoSound(void) {
 	mixer.needed += (mixer.tick_counter >> TICK_SHIFT);
 	mixer.tick_counter &= TICK_MASK;
 	mixer.done=0;
+	MIXER_PushNewAudio();
 }
 
 static void SDLCALL MIXER_CallBack(void * userdata, Uint8 *stream, int len) {
