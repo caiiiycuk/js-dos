@@ -177,8 +177,8 @@ set(SOURCES
 )
 
 if(${EMSCRIPTEN})
-	add_library(bin-asyncify OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
-    target_compile_definitions(bin-asyncify PUBLIC -DEMTERPRETER_SYNC -DASYNCIFY -Demscripten_sleep_with_yield=emscripten_sleep)
+	add_library(bin-asyncify OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY} "${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-asyncify.cpp")
+    target_compile_definitions(bin-asyncify PUBLIC -DEMTERPRETER_SYNC -DASYNCIFY -Demscripten_sleep_with_yield=asyncify_sleep_with_yield)
 	add_executable(wdosbox $<TARGET_OBJECTS:bin-asyncify>)
 	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
 	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
