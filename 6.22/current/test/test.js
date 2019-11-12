@@ -7,13 +7,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.47 (ef63058d4cc6eeea8db947f569e501ce)",
-  jsVersion: "3eeeaf5fbe25436e245ade58899f430c64e05ee2",
-  wasmJsSize: 199778,
-  wasmVersion: "69c3be525f3290f3e69512ede0ba8831",
-  wasmSize: 1809313,
-  jsSize: 6651975,
-  buildSeed: 1573489031160
+  version: "6.22.48 (2293dcc63f8e2079d4b2008ea7ecbfb5)",
+  jsVersion: "e08d8ca32cfb1406784aeb9ca9349d0bc6973220",
+  wasmJsSize: 199820,
+  wasmVersion: "64d90f6260ff9924af63739321a185e6",
+  wasmSize: 1809370,
+  jsSize: 6652832,
+  buildSeed: 1573578042365
 };
 
 },{}],2:[function(require,module,exports){
