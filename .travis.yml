@@ -12,7 +12,7 @@ script:
   - source ./emsdk_env.sh
   - cd ..
   - emcmake cmake ..
-  - make wdosbox wdosbox-profiling wdosbox-nosync-profiling dosbox
+  - make wdosbox wdosbox-nosync wdosbox-profiling wdosbox-nosync-profiling dosbox dosbox-nosync
   - mkdir ../build
   - cp wdosbox* ../build
   - cp dosbox* ../build
