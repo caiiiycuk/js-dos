@@ -70,7 +70,9 @@ export class DosFS {
 
     // ### extractAll
     public extractAll(sources: DosArchiveSource[]): Promise<void> {
-        // download given archives and extract them to mountPoint's
+        // download given [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-dosarchivesource)
+        // and extract them to mountPoint's.
+        //
         // this method will return `Promise<void>`, that will be resolved
         // on success with empty object or rejected
         const extractArchiveInCwd = (url: string, path: string, type: "zip") => {

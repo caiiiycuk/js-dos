@@ -7,13 +7,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.49 (6067922c874c29f54118f9de9eaee2f4)",
+  version: "6.22.49 (2ca73b70d75aea02281b6a6803fc8b69)",
   jsVersion: "e8faff026a9655cb85c16743b92242e4b4f91fab",
   wasmJsSize: 189829,
   wasmVersion: "85b9fab69e705dd95b902986eba513ed",
   wasmSize: 1808684,
   jsSize: 6646965,
-  buildSeed: 1573750188657
+  buildSeed: 1573750387722
 };
 
 },{}],2:[function(require,module,exports){
@@ -560,7 +560,9 @@ function () {
 
 
   DosFS.prototype.extractAll = function (sources) {
-    var _this = this; // download given archives and extract them to mountPoint's
+    var _this = this; // download given [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-dosarchivesource)
+    // and extract them to mountPoint's.
+    //
     // this method will return `Promise<void>`, that will be resolved
     // on success with empty object or rejected
 

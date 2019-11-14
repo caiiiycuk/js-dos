@@ -388,7 +388,7 @@ In other words to store game progress just extract game archive into some folder
 ### Using multiple archives at once
 
 This section requires that you read section above. Sometimes need to have multiple persistent folders to run single game.
-For example, one for sound drivers another for game it self. It can be done with [`extractAll`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-extract-all) method. It accepts array of [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-dos-archive-source) to extract and extract them in one time. Actually, `extract` method is just syntax shugar and implemented via `extractAll`. 
+For example, one for sound drivers another for game it self. It can be done with [`extractAll`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-extractall) method. It accepts array of [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-dosarchivesource) to extract and extract them in one time. Actually, `extract` method is just syntax shugar and implemented via `extractAll`. 
 
 ```
     Dos(canvas).ready((fs, main) => {

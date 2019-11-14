@@ -228,7 +228,9 @@ simplified version of extractAll, works only for one archive. It calls extractAl
 
 
 
-download given archives and extract them to mountPoint's
+download given [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-dosarchivesource)
+and extract them to mountPoint's.
+
 this method will return `Promise<void>`, that will be resolved
 on success with empty object or rejected
 
