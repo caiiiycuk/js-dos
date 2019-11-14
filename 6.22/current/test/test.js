@@ -7,13 +7,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.49 (40cc863ce1aecee6dd4212d50bae4072)",
-  jsVersion: "862a72c15f9352a7ed52755de5e005c7d0a0a552",
-  wasmJsSize: 199869,
-  wasmVersion: "f96ca11a08c1493729054255a8da8d22",
-  wasmSize: 1809696,
-  jsSize: 6652832,
-  buildSeed: 1573582326787
+  version: "6.22.49 (f4efe5a2c730b31e7cd41b2d74bbf2d1)",
+  jsVersion: "e8faff026a9655cb85c16743b92242e4b4f91fab",
+  wasmJsSize: 189829,
+  wasmVersion: "85b9fab69e705dd95b902986eba513ed",
+  wasmSize: 1808684,
+  jsSize: 6646965,
+  buildSeed: 1573749737589
 };
 
 },{}],2:[function(require,module,exports){
@@ -443,7 +443,7 @@ exports.default = getJsDosConfig;
 
 var jsdosconf = "\n# This is the configurationfile for DOSBox 0.74. (Please use the latest version of DOSBox)\n# Lines starting with a # are commentlines and are ignored by DOSBox.\n# They are used to (briefly) document the effect of each option.\n\n[sdl]\n#       fullscreen: Start dosbox directly in fullscreen. (Press ALT-Enter to go back)\n#       fulldouble: Use double buffering in fullscreen. It can reduce screen flickering, but it can also result in a slow DOSBox.\n#   fullresolution: What resolution to use for fullscreen: original or fixed size (e.g. 1024x768).\n#                     Using your monitor's native resolution with aspect=true might give the best results.\n#                     If you end up with small window on a large screen, try an output different from surface.\n# windowresolution: Scale the window to this size IF the output device supports hardware scaling.\n#                     (output=surface does not!)\n#           output: What video system to use for output.\n#                   Possible values: surface, overlay, opengl, openglnb.\n#         autolock: Mouse will automatically lock, if you click on the screen. (Press CTRL-F10 to unlock)\n#      sensitivity: Mouse sensitivity.\n#      waitonerror: Wait before closing the console if dosbox has an error.\n#         priority: Priority levels for dosbox. Second entry behind the comma is for when dosbox is not focused/minimized.\n#                     pause is only valid for the second entry.\n#                   Possible values: lowest, lower, normal, higher, highest, pause.\n#       mapperfile: File used to load/save the key/event mappings from. Resetmapper only works with the defaul value.\n#     usescancodes: Avoid usage of symkeys, might not work on all operating systems.\n\nfullscreen=false\nfulldouble=false\nfullresolution=original\nwindowresolution=original\noutput=surface\nautolock=%autolock%\nsensitivity=100\nwaitonerror=true\npriority=higher,normal\nmapperfile=mapper-jsdos.map\nusescancodes=true\nvsync=false\n\n[dosbox]\n# language: Select another language file.\n#  machine: The type of machine tries to emulate.\n#           Possible values: hercules, cga, tandy, pcjr, ega, vgaonly, svga_s3, svga_et3000, svga_et4000, svga_paradise, vesa_nolfb, vesa_oldvbe.\n# captures: Directory where things like wave, midi, screenshot get captured.\n#  memsize: Amount of memory DOSBox has in megabytes.\n#             This value is best left at its default to avoid problems with some games,\n#             though few games might require a higher value.\n#             There is generally no speed advantage when raising this value.\n\nlanguage=\nmachine=svga_s3\ncaptures=capture\nmemsize=16\n\n[render]\n# frameskip: How many frames DOSBox skips before drawing one.\n#    aspect: Do aspect correction, if your output method doesn't support scaling this can slow things down!.\n#    scaler: Scaler used to enlarge/enhance low resolution modes.\n#              If 'forced' is appended, then the scaler will be used even if the result might not be desired.\n#            Possible values: none, normal2x, normal3x, advmame2x, advmame3x, advinterp2x, advinterp3x, hq2x, hq3x, 2xsai, super2xsai, supereagle, tv2x, tv3x, rgb2x, rgb3x, scan2x, scan3x.\n\nframeskip=0\naspect=false\nscaler=none\n\n[cpu]\n#      core: CPU Core used in emulation. auto will switch to dynamic if available and appropriate.\n#            Possible values: auto, dynamic, normal, simple.\n#   cputype: CPU Type used in emulation. auto is the fastest choice.\n#            Possible values: auto, 386, 386_slow, 486_slow, pentium_slow, 386_prefetch.\n#    cycles: Amount of instructions DOSBox tries to emulate each millisecond.\n#            Setting this value too high results in sound dropouts and lags.\n#            Cycles can be set in 3 ways:\n#              'auto'          tries to guess what a game needs.\n#                              It usually works, but can fail for certain games.\n#              'fixed #number' will set a fixed amount of cycles. This is what you usually need if 'auto' fails.\n#                              (Example: fixed 4000).\n#              'max'           will allocate as much cycles as your computer is able to handle.\n#\n#            Possible values: auto, fixed, max.\n#   cycleup: Amount of cycles to decrease/increase with keycombo.(CTRL-F11/CTRL-F12)\n# cycledown: Setting it lower than 100 will be a percentage.\n\ncore=auto\ncputype=auto\ncycles=%cycles%\ncycleup=10\ncycledown=20\n\n[mixer]\n#   nosound: Enable silent mode, sound is still emulated though.\n#      rate: Mixer sample rate, setting any device's rate higher than this will probably lower their sound quality.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n# blocksize: Mixer block size, larger blocks might help sound stuttering but sound will also be more lagged.\n#            Possible values: 1024, 2048, 4096, 8192, 512, 256.\n# prebuffer: How many milliseconds of data to keep on top of the blocksize.\n\nnosound=false\nrate=44100\nblocksize=1024\nprebuffer=20\n\n[midi]\n#     mpu401: Type of MPU-401 to emulate.\n#             Possible values: intelligent, uart, none.\n# mididevice: Device that will receive the MIDI data from MPU-401.\n#             Possible values: default, win32, alsa, oss, coreaudio, coremidi, none.\n# midiconfig: Special configuration options for the device driver. This is usually the id of the device you want to use.\n#               See the README/Manual for more details.\n\nmpu401=intelligent\nmididevice=default\nmidiconfig=\n\n[sblaster]\n#  sbtype: Type of Soundblaster to emulate. gb is Gameblaster.\n#          Possible values: sb1, sb2, sbpro1, sbpro2, sb16, gb, none.\n#  sbbase: The IO address of the soundblaster.\n#          Possible values: 220, 240, 260, 280, 2a0, 2c0, 2e0, 300.\n#     irq: The IRQ number of the soundblaster.\n#          Possible values: 7, 5, 3, 9, 10, 11, 12.\n#     dma: The DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n#    hdma: The High DMA number of the soundblaster.\n#          Possible values: 1, 5, 0, 3, 6, 7.\n# sbmixer: Allow the soundblaster mixer to modify the DOSBox mixer.\n# oplmode: Type of OPL emulation. On 'auto' the mode is determined by sblaster type. All OPL modes are Adlib-compatible, except for 'cms'.\n#          Possible values: auto, cms, opl2, dualopl2, opl3, none.\n#  oplemu: Provider for the OPL emulation. compat might provide better quality (see oplrate as well).\n#          Possible values: default, compat, fast.\n# oplrate: Sample rate of OPL music emulation. Use 49716 for highest quality (set the mixer rate accordingly).\n#          Possible values: 44100, 49716, 48000, 32000, 22050, 16000, 11025, 8000.\n\nsbtype=sb16\nsbbase=220\nirq=7\ndma=1\nhdma=5\nsbmixer=true\noplmode=auto\noplemu=default\noplrate=44100\n\n[gus]\n#      gus: Enable the Gravis Ultrasound emulation.\n#  gusrate: Sample rate of Ultrasound emulation.\n#           Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#  gusbase: The IO base address of the Gravis Ultrasound.\n#           Possible values: 240, 220, 260, 280, 2a0, 2c0, 2e0, 300.\n#   gusirq: The IRQ number of the Gravis Ultrasound.\n#           Possible values: 5, 3, 7, 9, 10, 11, 12.\n#   gusdma: The DMA channel of the Gravis Ultrasound.\n#           Possible values: 3, 0, 1, 5, 6, 7.\n# ultradir: Path to Ultrasound directory. In this directory\n#           there should be a MIDI directory that contains\n#           the patch files for GUS playback. Patch sets used\n#           with Timidity should work fine.\n\ngus=false\ngusrate=44100\ngusbase=240\ngusirq=5\ngusdma=3\nultradir=C:ULTRASND\n\n[speaker]\n# pcspeaker: Enable PC-Speaker emulation.\n#    pcrate: Sample rate of the PC-Speaker sound generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#     tandy: Enable Tandy Sound System emulation. For 'auto', emulation is present only if machine is set to 'tandy'.\n#            Possible values: auto, on, off.\n# tandyrate: Sample rate of the Tandy 3-Voice generation.\n#            Possible values: 44100, 48000, 32000, 22050, 16000, 11025, 8000, 49716.\n#    disney: Enable Disney Sound Source emulation. (Covox Voice Master and Speech Thing compatible).\n\npcspeaker=true\npcrate=44100\ntandy=auto\ntandyrate=44100\ndisney=true\n\n[joystick]\n# joysticktype: Type of joystick to emulate: auto (default), none,\n#               2axis (supports two joysticks),\n#               4axis (supports one joystick, first joystick used),\n#               4axis_2 (supports one joystick, second joystick used),\n#               fcs (Thrustmaster), ch (CH Flightstick).\n#               none disables joystick emulation.\n#               auto chooses emulation depending on real joystick(s).\n#               (Remember to reset dosbox's mapperfile if you saved it earlier)\n#               Possible values: auto, 2axis, 4axis, 4axis_2, fcs, ch, none.\n#        timed: enable timed intervals for axis. Experiment with this option, if your joystick drifts (away).\n#     autofire: continuously fires as long as you keep the button pressed.\n#       swap34: swap the 3rd and the 4th axis. can be useful for certain joysticks.\n#   buttonwrap: enable button wrapping at the number of emulated buttons.\n\njoysticktype=auto\ntimed=true\nautofire=false\nswap34=false\nbuttonwrap=false\n\n[serial]\n# serial1: set type of device connected to com port.\n#          Can be disabled, dummy, modem, nullmodem, directserial.\n#          Additional parameters must be in the same line in the form of\n#          parameter:value. Parameter for all types is irq (optional).\n#          for directserial: realport (required), rxdelay (optional).\n#                           (realport:COM1 realport:ttyS0).\n#          for modem: listenport (optional).\n#          for nullmodem: server, rxdelay, txdelay, telnet, usedtr,\n#                         transparent, port, inhsocket (all optional).\n#          Example: serial1=modem listenport:5000\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial2: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial3: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n# serial4: see serial1\n#          Possible values: dummy, disabled, modem, nullmodem, directserial.\n\nserial1=dummy\nserial2=dummy\nserial3=disabled\nserial4=disabled\n\n[dos]\n#            xms: Enable XMS support.\n#            ems: Enable EMS support.\n#            umb: Enable UMB support.\n# keyboardlayout: Language code of the keyboard layout (or none).\n\nxms=true\nems=true\numb=true\nkeyboardlayout=auto\n\n[ipx]\n# ipx: Enable ipx over UDP/IP emulation.\n\nipx=false\n\n[autoexec]\n# Lines in this section will be run at startup.\n# You can put your MOUNT lines here.\n\n# https://js-dos.com\n# \u2588\u2580\u2580\u2580\u2580\u2580\u2588 \u2588  \u2584\u2584\u2584\u2580\u2580\u2588 \u2588\u2580\u2580\u2580\u2580\u2580\u2588\n# \u2588 \u2588\u2588\u2588 \u2588 \u2588\u2588\u2584 \u2588 \u2580 \u2584 \u2588 \u2588\u2588\u2588 \u2588\n# \u2588 \u2580\u2580\u2580 \u2588 \u2584\u2588\u2588 \u2580 \u2580\u2580\u2588 \u2588 \u2580\u2580\u2580 \u2588\n# \u2580\u2580\u2580\u2580\u2580\u2580\u2580 \u2580 \u2588\u2584\u2580\u2584\u2580 \u2588 \u2580\u2580\u2580\u2580\u2580\u2580\u2580\n# \u2588\u2580\u2584\u2584\u2588\u2580\u2580\u2584\u2584 \u2580 \u2580\u2588\u2584\u2584\u2584\u2584 \u2580\u2584\u2588\u2580\u2588\u2580\n# \u2588\u2580 \u2580 \u2580\u2580\u2584 \u2588\u2580 \u2584 \u2584\u2580\u2580\u2580\u2584 \u2588\u2580\u2588\u2584\n# \u2584 \u2584\u2584 \u2588\u2580\u2580\u2584 \u2584\u2580\u2584\u2580\u2580\u2588  \u2580\u2580\u2584\u2580\u2580\u2588\u2580\n#   \u2584\u2580\u2580\u2588\u2580\u2580 \u2588\u2580\u2588\u2580\u2588\u2580\u2580\u2584 \u2580\u2588\u2588\u2580\u2588\u2584\n# \u2580\u2580\u2580 \u2580 \u2580 \u2588\u2584\u2588 \u2580\u2588\u2584\u2584\u2588\u2580\u2580\u2580\u2588\u2580\u2580\n# \u2588\u2580\u2580\u2580\u2580\u2580\u2588 \u2584\u2584\u2584 \u2584 \u2584 \u2588 \u2580 \u2588\u2584\u2584\u2584\u2584\n# \u2588 \u2588\u2588\u2588 \u2588 \u2580\u2588\u2580\u2580\u2584\u2580\u2580\u2584\u2588\u2588\u2588\u2588\u2580\u2580\u2588\u2584\u2588\n# \u2588 \u2580\u2580\u2580 \u2588 \u2584\u2580\u2580\u2588\u2580\u2588\u2580\u2584 \u2580\u2580\u2584\u2584\u2588\u2584\u2588 \n# \u2580\u2580\u2580\u2580\u2580\u2580\u2580 \u2580   \u2580\u2580 \u2580  \u2580   \u2580\u2580\u2580\n";
 
-},{"./js-dos-options":11,"core-js/modules/es6.array.iterator":115,"core-js/modules/es6.object.keys":121,"core-js/modules/es6.object.to-string":123,"core-js/modules/es6.regexp.replace":128,"core-js/modules/web.dom.iterable":135}],7:[function(require,module,exports){
+},{"./js-dos-options":11,"core-js/modules/es6.array.iterator":115,"core-js/modules/es6.object.keys":121,"core-js/modules/es6.object.to-string":123,"core-js/modules/es6.regexp.replace":128,"core-js/modules/web.dom.iterable":136}],7:[function(require,module,exports){
 "use strict"; // # DosDom
 // Simple API to work with DOM
 
@@ -484,13 +484,19 @@ require("core-js/modules/es6.regexp.constructor");
 
 require("core-js/modules/es6.regexp.replace");
 
+require("core-js/modules/web.dom.iterable");
+
+require("core-js/modules/es6.array.iterator");
+
+require("core-js/modules/es6.string.iterator");
+
+require("core-js/modules/es6.regexp.split");
+
 require("core-js/modules/es6.typed.uint8-array");
 
 require("core-js/modules/es6.promise");
 
 require("core-js/modules/es6.object.to-string");
-
-require("core-js/modules/es6.regexp.split");
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -534,34 +540,31 @@ function () {
   }; // ### extract
 
 
-  DosFS.prototype.extract = function (url, persistentMount, type) {
-    // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
-    //
-    // * `url` - url for downloading archive
-    // * `persistentMount` - is a path to mount archive contents, by default mount point is '/' which
-    // is a MEMFS that is live only in one ssesion. It means that after restart all progress will be erased.
-    // If you set some path (any), then this path will be stored across sessions in indexed db. It means
-    // that progress will be there after browser restart.
-    // * `type` - archive type **only zip is supported**
-    //
-    // this method will return `Promise<void>`, that will be resolved
-    // on success with empty object or rejected
-    var _this = this;
-
-    if (persistentMount === void 0) {
-      persistentMount = "/";
+  DosFS.prototype.extract = function (url, mountPoint, type) {
+    if (mountPoint === void 0) {
+      mountPoint = "/";
     }
 
     if (type === void 0) {
       type = "zip";
-    }
+    } // simplified version of extractAll, works only for one archive. It calls extractAll inside.
 
-    persistentMount = this.normalizePath(persistentMount);
-    var parts = persistentMount.split("/");
-    this.createPath(parts, 0, parts.length);
-    this.chdir(persistentMount);
 
-    var extractArchiveInCwd = function extractArchiveInCwd() {
+    return this.extractAll([{
+      url: url,
+      mountPoint: mountPoint,
+      type: type
+    }]);
+  }; // ### extract
+
+
+  DosFS.prototype.extractAll = function (sources) {
+    var _this = this; // download given archives and extract them to mountPoint's
+    // this method will return `Promise<void>`, that will be resolved
+    // on success with empty object or rejected
+
+
+    var extractArchiveInCwd = function extractArchiveInCwd(url, path, type) {
       return new Promise(function (resolve, reject) {
         if (type !== "zip") {
           reject("Only ZIP archive is supported");
@@ -580,6 +583,8 @@ function () {
             }
           },
           success: function success(data) {
+            _this.chdir(path);
+
             var bytes = new Uint8Array(data);
 
             var buffer = _this.em._malloc(bytes.length);
@@ -591,9 +596,9 @@ function () {
             _this.em._free(buffer);
 
             if (retcode === 0) {
-              _this.writeOk(persistentMount);
+              _this.writeOk(path);
 
-              _this.syncFs().then(resolve).catch(reject);
+              resolve();
             } else {
               reject("Can't extract zip, retcode " + retcode + ", see more info in logs");
             }
@@ -602,9 +607,33 @@ function () {
       });
     };
 
-    if (persistentMount === "/" || persistentMount.length === 0) {
-      return extractArchiveInCwd();
-    }
+    var prepareMountFunction = function prepareMountFunction(source) {
+      var mountPoint = _this.normalizePath(source.mountPoint);
+
+      var type = source.type || "zip";
+      var isRoot = mountPoint === "/" || mountPoint.length === 0;
+      var parts = mountPoint.split("/");
+
+      _this.createPath(parts, 0, parts.length);
+
+      var mountFn = function mountFn() {
+        if (isRoot || !_this.readOk(mountPoint)) {
+          if (!isRoot) {
+            _this.dos.warn("Indexed db does not contains '" + mountPoint + "' rewriting...");
+          }
+
+          return extractArchiveInCwd(source.url, mountPoint, type);
+        }
+
+        return Promise.resolve();
+      };
+
+      if (!isRoot) {
+        _this.fs.mount(_this.fs.filesystems.IDBFS, {}, mountPoint);
+      }
+
+      return mountFn;
+    };
 
     return new Promise(function (resolve, reject) {
       if (_this.lastSyncTime > 0) {
@@ -612,22 +641,28 @@ function () {
         return;
       }
 
-      _this.fs.mount(_this.fs.filesystems.IDBFS, {}, persistentMount);
+      var mountFunctions = [];
+
+      for (var _i = 0, sources_1 = sources; _i < sources_1.length; _i++) {
+        var source = sources_1[_i];
+        mountFunctions.push(prepareMountFunction(source));
+      }
 
       _this.fs.syncfs(true, function (err) {
         if (err) {
-          reject("Can't restore FS from indexed db, cause: " + err);
-          return;
+          _this.dos.error("Can't restore FS from indexed db, cause: " + err);
         }
 
-        if (!_this.readOk(persistentMount)) {
-          _this.dos.warn("Indexed db contains broken FS, resetting...");
+        var promises = [];
 
-          extractArchiveInCwd().then(resolve).catch(reject);
-          return;
+        for (var _i = 0, mountFunctions_1 = mountFunctions; _i < mountFunctions_1.length; _i++) {
+          var mountFn = mountFunctions_1[_i];
+          promises.push(mountFn());
         }
 
-        resolve();
+        Promise.all(promises).then(function () {
+          _this.syncFs().then(resolve).catch(reject);
+        }).catch(reject);
       });
     });
   }; // ### createFile
@@ -743,7 +778,7 @@ function () {
 
 exports.DosFS = DosFS;
 
-},{"./js-dos-cache-noop":3,"./js-dos-xhr":13,"core-js/modules/es6.object.to-string":123,"core-js/modules/es6.promise":124,"core-js/modules/es6.regexp.constructor":125,"core-js/modules/es6.regexp.replace":128,"core-js/modules/es6.regexp.split":129,"core-js/modules/es6.string.ends-with":131,"core-js/modules/es6.typed.uint8-array":133}],9:[function(require,module,exports){
+},{"./js-dos-cache-noop":3,"./js-dos-xhr":13,"core-js/modules/es6.array.iterator":115,"core-js/modules/es6.object.to-string":123,"core-js/modules/es6.promise":124,"core-js/modules/es6.regexp.constructor":125,"core-js/modules/es6.regexp.replace":128,"core-js/modules/es6.regexp.split":129,"core-js/modules/es6.string.ends-with":131,"core-js/modules/es6.string.iterator":132,"core-js/modules/es6.typed.uint8-array":134,"core-js/modules/web.dom.iterable":136}],9:[function(require,module,exports){
 "use strict"; // # DosHost
 // This class is used to detect and provide information about
 // features that supported in current environment
@@ -1035,7 +1070,7 @@ function () {
 
 exports.Host = new DosHost();
 
-},{"./js-dos-build":1,"./js-dos-xhr":13,"core-js/modules/es6.math.clz32":116,"core-js/modules/es6.math.fround":117,"core-js/modules/es6.math.imul":118,"core-js/modules/es6.math.trunc":119,"core-js/modules/es6.object.to-string":123,"core-js/modules/es6.promise":124,"core-js/modules/es6.regexp.replace":128,"core-js/modules/es6.symbol":132,"core-js/modules/es6.typed.uint8-array":133,"core-js/modules/es7.symbol.async-iterator":134}],10:[function(require,module,exports){
+},{"./js-dos-build":1,"./js-dos-xhr":13,"core-js/modules/es6.math.clz32":116,"core-js/modules/es6.math.fround":117,"core-js/modules/es6.math.imul":118,"core-js/modules/es6.math.trunc":119,"core-js/modules/es6.object.to-string":123,"core-js/modules/es6.promise":124,"core-js/modules/es6.regexp.replace":128,"core-js/modules/es6.symbol":133,"core-js/modules/es6.typed.uint8-array":134,"core-js/modules/es7.symbol.async-iterator":135}],10:[function(require,module,exports){
 "use strict";
 
 require("core-js/modules/es6.promise");
@@ -2898,7 +2933,7 @@ function hasOwnProperty(obj, prop) {
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./support/isBuffer":17,"_process":136,"inherits":16}],19:[function(require,module,exports){
+},{"./support/isBuffer":17,"_process":137,"inherits":16}],19:[function(require,module,exports){
 module.exports = function (it) {
   if (typeof it != 'function') throw TypeError(it + ' is not a function!');
   return it;
@@ -6066,6 +6101,25 @@ $export($export.P + $export.F * require('./_fails-is-regexp')(ENDS_WITH), 'Strin
 
 },{"./_export":39,"./_fails-is-regexp":40,"./_string-context":97,"./_to-length":103}],132:[function(require,module,exports){
 'use strict';
+var $at = require('./_string-at')(true);
+
+// 21.1.3.27 String.prototype[@@iterator]()
+require('./_iter-define')(String, 'String', function (iterated) {
+  this._t = String(iterated); // target
+  this._i = 0;                // next index
+// 21.1.5.2.1 %StringIteratorPrototype%.next()
+}, function () {
+  var O = this._t;
+  var index = this._i;
+  var point;
+  if (index >= O.length) return { value: undefined, done: true };
+  point = $at(O, index);
+  this._i += point.length;
+  return { value: point, done: false };
+});
+
+},{"./_iter-define":60,"./_string-at":96}],133:[function(require,module,exports){
+'use strict';
 // ECMAScript 6 symbols shim
 var global = require('./_global');
 var has = require('./_has');
@@ -6312,17 +6366,17 @@ setToStringTag(Math, 'Math', true);
 // 24.3.3 JSON[@@toStringTag]
 setToStringTag(global.JSON, 'JSON', true);
 
-},{"./_an-object":23,"./_descriptors":35,"./_enum-keys":38,"./_export":39,"./_fails":41,"./_global":46,"./_has":47,"./_hide":48,"./_is-array":55,"./_is-object":56,"./_library":64,"./_meta":67,"./_object-create":71,"./_object-dp":72,"./_object-gopd":74,"./_object-gopn":76,"./_object-gopn-ext":75,"./_object-gops":77,"./_object-keys":80,"./_object-pie":81,"./_property-desc":85,"./_redefine":87,"./_set-to-string-tag":92,"./_shared":94,"./_to-iobject":102,"./_to-object":104,"./_to-primitive":105,"./_uid":109,"./_wks":113,"./_wks-define":111,"./_wks-ext":112}],133:[function(require,module,exports){
+},{"./_an-object":23,"./_descriptors":35,"./_enum-keys":38,"./_export":39,"./_fails":41,"./_global":46,"./_has":47,"./_hide":48,"./_is-array":55,"./_is-object":56,"./_library":64,"./_meta":67,"./_object-create":71,"./_object-dp":72,"./_object-gopd":74,"./_object-gopn":76,"./_object-gopn-ext":75,"./_object-gops":77,"./_object-keys":80,"./_object-pie":81,"./_property-desc":85,"./_redefine":87,"./_set-to-string-tag":92,"./_shared":94,"./_to-iobject":102,"./_to-object":104,"./_to-primitive":105,"./_uid":109,"./_wks":113,"./_wks-define":111,"./_wks-ext":112}],134:[function(require,module,exports){
 require('./_typed-array')('Uint8', 1, function (init) {
   return function Uint8Array(data, byteOffset, length) {
     return init(this, data, byteOffset, length);
   };
 });
 
-},{"./_typed-array":106}],134:[function(require,module,exports){
+},{"./_typed-array":106}],135:[function(require,module,exports){
 require('./_wks-define')('asyncIterator');
 
-},{"./_wks-define":111}],135:[function(require,module,exports){
+},{"./_wks-define":111}],136:[function(require,module,exports){
 var $iterators = require('./es6.array.iterator');
 var getKeys = require('./_object-keys');
 var redefine = require('./_redefine');
@@ -6382,7 +6436,7 @@ for (var collections = getKeys(DOMIterables), i = 0; i < collections.length; i++
   }
 }
 
-},{"./_global":46,"./_hide":48,"./_iterators":63,"./_object-keys":80,"./_redefine":87,"./_wks":113,"./es6.array.iterator":115}],136:[function(require,module,exports){
+},{"./_global":46,"./_hide":48,"./_iterators":63,"./_object-keys":80,"./_redefine":87,"./_wks":113,"./es6.array.iterator":115}],137:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -6568,7 +6622,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],137:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6645,7 +6699,7 @@ var compare = function compare(imageUrl, ci, callback) {
   });
 };
 
-},{"./do":138,"assert":15}],138:[function(require,module,exports){
+},{"./do":139,"assert":15}],139:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6703,7 +6757,7 @@ function doReady(promise, fn) {
 
 exports.doReady = doReady;
 
-},{"assert":15}],139:[function(require,module,exports){
+},{"assert":15}],140:[function(require,module,exports){
 "use strict";
 /* tslint:disable:max-line-length */
 
@@ -6933,15 +6987,21 @@ test("js-dos-fs can create file (windows path)", function (done) {
   });
 });
 test("js-dos-fs clearing IDBFS db", function (done) {
-  var request = indexedDB.deleteDatabase("/test");
-
-  request.onerror = function (event) {
+  var errorFn = function errorFn(event) {
     console.error(event);
     assert.fail();
   };
 
-  request.onsuccess = function (event) {
-    done();
+  var deleteTest = indexedDB.deleteDatabase("/test");
+  deleteTest.onerror = errorFn;
+
+  deleteTest.onsuccess = function (event) {
+    var deleteArkanoid = indexedDB.deleteDatabase("/arkanoid");
+    deleteArkanoid.onerror = errorFn;
+
+    deleteArkanoid.onsuccess = function (event) {
+      done();
+    };
   };
 });
 test("js-dos-fs can mount archive on persistent point [empty db]", function (done) {
@@ -6960,7 +7020,7 @@ test("js-dos-fs can mount archive on persistent point [empty db]", function (don
       do_1.doNext(main(), function (ci) {
         do_1.doNext(ci.shell("dir test"), function () {
           assert.ok(isOnProgress);
-          compare_1.compareAndExit("pesistent-mount.png", ci, done);
+          compare_1.compareAndExit("persistent-mount.png", ci, done);
         });
       });
     });
@@ -6980,7 +7040,75 @@ test("js-dos-fs can mount archive on persistent point [existent db]", function (
     do_1.doNext(fs.extract("digger.zip", "/test"), function () {
       do_1.doNext(main(), function (ci) {
         do_1.doNext(ci.shell("dir test"), function () {
-          compare_1.compareAndExit("pesistent-mount.png", ci, done);
+          compare_1.compareAndExit("persistent-mount.png", ci, done);
+        });
+      });
+    });
+  });
+});
+test("js-dos-fs can mount ANOTHER archive on persistent point [empty db]", function (done) {
+  var isOnProgress = false;
+  var dos = js_dos_1.default(document.getElementById("canvas"), {
+    wdosboxUrl: wdosboxUrl,
+    onerror: function onerror(message) {
+      assert.fail();
+    },
+    onprogress: function onprogress(stage, total, loaded) {
+      isOnProgress = true;
+    }
+  });
+  do_1.doReady(dos, function (fs, main) {
+    do_1.doNext(fs.extract("arkanoid.zip", "/arkanoid"), function () {
+      do_1.doNext(main(), function (ci) {
+        do_1.doNext(ci.shell("dir arkanoid"), function () {
+          assert.ok(isOnProgress);
+          compare_1.compareAndExit("persistent-mount-arkanoid.png", ci, done);
+        });
+      });
+    });
+  });
+});
+test("js-dos-fs can mount ANOTHER archive on persistent point [existent db]", function (done) {
+  var dos = js_dos_1.default(document.getElementById("canvas"), {
+    wdosboxUrl: wdosboxUrl,
+    onerror: function onerror(message) {
+      assert.fail();
+    },
+    onprogress: function onprogress(stage, total, loaded) {
+      assert.fail();
+    }
+  });
+  do_1.doReady(dos, function (fs, main) {
+    do_1.doNext(fs.extract("arkanoid.zip", "/arkanoid"), function () {
+      do_1.doNext(main(), function (ci) {
+        do_1.doNext(ci.shell("dir arkanoid"), function () {
+          compare_1.compareAndExit("persistent-mount-arkanoid.png", ci, done);
+        });
+      });
+    });
+  });
+});
+test("js-dos-fs can mount multiple persistent point [existent db]", function (done) {
+  var dos = js_dos_1.default(document.getElementById("canvas"), {
+    wdosboxUrl: wdosboxUrl,
+    onerror: function onerror(message) {
+      assert.fail();
+    },
+    onprogress: function onprogress(stage, total, loaded) {
+      assert.fail();
+    }
+  });
+  do_1.doReady(dos, function (fs, main) {
+    do_1.doNext(fs.extractAll([{
+      url: "arkanoid.zip",
+      mountPoint: "/arkanoid"
+    }, {
+      url: "digger.zip",
+      mountPoint: "/test"
+    }]), function () {
+      do_1.doNext(main(), function (ci) {
+        do_1.doNext(ci.shell("dir arkanoid", "dir ..\\test"), function () {
+          compare_1.compareAndExit("presistent-mount-multiple.png", ci, done);
         });
       });
     });
@@ -7059,6 +7187,6 @@ var saveImage = function saveImage(ci) {
 
 var wikiElonMusk = "\nElon Reeve Musk FRS (/\u02C8i\u02D0l\u0252n/; born June 28, 1971) is a\ntechnology entrepreneur and engineer.[10][11][12]\nHe holds South African, Canadian, and U.S. citizenship\nand is the founder, CEO, and lead designer of SpaceX;\n[13] co-founder, CEO, and product architect of Tesla, Inc.;\n[14] co-founder and CEO of Neuralink; and co-founder of PayPal.\nIn December 2016, he was ranked 21st on the Forbes list of\nThe World's Most Powerful People.[15] As of October 2018,\nhe has a net worth of $22.8 billion and is listed by Forbes\nas the 54th-richest person in the world.[16]\nBorn and raised in Pretoria, South Africa, Musk moved to\nCanada when he was 17 to attend Queen's University.\nHe transferred to the University of Pennsylvania two years\nlater, where he received an economics degree from\nthe Wharton School and a degree in physics from the College\nof Arts and Sciences. He began a Ph.D.\nin applied physics and material sciences at Stanford University\nin 1995 but dropped out after two days to pursue\nan entrepreneurial career. He subsequently co-founded Zip2, a\nweb software company, which was acquired by Compaq\nfor $340 million in 1999. Musk then founded X.com, an online bank.\nIt merged with Confinity in 2000 and later that\nyear became PayPal, which was bought by eBay for $1.5 billion\nin October 2002.[17][18][19][20]\n";
 
-},{"../js-dos-ts/js-dos":14,"../js-dos-ts/js-dos-cache-noop":3,"../js-dos-ts/js-dos-host":9,"./compare":137,"./do":138,"assert":15,"core-js/modules/es6.regexp.replace":128}]},{},[139])
+},{"../js-dos-ts/js-dos":14,"../js-dos-ts/js-dos-cache-noop":3,"../js-dos-ts/js-dos-host":9,"./compare":138,"./do":139,"assert":15,"core-js/modules/es6.regexp.replace":128}]},{},[140])
 
 //# sourceMappingURL=test.js.map

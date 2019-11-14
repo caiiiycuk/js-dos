@@ -5,6 +5,29 @@ import CacheNoop from "./js-dos-cache-noop";
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
 
+export interface DosArchiveSource {
+    // **url** where archive is located
+    url: string;
+
+    // **mountPoint**
+    mountPoint: string;
+    // is a path to mount archive contents. There are two types of mountPoints:
+    // * path '/' which is a MEMFS that is live only in one ssesion.
+    // It means that after restart all progress will be erased.
+    //
+    // * any other path (e.g. '/game'). This path will be stored across sessions in indexed db. It means
+    // that progress will be there after browser restart.
+    //
+    // In other words, you can use path '/' to store temporal data, but others use to store
+    // content that need to be persisten.
+    // **NOTE**: because content of folder is stored in indexed db original archive is downloaded
+    // and extracted only once to avoid rewriting stored content! And you can't store different
+    // content (from different archives) into one path.
+
+    // **type** currently we support only zip archives
+    type?: "zip";
+}
+
 export class DosFS {
     private dos: DosModule;
     private em: any; // typeof Module;
@@ -34,26 +57,17 @@ export class DosFS {
     }
 
     // ### extract
-    public extract(url: string, persistentMount: string = "/", type: string = "zip") {
-        // download archive by given url and then extract it in cwd (cwd will be mounted as C:)
-        //
-        // * `url` - url for downloading archive
-        // * `persistentMount` - is a path to mount archive contents, by default mount point is '/' which
-        // is a MEMFS that is live only in one ssesion. It means that after restart all progress will be erased.
-        // If you set some path (any), then this path will be stored across sessions in indexed db. It means
-        // that progress will be there after browser restart.
-        // * `type` - archive type **only zip is supported**
-        //
+    public extract(url: string, mountPoint: string = "/", type: "zip" = "zip"): Promise<void> {
+        // simplified version of extractAll, works only for one archive. It calls extractAll inside.
+        return this.extractAll([{ url, mountPoint, type }]);
+    }
+
+    // ### extract
+    public extractAll(sources: DosArchiveSource[]): Promise<void> {
+        // download given archives and extract them to mountPoint's
         // this method will return `Promise<void>`, that will be resolved
         // on success with empty object or rejected
-
-        persistentMount = this.normalizePath(persistentMount);
-
-        const parts = persistentMount.split("/");
-        this.createPath(parts, 0, parts.length);
-        this.chdir(persistentMount);
-
-        const extractArchiveInCwd = () => {
+        const extractArchiveInCwd = (url: string, path: string, type: "zip") => {
             return new Promise<void>((resolve, reject) => {
                 if (type !== "zip") {
                     reject("Only ZIP archive is supported");
@@ -70,6 +84,8 @@ export class DosFS {
                         }
                     },
                     success: (data: ArrayBuffer) => {
+                        this.chdir(path);
+
                         const bytes = new Uint8Array(data);
                         const buffer = this.em._malloc(bytes.length);
                         this.em.HEAPU8.set(bytes, buffer);
@@ -77,8 +93,8 @@ export class DosFS {
                         this.em._free(buffer);
 
                         if (retcode === 0) {
-                            this.writeOk(persistentMount);
-                            this.syncFs().then(resolve).catch(reject);
+                            this.writeOk(path);
+                            resolve();
                         } else {
                             reject("Can't extract zip, retcode " + retcode + ", see more info in logs");
                         }
@@ -87,9 +103,30 @@ export class DosFS {
             });
         };
 
-        if (persistentMount === "/" || persistentMount.length === 0) {
-            return extractArchiveInCwd();
-        }
+        const prepareMountFunction = (source: DosArchiveSource) => {
+            const mountPoint = this.normalizePath(source.mountPoint);
+            const type = source.type || "zip";
+            const isRoot = mountPoint === "/" || mountPoint.length === 0;
+
+            const parts = mountPoint.split("/");
+            this.createPath(parts, 0, parts.length);
+
+            const mountFn = () => {
+                if (isRoot || !this.readOk(mountPoint)) {
+                    if (!isRoot) {
+                        this.dos.warn("Indexed db does not contains '" + mountPoint + "' rewriting...");
+                    }
+                    return extractArchiveInCwd(source.url, mountPoint, type);
+                }
+                return Promise.resolve();
+            };
+
+            if (!isRoot) {
+                this.fs.mount(this.fs.filesystems.IDBFS, {}, mountPoint);
+            }
+
+            return mountFn;
+        };
 
         return new Promise<void>((resolve, reject) => {
             if (this.lastSyncTime > 0) {
@@ -97,20 +134,26 @@ export class DosFS {
                 return;
             }
 
-            this.fs.mount(this.fs.filesystems.IDBFS, {}, persistentMount);
+            const mountFunctions: Array<() => Promise<void>> = [];
+            for (const source of sources) {
+                mountFunctions.push(prepareMountFunction(source));
+            }
+
             this.fs.syncfs(true, (err: any) => {
                 if (err) {
-                    reject("Can't restore FS from indexed db, cause: " + err);
-                    return;
+                    this.dos.error("Can't restore FS from indexed db, cause: " + err);
                 }
 
-                if (!this.readOk(persistentMount)) {
-                    this.dos.warn("Indexed db contains broken FS, resetting...");
-                    extractArchiveInCwd().then(resolve).catch(reject);
-                    return;
+                const promises: Array<Promise<void>> = [];
+                for (const mountFn of mountFunctions) {
+                    promises.push(mountFn());
                 }
 
-                resolve();
+                Promise.all(promises)
+                    .then(() => {
+                        this.syncFs().then(resolve).catch(reject);
+                    })
+                    .catch(reject);
             });
         });
     }
@@ -128,7 +171,7 @@ export class DosFS {
 
         // windows style path are also valid, but **drive letter is ignored**
         // if you pass only filename, then file will be writed in root "/" directory
-        file = file.replace(new RegExp("^[a-zA-z]+:"), "") .replace(new RegExp("\\\\", "g"), "/");
+        file = file.replace(new RegExp("^[a-zA-z]+:"), "").replace(new RegExp("\\\\", "g"), "/");
         const parts = file.split("/");
 
         if (parts.length === 0) {
