@@ -15,6 +15,7 @@ export interface DosArchiveSource {
     // **mountPoint**
     mountPoint: string;
     // is a path to mount archive contents. There are two types of mountPoints:
+    //
     // * path '/' which is a MEMFS that is live only in one ssesion.
     // It means that after restart all progress will be erased.
     //
@@ -23,6 +24,7 @@ export interface DosArchiveSource {
     //
     // In other words, you can use path '/' to store temporal data, but others use to store
     // content that need to be persisten.
+    //
     // **NOTE**: because content of folder is stored in indexed db original archive is downloaded
     // and extracted only once to avoid rewriting stored content! And you can't store different
     // content (from different archives) into one path.
@@ -31,6 +33,7 @@ export interface DosArchiveSource {
     type?: "zip";
 }
 
+// ## DosFS
 export class DosFS {
     private dos: DosModule;
     private em: any; // typeof Module;

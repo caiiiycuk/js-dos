@@ -7,13 +7,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.49 (a646fe7b134e3a99f4738600ea2b649d)",
+  version: "6.22.49 (6067922c874c29f54118f9de9eaee2f4)",
   jsVersion: "e8faff026a9655cb85c16743b92242e4b4f91fab",
   wasmJsSize: 189829,
   wasmVersion: "85b9fab69e705dd95b902986eba513ed",
   wasmSize: 1808684,
   jsSize: 6646965,
-  buildSeed: 1573749947365
+  buildSeed: 1573750188657
 };
 
 },{}],2:[function(require,module,exports){
@@ -504,7 +504,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var js_dos_cache_noop_1 = require("./js-dos-cache-noop");
 
-var js_dos_xhr_1 = require("./js-dos-xhr");
+var js_dos_xhr_1 = require("./js-dos-xhr"); // ## DosFS
+
 
 var DosFS =
 /** @class */
