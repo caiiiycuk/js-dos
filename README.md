@@ -383,6 +383,26 @@ In other words to store game progress just extract game archive into some folder
 
 **NOTE 2: ** Do not forget to change directory to correct path before running game.
 
+**NOTE 3: ** Because content of folder is stored in indexed db original archive is downloaded and extracted only once to avoid rewriting stored content! This means that you can't update it from archive, and of course you can't store different content (from different archives) into one path.
+
+### Using multiple archives at once
+
+This section requires that you read section above. Sometimes need to have multiple persistent folders to run single game.
+For example, one for sound drivers another for game it self. It can be done with [`extractAll`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-extractall) method. It accepts array of [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-dosarchivesource) to extract and extract them in one time. Actually, `extract` method is just syntax shugar and implemented via `extractAll`. 
+
+```
+    Dos(canvas).ready((fs, main) => {
+        fs.extractAll([
+            { url: "ultrsound.zip", mountPoint: "/snd" },
+            { url: "game.zip", mountPoint: "/game" },
+        }).then(() => {
+            main(["-c", "cd game", "-c", "game.exe"])
+        });
+    });
+```
+
+
+
 ### Caching js-dos script
 
 No need to cache js-dos scripts, because they are automatically added to indexed db cache, so from every second load js-dos can work in offline mode.

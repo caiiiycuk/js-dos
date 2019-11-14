@@ -19,7 +19,7 @@ if(${EMSCRIPTEN})
 		-s INVOKE_RUN=0 \
 		-s MODULARIZE=1 \
 		-s EXPORT_NAME='WDOSBOX' \
-		-s FORCE_FILESYSTEM=1 \
+		-s FORCE_FILESYSTEM=1 -lidbfs.js \
 		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency','FS', 'FS_createPath', 'FS_createPreloadedFile', \
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString', 'UTF8ToString', 'callMain']\" \
 		-s NO_EXIT_RUNTIME=1 \

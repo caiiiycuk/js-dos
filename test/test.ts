@@ -230,15 +230,19 @@ test("js-dos-fs can create file (windows path)", (done) => {
 });
 
 test("js-dos-fs clearing IDBFS db", (done) => {
-    const request = indexedDB.deleteDatabase("/test");
-
-    request.onerror = (event) => {
+    const errorFn = (event) => {
         console.error(event);
         assert.fail();
     };
 
-    request.onsuccess = (event) => {
-        done();
+    const deleteTest = indexedDB.deleteDatabase("/test");
+    deleteTest.onerror = errorFn;
+    deleteTest.onsuccess = (event) => {
+        const deleteArkanoid = indexedDB.deleteDatabase("/arkanoid");
+        deleteArkanoid.onerror = errorFn;
+        deleteArkanoid.onsuccess = (event) => {
+            done();
+        };
     };
 });
 
@@ -259,7 +263,7 @@ test("js-dos-fs can mount archive on persistent point [empty db]", (done) => {
             doNext(main(), (ci) => {
                 doNext(ci.shell("dir test"), () => {
                     assert.ok(isOnProgress);
-                    compareAndExit("pesistent-mount.png", ci, done);
+                    compareAndExit("persistent-mount.png", ci, done);
                 });
             });
         });
@@ -281,7 +285,78 @@ test("js-dos-fs can mount archive on persistent point [existent db]", (done) => 
         doNext(fs.extract("digger.zip", "/test"), () => {
             doNext(main(), (ci) => {
                 doNext(ci.shell("dir test"), () => {
-                    compareAndExit("pesistent-mount.png", ci, done);
+                    compareAndExit("persistent-mount.png", ci, done);
+                });
+            });
+        });
+    });
+});
+
+test("js-dos-fs can mount ANOTHER archive on persistent point [empty db]", (done) => {
+    let isOnProgress = false;
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
+        wdosboxUrl,
+        onerror: (message) => {
+            assert.fail();
+        },
+        onprogress: (stage: string, total: number, loaded: number) => {
+            isOnProgress = true;
+        },
+    });
+
+    doReady(dos, (fs, main) => {
+        doNext(fs.extract("arkanoid.zip", "/arkanoid"), () => {
+            doNext(main(), (ci) => {
+                doNext(ci.shell("dir arkanoid"), () => {
+                    assert.ok(isOnProgress);
+                    compareAndExit("persistent-mount-arkanoid.png", ci, done);
+                });
+            });
+        });
+    });
+});
+
+test("js-dos-fs can mount ANOTHER archive on persistent point [existent db]", (done) => {
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
+        wdosboxUrl,
+        onerror: (message) => {
+            assert.fail();
+        },
+        onprogress: (stage: string, total: number, loaded: number) => {
+            assert.fail();
+        },
+    });
+
+    doReady(dos, (fs, main) => {
+        doNext(fs.extract("arkanoid.zip", "/arkanoid"), () => {
+            doNext(main(), (ci) => {
+                doNext(ci.shell("dir arkanoid"), () => {
+                    compareAndExit("persistent-mount-arkanoid.png", ci, done);
+                });
+            });
+        });
+    });
+});
+
+test("js-dos-fs can mount multiple persistent point [existent db]", (done) => {
+    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
+        wdosboxUrl,
+        onerror: (message) => {
+            assert.fail();
+        },
+        onprogress: (stage: string, total: number, loaded: number) => {
+            assert.fail();
+        },
+    });
+
+    doReady(dos, (fs, main) => {
+        doNext(fs.extractAll([
+            { url: "arkanoid.zip", mountPoint: "/arkanoid" },
+            { url: "digger.zip", mountPoint: "/test" },
+        ]), () => {
+            doNext(main(), (ci) => {
+                doNext(ci.shell("dir arkanoid", "dir ..\\test"), () => {
+                    compareAndExit("persistent-mount-multiple.png", ci, done);
                 });
             });
         });
