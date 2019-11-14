@@ -7,13 +7,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.49 (f4efe5a2c730b31e7cd41b2d74bbf2d1)",
+  version: "6.22.49 (a646fe7b134e3a99f4738600ea2b649d)",
   jsVersion: "e8faff026a9655cb85c16743b92242e4b4f91fab",
   wasmJsSize: 189829,
   wasmVersion: "85b9fab69e705dd95b902986eba513ed",
   wasmSize: 1808684,
   jsSize: 6646965,
-  buildSeed: 1573749737589
+  buildSeed: 1573749947365
 };
 
 },{}],2:[function(require,module,exports){
@@ -555,7 +555,7 @@ function () {
       mountPoint: mountPoint,
       type: type
     }]);
-  }; // ### extract
+  }; // ### extractAll
 
 
   DosFS.prototype.extractAll = function (sources) {

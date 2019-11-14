@@ -14,9 +14,33 @@ import CacheNoop from "./js-dos-cache-noop";
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
 
+
+```
+
+
+
+
+
+
+
+### DosArchiveSource
+
+
+  
+
+```
 export interface DosArchiveSource {
 
 ```
+
+
+
+
+
+
+
+source (archive) to download and extract via `extractAll`
+
 
 
 
@@ -171,7 +195,7 @@ simplified version of extractAll, works only for one archive. It calls extractAl
 
 
 
-### extract
+### extractAll
 
 
   

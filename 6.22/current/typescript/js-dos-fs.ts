@@ -5,7 +5,10 @@ import CacheNoop from "./js-dos-cache-noop";
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
 
+// ### DosArchiveSource
 export interface DosArchiveSource {
+    // source (archive) to download and extract via `extractAll`
+
     // **url** where archive is located
     url: string;
 
@@ -62,7 +65,7 @@ export class DosFS {
         return this.extractAll([{ url, mountPoint, type }]);
     }
 
-    // ### extract
+    // ### extractAll
     public extractAll(sources: DosArchiveSource[]): Promise<void> {
         // download given archives and extract them to mountPoint's
         // this method will return `Promise<void>`, that will be resolved
