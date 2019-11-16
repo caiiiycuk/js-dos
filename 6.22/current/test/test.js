@@ -7,13 +7,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.51 (0d9a49df46d12410888647928b6a2b50)",
+  version: "6.22.51 (20c4be095b000dd549b3152a0913829a)",
   jsVersion: "297e428db4aa9f0d1eb96351bc1a411e5cdacb49",
   wasmJsSize: 189829,
-  wasmVersion: "85b9fab69e705dd95b902986eba513ed",
-  wasmSize: 1808684,
-  jsSize: 6646965,
-  buildSeed: 1573751057486
+  wasmVersion: "2fd178bd8e47cce5805a1e1d9d2f9525",
+  wasmSize: 1808679,
+  jsSize: 6646940,
+  buildSeed: 1573918633271
 };
 
 },{}],2:[function(require,module,exports){
@@ -790,11 +790,13 @@ require("core-js/modules/es7.symbol.async-iterator");
 
 require("core-js/modules/es6.symbol");
 
-require("core-js/modules/es6.regexp.replace");
-
 require("core-js/modules/es6.promise");
 
 require("core-js/modules/es6.object.to-string");
+
+require("core-js/modules/es6.regexp.replace");
+
+require("core-js/modules/es6.string.ends-with");
 
 require("core-js/modules/es6.math.trunc");
 
@@ -953,6 +955,11 @@ function () {
 
       if (isWasmUrl) {
         url = url.substr(0, wIndex) + url.substr(wIndex + 1);
+
+        if (url.endsWith("dosbox.js")) {
+          // do not use dosbox.js, because it's not asm.js
+          url = url.replace("dosbox.js", "dosbox-emterp.js");
+        }
       }
 
       return this.compileJsDosBox(url, cache, module);
@@ -1073,7 +1080,7 @@ function () {
 
 exports.Host = new DosHost();
 
-},{"./js-dos-build":1,"./js-dos-xhr":13,"core-js/modules/es6.math.clz32":116,"core-js/modules/es6.math.fround":117,"core-js/modules/es6.math.imul":118,"core-js/modules/es6.math.trunc":119,"core-js/modules/es6.object.to-string":123,"core-js/modules/es6.promise":124,"core-js/modules/es6.regexp.replace":128,"core-js/modules/es6.symbol":133,"core-js/modules/es6.typed.uint8-array":134,"core-js/modules/es7.symbol.async-iterator":135}],10:[function(require,module,exports){
+},{"./js-dos-build":1,"./js-dos-xhr":13,"core-js/modules/es6.math.clz32":116,"core-js/modules/es6.math.fround":117,"core-js/modules/es6.math.imul":118,"core-js/modules/es6.math.trunc":119,"core-js/modules/es6.object.to-string":123,"core-js/modules/es6.promise":124,"core-js/modules/es6.regexp.replace":128,"core-js/modules/es6.string.ends-with":131,"core-js/modules/es6.symbol":133,"core-js/modules/es6.typed.uint8-array":134,"core-js/modules/es7.symbol.async-iterator":135}],10:[function(require,module,exports){
 "use strict";
 
 require("core-js/modules/es6.promise");
