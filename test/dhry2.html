@@ -73,8 +73,8 @@
       cycles: "max",
       autolock: "false",
     }).ready(function (fs, main) {
-      fs.extract("https://js-dos.com/6.22/current/test/dhry2.zip").then(function () {
-        main(["-c", "DHRY2OD.EXE"]).then(function (ci) {
+      fs.extract("dhry2.zip").then(function () {
+        main(["-c", "dhry_1.exe"]).then(function (ci) {
           const oneRunMSecs = /Microseconds for one run through Dhrystone:\s+([0-9.]+)/;
           const dhrystonesPerSec = /Dhrystones per Second:\s+([0-9.]+)/;
           const vaxMips = /VAX  MIPS rating =\s+([0-9.]+)/;

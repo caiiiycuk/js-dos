@@ -69,6 +69,7 @@ gulp.task('copyAssets', function () {
         'build-emterp/wdosbox-emterp.js', 'build-emterp/wdosbox-emterp.js.symbols',
         'build/wdosbox-profiling.js', 'build/wdosbox-profiling.js.symbols',
         'build/wdosbox-nosync-profiling.js', 'build/wdosbox-nosync-profiling.js.symbols',
+        'build/dosbox.js', 'build/dosbox.js.mem', 'build/dosbox.js.symbols',
         'build-emterp/wdosbox-emterp-profiling.js', 'build-emterp/wdosbox-emterp-profiling.js.symbols',
         'build-emterp/dosbox-emterp.js', 'build-emterp/dosbox-emterp.js.mem', 'build-emterp/dosbox-emterp.js.symbols',
         'build-emterp/dosbox-nosync.js', 'build-emterp/dosbox-nosync.js.mem', 'build-emterp/dosbox-nosync.js.symbols',
@@ -142,7 +143,7 @@ gulp.task('test', ['copyAssetsTest'], function () {
         .pipe(gulp.dest('dist/test'));
 });
 
-gulp.task('default', ['test', 'generateBuildInfo', 'copyWasm', 'copyAssets', 'rewriteDefaultVersion',
+gulp.task('default', ['test', 'generateBuildInfo', 'copyWasm', 'copyAssets', /* 'rewriteDefaultVersion', */
     'copyTypeScript', 'docs', 'copyPackageJson'], function () {
         return browserify({
             basedir: '.',

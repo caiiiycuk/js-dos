@@ -131,6 +131,10 @@ class DosHost {
             // fallback to js version if wasm not supported
             if (isWasmUrl) {
                 url = url.substr(0, wIndex) + url.substr(wIndex + 1);
+                if (url.endsWith("dosbox.js")) {
+                    // do not use dosbox.js, because it's not asm.js
+                    url = url.replace("dosbox.js", "dosbox-emterp.js");
+                }
             }
             return this.compileJsDosBox(url, cache, module);
         }
