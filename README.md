@@ -233,7 +233,7 @@ Default version have limitation and can't be compiled to asm.js, dosbox-emterp.j
     Dos(canvas, { wdosboxUrl: "/wdosbox-nosync.js" }).ready(...);
 ```
 
-Don't know which version to use, read [performance seciont](https://js-dos.com/#js-dos-622-preformance)
+Don't know which version to use, read [performance section](https://js-dos.com/#js-dos-622-preformance)
 
 ### How to handle errors
 
