@@ -67,7 +67,7 @@ int             Int_Glob;
                  Ch_2_Glob;
  int             Arr_1_Glob [50];
  int             Arr_2_Glob [50] [50];
- int             getinput = 1;
+ int             getinput = 0;
 
  
  char Reg_Define[] = "Register option      Selected.";
@@ -136,7 +136,6 @@ int             Int_Glob;
    REG   int         Run_Index;
    REG   int         Number_Of_Runs; 
          int         endit, count = 10;
-         FILE        *Ap;
          char        general[9][80] = {" "};
          struct      dosdate_t date;
 
@@ -155,14 +154,6 @@ int             Int_Glob;
          }
       }
  
-   if ((Ap = fopen("Dhry.txt","a+")) == NULL)
-     {
-        printf("Can not open Dhry.txt\n\n");
-        printf("Press any key\n");
-        endit = getch();
-        exit(1);
-     }
-
 /***********************************************************************
  *         Change for compiler and optimisation used                   *
  ***********************************************************************/
@@ -453,6 +444,8 @@ int             Int_Glob;
      Dhrystones_Per_Second = (double) Number_Of_Runs / User_Time;
      Vax_Mips = Dhrystones_Per_Second / 1757.0;
  
+     printf ("Number Of Runs: ");
+     printf ("%12.0lf\n", (double) Number_Of_Runs);
      printf ("Microseconds for one run through Dhrystone: ");
      printf ("%12.2lf \n", Microseconds);
      printf ("Dhrystones per Second:                      ");
@@ -501,167 +494,7 @@ int             Int_Glob;
         printf ("E-mail address        ? ");
         gets(general[0]);
      } 
-/************************************************************************
- *                Add results to output file Dhry.txt                   *
- ************************************************************************/
-   fprintf (Ap, "-------------------- -----------------------------------"        
-                         "\n");
-   fprintf (Ap, "Dhrystone Benchmark  Version 2.1 (Language: C++)\n\n");
-   fprintf (Ap, "Month run            %d/%d\n", date.month, date.year);
-   fprintf (Ap, "PC model             %s\n", general[1]);
-   fprintf (Ap, "CPU                  %s\n", general[2]);
-   fprintf (Ap, "Clock MHz            %s\n", general[3]);
-   fprintf (Ap, "Cache                %s\n", general[4]);
-   fprintf (Ap, "Options              %s\n", general[5]);
-   fprintf (Ap, "OS/DOS               %s\n", general[6]);
-   fprintf (Ap, "Compiler             %s\n", compiler);
-   fprintf (Ap, "OptLevel             %s\n", options);
-   fprintf (Ap, "Run by               %s\n", general[7]);
-   fprintf (Ap, "From                 %s\n", general[8]);
-   fprintf (Ap, "Mail                 %s\n\n", general[0]);
-
-   fprintf (Ap, "Final values         (* implementation-dependent):\n");
-   fprintf (Ap, "\n");
-   fprintf (Ap, "Int_Glob:      ");
-   if (Int_Glob == 5)  fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Int_Glob);
-      
-   fprintf (Ap, "Bool_Glob:     ");
-   if (Bool_Glob == 1) fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Bool_Glob);
-      
-   fprintf (Ap, "Ch_1_Glob:     ");
-   if (Ch_1_Glob == 'A')  fprintf (Ap, "O.K.  ");               
-   else                   fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%c\n", Ch_1_Glob);
-         
-   fprintf (Ap, "Ch_2_Glob:     ");
-   if (Ch_2_Glob == 'B')  fprintf (Ap, "O.K.  ");
-   else                   fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%c\n",  Ch_2_Glob);
-   
-   fprintf (Ap, "Arr_1_Glob[8]: ");
-   if (Arr_1_Glob[8] == 7)  fprintf (Ap, "O.K.  ");
-   else                     fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Arr_1_Glob[8]);
-            
-   fprintf (Ap, "Arr_2_Glob8/7: ");
-   if (Arr_2_Glob[8][7] == Number_Of_Runs + 10)
-                          fprintf (Ap, "O.K.  ");
-   else                   fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%10d\n", Arr_2_Glob[8][7]);
-   
-   fprintf (Ap, "Ptr_Glob->  \n");
-   fprintf (Ap, "  Ptr_Comp:       *  %d\n", (int) Ptr_Glob->Ptr_Comp);
-   
-   fprintf (Ap, "  Discr:       ");
-   if (Ptr_Glob->Discr == 0)  fprintf (Ap, "O.K.  ");
-   else                       fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Ptr_Glob->Discr);
-            
-   fprintf (Ap, "  Enum_Comp:   ");
-   if (Ptr_Glob->variant.var_1.Enum_Comp == 2)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Ptr_Glob->variant.var_1.Enum_Comp);
-      
-   fprintf (Ap, "  Int_Comp:    ");
-   if (Ptr_Glob->variant.var_1.Int_Comp == 17)  fprintf (Ap, "O.K.  ");
-   else                                         fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Ptr_Glob->variant.var_1.Int_Comp);
-      
-   fprintf (Ap, "  Str_Comp:    ");
-   if (strcmp(Ptr_Glob->variant.var_1.Str_Comp,
-                        "DHRYSTONE PROGRAM, SOME STRING") == 0)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");   
-   fprintf (Ap, "%s\n", Ptr_Glob->variant.var_1.Str_Comp);
-   
-   fprintf (Ap, "Next_Ptr_Glob-> \n"); 
-   fprintf (Ap, "  Ptr_Comp:       *  %d", (int) Next_Ptr_Glob->Ptr_Comp);
-   fprintf (Ap, " same as above\n");
-   
-   fprintf (Ap, "  Discr:       ");
-   if (Next_Ptr_Glob->Discr == 0)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Next_Ptr_Glob->Discr);
-   
-   fprintf (Ap, "  Enum_Comp:   ");
-   if (Next_Ptr_Glob->variant.var_1.Enum_Comp == 1)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Next_Ptr_Glob->variant.var_1.Enum_Comp);
-   
-   fprintf (Ap, "  Int_Comp:    ");
-   if (Next_Ptr_Glob->variant.var_1.Int_Comp == 18)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Next_Ptr_Glob->variant.var_1.Int_Comp);
-   
-   fprintf (Ap, "  Str_Comp:    ");
-   if (strcmp(Next_Ptr_Glob->variant.var_1.Str_Comp,
-                        "DHRYSTONE PROGRAM, SOME STRING") == 0)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");   
-   fprintf (Ap, "%s\n", Next_Ptr_Glob->variant.var_1.Str_Comp);
-   
-   fprintf (Ap, "Int_1_Loc:     ");
-   if (Int_1_Loc == 5)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Int_1_Loc);
-      
-   fprintf (Ap, "Int_2_Loc:     ");
-   if (Int_2_Loc == 13)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Int_2_Loc);
-   
-   fprintf (Ap, "Int_3_Loc:     ");
-   if (Int_3_Loc == 7)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Int_3_Loc);
-   
-   fprintf (Ap, "Enum_Loc:      ");
-   if (Enum_Loc == 1)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");
-   fprintf (Ap, "%d\n", Enum_Loc);
-   
-   fprintf (Ap, "Str_1_Loc:     ");
-   if (strcmp(Str_1_Loc, "DHRYSTONE PROGRAM, 1'ST STRING") == 0)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");   
-   fprintf (Ap, "%s\n", Str_1_Loc);
-   
-   fprintf (Ap, "Str_2_Loc:     ");
-   if (strcmp(Str_2_Loc, "DHRYSTONE PROGRAM, 2'ND STRING") == 0)
-                        fprintf (Ap, "O.K.  ");
-   else                fprintf (Ap, "WRONG ");   
-   fprintf (Ap, "%s\n", Str_2_Loc);
-         
-   
-   fprintf (Ap, "\n");
-   fprintf(Ap,"%s\n",Reg_Define);
-   fprintf (Ap, "\n");
-   fprintf(Ap,"Microseconds 1 loop:  %12.2lf\n",Microseconds);
-   fprintf(Ap,"Dhrystones / second:  %10.0lf\n",Dhrystones_Per_Second);
-   fprintf(Ap,"VAX MIPS rating:      %12.2lf\n\n",Vax_Mips);
-   fclose(Ap);
-   }
-   
-    printf ("\n");
-    printf ("A new results file will have been created in the same directory as the\n");
-    printf (".EXE files if one did not already exist. If you made a mistake on input, \n");
-    printf ("you can use a text editor to correct it, delete the results or copy \n");
-    printf ("them to a different file name. If you intend to run multiple tests you\n");
-    printf ("you may wish to rename DHRY.TXT with a more informative title.\n\n");
-    printf ("Please submit feedback and results files as a posting in Section 12\n");
-    printf ("or to Roy_Longbottom@compuserve.com\n\n");
+    } 
 
     if (getinput == 1)
      {
@@ -773,16 +606,21 @@ void Proc_4 () /* without parameters */
  }
  #endif
 
+/*
+@caiiiycuk: dtime that based on clock is good for real systems,
+but not for emdosbox, it can't grantee stable updates of it,
+and it's not possible to measure time with it.
+As workaround we will print marker in console to use Date.now
+in browser environment
+*/
 
 double dtime()
 {
-  
-  /* #include <ctype.h> */
-
   #define HZ CLOCKS_PER_SEC
   clock_t tnow;
 
   double q;
+  printf("~>dtime\n");
   tnow = clock();
   q = (double)tnow / (double)HZ;     
   return q;
