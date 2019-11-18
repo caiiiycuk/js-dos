@@ -7,13 +7,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.52 (d40ff6c5299b726d3ad8993e511626df)",
-  jsVersion: "bbbf2282daa5590d91f3c854798b1234caefa4a8",
+  version: "6.22.53 (2c7e334948722fc8af100b2a64d23944)",
+  jsVersion: "d4b33ddd96aec4037989d782333cb075edb9752c",
   wasmJsSize: 189829,
   wasmVersion: "2fd178bd8e47cce5805a1e1d9d2f9525",
   wasmSize: 1808679,
   jsSize: 6646940,
-  buildSeed: 1574086003517
+  buildSeed: 1574087366254
 };
 
 },{}],2:[function(require,module,exports){
