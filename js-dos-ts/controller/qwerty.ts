@@ -3,6 +3,7 @@ import * as DosDom from "../js-dos-dom";
 
 export interface QwertyOptions {
     uppercase: boolean;
+    cssText?: string;
 }
 
 const defaultOptions: QwertyOptions = {
@@ -11,7 +12,7 @@ const defaultOptions: QwertyOptions = {
 
 export default function Qwerty(zone: HTMLDivElement, consumer: DosKeyEventConsumer,
                                options: QwertyOptions = defaultOptions) {
-    DosDom.applyCss("lqwerty-css", css);
+    DosDom.applyCss("lqwerty-css", css + "\n\n" + (options.cssText || ""));
 
     const sendFn = () => {
         const value = options.uppercase ? input.value.toUpperCase() : input.value;

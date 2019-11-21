@@ -127,7 +127,7 @@ export class DosUi {
     /* tslint:disable:member-ordering */
     /* tslint:disable:max-line-length */
     private css: string = `
-    .dosbox-container { position: relative; min-width: 320px; min-height: 200px; display: inline-block; }
+    .dosbox-container { position: relative; min-width: 320px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     .dosbox-overlay, .dosbox-loader { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(51, 51, 51, 0.7); }
     .dosbox-start { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; color: #fff; font-size: 1.5em; text-decoration: underline; cursor: pointer; }
     .dosbox-overlay a { color: #fff; }

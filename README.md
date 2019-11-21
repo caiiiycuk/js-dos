@@ -20,9 +20,22 @@ npm start
 firefox 127.0.0.1:8080
 ```
 
+### Test it
+
+Scroll down browser window to play Digger, or use **fullscreen button** under dosbox window.
+
+Controls:
+
+* Arrow keys - move digger (left, right, up, down)
+* **OR** Swipe in direction where you want to move
+* To enter name use keyboard or keyboard button under dosbox window
+
+To start game, just swipe. Have a nice play!
+
+
 ![Digger in browser](https://github.com/caiiiycuk/create-dosbox/raw/master/digger.gif)
 
-Or if you have **ZIP** archive with dos program you can bootstrap it:
+**NOTE**: if you have **ZIP** archive with dos program you can bootstrap it:
 ```
 npx create-dosbox my-app archive.zip
 cd my-app
@@ -54,42 +67,6 @@ dosbox -c DIGGER.COM
 ```
 
 Dos has couple configuration [options](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) that you can pass as second argument `Dos(canvas, options)`.
-
-## HTML template
-
-You can have same results if just create simple html page:
-
-```html
-<!doctype html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <title>Digger js-dos 6.22</title>
-  <script src="https://js-dos.com/6.22/current/js-dos.js"></script>
-  <style>
-    canvas {
-      width: 640px;
-      height: 400px;
-    }
-  </style>
-</head>
-
-<body>
-  <canvas id="jsdos"></canvas>
-  <script>
-    Dos(document.getElementById("jsdos"), { 
-        wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js" 
-    }).ready((fs, main) => {
-      fs.extract("https://js-dos.com/6.22/current/test/digger.zip").then(() => {
-        main(["-c", "DIGGER.COM"])
-      });
-    });
-  </script>
-</body>
-
-</html>
-```
 
 ## Archives
 
@@ -151,10 +128,72 @@ You can found real use of js-dos on certain websites about dos games.
 
 Please open issue on github if you want to add link for another site that uses js-dos.
 
+## Preformance
+
+To measure performance used variant of **Dhrystone 2 Test** originally taken from [this page](http://www.roylongbottom.org.uk/dhrystone%20results.htm). Original version used `clock()` to calculate delta time. Which is good for real pc, but does not very accurate for dosbox emulator. When `clock()` call happend modifed version send `~>dtime` marker which intercepted by test page
+and used to calculate delta time with `performance.now()` from browser. Source code of modified test is [here](https://github.com/caiiiycuk/js-dos/tree/6.22/programms/dhry2). 
+
+Basically this test produce a lot of int operations and measure amount of operations (Dhrystones) produced per second. Output is 
+a **VAX MIPS RATING** which is Drhystones per second divided by 1757 (is as DEC VAX 11/780 result).
+
+You can run [this test](https://js-dos.com/6.22/examples/?dhry2) for your PC, change variant and see how different implementations
+affects performance.
+
+![Current results for `6.22.53`](/6.22/performance/6.22.53.png)
+
+||iPhone 8 2.1Ghz|Linux FF i7 - 2.7Ghz|Linux Chrome i7 - 2.7GHz|Xiaomi Mi Max 2 - 2Ghz|Huawei Mate 10 Pro 2.36Ghz|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+|asyncify|19,83|11,2|12,14|1,89|3,07|
+|emterp|18,02|7,86|8,87|1,2|2,5|
+|nosync|20,19|14,21|12,14|1,19|3,12|
+|asyncifyJs|2,12|0,96|0,12|0,03|0,1|
+|emterpJs|0,2|7,19|2|0,84|0,88|
+|nosyncJs|0,21|9,02|1,95|0|0|
+
+Host for this run is **Ubuntu 19.10 Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz**.
+Host result for same test but with native dosbox is **125**.
+
+Current version is **~10 times slower then native dosbox**. Optimal version to use is
+a **asyncify** (wdosbox.js) whice have similar performance as a nosync version (wdosbox-nosync.js)
+but much more stable. 
+
+ASM.JS versions emterpJs (wdosbox-emterp.js) and nosyncJs (wdosbox-nosync.js) have better performance
+only in Firefox, other browser seems does not do any optimization and performance is much worse.
+
 
 ## API Reference
 
 Read about api provided by js-dos in [**API Reference**](https://js-dos.com/6.22/docs/)
+
+## Mobile support
+
+One of the main objective of this project is to bring dosbox on mobile platform. Dosbox it self works in mobile environment
+without any problem. But old dos programs were made for PC, and often requires keyboard to play. JS-DOS provides additional
+controls to simulate required hardware through gestures or virtual keyboard.
+
+### MoveController
+simple controller that detect swipes in four directions (left, right, up, down) and bind them to keys 
+usually arrow keys. You can use options object to change key bindings. 
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        main([...]).then((ci) => {
+            DosController.Move(ci.getParentDiv(), ci.getKeyEventConsumer());
+        });
+    });
+```
+
+### QwertyController
+provides keyboard to enter textual data. Keyboard can be accessed through button that automatically created.
+You can change button style through options object.
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        main([...]).then((ci) => {
+            DosController.Qwerty(ci.getParentDiv(), ci.getKeyEventConsumer());
+        });
+    });
+```
 
 ## FAQ
 
@@ -200,6 +239,8 @@ Default version have limitation and can't be compiled to asm.js, dosbox-emterp.j
 ```javascript
     Dos(canvas, { wdosboxUrl: "/wdosbox-nosync.js" }).ready(...);
 ```
+
+Don't know which version to use, read [performance section](https://js-dos.com/#js-dos-622-preformance)
 
 ### How to handle errors
 
@@ -339,6 +380,7 @@ fullscreen mode using [CommandInterface.fullscreen()](https://js-dos.com/6.22/do
 
 ```js
 <button onclick="ci.fullscreen()">Fullscreen</button>
+<button onclick="ci.exitFullscreen()">Exit fullscreen</button>
 <script>
     Dos(canvas).ready((fs, main) => {
         main([...]).then((ci) => {
@@ -348,7 +390,13 @@ fullscreen mode using [CommandInterface.fullscreen()](https://js-dos.com/6.22/do
 </script>
 ```
 
+To exit fullscreen use [CommandInterface.exitFullscreen()](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci). 
+
+
 **NOTE:** This function can be called anywhere, but for web security reasons its associated request can only be raised inside the event handler for a user-generated event (for example a key, mouse or touch press/release).
+
+**NOTE2:** Native fullscreen have limited support in some browser. In case when browser does not support Fullscreen API, css
+workaround will be used.
 
 ### Multiple dosbox instances on one page
 

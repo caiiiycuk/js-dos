@@ -18,7 +18,7 @@ const defaultOptions: MoveOptions = {
     },
 };
 
-export default function Move(zone: HTMLDivElement, consumer: DosKeyEventConsumer, 
+export default function Move(zone: HTMLDivElement, consumer: DosKeyEventConsumer,
                              options: MoveOptions = defaultOptions) {
     const moveTreshold = 15;
     const keysCode: {[index: string]: number} = options.keysCode;
@@ -86,6 +86,7 @@ export default function Move(zone: HTMLDivElement, consumer: DosKeyEventConsumer
     };
 
     zone.addEventListener("touchstart", (event) => {
+        event.preventDefault();
         const touches = event.changedTouches;
         // tslint:disable-next-line:prefer-for-of
         for (let touchIndex = 0; touchIndex < touches.length; touchIndex++) {
@@ -95,6 +96,7 @@ export default function Move(zone: HTMLDivElement, consumer: DosKeyEventConsumer
     }, true);
 
     zone.addEventListener("touchmove", (event) => {
+        event.preventDefault();
         const touches = event.changedTouches;
         // tslint:disable-next-line:prefer-for-of
         for (let touchIndex = 0; touchIndex < touches.length; touchIndex++) {
@@ -104,6 +106,7 @@ export default function Move(zone: HTMLDivElement, consumer: DosKeyEventConsumer
     }, true);
 
     zone.addEventListener("touchend", (event) => {
+        event.preventDefault();
         const touches = event.changedTouches;
         // tslint:disable-next-line:prefer-for-of
         for (let touchIndex = 0; touchIndex < touches.length; touchIndex++) {
@@ -113,18 +116,22 @@ export default function Move(zone: HTMLDivElement, consumer: DosKeyEventConsumer
     }, true);
 
     zone.addEventListener("mousedown", (event) => {
+        event.preventDefault();
         onTouchStart(-1, event.pageX, event.pageY);
     }, true);
 
     zone.addEventListener("mousemove", (event) => {
+        event.preventDefault();
         onTouchMove(-1, event.pageX, event.pageY);
     }, true);
 
     zone.addEventListener("mouseup", (event) => {
+        event.preventDefault();
         onTouchEnd(-1, event.pageX, event.pageY);
     }, true);
 
     zone.addEventListener("mouseleave", (event) => {
+        event.preventDefault();
         onTouchEnd(-1, event.pageX, event.pageY);
     }, true);
 
