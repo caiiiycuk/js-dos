@@ -19,6 +19,7 @@ export class DosCommandInterface {
         onPress: (keyCode) => this.simulateKeyEvent(keyCode, true),
         onRelease: (keyCode) => this.simulateKeyEvent(keyCode, false),
     };
+    private fullscreenInitialCssStyle?: string;
 
     constructor(dos: DosModule, onready: (ci: DosCommandInterface) => void) {
         this.dos = dos;
@@ -44,7 +45,62 @@ export class DosCommandInterface {
     // This function can be called anywhere, but for web security reasons its associated request can only be raised
     // inside the event handler for a user-generated event (for example a key, mouse or touch press/release).
     public fullscreen() {
-        this.dos.canvas.requestFullscreen()
+        const requestFn = (element: any) => {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            } else if (element.webkitEnterFullscreen) {
+                element.webkitEnterFullscreen();
+            } else {
+                this.fullscreenInitialCssStyle = (element as HTMLElement).style.cssText;
+                (element as HTMLElement).style.cssText = `
+                    position: fixed;
+                    left: 0;
+                    top: 0;
+                    bottom: 0;
+                    right: 0;
+                    background: black;
+                    z-index: 999;
+                `;
+            }
+        };
+
+        const parent = this.getParentDiv();
+        if (parent !== null && parent.className === "dosbox-container") {
+            requestFn(parent);
+        } else {
+            requestFn(this.dos.canvas);
+        }
+    }
+
+    // * `exitFullscreen()` allows you to leave fullscreen entered with `fullscreen()` call
+    public exitFullscreen() {
+        const requestFn = (element: any) => {
+            if (this.fullscreenInitialCssStyle !== undefined) {
+                (element as HTMLElement).style.cssText = this.fullscreenInitialCssStyle;
+                delete this.fullscreenInitialCssStyle;
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if ((document as any).webkitExitFullscreen) {
+                (document as any).webkitExitFullscreen();
+            } else if ((document as any).webkitExitFullscreen) {
+                (document as any).mozCancelFullScreen();
+            } else if ((document as any).msExitFullscreen) {
+                (document as any).msExitFullscreen();
+            }
+        };
+
+        const parent = this.getParentDiv();
+        if (parent !== null && parent.className === "dosbox-container") {
+            requestFn(parent);
+        } else {
+            requestFn(this.dos.canvas);
+        }
     }
 
     // * `listenStdout()` - redirect everything that printed by dosbox into
@@ -108,8 +164,8 @@ export class DosCommandInterface {
         Object.defineProperty(event, "charCode", getter);
 
         event.initKeyboardEvent
-        ? event.initKeyboardEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, keyCode)
-        : event.initKeyEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, 0);
+            ? event.initKeyboardEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, keyCode)
+            : event.initKeyEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, 0);
 
         event.keyCodeVal = keyCode;
         this.dos.canvas && this.dos.canvas.dispatchEvent(event);

@@ -98,6 +98,7 @@ function Move(zone, consumer, options) {
   };
 
   zone.addEventListener("touchstart", function (event) {
+    event.preventDefault();
     var touches = event.changedTouches; // tslint:disable-next-line:prefer-for-of
 
     for (var touchIndex = 0; touchIndex < touches.length; touchIndex++) {
@@ -106,6 +107,7 @@ function Move(zone, consumer, options) {
     }
   }, true);
   zone.addEventListener("touchmove", function (event) {
+    event.preventDefault();
     var touches = event.changedTouches; // tslint:disable-next-line:prefer-for-of
 
     for (var touchIndex = 0; touchIndex < touches.length; touchIndex++) {
@@ -114,6 +116,7 @@ function Move(zone, consumer, options) {
     }
   }, true);
   zone.addEventListener("touchend", function (event) {
+    event.preventDefault();
     var touches = event.changedTouches; // tslint:disable-next-line:prefer-for-of
 
     for (var touchIndex = 0; touchIndex < touches.length; touchIndex++) {
@@ -122,15 +125,19 @@ function Move(zone, consumer, options) {
     }
   }, true);
   zone.addEventListener("mousedown", function (event) {
+    event.preventDefault();
     onTouchStart(-1, event.pageX, event.pageY);
   }, true);
   zone.addEventListener("mousemove", function (event) {
+    event.preventDefault();
     onTouchMove(-1, event.pageX, event.pageY);
   }, true);
   zone.addEventListener("mouseup", function (event) {
+    event.preventDefault();
     onTouchEnd(-1, event.pageX, event.pageY);
   }, true);
   zone.addEventListener("mouseleave", function (event) {
+    event.preventDefault();
     onTouchEnd(-1, event.pageX, event.pageY);
   }, true);
 }
@@ -155,7 +162,7 @@ function Qwerty(zone, consumer, options) {
     options = defaultOptions;
   }
 
-  DosDom.applyCss("lqwerty-css", css);
+  DosDom.applyCss("lqwerty-css", css + "\n\n" + (options.cssText || ""));
 
   var sendFn = function sendFn() {
     var value = options.uppercase ? input.value.toUpperCase() : input.value;
@@ -238,13 +245,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.53 (bbe344153192b8a8a95749400ef17b9f)",
+  version: "6.22.54 (43c312a101782bbf8883a0acd5e696b0)",
   jsVersion: "f4d2920070457f2f2d0b7df8181de39e2b5721cc",
   wasmJsSize: 189847,
   wasmVersion: "d2dbc5fdc92d8e92c35105131b49a979",
   wasmSize: 1808702,
   jsSize: 6646940,
-  buildSeed: 1574271723844
+  buildSeed: 1574354308902
 };
 
 },{}],4:[function(require,module,exports){
@@ -477,7 +484,60 @@ function () {
 
 
   DosCommandInterface.prototype.fullscreen = function () {
-    this.dos.canvas.requestFullscreen();
+    var _this = this;
+
+    var requestFn = function requestFn(element) {
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      } else if (element.webkitEnterFullscreen) {
+        element.webkitEnterFullscreen();
+      } else {
+        _this.fullscreenInitialCssStyle = element.style.cssText;
+        element.style.cssText = "\n                    position: fixed;\n                    left: 0;\n                    top: 0;\n                    bottom: 0;\n                    right: 0;\n                    background: black;\n                    z-index: 999;\n                ";
+      }
+    };
+
+    var parent = this.getParentDiv();
+
+    if (parent !== null && parent.className === "dosbox-container") {
+      requestFn(parent);
+    } else {
+      requestFn(this.dos.canvas);
+    }
+  }; // * `exitFullscreen()` allows you to leave fullscreen entered with `fullscreen()` call
+
+
+  DosCommandInterface.prototype.exitFullscreen = function () {
+    var _this = this;
+
+    var requestFn = function requestFn(element) {
+      if (_this.fullscreenInitialCssStyle !== undefined) {
+        element.style.cssText = _this.fullscreenInitialCssStyle;
+        delete _this.fullscreenInitialCssStyle;
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    };
+
+    var parent = this.getParentDiv();
+
+    if (parent !== null && parent.className === "dosbox-container") {
+      requestFn(parent);
+    } else {
+      requestFn(this.dos.canvas);
+    }
   }; // * `listenStdout()` - redirect everything that printed by dosbox into
   // console to passed function
 
@@ -1838,7 +1898,7 @@ function () {
 
     /* tslint:disable:max-line-length */
 
-    this.css = "\n    .dosbox-container { position: relative; min-width: 320px; min-height: 200px; display: inline-block; }\n    .dosbox-overlay, .dosbox-loader { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(51, 51, 51, 0.7); }\n    .dosbox-start { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; color: #fff; font-size: 1.5em; text-decoration: underline; cursor: pointer; }\n    .dosbox-overlay a { color: #fff; }\n    .dosbox-powered { position: absolute; right: 1em; bottom: 1em; font-size: 0.8em; color: #9C9C9C; }\n    .dosbox-loader-message { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; margin: 0 0 -3em 0; box-sizing: border-box; color: #fff; font-size: 1.5em; }\n    @-moz-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @-webkit-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } .st-loader { width: 10em; height: 2.5em; position: absolute; top: 50%; left: 50%; margin: -1.25em 0 0 -5em; box-sizing: border-box; }\n    .st-loader:before, .st-loader:after { content: \"\"; display: block; position: absolute; top: 0; bottom: 0; width: 1.25em; box-sizing: border-box; border: 0.25em solid #fff; }\n    .st-loader:before { left: -0.76923em; border-right: 0; }\n    .st-loader:after { right: -0.76923em; border-left: 0; }\n    .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #fff; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; background: #fff; }\n    "; // ### Template
+    this.css = "\n    .dosbox-container { position: relative; min-width: 320px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; }\n    .dosbox-overlay, .dosbox-loader { position: absolute; left: 0; right: 0; top: 0; bottom: 0; background-color: rgba(51, 51, 51, 0.7); }\n    .dosbox-start { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; color: #fff; font-size: 1.5em; text-decoration: underline; cursor: pointer; }\n    .dosbox-overlay a { color: #fff; }\n    .dosbox-powered { position: absolute; right: 1em; bottom: 1em; font-size: 0.8em; color: #9C9C9C; }\n    .dosbox-loader-message { text-align: center; position: absolute; left: 0; right: 0; bottom: 50%; margin: 0 0 -3em 0; box-sizing: border-box; color: #fff; font-size: 1.5em; }\n    @-moz-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @-webkit-keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } @keyframes loading { 0% { left: 0; } 50% { left: 8.33333em; } 100% { left: 0; } } .st-loader { width: 10em; height: 2.5em; position: absolute; top: 50%; left: 50%; margin: -1.25em 0 0 -5em; box-sizing: border-box; }\n    .st-loader:before, .st-loader:after { content: \"\"; display: block; position: absolute; top: 0; bottom: 0; width: 1.25em; box-sizing: border-box; border: 0.25em solid #fff; }\n    .st-loader:before { left: -0.76923em; border-right: 0; }\n    .st-loader:after { right: -0.76923em; border-left: 0; }\n    .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #fff; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; background: #fff; }\n    "; // ### Template
 
     /* tslint:disable:member-ordering */
 

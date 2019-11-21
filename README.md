@@ -20,9 +20,22 @@ npm start
 firefox 127.0.0.1:8080
 ```
 
+### Test it
+
+Scroll down browser window to play Digger, or use **fullscreen button** under dosbox window.
+
+Controls:
+
+* Arrow keys - move digger (left, right, up, down)
+* **OR** Swipe in direction where you want to move
+* To enter name use keyboard or keyboard button under dosbox window
+
+To start game, just swipe. Have a nice play!
+
+
 ![Digger in browser](https://github.com/caiiiycuk/create-dosbox/raw/master/digger.gif)
 
-Or if you have **ZIP** archive with dos program you can bootstrap it:
+**NOTE**: if you have **ZIP** archive with dos program you can bootstrap it:
 ```
 npx create-dosbox my-app archive.zip
 cd my-app
@@ -54,42 +67,6 @@ dosbox -c DIGGER.COM
 ```
 
 Dos has couple configuration [options](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) that you can pass as second argument `Dos(canvas, options)`.
-
-## HTML template
-
-You can have same results if just create simple html page:
-
-```html
-<!doctype html>
-<html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <title>Digger js-dos 6.22</title>
-  <script src="https://js-dos.com/6.22/current/js-dos.js"></script>
-  <style>
-    canvas {
-      width: 640px;
-      height: 400px;
-    }
-  </style>
-</head>
-
-<body>
-  <canvas id="jsdos"></canvas>
-  <script>
-    Dos(document.getElementById("jsdos"), { 
-        wdosboxUrl: "https://js-dos.com/6.22/current/wdosbox.js" 
-    }).ready((fs, main) => {
-      fs.extract("https://js-dos.com/6.22/current/test/digger.zip").then(() => {
-        main(["-c", "DIGGER.COM"])
-      });
-    });
-  </script>
-</body>
-
-</html>
-```
 
 ## Archives
 
@@ -187,6 +164,36 @@ only in Firefox, other browser seems does not do any optimization and performanc
 ## API Reference
 
 Read about api provided by js-dos in [**API Reference**](https://js-dos.com/6.22/docs/)
+
+## Mobile support
+
+One of the main objective of this project is to bring dosbox on mobile platform. Dosbox it self works in mobile environment
+without any problem. But old dos programs were made for PC, and often requires keyboard to play. JS-DOS provides additional
+controls to simulate required hardware through gestures or virtual keyboard.
+
+### MoveController
+simple controller that detect swipes in four directions (left, right, up, down) and bind them to keys 
+usually arrow keys. You can use options object to change key bindings. 
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        main([...]).then((ci) => {
+            DosController.Move(ci.getParentDiv(), ci.getKeyEventConsumer());
+        });
+    });
+```
+
+### QwertyController
+provides keyboard to enter textual data. Keyboard can be accessed through button that automatically created.
+You can change button style through options object.
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        main([...]).then((ci) => {
+            DosController.Qwerty(ci.getParentDiv(), ci.getKeyEventConsumer());
+        });
+    });
+```
 
 ## FAQ
 
@@ -373,6 +380,7 @@ fullscreen mode using [CommandInterface.fullscreen()](https://js-dos.com/6.22/do
 
 ```js
 <button onclick="ci.fullscreen()">Fullscreen</button>
+<button onclick="ci.exitFullscreen()">Exit fullscreen</button>
 <script>
     Dos(canvas).ready((fs, main) => {
         main([...]).then((ci) => {
@@ -382,7 +390,13 @@ fullscreen mode using [CommandInterface.fullscreen()](https://js-dos.com/6.22/do
 </script>
 ```
 
+To exit fullscreen use [CommandInterface.exitFullscreen()](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci). 
+
+
 **NOTE:** This function can be called anywhere, but for web security reasons its associated request can only be raised inside the event handler for a user-generated event (for example a key, mouse or touch press/release).
+
+**NOTE2:** Native fullscreen have limited support in some browser. In case when browser does not support Fullscreen API, css
+workaround will be used.
 
 ### Multiple dosbox instances on one page
 

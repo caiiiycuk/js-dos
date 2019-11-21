@@ -988,3 +988,7 @@ aside.notice::before {
   font-family: 'icomoon';
   margin: 0 0.5em;
 }
+
+.dosbox-container {
+  padding-bottom: 50px;
+}
