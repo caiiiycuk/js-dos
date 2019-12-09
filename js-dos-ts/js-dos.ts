@@ -100,6 +100,10 @@ const Dos: DosFactory = (canvas: HTMLCanvasElement, options?: DosOptions) => {
 };
 
 export default Dos;
+export const DosController = {
+    Qwerty,
+    Move,
+};
 
 export type DosMainFn = (args?: string[]) => Promise<DosCommandInterface>;
 
@@ -123,7 +127,4 @@ export interface DosReadyPromise extends Promise<DosRuntime> {
 }
 
 (window as any).Dos = Dos;
-(window as any).DosController = {
-    Qwerty,
-    Move,
-};
+(window as any).DosController = DosController;

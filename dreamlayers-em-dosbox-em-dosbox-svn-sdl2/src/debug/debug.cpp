@@ -51,6 +51,7 @@ using namespace std;
 #include "../cpu/lazyflags.h"
 #include "keyboard.h"
 #include "setup.h"
+#include <js-dos-debug.h>
 
 #ifdef WIN32
 void WIN32_Console();
@@ -1309,6 +1310,10 @@ bool ParseCommand(char* str) {
 		return true;
 	};
 
+	if (DEBUG_JsDos_ParseCommand(str)) {
+	    return true;
+	};
+
 #endif
 	if (command == "HELP" || command == "?") {
 		DEBUG_ShowMsg("Debugger commands (enter all values in hex or as register):\n");
@@ -2211,7 +2216,7 @@ void DEBUG_Init(Section* sec) {
 //	MSG_Add("DEBUG_CONFIGFILE_HELP","Debugger related options.\n");
 	DEBUG_DrawScreen();
 	/* Add some keyhandlers */
-	MAPPER_AddHandler(DEBUG_Enable,MK_pause,MMOD2,"debugger","Debugger");
+	MAPPER_AddHandler(DEBUG_Enable,MK_f10, 0,"debugger","Debugger");
 	/* Reset code overview and input line */
 	memset((void*)&codeViewData,0,sizeof(codeViewData));
 	/* setup debug.com */

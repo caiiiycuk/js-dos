@@ -27,7 +27,7 @@ if(${EMSCRIPTEN})
 	add_definitions(-DEMSCRIPTEN)		
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
-	add_definitions(-DDEBUG -DEMSCRIPTEN_KEEPALIVE=)
+	add_definitions(-DC_HAVE_DEBUG=1 -DC_HEAVY_DEBUG=1 -DEMSCRIPTEN_KEEPALIVE=)
 
 	include_directories("${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/linux")
 endif()
@@ -54,6 +54,8 @@ set_source_files_properties(${SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "-std=c++1
 
 set(SOURCES 
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-3rdparty.c"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-debug.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-debug-mem.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dosbox.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/cpu/core_simple.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/cpu/paging.cpp"
@@ -214,7 +216,7 @@ if(${EMSCRIPTEN})
 else()
 	add_executable(bin ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	target_link_libraries(bin
-		SDL z
+		SDL z ncurses
 	)
 
 	set_target_properties(bin PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")

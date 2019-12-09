@@ -101,7 +101,7 @@ gulp.task('copyWasm', function () {
 });
 
 gulp.task('copyTypeScript', function () {
-    return gulp.src('js-dos-ts/*')
+    return gulp.src('js-dos-ts/**')
         .pipe(gulp.dest('dist/typescript'));
 });
 
