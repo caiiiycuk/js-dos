@@ -12,12 +12,13 @@
 #include "timer.h"
 
 extern Bit32u GetAddress(Bit16u seg, Bit32u offset);
+extern void DEBUG_ShowMsg(char const* format,...);
 
 const auto addressableSegments = 1; // 64Kb
 const auto addressableOffsets = 0xFFFF;
 
 std::unordered_set<Bit8u> watchingValues;
-std::vector<std::pair<Bit16u, Bit32u>> addresses;
+std::vector<std::pair<Bit16u, Bit32u> > addresses;
 Bit32u reportedFoundCount = 0;
 
 void MSR_Set(Bit8u val) {
@@ -60,7 +61,7 @@ void MSR_Execute() {
             }
         }
     } else {
-        std::vector<std::pair<Bit16u, Bit32u>> newAddresses;
+        std::vector<std::pair<Bit16u, Bit32u> > newAddresses;
         newAddresses.reserve(addresses.size());
         for (auto next: addresses) {
             auto val = mem_readb(GetAddress(next.first, next.second));
