@@ -27,7 +27,7 @@ Scroll down browser window to play Digger, or use **fullscreen button** under do
 Controls:
 
 * Arrow keys - move digger (left, right, up, down)
-* **OR** Swipe in direction where you want to move
+* **OR** Swipe in direction where you want to move (with mouse too!)
 * To enter name use keyboard or keyboard button under dosbox window
 
 To start game, just swipe. Have a nice play!
