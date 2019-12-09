@@ -245,13 +245,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.55 (2eb59630c433fe061e3a631b1f76d6e1)",
-  jsVersion: "9020cc52a3e6acaf04e2ecd1c36ced153f8a2a34",
+  version: "6.22.56 (0ea34a083a8479fb83672778b7d01f2c)",
+  jsVersion: "e067ab0a299616d934f2d3cf0e0f02d23ded1d2f",
   wasmJsSize: 189847,
   wasmVersion: "d2dbc5fdc92d8e92c35105131b49a979",
   wasmSize: 1808702,
   jsSize: 6646940,
-  buildSeed: 1575905143589
+  buildSeed: 1575907786319
 };
 
 },{}],4:[function(require,module,exports){
@@ -2242,12 +2242,11 @@ var Dos = function Dos(canvas, options) {
 };
 
 exports.default = Dos;
-exports.DosController = {
+window.Dos = Dos;
+window.DosController = {
   Qwerty: qwerty_1.default,
   Move: move_1.default
 };
-window.Dos = Dos;
-window.DosController = exports.DosController;
 
 },{"./controller/move":1,"./controller/qwerty":2,"./js-dos-cache":6,"./js-dos-host":11,"./js-dos-module":12,"core-js/modules/es6.object.assign":122,"core-js/modules/es6.object.to-string":125,"core-js/modules/es6.promise":126}],17:[function(require,module,exports){
 (function (global){
