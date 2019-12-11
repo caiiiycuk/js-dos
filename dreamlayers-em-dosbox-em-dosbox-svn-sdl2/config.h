@@ -121,7 +121,7 @@
 #define ENVIRON_LINKED 1
 
 /* use array of function pointers in core */
-#define FUNARRAY_CORE 1
+#define FUNARRAY_CORE 0
 
 /* Define to 1 to use ALSA for MIDI */
 /* #undef HAVE_ALSA */
