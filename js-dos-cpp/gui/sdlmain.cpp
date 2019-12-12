@@ -70,11 +70,6 @@ extern char** environ;
 
 enum SCREEN_TYPES	{
 	SCREEN_SURFACE,
-	SCREEN_SURFACE_DDRAW,
-#ifndef EMSCRIPTEN
-	SCREEN_OVERLAY,
-#endif /* !EMSCRIPTEN */
-	SCREEN_OPENGL
 };
 
 enum PRIORITY_LEVELS {
@@ -188,14 +183,6 @@ static unsigned char logo[32*32*4]= {
 #include <src/gui/dosbox_logo.h>
 };
 static void GFX_SetIcon() {
-#if !defined(MACOSX) && !defined(EMSCRIPTEN)
-	/* Set Icon (must be done before any sdl_setvideomode call) */
-	/* But don't set it on OS X, as we use a nicer external icon there. */
-	/* Made into a separate call, so it can be called again when we restart the graphics output on win32 */
-	SDL_Surface* logos= SDL_CreateRGBSurfaceFrom((void*)logo,32,32,32,128,0x000000ff,0x0000ff00,0x00ff0000,0);
-
-	SDL_WM_SetIcon(logos,NULL);
-#endif // !defined(MACOSX)
 }
 
 
@@ -285,13 +272,6 @@ check_surface:
 		}
 			flags |= GFX_CAN_RANDOM;
 		break;
-#ifndef EMSCRIPTEN
-	case SCREEN_OVERLAY:
-		if (flags & GFX_RGBONLY || !(flags&GFX_CAN_32)) goto check_surface;
-		flags|=GFX_SCALING;
-		flags&=~(GFX_CAN_8|GFX_CAN_15|GFX_CAN_16);
-		break;
-#endif /* !EMSCRIPTEN */
 	default:
 		goto check_surface;
 		break;
@@ -455,23 +435,6 @@ dosurface:
 			/* If this one fails be ready for some flickering... */
 		}
 		break;
-#ifndef EMSCRIPTEN
-	case SCREEN_OVERLAY:
-		if (sdl.overlay) {
-			SDL_FreeYUVOverlay(sdl.overlay);
-			sdl.overlay=0;
-		}
-		if (!(flags&GFX_CAN_32) || (flags & GFX_RGBONLY)) goto dosurface;
-		if (!GFX_SetupSurfaceScaled(0,0)) goto dosurface;
-		sdl.overlay=SDL_CreateYUVOverlay(width*2,height,SDL_UYVY_OVERLAY,sdl.surface);
-		if (!sdl.overlay) {
-			LOG_MSG("SDL: Failed to create overlay, switching back to surface");
-			goto dosurface;
-		}
-		sdl.desktop.type=SCREEN_OVERLAY;
-		retFlags = GFX_CAN_32 | GFX_SCALING | GFX_HARDWARE;
-		break;
-#endif /* !EMSCRIPTEN */
 	default:
 		goto dosurface;
 		break;
@@ -611,14 +574,6 @@ bool GFX_StartUpdate(Bit8u * & pixels,Bitu & pitch) {
 		}
 		sdl.updating=true;
 		return true;
-#ifndef EMSCRIPTEN
-	case SCREEN_OVERLAY:
-		if (SDL_LockYUVOverlay(sdl.overlay)) return false;
-		pixels=(Bit8u *)*(sdl.overlay->pixels);
-		pitch=*(sdl.overlay->pitches);
-		sdl.updating=true;
-		return true;
-#endif /* !EMSCRIPTEN */
 	default:
 		break;
 	}
@@ -661,12 +616,6 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 				SDL_UpdateRects( sdl.surface, rectCount, sdl.updateRects );
 		}
 		break;
-#ifndef EMSCRIPTEN
-	case SCREEN_OVERLAY:
-		SDL_UnlockYUVOverlay(sdl.overlay);
-		SDL_DisplayYUVOverlay(sdl.overlay,&sdl.clip);
-		break;
-#endif /* !EMSCRIPTEN */
 	default:
 		break;
 	}
@@ -691,22 +640,9 @@ void GFX_SetPalette(Bitu start,Bitu count,GFX_PalEntry * entries) {
 
 Bitu GFX_GetRGB(Bit8u red,Bit8u green,Bit8u blue) {
 	switch (sdl.desktop.type) {
-	case SCREEN_SURFACE:
-	case SCREEN_SURFACE_DDRAW:
-		return SDL_MapRGB(sdl.surface->format,red,green,blue);
-#ifndef EMSCRIPTEN
-	case SCREEN_OVERLAY:
-		{
-			Bit8u y =  ( 9797*(red) + 19237*(green) +  3734*(blue) ) >> 15;
-			Bit8u u =  (18492*((blue)-(y)) >> 15) + 128;
-			Bit8u v =  (23372*((red)-(y)) >> 15) + 128;
-			return (u << 0) | (y << 8) | (v << 16) | (y << 24);
-		}
-#endif /* !EMSCRIPTEN */
-	case SCREEN_OPENGL:
-		//USE BGRA otherwise
-		return ((blue << 0) | (green << 8) | (red << 16)) | (255 << 24);
-	}
+        case SCREEN_SURFACE:
+            return SDL_MapRGB(sdl.surface->format, red, green, blue);
+    }
 	return 0;
 }
 
@@ -879,10 +815,6 @@ static void GUI_StartUp(Section * sec) {
 
 	if (output == "surface") {
 		sdl.desktop.want_type=SCREEN_SURFACE;
-#ifndef EMSCRIPTEN
-	} else if (output == "overlay") {
-		sdl.desktop.want_type=SCREEN_OVERLAY;
-#endif /* !EMSCRIPTEN */
 	} else {
 		LOG_MSG("SDL: Unsupported output device %s, switching back to surface",output.c_str());
 		sdl.desktop.want_type=SCREEN_SURFACE;//SHOULDN'T BE POSSIBLE anymore
