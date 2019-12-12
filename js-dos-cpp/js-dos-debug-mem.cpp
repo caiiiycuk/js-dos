@@ -13,6 +13,7 @@
 #include <paging.h>
 #include <regs.h>
 #include <cassert>
+#include <cstdio>
 
 extern Bit32u GetAddress(Bit16u seg, Bit32u offset);
 extern void DEBUG_ShowMsg(char const* format,...);
