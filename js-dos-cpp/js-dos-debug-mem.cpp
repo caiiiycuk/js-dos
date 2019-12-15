@@ -14,6 +14,9 @@
 #include <regs.h>
 #include <cassert>
 #include <cstdio>
+#include <video.h>
+#include <render.h>
+#include <vga.h>
 
 extern Bit32u GetAddress(Bit16u seg, Bit32u offset);
 extern void DEBUG_ShowMsg(char const* format,...);
@@ -88,8 +91,33 @@ void WriteSnapshot() {
         return;
     }
 
-    fwrite(&cpu_regs, sizeof(CPU_Regs), 1, f);
+    Bit8u *pixels;
+    Bitu pitch;
+    int width;
+    int height;
+    bool fullscreen;
+    GFX_GetSize(width, height, fullscreen);
+    if (!GFX_StartUpdate(pixels, pitch)) {
+        DEBUG_ShowMsg("DEBUG: Can't capture video data\n");
+        fclose(f);
+        return;
+    }
 
+    fwrite(pixels, sizeof(Bit8u), height * pitch, f);
+
+    //vga mem
+    Bit32u vga_allocsize=vga.vmemsize;
+    // Keep lower limit at 512k
+    if (vga_allocsize<512*1024) vga_allocsize=512*1024;
+    // We reserve extra 2K for one scan line
+    vga_allocsize+=2048;
+//    vga.mem.linear_orgptr = new Bit8u[vga_allocsize+16];
+    fwrite(vga.mem.linear_orgptr, 1, vga_allocsize + 16, f);
+//    vga.fastmem_orgptr = new Bit8u[(vga.vmemsize<<1)+4096+16];
+    fwrite(vga.fastmem_orgptr, 1, (vga.vmemsize<<1)+4096+16, f);
+    DEBUG_ShowMsg("Snapshot vga size %d %d\n", vga_allocsize + 16, (vga.vmemsize<<1)+4096+16);
+
+    fwrite(&cpu_regs, sizeof(CPU_Regs), 1, f);
 
     for (auto seg = 0; seg < segCount; ++seg) {
         for (auto offset = 0; offset < 0xFFFF; ++offset) {
@@ -101,18 +129,47 @@ void WriteSnapshot() {
         }
     }
 
+    GFX_EndUpdate(0);
     fclose(f);
     DEBUG_ShowMsg("DEBUG: Machine dumped to snapshot.bin\n");
 }
 
 void RestoreSnapshot() {
-    FILE* f = fopen("mem.bin","rb");
+    FILE* f = fopen("snapshot.bin","rb");
     if (!f) {
         DEBUG_ShowMsg("DEBUG: Can't open snapshot.bin\n");
         return;
     }
 
-    assert(fread(&cpu_regs, sizeof(CPU_Regs), 1, f) == 1);
+    Bit8u *pixels;
+    Bitu pitch;
+    int width;
+    int height;
+    bool fullscreen;
+    GFX_GetSize(width, height, fullscreen);
+    if (!GFX_StartUpdate(pixels, pitch)) {
+        DEBUG_ShowMsg("DEBUG: Can't update video data\n");
+        fclose(f);
+        return;
+    }
+    fread(pixels, sizeof(Bit8u), height * pitch, f);
+
+    //vga mem
+    Bit32u vga_allocsize=vga.vmemsize;
+    // Keep lower limit at 512k
+    if (vga_allocsize<512*1024) vga_allocsize=512*1024;
+    // We reserve extra 2K for one scan line
+    vga_allocsize+=2048;
+//    vga.mem.linear_orgptr = new Bit8u[vga_allocsize+16];
+    fread(vga.mem.linear_orgptr, 1, vga_allocsize + 16, f);
+//    vga.fastmem_orgptr = new Bit8u[(vga.vmemsize<<1)+4096+16];
+    fread(vga.fastmem_orgptr, 1, (vga.vmemsize<<1)+4096+16, f);
+
+    DEBUG_ShowMsg("Snapshot vga size %d %d\n", vga_allocsize + 16, (vga.vmemsize<<1)+4096+16);
+    auto readcount = fread(&cpu_regs, sizeof(CPU_Regs), 1, f);
+    if (readcount != 1) {
+        assert(false);
+    }
 
     Bit8u val;
     Bitu offset = 0;
@@ -121,6 +178,7 @@ void RestoreSnapshot() {
         offset++;
     }
 
+    GFX_EndUpdate(0);
     fclose(f);
     DEBUG_ShowMsg("DEBUG: Snapshot readed from snapshot.bin\n");
 }

@@ -111,9 +111,6 @@ struct SDL_Block {
 		SCREEN_TYPES want_type;
 	} desktop;
 	struct {
-		SDL_Surface * surface;
-	} blit;
-	struct {
 		PRIORITY_LEVELS focus;
 		PRIORITY_LEVELS nofocus;
 	} priority;
@@ -372,10 +369,6 @@ Bitu GFX_SetSize(Bitu width,Bitu height,Bitu flags,double scalex,double scaley,G
 	Bitu retFlags = 0;
 	int bpp=0;
 
-	if (sdl.blit.surface) {
-		SDL_FreeSurface(sdl.blit.surface);
-		sdl.blit.surface=0;
-	}
 	switch (sdl.desktop.want_type) {
 	case SCREEN_SURFACE:
 dosurface:
@@ -392,13 +385,13 @@ dosurface:
 				sdl.clip.y=(Sint16)((sdl.desktop.full.height-height)/2);
 				sdl.surface=SDL_SetVideoMode_Wrap(sdl.desktop.full.width,sdl.desktop.full.height,bpp,
 					SDL_FULLSCREEN | ((flags & GFX_CAN_RANDOM) ? SDL_SWSURFACE : SDL_HWSURFACE) |
-					(sdl.desktop.vsync ? SDL_DOUBLEBUF|SDL_ASYNCBLIT : 0) | SDL_HWPALETTE);
+					SDL_HWPALETTE);
 				if (sdl.surface == NULL) E_Exit("Could not set fullscreen video mode %ix%i-%i: %s",sdl.desktop.full.width,sdl.desktop.full.height,bpp,SDL_GetError());
 			} else {
 				sdl.clip.x=0;sdl.clip.y=0;
 				sdl.surface=SDL_SetVideoMode_Wrap(width,height,bpp,
 					SDL_FULLSCREEN | ((flags & GFX_CAN_RANDOM) ? SDL_SWSURFACE : SDL_HWSURFACE) |
-					(sdl.desktop.vsync ? SDL_DOUBLEBUF|SDL_ASYNCBLIT  : 0)|SDL_HWPALETTE);
+					SDL_HWPALETTE);
 				if (sdl.surface == NULL)
 					E_Exit("Could not set fullscreen video mode %ix%i-%i: %s",(int)width,(int)height,bpp,SDL_GetError());
 			}
@@ -422,18 +415,10 @@ dosurface:
 				retFlags = GFX_CAN_32;
 				break;
 		}
-		if (retFlags && (sdl.surface->flags & SDL_HWSURFACE))
-			retFlags |= GFX_HARDWARE;
-		if (retFlags && (sdl.surface->flags & SDL_DOUBLEBUF)) {
-			sdl.blit.surface=SDL_CreateRGBSurface(SDL_HWSURFACE,
-				sdl.draw.width, sdl.draw.height,
-				sdl.surface->format->BitsPerPixel,
-				sdl.surface->format->Rmask,
-				sdl.surface->format->Gmask,
-				sdl.surface->format->Bmask,
-			0);
-			/* If this one fails be ready for some flickering... */
-		}
+		if (retFlags && (sdl.surface->flags & SDL_HWSURFACE)) {
+            retFlags |= GFX_HARDWARE;
+        }
+
 		break;
 	default:
 		goto dosurface;
@@ -558,20 +543,12 @@ bool GFX_StartUpdate(Bit8u * & pixels,Bitu & pitch) {
 		return false;
 	switch (sdl.desktop.type) {
 	case SCREEN_SURFACE:
-		if (sdl.blit.surface) {
-			if (SDL_MUSTLOCK(sdl.blit.surface) && SDL_LockSurface(sdl.blit.surface))
-				return false;
-			pixels=(Bit8u *)sdl.blit.surface->pixels;
-			pitch=sdl.blit.surface->pitch;
-		} else
-		{
-			if (SDL_MUSTLOCK(sdl.surface) && SDL_LockSurface(sdl.surface))
-				return false;
-			pixels=(Bit8u *)sdl.surface->pixels;
-			pixels+=sdl.clip.y*sdl.surface->pitch;
-			pixels+=sdl.clip.x*sdl.surface->format->BytesPerPixel;
-			pitch=sdl.surface->pitch;
-		}
+        if (SDL_MUSTLOCK(sdl.surface) && SDL_LockSurface(sdl.surface))
+            return false;
+        pixels=(Bit8u *)sdl.surface->pixels;
+        pixels+=sdl.clip.y*sdl.surface->pitch;
+        pixels+=sdl.clip.x*sdl.surface->format->BytesPerPixel;
+        pitch=sdl.surface->pitch;
 		sdl.updating=true;
 		return true;
 	default:
@@ -588,16 +565,9 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 	switch (sdl.desktop.type) {
 	case SCREEN_SURFACE:
 		if (SDL_MUSTLOCK(sdl.surface)) {
-			if (sdl.blit.surface) {
-				SDL_UnlockSurface(sdl.blit.surface);
-				int Blit = SDL_BlitSurface( sdl.blit.surface, 0, sdl.surface, &sdl.clip );
-				LOG(LOG_MISC,LOG_WARN)("BlitSurface returned %d",Blit);
-			} else {
-				SDL_UnlockSurface(sdl.surface);
-			}
+            SDL_UnlockSurface(sdl.surface);
 			SDL_Flip(sdl.surface);
-		} else
-		if (changedLines) {
+		} else if (changedLines) {
 			Bitu y = 0, index = 0, rectCount = 0;
 			while (y < sdl.draw.height) {
 				if (!(index & 1)) {
