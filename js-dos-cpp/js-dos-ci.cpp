@@ -3,6 +3,7 @@
 #include <js-dos-ci.h>
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
+extern "C" void destroySyncSleep();
 #endif
 
 CommandInterface::CommandInterface(): m_events(new Events()) {
@@ -34,7 +35,8 @@ CommandInterface::CommandInterface(): m_events(new Events()) {
 // is no safe
 CommandInterface::~CommandInterface() {
 #ifdef EMSCRIPTEN
-  emscripten_force_exit(0);
+    destroySyncSleep();
+    emscripten_force_exit(0);
 #endif
 }
 

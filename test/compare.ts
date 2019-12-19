@@ -8,7 +8,7 @@ import { doThen } from "./do";
 
 export function compareAndExit(imageUrl: string, ci: DosCommandInterface, done: () => void) {
     compare(imageUrl, ci, (wrong) => {
-        assert.equal(0, wrong);
+        assert.ok(wrong <= 10, "Image not same, wrong: " + wrong);
         ci.exit();
         done();
     });

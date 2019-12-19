@@ -52,6 +52,8 @@
 #define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)
 #endif
 
+const auto LOOP_EXECUTION_TIME = 1000 / 60;
+
 Config * control;
 MachineType machine;
 SVGACards svgaCard;
@@ -138,6 +140,7 @@ Bit32s ticksDone;
 Bit32u ticksScheduled;
 bool ticksLocked;
 
+
 #ifdef JSDOS
 #ifdef EMTERPRETER_SYNC
 int nosleep_lock = 0;
@@ -146,27 +149,33 @@ static int runcount = 0;
 #endif
 #endif
 
+
+#if defined(EMTERPRETER_SYNC) && defined(EMSCRIPTEN)
+bool isNormalState() {
+#if defined(ASYNCIFY)
+    return EM_ASM_INT((
+       return Asyncify.state === 0 ? 1 : 0;
+    )) == 1;
+#else
+    return EM_ASM_INT((
+        return EmterpreterAsync.state === 0 ? 1 : 0;
+    )) == 1;
+#endif
+}
+#else
+bool isNormalState() {
+    return true;
+}
+#endif
+
 bool doHeapOperation() {
     if (ticksLocked) {
         return false;
     }
 
-
-#if defined(EMTERPRETER_SYNC) && defined(EMSCRIPTEN)
-#if defined(ASYNCIFY)
-    bool isNormalState = EM_ASM_INT((
-       return Asyncify.state === 0 ? 1 : 0;
-    )) == 1;
-#else
-    bool isNormalState = EM_ASM_INT((
-       return EmterpreterAsync.state === 0 ? 1 : 0;
-    )) == 1;
-#endif
-
-    if (!isNormalState) {
+    if (!isNormalState()) {
         return false;
     }
-#endif
 
     bool heapChanged = false;
 #ifdef EMSCRIPTEN
@@ -192,45 +201,30 @@ bool doHeapOperation() {
     return heapChanged;
 }
 
+void increaseticks();
+
 static Bitu Normal_Loop(void) {
 	if (doHeapOperation()) {
 		return 0;
 	}
 
 	Bits ret;
-#ifdef JSDOS
-	int ticksEntry = GetTicks();
-#ifdef EMTERPRETER_SYNC
-	/* Normal DOSBox is free to use up all available host CPU time, but
-	 * in a browser, sleep has to happen regularly so the screen is updated,
-	 * sound isn't interrupted, and the script does not appear to hang.
-	 */
-	static Bitu last_sleep = 0;
-	static Bitu last_loop = 0;
-	if (SDL_TICKS_PASSED(ticksEntry, last_sleep + 10)) {
-		if (nosleep_lock == 0) {
-			last_sleep = ticksEntry;
-			emscripten_sleep_with_yield(1);
-			ticksEntry = GetTicks();
-		} else if (SDL_TICKS_PASSED(ticksEntry, last_sleep + 2000) &&
-		           !SDL_TICKS_PASSED(ticksEntry, last_loop + 200)) {
-			/* Emterpreter makes code much slower, so the CPU interpreter does
-			 * not use it. That means it must not be interrupted using
-			 * emscripten_sleep(). Normally, CPU interpreter recursion should
-			 * only involve brief CPU exceptions, so this should not be
-			 * triggered. Sometimes DOSBox fails to detect return from
-			 * exception. Timeout must not be triggered when the browser is
-			 * running slow overall or the page is in the background.
-			 */
-			LOG_MSG("[SYNC] Emulation aborted due to nested emulation timeout.");
-			em_exit(1);
-		}
-	}
-	last_loop = ticksEntry;
+#if defined(JSDOS) && defined(EMTERPRETER_SYNC)
+    static Uint32 lastSleepTime = GetTicks();
+    if (nosleep_lock == 0 && GetTicks() - lastSleepTime > LOOP_EXECUTION_TIME) {
+#ifdef EMSCRIPTEN
+        EM_ASM(({
+        if (SDL && SDL.audio && SDL.audio.queueNewAudioData) {
+            SDL.audio.queueNewAudioData();
+        }
+    }));
 #endif
+        emscripten_sleep_with_yield(0);
+        lastSleepTime = GetTicks();
+    }
 #endif
-	while (1) {
-		if (PIC_RunQueue()) {
+    while (1) {
+        if (PIC_RunQueue()) {
 			ret = (*cpudecoder)();
 			if (GCC_UNLIKELY(ret<0)) return 1;
 			if (ret>0) {
@@ -246,184 +240,165 @@ static Bitu Normal_Loop(void) {
 			if (ticksRemain>0) {
 				TIMER_AddTick();
 				ticksRemain--;
-			} else goto increaseticks;
+			} else {
+			    increaseticks();
+			    return 0;
+			}
 		}
 	}
-increaseticks:
-	if (GCC_UNLIKELY(ticksLocked)) {
+}
+
+//For trying other delays
+#define wrap_delay(a) //emscripten_sleep(a);
+
+void increaseticks() { //Make it return ticksRemain and set it in the function above to remove the global variable.
+	if (GCC_UNLIKELY(ticksLocked)) { // For Fast Forward Mode
 		ticksRemain=5;
 		/* Reset any auto cycle guessing for this frame */
 		ticksLast = GetTicks();
 		ticksAdded = 0;
 		ticksDone = 0;
 		ticksScheduled = 0;
-	} else {
-/*** CPU cycle adjustment algorithm configuration ***/
-#ifdef EMSCRIPTEN
-// This only includes CPU usage during the main loop. Other Emscripten code
-// plus the browser also require CPU time. Low values don't take full
-// advantage of the host CPU and decrease emulation performance. High values
-// cause tick limits to be hit more often and disrupt sound.
-// Over 60 increases sound interruptions in Firefox 34 in Linux.
-// Up to 80 delivers results which aren't too bad.
-#define CPU_USAGE_TARGET 60
-// Exceeding the soft limit will case immediate cutback or
-// recalculation of CPU_CycleMax.
-#define SOFT_TICK_LIMIT 18
-// Exceeding the hard limit causes emulation to slow down compared to real
-// time. Occasional spikes triggering this are unavoidable in a browser.
-// Missed ticks are added to the backlog in an attempt to catch up later.
-#define HARD_TICK_LIMIT 25
-// The backlog cannot be allowed to grow without bound.
-#define BACKLOG_LIMIT 50
-#else
-#define CPU_USAGE_TARGET 90
-#define SOFT_TICK_LIMIT 15
-#define HARD_TICK_LIMIT 20
-#define BACKLOG_LIMIT 40
-#endif
-
-// Define this to print output of CPU cycle adjustment algorithm
-//#define DEBUG_CYCLE_ADJUST
-
-		Bit32u ticksNew;
-		ticksNew=GetTicks();
-		ticksScheduled += ticksAdded;
-		if (ticksNew > ticksLast) {
-			ticksRemain = ticksNew-ticksLast;
-			ticksLast = ticksNew;
-#ifdef JSDOS
-			/* Calculations below are meant to be based on the number of ticks
-			 * used by DOSBox. Ticks between two main loop calls include time
-			 * when DOSBox isn't running, so only time from the start of this
-			 * function is considered.
-			 */
-			ticksDone += ticksNew - ticksEntry;
-#else
-			ticksDone += ticksRemain;
-#endif
-#ifdef DEBUG_CYCLE_ADJUST
-			// Keep track of emulation slowdown compared to real time
-			static Bit32u ticksLost=0;
-#endif
-			static Bit32u backLog = 0;
-			if (ticksRemain > HARD_TICK_LIMIT) {
-				backLog += ticksRemain - HARD_TICK_LIMIT;
-				ticksRemain = HARD_TICK_LIMIT;
-				if (backLog > BACKLOG_LIMIT) {
-#ifdef DEBUG_CYCLE_ADJUST
-					ticksLost += backLog - BACKLOG_LIMIT;
-#endif
-					backLog = BACKLOG_LIMIT;
-				}
-			} else if (backLog > 0) {
-				if (backLog < HARD_TICK_LIMIT - ticksRemain) {
-					ticksRemain += backLog;
-					backLog = 0;
-				} else {
-					backLog -= HARD_TICK_LIMIT - ticksRemain;
-					ticksRemain = HARD_TICK_LIMIT;
-				}
-			}
-			ticksAdded = ticksRemain;
-			if (CPU_CycleAutoAdjust && !CPU_SkipCycleAutoAdjust) {
-				if (ticksScheduled >= 250 || ticksDone >= 250 || (ticksAdded > SOFT_TICK_LIMIT && ticksScheduled >= 5) ) {
-					if(ticksDone < 1) ticksDone = 1; // Protect against div by zero
-					Bit32s ratio = (ticksScheduled * (CPU_CyclePercUsed*CPU_USAGE_TARGET*1024/100/100)) / ticksDone;
-					Bit32s new_cmax = CPU_CycleMax;
-					Bit64s cproc = (Bit64s)CPU_CycleMax * (Bit64s)ticksScheduled;
-					if (cproc > 0) {
-						/* ignore the cycles added due to the IO delay code in order
-						   to have smoother auto cycle adjustments */
-						double ratioremoved = (double) CPU_IODelayRemoved / (double) cproc;
-						if (ratioremoved < 1.0) {
-							ratio = (Bit32s)((double)ratio * (1 - ratioremoved));
-							/* Don't allow very high ratio which can cause us to lock as we don't scale down
-							 * for very low ratios. High ratio might result because of timing resolution */
-							if (ticksScheduled >= 250 && ticksDone < 10 && ratio > 20480) 
-								ratio = 20480;
-							Bit64s cmax_scaled = (Bit64s)CPU_CycleMax * (Bit64s)ratio;
-							/* The auto cycle code seems reliable enough to disable the fast cut back code.
-							 * This should improve the fluency of complex games.
-							if (ratio <= 1024) 
-								new_cmax = (Bit32s)(cmax_scaled / (Bit64s)1024);
-							else 
-							 */
-							new_cmax = (Bit32s)(1 + (CPU_CycleMax >> 1) + cmax_scaled / (Bit64s)2048);
-						}
-					}
-
-					if (new_cmax<CPU_CYCLES_LOWER_LIMIT)
-						new_cmax=CPU_CYCLES_LOWER_LIMIT;
-
-					/*
-					LOG_MSG("cyclelog: current %6d   cmax %6d   ratio  %5d  done %3d   sched %3d",
-						CPU_CycleMax,
-						new_cmax,
-						ratio,
-						ticksDone,
-						ticksScheduled);
-					*/  
-					/* ratios below 1% are considered to be dropouts due to
-					   temporary load imbalance, the cycles adjusting is skipped */
-					if (ratio>10) {
-						/* ratios below 12% along with a large time since the last update
-						   has taken place are most likely caused by heavy load through a
-						   different application, the cycles adjusting is skipped as well */
-						if ((ratio>120) || (ticksDone<700)) {
-							CPU_CycleMax = new_cmax;
-							if (CPU_CycleLimit > 0) {
-								if (CPU_CycleMax>CPU_CycleLimit) CPU_CycleMax = CPU_CycleLimit;
-							}
-						}
-					}
-					CPU_IODelayRemoved = 0;
-					ticksDone = 0;
-					ticksScheduled = 0;
-				} else if (ticksAdded > SOFT_TICK_LIMIT) {
-					/* ticksAdded > 15 but ticksScheduled < 5, lower the cycles
-					   but do not reset the scheduled/done ticks to take them into
-					   account during the next auto cycle adjustment */
-					CPU_CycleMax /= 3;
-					if (CPU_CycleMax < CPU_CYCLES_LOWER_LIMIT)
-						CPU_CycleMax = CPU_CYCLES_LOWER_LIMIT;
-				}
-			}
-#ifdef DEBUG_CYCLE_ADJUST
-#define LOG_AVG_SIZE 10
-			static int ctr = 0;
-			static Bit32s cycleavg = 0;
-			static Bit32u ticksRemainavg = 0;
-			cycleavg += CPU_CycleMax;
-			ticksRemainavg += ticksRemain;
-			if (++ctr == LOG_AVG_SIZE) {
-				ctr = 0;
-				// Printing this every time has too much performance impact
-				LOG_MSG("%i %i %i",
-						ticksRemainavg / LOG_AVG_SIZE,
-						cycleavg / LOG_AVG_SIZE,
-						ticksLost);
-				cycleavg = 0;
-				ticksRemainavg = 0;
-				ticksLost = 0;
-			}
-#endif
-		} else {
-			ticksAdded = 0;
-#ifndef JSDOS
-			SDL_Delay(1);
-#elif defined(EMTERPRETER_SYNC)
-			if (nosleep_lock == 0) {
-				last_sleep = ticksNew;
-				emscripten_sleep_with_yield(1);
-			}
-#endif
-			ticksDone -= GetTicks() - ticksNew;
-			if (ticksDone < 0)
-				ticksDone = 0;
-		}
+		return;
 	}
-	return 0;
+
+	static Bit32s lastsleepDone = -1;
+	static Bitu sleep1count = 0;
+
+	Bit32u ticksNew;
+    ticksNew = GetTicks();
+	ticksScheduled += ticksAdded;
+	if (ticksNew <= ticksLast) { //lower should not be possible, only equal.
+#if defined(JSDOS) && !defined(EMTERPRETER_SYNC) || true
+		ticksAdded = 0;
+        ticksDone = 0;
+        return;
+#endif
+
+		if (!CPU_CycleAutoAdjust || CPU_SkipCycleAutoAdjust || sleep1count < 3) {
+			wrap_delay(1);
+		} else {
+			/* Certain configurations always give an exact sleepingtime of 1, this causes problems due to the fact that
+			   dosbox keeps track of full blocks.
+			   This code introduces some randomness to the time slept, which improves stability on those configurations
+			 */
+			static const Bit32u sleeppattern[] = { 2, 2, 3, 2, 2, 4, 2};
+			static Bit32u sleepindex = 0;
+			if (ticksDone != lastsleepDone) sleepindex = 0;
+			wrap_delay(sleeppattern[sleepindex++]);
+			sleepindex %= sizeof(sleeppattern) / sizeof(sleeppattern[0]);
+		}
+		Bit32s timeslept = GetTicks() - ticksNew;
+		// Count how many times in the current block (of 250 ms) the time slept was 1 ms
+		if (CPU_CycleAutoAdjust && !CPU_SkipCycleAutoAdjust && timeslept == 1) sleep1count++;
+		lastsleepDone = ticksDone;
+
+		// Update ticksDone with the time spent sleeping
+		ticksDone -= timeslept;
+		if (ticksDone < 0)
+			ticksDone = 0;
+		return; //0
+
+		// If we do work this tick and sleep till the next tick, then ticksDone is decreased, 
+		// despite the fact that work was done as well in this tick. Maybe make it depend on an extra parameter.
+		// What do we know: ticksRemain = 0 (condition to enter this function)
+		// ticksNew = time before sleeping
+		
+		// maybe keep track of sleeped time in this frame, and use sleeped and done as indicators. (and take care of the fact there
+		// are frames that have both.
+	}
+
+	//TicksNew > ticksLast
+	ticksRemain = ticksNew - ticksLast;
+	ticksLast = ticksNew;
+	ticksDone += ticksRemain;
+	if ( ticksRemain > 20 ) {
+//		LOG(LOG_MISC,LOG_ERROR)("large remain %d",ticksRemain);
+		ticksRemain = 20;
+	}
+	ticksAdded = ticksRemain;
+
+	// Is the system in auto cycle mode guessing ? If not just exit. (It can be temporary disabled)
+	if (!CPU_CycleAutoAdjust || CPU_SkipCycleAutoAdjust) return;
+
+	if (ticksScheduled >= 250 || ticksDone >= 250 || (ticksAdded > 15 && ticksScheduled >= 5) ) {
+		if(ticksDone < 1) ticksDone = 1; // Protect against div by zero
+		/* ratio we are aiming for is around 90% usage*/
+		Bit32s ratio = (ticksScheduled * (CPU_CyclePercUsed*90*1024/100/100)) / ticksDone;
+		Bit32s new_cmax = CPU_CycleMax;
+		Bit64s cproc = (Bit64s)CPU_CycleMax * (Bit64s)ticksScheduled;
+		double ratioremoved = 0.0; //increase scope for logging
+		if (cproc > 0) {
+			/* ignore the cycles added due to the IO delay code in order
+			   to have smoother auto cycle adjustments */
+			ratioremoved = (double) CPU_IODelayRemoved / (double) cproc;
+			if (ratioremoved < 1.0) {
+				double ratio_not_removed = 1 - ratioremoved;
+				ratio = (Bit32s)((double)ratio * ratio_not_removed);
+
+				/* Don't allow very high ratio which can cause us to lock as we don't scale down
+				 * for very low ratios. High ratio might result because of timing resolution */
+				if (ticksScheduled >= 250 && ticksDone < 10 && ratio > 16384)
+					ratio = 16384;
+
+				// Limit the ratio even more when the cycles are already way above the realmode default.
+				if (ticksScheduled >= 250 && ticksDone < 10 && ratio > 5120 && CPU_CycleMax > 50000)
+					ratio = 5120;
+
+				// When downscaling multiple times in a row, ensure a minimum amount of downscaling
+				if (ticksAdded > 15 && ticksScheduled >= 5 && ticksScheduled <= 20 && ratio > 800)
+					ratio = 800;
+
+				if (ratio <= 1024) {
+					// ratio_not_removed = 1.0; //enabling this restores the old formula
+					double r = (1.0 + ratio_not_removed) /(ratio_not_removed + 1024.0/(static_cast<double>(ratio)));
+					new_cmax = 1 + static_cast<Bit32s>(CPU_CycleMax * r);
+				} else {
+					Bit64s ratio_with_removed = (Bit64s) ((((double)ratio - 1024.0) * ratio_not_removed) + 1024.0);
+					Bit64s cmax_scaled = (Bit64s)CPU_CycleMax * ratio_with_removed;
+					new_cmax = (Bit32s)(1 + (CPU_CycleMax >> 1) + cmax_scaled / (Bit64s)2048);
+				}
+			}
+		}
+
+		if (new_cmax < CPU_CYCLES_LOWER_LIMIT)
+			new_cmax = CPU_CYCLES_LOWER_LIMIT;
+		LOG(LOG_MISC,LOG_ERROR)("cyclelog: current %06d   cmax %06d   ratio  %05d  done %03d   sched %03d Add %d rr %4.2f",
+			CPU_CycleMax,
+			new_cmax,
+			ratio,
+			ticksDone,
+			ticksScheduled,
+			ticksAdded,
+			ratioremoved);
+		/* ratios below 1% are considered to be dropouts due to
+		   temporary load imbalance, the cycles adjusting is skipped */
+		if (ratio > 10) {
+			/* ratios below 12% along with a large time since the last update
+			   has taken place are most likely caused by heavy load through a
+			   different application, the cycles adjusting is skipped as well */
+			if ((ratio > 120) || (ticksDone < 700)) {
+				CPU_CycleMax = new_cmax;
+				if (CPU_CycleLimit > 0) {
+					if (CPU_CycleMax > CPU_CycleLimit) CPU_CycleMax = CPU_CycleLimit;
+				} else if (CPU_CycleMax > 2000000) CPU_CycleMax = 2000000; //Hardcoded limit, if no limit was specified.
+			}
+		}
+
+		//Reset cycleguessing parameters.
+		CPU_IODelayRemoved = 0;
+		ticksDone = 0;
+		ticksScheduled = 0;
+		lastsleepDone = -1;
+		sleep1count = 0;
+	} else if (ticksAdded > 15) {
+		/* ticksAdded > 15 but ticksScheduled < 5, lower the cycles
+		   but do not reset the scheduled/done ticks to take them into
+		   account during the next auto cycle adjustment */
+		CPU_CycleMax /= 3;
+		if (CPU_CycleMax < CPU_CYCLES_LOWER_LIMIT)
+			CPU_CycleMax = CPU_CYCLES_LOWER_LIMIT;
+	} //if (ticksScheduled >= 250 || ticksDone >= 250 || (ticksAdded > 15 && ticksScheduled >= 5) )
 }
 
 void DOSBOX_SetLoop(LoopHandler * handler) {
@@ -458,11 +433,31 @@ void em_exit(int exitarg) {
 }
 
 static void em_main_loop(void) {
-	if (doHeapOperation()) {
-		return;
-	}
+    if (doHeapOperation()) {
+        return;
+    }
 
-	if ((*loop)()) {
+    //@caiiiycuk: this function is usually called from
+    // requestAnimationFrame OR setTimeout.
+    // minimal browser interval is ~5 ms for setTimeout
+    // and ~16ms for requestAnimationFrame
+    // if we will do 1 loop emulation per frame then
+    // our performance will be terrible
+    // to solve this we will try to emulate as much as
+    // we can while we fit into 60 fps (16ms)
+
+    Uint32 startedAt = GetTicks();
+    Uint32 usedTime;
+    Uint32 count = 0;
+    Bitu ret;
+
+    do {
+        ret=(*loop)();
+        usedTime = GetTicks() - startedAt;
+        count++;
+    } while (!ret && usedTime + (usedTime / count) <= LOOP_EXECUTION_TIME);
+
+    if (ret) {
 		/* Here, the function which called emscripten_set_main_loop() should
 		 * return, but that call stack is gone, so emulation ends.
 		 */
@@ -478,15 +473,11 @@ void DOSBOX_RunMachine(void){
 		runcount = 1;
 	} else if (runcount == 1) {
 		runcount = 2;
-		/* The fps parameter is not actually frames per second! It is a
-		 * 1000/fps millisecond delay via a setTimeout() call after the
-		 * main loop runs. So, any time spent in the main loop adds to the
-		 * interval between main loop invocations.
-		 */
 		emscripten_set_main_loop(em_main_loop, 0, 1);
+        return;
 	}
-	Uint32 ticksStart = GetTicks();
 #endif
+    Uint32 ticksStart = GetTicks();
 	Bitu ret;
 	do {
 		ret=(*loop)();
@@ -495,7 +486,7 @@ void DOSBOX_RunMachine(void){
 		 * Anything taking a long time will probably run indefinitely,
 		 * making DOSBox appear to hang.
 		 */
-		if (GetTicks() - ticksStart > 2000) {
+		if (GetTicks() - ticksStart > 30000) {
 			LOG_MSG("[NOSYNC] Emulation aborted due to nested emulation timeout (%d).", GetTicks() - ticksStart);
 			em_exit(1);
 			break;
@@ -592,7 +583,7 @@ void DOSBOX_Init(void) {
 	const char* machines[] = {
 		"hercules", "cga", "tandy", "pcjr", "ega",
 		"vgaonly", "svga_s3", "svga_et3000", "svga_et4000",
-		"svga_paradise", "vesa_nolfb", "vesa_oldvbe", 0 };
+		 "svga_paradise", "vesa_nolfb", "vesa_oldvbe", 0 };
 	secprop=control->AddSection_prop("dosbox",&DOSBOX_RealInit);
 	Pstring = secprop->Add_path("language",Property::Changeable::Always,"");
 	Pstring->Set_help("Select another language file.");
@@ -631,12 +622,14 @@ void DOSBOX_Init(void) {
 	Pint->Set_help("How many frames DOSBox skips before drawing one.");
 
 	Pbool = secprop->Add_bool("aspect",Property::Changeable::Always,false);
-	Pbool->Set_help("Do aspect correction, if your output method doesn't support scaling this can slow things down!.");
+	Pbool->Set_help("Do aspect correction, if your output method doesn't support scaling this can slow things down!");
 
 	Pmulti = secprop->Add_multi("scaler",Property::Changeable::Always," ");
 	Pmulti->SetValue("normal2x");
 	Pmulti->Set_help("Scaler used to enlarge/enhance low resolution modes. If 'forced' is appended,\n"
-	                 "then the scaler will be used even if the result might not be desired.");
+	                 "  then the scaler will be used even if the result might not be desired.\n"
+	                 "  To fit a scaler in the resolution used at full screen may require a border or side bars,\n"
+	                 "  to fill the screen entirely, depending on your hardware, a different scaler/fullresolution might work.");
 	Pstring = Pmulti->GetSection()->Add_string("type",Property::Changeable::Always,"normal2x");
 
 	const char *scalers[] = { 
@@ -669,7 +662,7 @@ void DOSBOX_Init(void) {
 	);
 	Pstring->Set_values(cores);
 	Pstring->Set_help("CPU Core used in emulation. auto will switch to dynamic if available and\n"
-		"appropriate.");
+	                  "appropriate.");
 
 	const char* cputype_values[] = { "auto", "386", "386_slow", "486_slow", "pentium_slow", "386_prefetch", 0};
 	Pstring = secprop->Add_string("cputype",Property::Changeable::Always,"auto");
@@ -685,9 +678,9 @@ void DOSBOX_Init(void) {
 		"  'auto'          tries to guess what a game needs.\n"
 		"                  It usually works, but can fail for certain games.\n"
 		"  'fixed #number' will set a fixed amount of cycles. This is what you usually\n"
-		"                  need if 'auto' fails (Example: fixed 4000).\n"
+	        "                  need if 'auto' fails. (Example: fixed 4000).\n"
 		"  'max'           will allocate as much cycles as your computer is able to\n"
-		"                  handle.");
+	        "                  handle.");
 
 	const char* cyclest[] = { "auto","fixed","max","%u",0 };
 	Pstring = Pmulti_remain->GetSection()->Add_string("type",Property::Changeable::Always,"auto");
@@ -727,13 +720,7 @@ void DOSBOX_Init(void) {
 
 	const char *blocksizes[] = {
 		 "1024", "2048", "4096", "8192", "512", "256", 0};
-	Pint = secprop->Add_int("blocksize",Property::Changeable::OnlyAtStart,
-#if defined(JSDOS) && SDL_VERSION_ATLEAST(2,0,0)
-		2048
-#else
-		1024
-#endif
-	);
+	Pint = secprop->Add_int("blocksize",Property::Changeable::OnlyAtStart,1024);
 	Pint->Set_values(blocksizes);
 	Pint->Set_help("Mixer block size, larger blocks might help sound stuttering but sound will also be more lagged.");
 
@@ -762,10 +749,9 @@ void DOSBOX_Init(void) {
 	Pstring->Set_help("Device that will receive the MIDI data from MPU-401.");
 
 	Pstring = secprop->Add_string("midiconfig",Property::Changeable::WhenIdle,"");
-	Pstring->Set_help("Special configuration options for the device driver. This is usually the id of the device you want to use.\n"
-	                  "  or in the case of coreaudio, you can specify a soundfont here.\n"
-	                  "  When using a Roland MT-32 rev. 0 as midi output device, some games may require a delay in order to prevent 'buffer overflow' issues.\n"
-	                  "  In that case, add 'delaysysex', for example: midiconfig=2 delaysysex\n"
+	Pstring->Set_help("Special configuration options for the device driver. This is usually the id of the device you want to use\n"
+	                  "  (find the id with mixer/listmidi).\n"
+	                  "  Or in the case of coreaudio, you can specify a soundfont here.\n"
 	                  "  See the README/Manual for more details.");
 
 #if C_DEBUG
@@ -887,7 +873,7 @@ void DOSBOX_Init(void) {
 	Pbool->Set_help("continuously fires as long as you keep the button pressed.");
 	
 	Pbool = secprop->Add_bool("swap34",Property::Changeable::WhenIdle,false);
-	Pbool->Set_help("swap the 3rd and the 4th axis. can be useful for certain joysticks.");
+	Pbool->Set_help("swap the 3rd and the 4th axis. Can be useful for certain joysticks.");
 
 	Pbool = secprop->Add_bool("buttonwrap",Property::Changeable::WhenIdle,false);
 	Pbool->Set_help("enable button wrapping at the number of emulated buttons.");

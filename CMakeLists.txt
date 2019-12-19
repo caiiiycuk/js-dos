@@ -28,6 +28,7 @@ if(${EMSCRIPTEN})
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
 	add_definitions(-DC_DEBUG=1 -DC_HEAVY_DEBUG=1 -DEMSCRIPTEN_KEEPALIVE=)
+	add_definitions(-DEMTERPRETER_SYNC)
 
 	include_directories("${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/linux")
 endif()
@@ -58,6 +59,7 @@ set(SOURCES
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-3rdparty.c"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-debug.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-debug-mem.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-asyncify.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dosbox.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/cpu/core_simple.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/cpu/paging.cpp"
@@ -181,17 +183,17 @@ set(SOURCES
 )
 
 if(${EMSCRIPTEN})
-	add_library(bin-asyncify OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY} "${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-asyncify.cpp")
-    target_compile_definitions(bin-asyncify PUBLIC -DEMTERPRETER_SYNC -DASYNCIFY -Demscripten_sleep_with_yield=asyncify_sleep_with_yield)
+	add_library(bin-asyncify OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
+        target_compile_definitions(bin-asyncify PUBLIC -DEMTERPRETER_SYNC -DASYNCIFY -Demscripten_sleep_with_yield=asyncify_sleep -Demscripten_sleep=asyncify_sleep)
 	add_executable(wdosbox $<TARGET_OBJECTS:bin-asyncify>)
 	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
-	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
+	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
 	add_executable(wdosbox-profiling $<TARGET_OBJECTS:bin-asyncify>)
 	set_target_properties(wdosbox-profiling PROPERTIES SUFFIX .js)
-	set_target_properties(wdosbox-profiling PROPERTIES LINK_FLAGS "--profiling-funcs -s WASM=1 -s ASYNCIFY -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
+	set_target_properties(wdosbox-profiling PROPERTIES LINK_FLAGS "--profiling-funcs -s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\", \"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
 	add_executable(dosbox $<TARGET_OBJECTS:bin-asyncify>)
 	set_target_properties(dosbox PROPERTIES SUFFIX .js)
-	set_target_properties(dosbox PROPERTIES LINK_FLAGS "-s WASM=0 -s ALLOW_MEMORY_GROWTH=0 --memory-init-file 0 -s ASYNCIFY -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
+	set_target_properties(dosbox PROPERTIES LINK_FLAGS "-s WASM=0 -s ALLOW_MEMORY_GROWTH=0 --memory-init-file 0 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\", \"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
 
 	add_library(bin-emterp OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
     target_compile_definitions(bin-emterp PUBLIC -DEMTERPRETER_SYNC)

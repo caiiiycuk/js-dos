@@ -29,6 +29,8 @@
 #include <sstream>
 #if defined(EMSCRIPTEN)
 #include <emscripten.h>
+#else
+#include <emscripten_stub.h>
 #endif
 using namespace std;
 

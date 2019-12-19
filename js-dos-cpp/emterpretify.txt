@@ -1,4 +1,6 @@
 [
+"_asyncify_sleep_with_yield",
+"_syncSleep",
 "_main",
 "__Z10SHELL_Initv",
 "__Z12DOS_ReadFiletPhPtb",
@@ -7,6 +9,7 @@
 "__Z19CALLBACK_RunRealFartt",
 "__Z13CALLBACK_Idlev",
 "__ZL11Normal_Loopv",
+"__Z13increaseticksv",
 "__ZL13DOS_21Handlerv",
 "__ZL16PROGRAMS_Handlerv",
 "__ZN10device_CON4ReadEPhPt",
