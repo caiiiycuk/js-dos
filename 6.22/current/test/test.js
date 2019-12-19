@@ -245,13 +245,13 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Build = {
-  version: "6.22.56 (0ea34a083a8479fb83672778b7d01f2c)",
-  jsVersion: "e067ab0a299616d934f2d3cf0e0f02d23ded1d2f",
-  wasmJsSize: 189847,
-  wasmVersion: "d2dbc5fdc92d8e92c35105131b49a979",
-  wasmSize: 1808702,
-  jsSize: 6646940,
-  buildSeed: 1575907786319
+  version: "6.22.58 (a9107df98f77fd4ca7bd4992c74fdff7)",
+  jsVersion: "d9155f5d1924730bf09ec6ff9d05d8c72a3740d2",
+  wasmJsSize: 189747,
+  wasmVersion: "71fe9ff4a95b096864d85d8faad0ec21",
+  wasmSize: 1809263,
+  jsSize: 6656119,
+  buildSeed: 1576774001420
 };
 
 },{}],4:[function(require,module,exports){
@@ -7071,7 +7071,7 @@ var do_1 = require("./do"); // Compare
 
 function compareAndExit(imageUrl, ci, done) {
   compare(imageUrl, ci, function (wrong) {
-    assert.equal(0, wrong);
+    assert.ok(wrong <= 10, "Image not same, wrong: " + wrong);
     ci.exit();
     done();
   });
