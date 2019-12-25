@@ -37,7 +37,7 @@ bool initSyncSleep() {
             }
 
             Module.sync_wakeUp = wakeUp;
-            window.postMessage({ type: "sync_sleep_message", id: Module.sync_id });
+            window.postMessage({ type: "sync_sleep_message", id: Module.sync_id }, "*");
         };
 
         Module.receive = function(ev) {
