@@ -85,10 +85,19 @@ export default function Renderer(props: { path: string, cycles: string, autolock
     if (!Number.parseInt(cycles)) {
       cycles = "\"" + cycles + "\"";
     }
-    const newContent = (content + "")
-      .replace(/autolock:.*/, "autolock: " + autolock + ",")
-      .replace(/cycles:.*/, "cycles: " + cycles + ",")
-      .replace(/wdosboxUrl:.*/, "wdosboxUrl: \"https://js-dos.com/6.22/current/" + variant + "\",");
+    
+    let newContent = (content + "")
+        .replace(/autolock:.*/, "autolock: " + autolock + ",")
+        .replace(/cycles:.*/, "cycles: " + cycles + ",");
+
+    if (variant.startsWith("archive/")) {
+        variant = "6.22/" + variant + "/wdosbox.js";
+        newContent = newContent.replace(/wdosboxUrl:.*/, 
+            "wdosboxUrl: \"https://js-dos.com/" + variant + "\",");
+    } else {
+        newContent = newContent.replace(/wdosboxUrl:.*/, 
+            "wdosboxUrl: \"https://js-dos.com/6.22/current/" + variant + "\",");
+    }
 
     return newContent;
   }
@@ -160,6 +169,8 @@ export default function Renderer(props: { path: string, cycles: string, autolock
           "wdosbox.js", "wdosbox-emterp.js", "wdosbox-nosync.js",
           "dosbox.js", "dosbox-emterp.js", "dosbox-nosync.js", 
           "wdosbox-profiling.js", "wdosbox-emterp-profiling.js", "wdosbox-nosync-profiling.js",
+	  "archive/6.22.29", "archive/6.22.33", "archive/6.22.37", "archive/6.22.41",
+	  "archive/6.22.45", "archive/6.22.49", "archive/6.22.53", "archive/6.22.59",
         ]} value={wdosboxUrl}
           onChange={(ev) => doSetVariant(ev.currentTarget.value)}></HTMLSelect>
         <NavbarDivider></NavbarDivider>
