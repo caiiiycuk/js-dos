@@ -142,6 +142,16 @@ affects performance.
 ### Latest
 ![Current results for `6.22.59`](/6.22/performance/6.22.59.png)
 
+Host for this run is **Ubuntu 19.10 Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz**.
+Host result for same test but with native dosbox is **125**.
+
+Current version is **~6 times slower then native dosbox**. Optimal version to use is
+a **asyncify** (wdosbox.js) which have similar performance as a nosync version (wdosbox-nosync.js)
+but much more stable. 
+
+ASM.JS versions emterpJs (wdosbox-emterp.js) and nosyncJs (wdosbox-nosync.js) have better performance
+only in Firefox, other browser seems does not do any optimization and performance is much worse.
+
 ### 6.22.53
 ![Current results for `6.22.53`](/6.22/performance/6.22.53.png)
 
@@ -153,16 +163,6 @@ affects performance.
 |asyncifyJs|2,12|0,96|0,12|0,03|0,1|
 |emterpJs|0,2|7,19|2|0,84|0,88|
 |nosyncJs|0,21|9,02|1,95|0|0|
-
-Host for this run is **Ubuntu 19.10 Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz**.
-Host result for same test but with native dosbox is **125**.
-
-Current version is **~10 times slower then native dosbox**. Optimal version to use is
-a **asyncify** (wdosbox.js) whice have similar performance as a nosync version (wdosbox-nosync.js)
-but much more stable. 
-
-ASM.JS versions emterpJs (wdosbox-emterp.js) and nosyncJs (wdosbox-nosync.js) have better performance
-only in Firefox, other browser seems does not do any optimization and performance is much worse.
 
 
 ## API Reference
