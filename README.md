@@ -130,7 +130,7 @@ Please open issue on github if you want to add link for another site that uses j
 
 ## Preformance
 
-To measure performance used variant of **Dhrystone 2 Test** originally taken from [this page](http://www.roylongbottom.org.uk/dhrystone%20results.htm). Original version used `clock()` to calculate delta time. Which is good for real pc, but does not very accurate for dosbox emulator. When `clock()` call happend modifed version send `~>dtime` marker which intercepted by test page
+To measure performance used variant of **Dhrystone 2 Test** originally taken from [this page](http://www.roylongbottom.org.uk/dhrystone%20results.htm). Original version used `clock()` to calculate delta time. Which is good for real pc, but does not very accurate for dosbox emulator. When `clock()` call happened modified version send `~>dtime` marker which intercepted by test page
 and used to calculate delta time with `performance.now()` from browser. Source code of modified test is [here](https://github.com/caiiiycuk/js-dos/tree/6.22/programms/dhry2). 
 
 Basically this test produce a lot of int operations and measure amount of operations (Dhrystones) produced per second. Output is 
@@ -139,6 +139,10 @@ a **VAX MIPS RATING** which is Drhystones per second divided by 1757 (is as DEC 
 You can run [this test](https://js-dos.com/6.22/examples/?dhry2) for your PC, change variant and see how different implementations
 affects performance.
 
+### Latest
+![Current results for `6.22.59`](/6.22/performance/6.22.59.png)
+
+### 6.22.53
 ![Current results for `6.22.53`](/6.22/performance/6.22.53.png)
 
 ||iPhone 8 2.1Ghz|Linux FF i7 - 2.7Ghz|Linux Chrome i7 - 2.7GHz|Xiaomi Mi Max 2 - 2Ghz|Huawei Mate 10 Pro 2.36Ghz|
