@@ -10,6 +10,7 @@ void MemSearchExecute();
 void MemSearchShowResult();
 
 void WriteSnapshot();
-void RestoreSnapshot();
+
+bool RestoreSnapshot();
 
 #endif //JS_DOS_JS_DOS_DEBUG_MEM_H

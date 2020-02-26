@@ -60,6 +60,7 @@ set(SOURCES
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-debug.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-debug-mem.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-asyncify.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-core.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dosbox.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/cpu/core_simple.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/cpu/paging.cpp"

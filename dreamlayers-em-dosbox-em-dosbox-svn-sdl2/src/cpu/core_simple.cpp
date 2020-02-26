@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 
+
 #include "dosbox.h"
 #include "mem.h"
 #include "cpu.h"
@@ -26,6 +27,9 @@
 #include "callback.h"
 #include "pic.h"
 #include "fpu.h"
+
+#include <js-dos-core.h>
+static CoreSimple& core = *getCoreSimple();
 
 #if C_DEBUG
 #include "debug.h"
@@ -80,20 +84,6 @@ extern Bitu cycle_count;
 typedef PhysPt (*GetEAHandler)(void);
 
 static const Bit32u AddrMaskTable[2]={0x0000ffff,0xffffffff};
-
-static struct {
-	Bitu opcode_index;
-#if defined (_MSC_VER)
-	volatile HostPt cseip;
-#else
-	HostPt cseip;
-#endif
-	PhysPt base_ds,base_ss;
-	SegNames base_val_ds;
-	bool rep_zero;
-	Bitu prefixes;
-	GetEAHandler * ea_table;
-} core;
 
 #define GETIP		(core.cseip-SegBase(cs)-MemBase)
 #define SAVEIP		reg_eip=GETIP;

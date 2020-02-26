@@ -47,6 +47,7 @@
 #include "ints/int10.h"
 #include "render.h"
 #include "pci_bus.h"
+#include <js-dos-debug-mem.h>
 
 #if !SDL_VERSION_ATLEAST(2,0,0)
 #define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)

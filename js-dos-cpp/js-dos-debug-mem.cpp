@@ -17,11 +17,12 @@
 #include <video.h>
 #include <render.h>
 #include <vga.h>
+#include <js-dos-core.h>
 
 extern Bit32u GetAddress(Bit16u seg, Bit32u offset);
 extern void DEBUG_ShowMsg(char const* format,...);
 
-const auto addressableSegments = 1; // 64Kb
+const auto addressableSegments = 32; // 1 segment == W64Kb
 const auto addressableOffsets = 0xFFFF;
 
 std::unordered_set<Bit8u> watchingValues;
@@ -118,7 +119,10 @@ void WriteSnapshot() {
     DEBUG_ShowMsg("Snapshot vga size %d %d\n", vga_allocsize + 16, (vga.vmemsize<<1)+4096+16);
 
     fwrite(&cpu_regs, sizeof(CPU_Regs), 1, f);
-
+    CorePrefetch* corePrefetch = getCorePrefetch();
+    CoreSimple* coreSimple = getCoreSimple();
+    fwrite(corePrefetch, sizeof(CorePrefetch), 1, f);
+    fwrite(coreSimple, sizeof(CoreSimple), 1, f);
     for (auto seg = 0; seg < segCount; ++seg) {
         for (auto offset = 0; offset < 0xFFFF; ++offset) {
             Bit8u val;
@@ -134,11 +138,11 @@ void WriteSnapshot() {
     DEBUG_ShowMsg("DEBUG: Machine dumped to snapshot.bin\n");
 }
 
-void RestoreSnapshot() {
+bool RestoreSnapshot() {
     FILE* f = fopen("snapshot.bin","rb");
     if (!f) {
         DEBUG_ShowMsg("DEBUG: Can't open snapshot.bin\n");
-        return;
+        return false;
     }
 
     Bit8u *pixels;
@@ -150,7 +154,7 @@ void RestoreSnapshot() {
     if (!GFX_StartUpdate(pixels, pitch)) {
         DEBUG_ShowMsg("DEBUG: Can't update video data\n");
         fclose(f);
-        return;
+        return false;
     }
     fread(pixels, sizeof(Bit8u), height * pitch, f);
 
@@ -171,6 +175,18 @@ void RestoreSnapshot() {
         assert(false);
     }
 
+    CorePrefetch* corePrefetch = getCorePrefetch();
+    CoreSimple* coreSimple = getCoreSimple();
+
+    GetEAHandler * prefetch_ea_table = corePrefetch->ea_table;
+    GetEAHandler * simple_ea_table = corePrefetch->ea_table;
+
+    assert(fread(corePrefetch, sizeof(CorePrefetch), 1, f) == 1);
+    assert(fread(coreSimple, sizeof(CoreSimple), 1, f) == 1);
+
+    corePrefetch->ea_table = prefetch_ea_table;
+    coreSimple->ea_table = simple_ea_table;
+
     Bit8u val;
     Bitu offset = 0;
     while (fread(&val, sizeof(Bit8u), 1, f) == 1) {
@@ -181,4 +197,5 @@ void RestoreSnapshot() {
     GFX_EndUpdate(0);
     fclose(f);
     DEBUG_ShowMsg("DEBUG: Snapshot readed from snapshot.bin\n");
+    return true;
 }

@@ -29,6 +29,9 @@
 #include "fpu.h"
 #include "paging.h"
 
+#include <js-dos-core.h>
+static CorePrefetch& core = *getCorePrefetch();
+
 #if C_DEBUG
 #include "debug.h"
 #endif
@@ -89,16 +92,6 @@ extern Bitu cycle_count;
 typedef PhysPt (*GetEAHandler)(void);
 
 static const Bit32u AddrMaskTable[2]={0x0000ffff,0xffffffff};
-
-static struct {
-	Bitu opcode_index;
-	PhysPt cseip;
-	PhysPt base_ds,base_ss;
-	SegNames base_val_ds;
-	bool rep_zero;
-	Bitu prefixes;
-	GetEAHandler * ea_table;
-} core;
 
 #define GETIP		(core.cseip-SegBase(cs))
 #define SAVEIP		reg_eip=GETIP;
