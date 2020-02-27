@@ -1,3 +1,4 @@
+project(js-dos)
 cmake_minimum_required(VERSION 3.6)
 
 if(${EMSCRIPTEN})
@@ -41,17 +42,21 @@ include(
 
 include_directories(
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/include"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/include/sokol"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/include"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2"
 )
 
-set(SOURCES_CXX11 
+set(SOURCES_CXX11
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-ci.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-events.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-json.cpp"
 #sdlmain
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/gui/sdlmain.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/gui/sdlmain.cpp"
+#	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/gui/sdlmain.cpp"
+	"js-dos-cpp/clients/sokol/js-dos-protocol-sokol.cpp"
+		"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-main.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-noop.cpp"
 )
 set_source_files_properties(${SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "-std=c++11")
 
@@ -221,7 +226,7 @@ if(${EMSCRIPTEN})
 else()
 	add_executable(bin ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	target_link_libraries(bin
-		SDL z ncurses
+		X11  z ncurses dl GL SDL pthread
 	)
 
 	set_target_properties(bin PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")

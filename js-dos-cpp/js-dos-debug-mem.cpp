@@ -83,6 +83,7 @@ void MemSearchShowResult() {
 
 
 void WriteSnapshot() {
+#if 0
     auto memSize = 16 * 1024 * 1024;
     auto segCount = memSize / 0xFFFF;
 
@@ -136,9 +137,13 @@ void WriteSnapshot() {
     GFX_EndUpdate(0);
     fclose(f);
     DEBUG_ShowMsg("DEBUG: Machine dumped to snapshot.bin\n");
+#endif
 }
 
 bool RestoreSnapshot() {
+#if 1
+    return false;
+#else
     FILE* f = fopen("snapshot.bin","rb");
     if (!f) {
         DEBUG_ShowMsg("DEBUG: Can't open snapshot.bin\n");
@@ -198,4 +203,5 @@ bool RestoreSnapshot() {
     fclose(f);
     DEBUG_ShowMsg("DEBUG: Snapshot readed from snapshot.bin\n");
     return true;
+#endif
 }

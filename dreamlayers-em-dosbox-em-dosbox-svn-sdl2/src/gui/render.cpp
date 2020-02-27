@@ -288,12 +288,17 @@ static void RENDER_Reset( void ) {
 	}
 	if ((dblh && dblw) || (render.scale.forced && !dblh && !dblw)) {
 		/* Initialize always working defaults */
+#ifndef JSDOS
 		if (render.scale.size == 2)
 			simpleBlock = &ScaleNormal2x;
 		else if (render.scale.size == 3)
 			simpleBlock = &ScaleNormal3x;
 		else
-			simpleBlock = &ScaleNormal1x;
+#endif
+        {
+            assert(render.scale.size == 1);
+            simpleBlock = &ScaleNormal1x;
+        }
 		/* Maybe override them */
 #if RENDER_USE_ADVANCED_SCALERS>0
 		switch (render.scale.op) {
@@ -597,7 +602,10 @@ void RENDER_Init(Section * sec) {
 	std::string f = prop->GetSection()->Get_string("force");
 	render.scale.forced = false;
 	if(f == "forced") render.scale.forced = true;
-   
+
+#ifdef JSDOS
+	render.scale.op = scalerOpNormal;
+#else
 	if (scaler == "none") { render.scale.op = scalerOpNormal;render.scale.size = 1; }
 	else if (scaler == "normal2x") { render.scale.op = scalerOpNormal;render.scale.size = 2; }
 	else if (scaler == "normal3x") { render.scale.op = scalerOpNormal;render.scale.size = 3; }
@@ -619,6 +627,7 @@ void RENDER_Init(Section * sec) {
 	else if (scaler == "rgb3x"){ render.scale.op = scalerOpRGB;render.scale.size = 3; }
 	else if (scaler == "scan2x"){ render.scale.op = scalerOpScan;render.scale.size = 2; }
 	else if (scaler == "scan3x"){ render.scale.op = scalerOpScan;render.scale.size = 3; }
+#endif
 #endif
 
 	//If something changed that needs a ReInit

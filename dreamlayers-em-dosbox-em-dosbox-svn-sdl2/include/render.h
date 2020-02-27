@@ -23,7 +23,13 @@
 // 1: complex scalers off, scaler cache off, all simple scalers on
 // 2: complex scalers off, scaler cache on
 // 3: complex scalers on
+#ifdef JSDOS
+// @caiiiycuk: no need to use scalers in WebAssembly build,
+// we can implement scalers better in web environment
+#define RENDER_USE_ADVANCED_SCALERS 0
+#else
 #define RENDER_USE_ADVANCED_SCALERS 3
+#endif
 
 #include "../src/gui/render_scalers.h"
 
@@ -64,7 +70,11 @@ typedef struct {
 		Bit8u hadSkip[RENDER_SKIP_CACHE];
 	} frameskip;
 	struct {
-		Bitu size;
+#ifdef JSDOS
+        const Bitu size = 1;
+#else
+        Bitu size;
+#endif
 		scalerMode_t inMode;
 		scalerMode_t outMode;
 		scalerOperation_t op;
