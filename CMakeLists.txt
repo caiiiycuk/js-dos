@@ -48,6 +48,7 @@ include_directories(
 )
 
 set(SOURCES_CXX11
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-timer.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-ci.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-events.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-json.cpp"
@@ -101,14 +102,17 @@ set(SOURCES
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/ints/int10_vesa.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/ints/int10_modes.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/drive_local.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/drive_cache.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_keyboard_layout.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom_ioctl_linux.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom_ioctl_win32.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom_aspi_win32.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom_image.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom_ioctl_os2.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_tables.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_devices.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_mscdex.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom_ioctl_win32.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_execute.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_programs.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos.cpp"
@@ -117,11 +121,8 @@ set(SOURCES
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_ioctl.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_memory.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_classes.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom_aspi_win32.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom_image.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_misc.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/drive_fat.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/cdrom_ioctl_os2.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/drive_iso.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/dos/dos_files.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/shell/shell.cpp"
@@ -229,7 +230,7 @@ if(${EMSCRIPTEN})
 else()
 	add_executable(bin ${SOURCES} ${SOURCES_CXX11} ${SOURCES_3RDPARTY})
 	target_link_libraries(bin
-		X11  z ncurses dl GL SDL pthread asound
+		X11  z ncurses dl GL  pthread asound
 	)
 
 	set_target_properties(bin PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")

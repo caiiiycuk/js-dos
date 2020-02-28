@@ -1598,7 +1598,7 @@ void WGET::Run(void) {
 		attr.onerror = downloadFailed;
 		fetchdone = false;
 		emscripten_fetch_t *fetch = emscripten_fetch(&attr, url.c_str());
-		while (!fetchdone) emscripten_sleep_with_yield(10);
+		while (!fetchdone) DelayWithYield(10);
 		if (fetchsuccess) {
 			Bit16u fhandle;
 			if (!DOS_CreateFile(outname.c_str(),OPEN_WRITE,&fhandle)) {

@@ -23,13 +23,17 @@
 #define PIT_TICK_RATE 1193182
 
 #ifdef JSDOS
-extern "C" double asyncify_ticks_ms();
-#define GetTicks() asyncify_ticks_ms()
+#define GetTicks() GetCurrentTimeMs()
 #else
 /* underlying clock rate in HZ */
 #include <SDL/SDL.h>
 #define GetTicks() SDL_GetTicks()
 #endif
+
+
+double GetCurrentTimeMs();
+void DelayWithYield(int ms);
+void Delay(int ms);
 
 typedef void (*TIMER_TickHandler)(void);
 

@@ -96,7 +96,7 @@ DB_Midi midi;
 void MIDI_RawOutByte(Bit8u data) {
 	if (midi.sysex.start) {
 		Bit32u passed_ticks = GetTicks() - midi.sysex.start;
-		if (passed_ticks < midi.sysex.delay) SDL_Delay(midi.sysex.delay - passed_ticks);
+		if (passed_ticks < midi.sysex.delay) Delay(midi.sysex.delay - passed_ticks);
 	}
 
 	/* Test for a realtime MIDI message */

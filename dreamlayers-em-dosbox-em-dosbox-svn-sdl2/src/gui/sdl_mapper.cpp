@@ -2636,7 +2636,7 @@ void MAPPER_RunInternal() {
 		}
 		BIND_MappingEvents();
 #ifdef JSDOS
-		emscripten_sleep(1);
+		Delay(1);
 #else
 		SDL_Delay(1);
 #endif

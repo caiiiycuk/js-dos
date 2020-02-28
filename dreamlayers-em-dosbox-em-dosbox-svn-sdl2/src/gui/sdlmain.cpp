@@ -434,7 +434,7 @@ static Bitu Pause_Loop(void) {
 		}
 	}
 #ifdef EMTERPRETER_SYNC
-	emscripten_sleep(10);
+	Delay(10);
 #endif
 	return 0;
 }
@@ -2091,7 +2091,7 @@ static void GUI_StartUp(Section * sec) {
 			}
 			if (exit_splash) break;
 #if defined(JSDOS) && defined(EMTERPRETER_SYNC)
-			emscripten_sleep_with_yield(1);
+			DelayWithYield(1);
 #endif
 
 			if (ct<1) {

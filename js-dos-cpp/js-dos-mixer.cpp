@@ -412,10 +412,10 @@ static void MIXER_MixData(Bitu needed) {
 
     static const int bufferSize = 8192;
     static float stream[bufferSize];
-    static double lastPushTimeMs = asyncify_ticks_ms();
+    static double lastPushTimeMs = GetCurrentTimeMs();
     static double framesRest = 0;
 
-    double nowMs = asyncify_ticks_ms();
+    double nowMs = GetCurrentTimeMs();
     double exactFrames = ((nowMs - lastPushTimeMs) / 1000.f) * mixer.freq + framesRest;
     lastPushTimeMs = nowMs;
 

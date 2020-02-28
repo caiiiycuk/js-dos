@@ -213,14 +213,7 @@ static Bitu Normal_Loop(void) {
 #if defined(JSDOS) && defined(EMTERPRETER_SYNC)
     static Uint32 lastSleepTime = GetTicks();
     if (nosleep_lock == 0 && GetTicks() - lastSleepTime > LOOP_EXECUTION_TIME) {
-#ifdef EMSCRIPTEN
-        EM_ASM(({
-        if (SDL && SDL.audio && SDL.audio.queueNewAudioData) {
-            SDL.audio.queueNewAudioData();
-        }
-    }));
-#endif
-        emscripten_sleep_with_yield(0);
+        DelayWithYield(0);
         lastSleepTime = GetTicks();
     }
 #endif
@@ -250,7 +243,7 @@ static Bitu Normal_Loop(void) {
 }
 
 //For trying other delays
-#define wrap_delay(a) //emscripten_sleep(a);
+#define wrap_delay(a) //Delay(a);
 
 void increaseticks() { //Make it return ticksRemain and set it in the function above to remove the global variable.
 	if (GCC_UNLIKELY(ticksLocked)) { // For Fast Forward Mode
