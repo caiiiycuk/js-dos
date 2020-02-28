@@ -2,6 +2,8 @@
 // Created by caiiiycuk on 13.11.2019.
 //
 
+#include <sys/time.h>
+
 #ifdef EMSCRIPTEN
 
 #import <emscripten.h>
@@ -75,4 +77,10 @@ extern "C" void asyncify_sleep(unsigned int ms) {
 #ifdef EMSCRIPTEN
     syncSleep();
 #endif
+}
+
+extern "C" double asyncify_ticks_ms() {
+    static struct timeval tp;
+    gettimeofday(&tp, 0);
+    return tp.tv_sec * 1000 + tp.tv_usec / 1000;
 }

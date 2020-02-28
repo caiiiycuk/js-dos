@@ -15,8 +15,3 @@ CorePrefetch* getCorePrefetch() {
     return &corePrefetch;
 }
 
-double getCurrentTimeInMs() {
-    static struct timeval tp;
-    gettimeofday(&tp, 0);
-    return tp.tv_sec * 1000 + tp.tv_usec / 1000;
-}

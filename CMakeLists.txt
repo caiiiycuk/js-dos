@@ -54,11 +54,13 @@ set(SOURCES_CXX11
 #sdl
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/gui/sdlmain.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/mixer.cpp"
+#	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/gui/sdl_mapper.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/gui/sdlmain.cpp"
 #sokol
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/clients/sokol/js-dos-protocol-sokol.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-main.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-mixer.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-mapper-noop.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-noop.cpp"
 )
 set_source_files_properties(${SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "-std=c++11")
@@ -127,7 +129,6 @@ set(SOURCES
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/shell/shell_batch.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/shell/shell_misc.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/gui/curstxt.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/gui/sdl_mapper.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/gui/midi.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/gui/sdl_gui.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/gui/render_scalers.cpp"

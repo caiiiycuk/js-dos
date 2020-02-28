@@ -3,14 +3,14 @@
 // Created by caiiiycuk on 26.02.2020.
 //
 
-
+#include <cstdarg>
 #include <config.h>
 #include <control.h>
 #include <video.h>
 #include <programs.h>
-#include <SDL/SDL.h>
 
 #include <js-dos-protocol.h>
+#include <mapper.h>
 
 Bit8u *surface = 0;
 Bitu surfaceWidth = 0;
@@ -99,8 +99,8 @@ static void GUI_StartUp(Section *sec) {
 
 void Config_Add_Gui() {
     Section_prop *sdl_sec = control->AddSection_prop("sdl", &GUI_StartUp);
-//    @caiiiycuk: TODO mapper
-//    sdl_sec->AddInitFunction(&MAPPER_StartUp);
+    sdl_sec->AddInitFunction(&MAPPER_StartUp);
+
     Prop_bool *Pbool;
     Prop_string *Pstring;
     Prop_int *Pint;
@@ -155,9 +155,8 @@ void Config_Add_Gui() {
     Pstring = Pmulti->GetSection()->Add_string("inactive", Property::Changeable::Always, "normal");
     Pstring->Set_values(inactt);
 
-//    @caiiiycuk: todo
-//    Pstring = sdl_sec->Add_path("mapperfile",Property::Changeable::Always,MAPPERFILE);
-//    Pstring->Set_help("File used to load/save the key/event mappings from. Resetmapper only works with the default value.");
+    Pstring = sdl_sec->Add_path("mapperfile",Property::Changeable::Always, "jsdos-mapper.json");
+    Pstring->Set_help("File used to load/save the key/event mappings from. Resetmapper only works with the default value.");
 
     Pbool = sdl_sec->Add_bool("usescancodes", Property::Changeable::Always, true);
     Pbool->Set_help("Avoid usage of symkeys, might not work on all operating systems.");
@@ -211,9 +210,6 @@ void GFX_ShowMsg(char const* format,...) {
 
 
 int jsdos_main(Config *config) {
-    // @caiiiycuk: for GetTicks()
-    SDL_Init(SDL_INIT_TIMER);
-
     // defined in control.h
     control = config;
 
@@ -296,9 +292,10 @@ int jsdos_main(Config *config) {
 //        }
 //    }
 //
-//    /* Init the keyMapper */
-//    MAPPER_Init();
-//    if (control->cmdline->FindExist("-startmapper")) MAPPER_RunInternal();
+
+    /* Init the keyMapper */
+    MAPPER_Init();
+    if (control->cmdline->FindExist("-startmapper")) MAPPER_RunInternal();
 
     /* Start up main machine */
     control->StartUp();

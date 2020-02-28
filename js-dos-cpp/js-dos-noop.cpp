@@ -2,9 +2,10 @@
 // Created by caiiiycuk on 26.02.2020.
 //
 #include <config.h>
-#include <SDL/SDL_video.h>
 #include <vector>
 #include <string>
+
+class SDL_Surface;
 
 void GFX_SetTitle(Bit32s cycles, Bits frameskip, bool paused) {
 }

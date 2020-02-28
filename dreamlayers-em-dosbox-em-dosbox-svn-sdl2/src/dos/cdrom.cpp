@@ -33,7 +33,7 @@
 #include "cdrom.h"
 
 // On all platforms, if SDL 2.0 is used then we don't support physical CD-ROMs.
-#if !defined(EMSCRIPTEN) && !SDL_VERSION_ATLEAST(2,0,0)
+#if !defined(JSDOS) && !defined(EMSCRIPTEN) && !SDL_VERSION_ATLEAST(2,0,0)
 CDROM_Interface_SDL::CDROM_Interface_SDL(void) {
 	driveID		= 0;
 	oldLeadOut	= 0;

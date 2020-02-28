@@ -19,12 +19,17 @@
 #ifndef DOSBOX_TIMER_H
 #define DOSBOX_TIMER_H
 
-/* underlying clock rate in HZ */
-#include <SDL/SDL.h>
 
 #define PIT_TICK_RATE 1193182
 
+#ifdef JSDOS
+extern "C" double asyncify_ticks_ms();
+#define GetTicks() asyncify_ticks_ms()
+#else
+/* underlying clock rate in HZ */
+#include <SDL/SDL.h>
 #define GetTicks() SDL_GetTicks()
+#endif
 
 typedef void (*TIMER_TickHandler)(void);
 
