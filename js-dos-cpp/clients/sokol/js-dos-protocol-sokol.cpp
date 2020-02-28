@@ -10,6 +10,7 @@
 
 #include "sokol_app.h"
 #include "sokol_gfx.h"
+#include "sokol_audio.h"
 
 #include "shaders.glsl330.h"
 
@@ -82,7 +83,7 @@ uint32_t *frameRgba = 0;
 
 GfxState *state = 0;
 
-extern "C" void client_set_frame_size(int width, int height) {
+extern "C" void client_frame_set_size(int width, int height) {
     std::lock_guard<std::mutex> g(mutex);
     if (frameRgba) {
         delete[] frameRgba;
@@ -92,20 +93,25 @@ extern "C" void client_set_frame_size(int width, int height) {
     frameRgba = new uint32_t[width * height];
 }
 
-extern "C" void client_open_frame() {
+extern "C" void client_frame_open() {
 }
 
-extern "C" void client_update_frame_lines(int start, int count, uint32_t *rgba) {
+extern "C" void client_frame_update_lines(int star, int count, uint32_t *rgba) {
     std::lock_guard<std::mutex> g(mutex);
     if (!frameRgba) {
         return;
     }
 
-    memcpy(&frameRgba[start * frameWidth], rgba, sizeof(uint32_t) * count * frameWidth);
+    memcpy(&frameRgba[star * frameWidth], rgba, sizeof(uint32_t) * count * frameWidth);
 }
 
-extern "C" void client_close_frame() {
+extern "C" void client_frame_close() {
 }
+
+extern "C" void client_sound_push(const float* samples, int num_samples) {
+    saudio_push(samples, num_samples);
+}
+
 
 void sokolInit() {
     sg_desc description{
@@ -117,6 +123,13 @@ void sokolInit() {
             .gl_force_gles2 = true,
     };
     sg_setup(&description);
+
+    saudio_desc desc{
+            .sample_rate = static_cast<int>(44100),
+            .num_channels = 1,
+    };
+    saudio_setup(&desc);
+    assert(saudio_isvalid());
 }
 
 void sokolFrame() {

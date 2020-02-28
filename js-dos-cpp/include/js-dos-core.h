@@ -32,5 +32,6 @@ struct CorePrefetch {
 
 extern CoreSimple* getCoreSimple();
 extern CorePrefetch* getCorePrefetch();
+double getCurrentTimeInMs();
 
 #endif //JS_DOS_JS_DOS_CORE_H

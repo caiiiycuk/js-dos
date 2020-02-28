@@ -184,9 +184,11 @@ bool RENDER_StartUpdate(void) {
 			render.fullFrame = true;
 		} else {
 			RENDER_DrawLine = RENDER_StartLineHandler;
-			if (GCC_UNLIKELY(CaptureState & (CAPTURE_IMAGE|CAPTURE_VIDEO))) 
+#ifdef JSDOS_CAPTURE
+			if (GCC_UNLIKELY(CaptureState & (CAPTURE_IMAGE|CAPTURE_VIDEO)))
 				render.fullFrame = true;
 			else
+#endif
 				render.fullFrame = false;
 		}
 	}
@@ -206,6 +208,7 @@ void RENDER_EndUpdate( bool abort ) {
 	if (GCC_UNLIKELY(!render.updating))
 		return;
 	RENDER_DrawLine = RENDER_EmptyLineHandler;
+#ifdef JSDOS_CAPTURE
 	if (GCC_UNLIKELY(CaptureState & (CAPTURE_IMAGE|CAPTURE_VIDEO))) {
 		Bitu pitch, flags;
 		flags = 0;
@@ -220,6 +223,7 @@ void RENDER_EndUpdate( bool abort ) {
 		CAPTURE_AddImage( render.src.width, render.src.height, render.src.bpp, pitch,
 			flags, fps, (Bit8u *)&scalerSourceCache, (Bit8u*)&render.pal.rgb );
 	}
+#endif
 	if ( render.scale.outWrite ) {
 #if C_CURSOUT
 		TXTOUT_EndUpdate();

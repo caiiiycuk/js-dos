@@ -1332,7 +1332,7 @@ static void erasemapperfile() {
 }
 
 //extern void UI_Init(void);
-int ____main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
 	try {
 		CommandLine com_line(argc,argv);
 		Config myconf(&com_line);

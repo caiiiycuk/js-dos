@@ -8,9 +8,12 @@
 #include <stdint.h>
 
 extern "C" void client_run();
-extern "C" void client_set_frame_size(int width, int height);
-extern "C" void client_open_frame();
-extern "C" void client_update_frame_lines(int star, int count, uint32_t *rgba);
-extern "C" void client_close_frame();
+
+extern "C" void client_frame_set_size(int width, int height);
+extern "C" void client_frame_open();
+extern "C" void client_frame_update_lines(int star, int count, uint32_t *rgba);
+extern "C" void client_frame_close();
+
+extern "C" void client_sound_push(const float* samples, int num_samples);
 
 #endif //JS_DOS_JS_DOS_PROTOCOL_H

@@ -603,7 +603,9 @@ void DOSBOX_Init(void) {
 	secprop->AddInitFunction(&IO_Init);//done
 	secprop->AddInitFunction(&PAGING_Init);//done
 	secprop->AddInitFunction(&MEM_Init);//done
+#ifdef JSDOS_CAPTURE
 	secprop->AddInitFunction(&HARDWARE_Init);//done
+#endif
 	Pint = secprop->Add_int("memsize", Property::Changeable::WhenIdle,16);
 	Pint->SetMinMax(1,63);
 	Pint->Set_help(

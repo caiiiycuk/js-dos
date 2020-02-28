@@ -35,7 +35,7 @@ Bitu GFX_SetSize(Bitu width, Bitu height, Bitu flags, double scalex, double scal
     surfaceHeight = height;
     surfacePitch = width * sizeof(uint32_t); // RGBA
     surface = new Bit8u[height * surfacePitch];
-    client_set_frame_size(width, height);
+    client_frame_set_size(width, height);
 
     return GFX_CAN_32 | GFX_CAN_RANDOM | GFX_HARDWARE;
 }
@@ -57,7 +57,7 @@ void GFX_EndUpdate(const Bit16u *changedLines) {
     }
 
     if (changedLines) {
-        client_open_frame();
+        client_frame_open();
         Bitu y = 0, index = 0;
         while (y < surfaceHeight) {
             if (!(index & 1)) {
@@ -67,12 +67,12 @@ void GFX_EndUpdate(const Bit16u *changedLines) {
                 int rgbaSize = count * surfacePitch;
                 uint32_t rgba[rgbaSize];
                 memcpy(rgba, &surface[y * surfacePitch], rgbaSize);
-                client_update_frame_lines(y, count, rgba);
+                client_frame_update_lines(y, count, rgba);
                 y += count;
             }
             index++;
         }
-        client_close_frame();
+        client_frame_close();
     }
 
     surfaceUpdating = false;
