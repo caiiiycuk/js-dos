@@ -42,7 +42,6 @@ public:
     sg_bindings bind;
 
     GfxState(int width, int height) : width(width), height(height) {
-
         sg_buffer_desc bufferDescription{
                 .size = sizeof(vertices),
                 .content = sg_query_features().origin_top_left ? vertices : verticesFlipped
@@ -113,7 +112,7 @@ void sokolInit() {
             .buffer_pool_size = 4,
             .image_pool_size = 4,
             .shader_pool_size = 4,
-            .pipeline_pool_size = 1,
+            .pipeline_pool_size = 2,
             .context_pool_size = 1,
             .gl_force_gles2 = true,
     };
@@ -163,13 +162,13 @@ extern "C" void client_run() {
             },
             .cleanup_cb = []() {
                 sokolCleanup();
+                std::terminate();
             },
 //            .event_cb = __dbgui_event,
             .width = WINDOW_WIDTH,
             .height = WINDOW_HEIGHT,
             .gl_force_gles2 = true,
     };
-
 
     _sapp_run(&appDescription);
 }

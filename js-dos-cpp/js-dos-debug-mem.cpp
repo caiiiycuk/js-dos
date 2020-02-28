@@ -1,7 +1,7 @@
 //
 // Created by caiiiycuk on 09.12.2019.
 //
-
+#ifdef C_HEAVY_DEBUG
 #include <dosbox.h>
 #include <cstdlib>
 #include <mem.h>
@@ -205,3 +205,4 @@ bool RestoreSnapshot() {
     return true;
 #endif
 }
+#endif

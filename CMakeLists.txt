@@ -28,8 +28,8 @@ if(${EMSCRIPTEN})
 	add_definitions(-DEMSCRIPTEN)		
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
-	add_definitions(-DC_DEBUG=1 -DC_HEAVY_DEBUG=1 -DEMSCRIPTEN_KEEPALIVE=)
-	add_definitions(-DEMTERPRETER_SYNC)
+#	add_definitions(-DC_DEBUG=1 -DC_HEAVY_DEBUG=1)
+	add_definitions(-DEMSCRIPTEN_KEEPALIVE= -DEMTERPRETER_SYNC)
 
 	include_directories("${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/linux")
 endif()
@@ -51,11 +51,14 @@ set(SOURCES_CXX11
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-ci.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-events.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-json.cpp"
-#sdlmain
+#sdl
+#	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/mixer.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/gui/sdlmain.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/gui/sdlmain.cpp"
-	"js-dos-cpp/clients/sokol/js-dos-protocol-sokol.cpp"
-		"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-main.cpp"
+#sokol
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/clients/sokol/js-dos-protocol-sokol.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-main.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-mixer.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-noop.cpp"
 )
 set_source_files_properties(${SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "-std=c++11")
@@ -154,7 +157,6 @@ set(SOURCES
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/vga_draw.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/ipx.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/adlib.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/mixer.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/iohandler.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/joystick.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/vga_seq.cpp"

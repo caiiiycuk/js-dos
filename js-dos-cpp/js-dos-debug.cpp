@@ -1,6 +1,7 @@
 //
 // Created by caiiiycuk on 09.12.2019.
 //
+#ifdef C_HEAVY_DEBUG
 #include <dosbox.h>
 #include <cstring>
 #include "js-dos-debug-mem.h"
@@ -36,3 +37,4 @@ bool DEBUG_JsDos_ParseCommand(char *str) {
 
     return false;
 }
+#endif

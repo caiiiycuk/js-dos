@@ -196,6 +196,20 @@ void Config_Emscripten() {
 #endif
 }
 
+/* static variable to show wether there is not a valid stdout.
+ * Fixes some bugs when -noconsole is used in a read only directory */
+static bool no_stdout = false;
+void GFX_ShowMsg(char const* format,...) {
+    char buf[512];
+    va_list msg;
+    va_start(msg,format);
+    vsprintf(buf,format,msg);
+    strcat(buf,"\n");
+    va_end(msg);
+    if(!no_stdout) printf("%s",buf); //Else buf is parsed again.
+}
+
+
 int jsdos_main(Config *config) {
     // @caiiiycuk: for GetTicks()
     SDL_Init(SDL_INIT_TIMER);
@@ -299,7 +313,6 @@ int main(int argc, char *argv[]) {
 
     CommandLine commandLine(argc, argv);
     Config config(&commandLine);
-
     return jsdos_main(&config);
 }
 
