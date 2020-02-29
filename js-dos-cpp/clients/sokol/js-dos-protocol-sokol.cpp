@@ -165,6 +165,10 @@ void sokolCleanup() {
     sg_shutdown();
 }
 
+void keyEvent(const sapp_event* event) {
+    server_add_key((KBD_KEYS) event->key_code, event->type == SAPP_EVENTTYPE_KEY_DOWN);
+}
+
 extern "C" void client_run() {
     sapp_desc appDescription {
             .init_cb = []() {
@@ -177,7 +181,14 @@ extern "C" void client_run() {
                 sokolCleanup();
                 std::terminate();
             },
-//            .event_cb = __dbgui_event,
+            .event_cb = [](const sapp_event* event) {
+                switch (event->type) {
+                    case SAPP_EVENTTYPE_KEY_DOWN:
+                    case SAPP_EVENTTYPE_KEY_UP:
+                        keyEvent(event);
+                    break;
+                }
+            },
             .width = WINDOW_WIDTH,
             .height = WINDOW_HEIGHT,
             .gl_force_gles2 = true,

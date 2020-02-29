@@ -8,6 +8,7 @@
 #include <control.h>
 #include <video.h>
 #include <programs.h>
+#include <mutex>
 
 #include <js-dos-protocol.h>
 #include <mapper.h>
@@ -302,6 +303,28 @@ int jsdos_main(Config *config) {
     /* Shutdown everything */
 
     return 0;
+}
+
+std::mutex eventsMutex;
+struct KeyEvent {
+    KBD_KEYS key;
+    bool pressed;
+};
+
+std::vector<KeyEvent> keyEvents;
+
+void GFX_Events() {
+    std::lock_guard<std::mutex> g(eventsMutex);
+    for (auto next : keyEvents) {
+        KEYBOARD_AddKey(next.key, next.pressed);
+    }
+    keyEvents.clear();
+}
+
+
+extern "C" void server_add_key(KBD_KEYS key, bool pressed) {
+    std::lock_guard<std::mutex> g(eventsMutex);
+    keyEvents.push_back({ key, pressed });
 }
 
 #include <thread>
