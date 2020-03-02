@@ -8,10 +8,25 @@
 #include <control.h>
 #include <video.h>
 #include <programs.h>
-#include <mutex>
 
 #include <js-dos-protocol.h>
 #include <mapper.h>
+
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#else
+#include <thread>
+#include <mutex>
+
+std::mutex eventsMutex;
+#endif
+
+// TODO:
+bool canUsePointerLock = false;
+bool isPointerLocked() {
+    return false;
+}
 
 Bit8u *surface = 0;
 Bitu surfaceWidth = 0;
@@ -305,7 +320,6 @@ int jsdos_main(Config *config) {
     return 0;
 }
 
-std::mutex eventsMutex;
 struct KeyEvent {
     KBD_KEYS key;
     bool pressed;
@@ -314,7 +328,10 @@ struct KeyEvent {
 std::vector<KeyEvent> keyEvents;
 
 void GFX_Events() {
+#ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(eventsMutex);
+#endif
+
     for (auto next : keyEvents) {
         KEYBOARD_AddKey(next.key, next.pressed);
     }
@@ -323,13 +340,19 @@ void GFX_Events() {
 
 
 extern "C" void server_add_key(KBD_KEYS key, bool pressed) {
+#ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(eventsMutex);
+#endif
+
     keyEvents.push_back({ key, pressed });
 }
 
-#include <thread>
 int main(int argc, char *argv[]) {
+#ifdef EMSCRIPTEN
+    client_run();
+#else
     std::thread client(client_run);
+#endif
 
     CommandLine commandLine(argc, argv);
     Config config(&commandLine);

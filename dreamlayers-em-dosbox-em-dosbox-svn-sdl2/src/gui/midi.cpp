@@ -22,7 +22,7 @@
 #include <string>
 #include <algorithm>
 
-#include "SDL/SDL.h"
+//#include "SDL/SDL.h"
 
 #include "dosbox.h"
 #include "midi.h"

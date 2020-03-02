@@ -229,7 +229,8 @@ void Events::fixEventKeyCode(SDL_Event* event) {
 
 std::vector<SDL_Event> sdlEvents;
 int Events::pollSDLEvent(SDL_Event *event) {
-  auto result = 0;//SDL_PollEvent(event);
+    //TODO
+  auto result = 0;// SDL_PollEvent(event);
   if (result == 0) {
     if (!sdlEvents.empty()) {
       *event = sdlEvents.back();

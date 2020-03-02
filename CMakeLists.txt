@@ -185,7 +185,7 @@ set(SOURCES
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/misc/cross.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/misc/support.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/misc/messages.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/libs/gui_tk/gui_tk.cpp"
+#	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/libs/gui_tk/gui_tk.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/hardware/opl.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/libs/zmbv/drvproc.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/libs/zmbv/zmbv.cpp"

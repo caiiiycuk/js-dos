@@ -49,7 +49,7 @@
 #include "pci_bus.h"
 #include <js-dos-debug-mem.h>
 
-#if !SDL_VERSION_ATLEAST(2,0,0)
+#if 1 // !SDL_VERSION_ATLEAST(2,0,0)
 #define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)
 #endif
 
@@ -211,7 +211,7 @@ static Bitu Normal_Loop(void) {
 
 	Bits ret;
 #if defined(JSDOS) && defined(EMTERPRETER_SYNC)
-    static Uint32 lastSleepTime = GetTicks();
+    static uint32_t lastSleepTime = GetTicks();
     if (nosleep_lock == 0 && GetTicks() - lastSleepTime > LOOP_EXECUTION_TIME) {
         DelayWithYield(0);
         lastSleepTime = GetTicks();
@@ -440,9 +440,9 @@ static void em_main_loop(void) {
     // to solve this we will try to emulate as much as
     // we can while we fit into 60 fps (16ms)
 
-    Uint32 startedAt = GetTicks();
-    Uint32 usedTime;
-    Uint32 count = 0;
+    uint32_t startedAt = GetTicks();
+    uint32_t usedTime;
+    uint32_t count = 0;
     Bitu ret;
 
     do {
@@ -471,7 +471,7 @@ void DOSBOX_RunMachine(void){
         return;
 	}
 #endif
-    Uint32 ticksStart = GetTicks();
+    uint32_t ticksStart = GetTicks();
 	Bitu ret;
 	do {
 		ret=(*loop)();

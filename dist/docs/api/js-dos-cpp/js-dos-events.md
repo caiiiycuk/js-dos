@@ -380,7 +380,22 @@ printf("event-out  %d %d \n", event->key.keysym.sym, event->key.keysym.scancode)
 
 std::vector<SDL_Event> sdlEvents;
 int Events::pollSDLEvent(SDL_Event *event) {
-  auto result = SDL_PollEvent(event);
+
+```
+
+
+
+
+
+
+
+TODO
+
+
+  
+
+```
+  auto result = 0;// SDL_PollEvent(event);
   if (result == 0) {
     if (!sdlEvents.empty()) {
       *event = sdlEvents.back();

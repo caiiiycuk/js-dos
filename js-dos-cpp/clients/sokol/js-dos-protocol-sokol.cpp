@@ -6,15 +6,27 @@
 
 #define SOKOL_NO_ENTRY
 #define SOKOL_IMPL
+
+#ifdef EMSCRIPTEN
+#define SOKOL_GLES2
+#else
 #define SOKOL_GLCORE33
+#endif
 
 #include "sokol_app.h"
 #include "sokol_gfx.h"
 #include "sokol_audio.h"
 
+#ifdef EMSCRIPTEN
+#include "shaders.glsl100.h"
+#else
 #include "shaders.glsl330.h"
+#endif
 
+#ifndef EMSCRIPTEN
 #include <mutex>
+std::mutex mutex;
+#endif
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 400
@@ -42,33 +54,32 @@ public:
     sg_pipeline pipeline;
     sg_bindings bind;
 
-    GfxState(int width, int height) : width(width), height(height) {
-        sg_buffer_desc bufferDescription{
-                .size = sizeof(vertices),
-                .content = sg_query_features().origin_top_left ? vertices : verticesFlipped
-        };
+    GfxState(int width, int height) : width(width), height(height),
+        pass({}), pipeline({}), bind({}) {
+
+        sg_buffer_desc bufferDescription = {};
+        bufferDescription.size = sizeof(vertices);
+        bufferDescription.content = sg_query_features().origin_top_left ? vertices : verticesFlipped;
+
         bind.vertex_buffers[0] = sg_make_buffer(&bufferDescription);
 
-        sg_pipeline_desc pipelineDescription{
-                .shader = sg_make_shader(display_shader_desc()),
-                .primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP
-        };
+        sg_pipeline_desc pipelineDescription = {};
+        pipelineDescription.shader = sg_make_shader(display_shader_desc());
+        pipelineDescription.primitive_type = SG_PRIMITIVETYPE_TRIANGLE_STRIP;
         pipelineDescription.layout.attrs[0].format = SG_VERTEXFORMAT_FLOAT2;
         pipelineDescription.layout.attrs[1].format = SG_VERTEXFORMAT_FLOAT2;
-
-        sg_image_desc imageDescription{
-                .width = width,
-                .height = height,
-                .pixel_format = SG_PIXELFORMAT_RGBA8,
-                .min_filter = SG_FILTER_LINEAR,
-                .mag_filter = SG_FILTER_LINEAR,
-                .wrap_u = SG_WRAP_CLAMP_TO_EDGE,
-                .wrap_v = SG_WRAP_CLAMP_TO_EDGE
-        };
-        imageDescription.usage = SG_USAGE_STREAM;
-
-        bind.fs_images[0] = sg_make_image(&imageDescription);
         pipeline = sg_make_pipeline(&pipelineDescription);
+
+        sg_image_desc imageDescription = {};
+        imageDescription.width = width;
+        imageDescription.height = height;
+        imageDescription.pixel_format = SG_PIXELFORMAT_RGBA8;
+        imageDescription.min_filter = SG_FILTER_LINEAR;
+        imageDescription.mag_filter = SG_FILTER_LINEAR;
+        imageDescription.wrap_u = SG_WRAP_CLAMP_TO_EDGE;
+        imageDescription.wrap_v = SG_WRAP_CLAMP_TO_EDGE;
+        imageDescription.usage = SG_USAGE_STREAM;
+        bind.fs_images[0] = sg_make_image(&imageDescription);
     }
 
     ~GfxState() {
@@ -76,7 +87,6 @@ public:
     }
 };
 
-std::mutex mutex;
 int frameWidth = 0;
 int frameHeight = 0;
 uint32_t *frameRgba = 0;
@@ -84,7 +94,10 @@ uint32_t *frameRgba = 0;
 GfxState *state = 0;
 
 extern "C" void client_frame_set_size(int width, int height) {
+#ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(mutex);
+#endif
+
     if (frameRgba) {
         delete[] frameRgba;
     }
@@ -97,7 +110,10 @@ extern "C" void client_frame_open() {
 }
 
 extern "C" void client_frame_update_lines(int star, int count, uint32_t *rgba) {
+#ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(mutex);
+#endif
+
     if (!frameRgba) {
         return;
     }
@@ -114,26 +130,28 @@ extern "C" void client_sound_push(const float* samples, int num_samples) {
 
 
 void sokolInit() {
-    sg_desc description{
-            .buffer_pool_size = 4,
-            .image_pool_size = 4,
-            .shader_pool_size = 4,
-            .pipeline_pool_size = 2,
-            .context_pool_size = 1,
-            .gl_force_gles2 = true,
-    };
-    sg_setup(&description);
+    sg_desc gfxDescription = {};
+    gfxDescription.buffer_pool_size = 4;
+    gfxDescription.image_pool_size = 4;
+    gfxDescription.shader_pool_size = 4;
+    gfxDescription.pipeline_pool_size = 2;
+    gfxDescription.context_pool_size = 1;
+    gfxDescription.gl_force_gles2 = true;
 
-    saudio_desc desc{
-            .sample_rate = static_cast<int>(44100),
-            .num_channels = 1,
-    };
-    saudio_setup(&desc);
+    sg_setup(&gfxDescription);
+
+    saudio_desc audioDescription = {};
+    audioDescription.sample_rate = static_cast<int>(44100);
+    audioDescription.num_channels = 1;
+
+    saudio_setup(&audioDescription);
     assert(saudio_isvalid());
 }
 
 void sokolFrame() {
+#ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(mutex);
+#endif
 
     if (frameWidth == 0 || frameHeight == 0) {
         return;
@@ -146,11 +164,11 @@ void sokolFrame() {
         state = new GfxState(frameWidth, frameHeight);
     }
 
-    sg_image_content imageContent;
-    imageContent.subimage[0][0] = {
-            .ptr = frameRgba,
-            .size = (state->width) * (state->height) * (int) sizeof(uint32_t)
-    };
+    sg_image_content imageContent = {};
+    imageContent.subimage[0][0] = {};
+    imageContent.subimage[0][0].ptr = frameRgba;
+    imageContent.subimage[0][0].size = (state->width) * (state->height) * (int) sizeof(uint32_t);
+
     sg_update_image(state->bind.fs_images[0], &imageContent);
 
     sg_begin_default_pass(&state->pass, state->width, state->height);
@@ -170,29 +188,34 @@ void keyEvent(const sapp_event* event) {
 }
 
 extern "C" void client_run() {
-    sapp_desc appDescription {
-            .init_cb = []() {
+    sapp_desc appDescription = {};
+    appDescription.init_cb = []() {
                 sokolInit();
-            },
-            .frame_cb = []() {
-                sokolFrame();
-            },
-            .cleanup_cb = []() {
-                sokolCleanup();
-                std::terminate();
-            },
-            .event_cb = [](const sapp_event* event) {
-                switch (event->type) {
-                    case SAPP_EVENTTYPE_KEY_DOWN:
-                    case SAPP_EVENTTYPE_KEY_UP:
-                        keyEvent(event);
-                    break;
-                }
-            },
-            .width = WINDOW_WIDTH,
-            .height = WINDOW_HEIGHT,
-            .gl_force_gles2 = true,
+            };
+#ifndef EMSCRIPTEN
+    appDescription.frame_cb = []() {
+        sokolFrame();
     };
+#endif
+    appDescription.cleanup_cb = []() {
+        sokolCleanup();
+#ifndef EMSCRIPTEN
+        std::terminate();
+#endif
+    };
+    appDescription.event_cb = [](const sapp_event* event) {
+        switch (event->type) {
+            case SAPP_EVENTTYPE_KEY_DOWN:
+            case SAPP_EVENTTYPE_KEY_UP:
+                keyEvent(event);
+            break;
+            default:;
+        }
+    };
+    appDescription.width = WINDOW_WIDTH;
+    appDescription.height = WINDOW_HEIGHT;
+    appDescription.ios_keyboard_resizes_canvas = false;
+    appDescription.gl_force_gles2 = true;
 
     _sapp_run(&appDescription);
 }

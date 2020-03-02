@@ -46,6 +46,7 @@
 #include "mapper.h"
 #include "setup.h"
 #include "pic.h"
+#include "timer.h"
 
 enum {
 	CLR_BLACK=0,

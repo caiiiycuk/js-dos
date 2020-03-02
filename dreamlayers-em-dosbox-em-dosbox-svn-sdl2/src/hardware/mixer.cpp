@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <math.h>
+#include <SDL/SDL.h>
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
@@ -39,7 +40,7 @@
 #include <mmsystem.h>
 #endif
 
-#include "SDL/SDL.h"
+//#include "SDL/SDL.h"
 #include "mem.h"
 #include "pic.h"
 #include "dosbox.h"
