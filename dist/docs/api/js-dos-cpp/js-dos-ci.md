@@ -85,6 +85,7 @@ CommandInterface::~CommandInterface() {
 #ifdef EMSCRIPTEN
     destroySyncSleep();
     client_exit();
+    emscripten_force_exit(0);
 #endif
 }
 

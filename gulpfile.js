@@ -38,12 +38,12 @@ gulp.task("docs", ["docco"], function (cb) {
 gulp.task('generateBuildInfo', function () {
     var info = getRepoInfo();
     var wasmHash = md5File.sync('build/wdosbox.wasm');
-    var asmHash = md5File.sync('build/dosbox.js');
+    var jsHash = md5File.sync('build/wdosbox.js');
     var seed = Date.now();
     var md5Version = new MD5().update(pjson.version)
         .update(info.sha)
         .update(wasmHash)
-        .update(asmHash)
+        .update(jsHash)
         .update(seed + "")
         .digest('hex');
 
@@ -57,7 +57,7 @@ gulp.task('generateBuildInfo', function () {
         "    wasmJsSize:  " + fs.statSync("build/wdosbox.js")['size'] + ",\n" +
         "    wasmVersion: \"" + wasmHash + "\",\n" +
         "    wasmSize: " + fs.statSync("build/wdosbox.wasm")['size'] + ",\n" +
-        "    jsSize:  " + fs.statSync("build/dosbox.js")['size'] + ",\n" +
+        "    jsSize:  0,\n" +
         "    buildSeed:  " + seed + ",\n" +
         "};\n");
 })
@@ -65,37 +65,12 @@ gulp.task('generateBuildInfo', function () {
 gulp.task('copyAssets', function () {
     return gulp.src(['test/index.html',
         'build/wdosbox.js', 'build/wdosbox.js.symbols',
-        'build/wdosbox-nosync.js', 'build/wdosbox-nosync.js.symbols',
-        'build-emterp/wdosbox-emterp.js', 'build-emterp/wdosbox-emterp.js.symbols',
-        'build/wdosbox-profiling.js', 'build/wdosbox-profiling.js.symbols',
-        'build/wdosbox-nosync-profiling.js', 'build/wdosbox-nosync-profiling.js.symbols',
-        'build/dosbox.js', 'build/dosbox.js.mem', 'build/dosbox.js.symbols',
-        'build-emterp/wdosbox-emterp-profiling.js', 'build-emterp/wdosbox-emterp-profiling.js.symbols',
-        'build-emterp/dosbox-emterp.js', 'build-emterp/dosbox-emterp.js.mem', 'build-emterp/dosbox-emterp.js.symbols',
-        'build-emterp/dosbox-nosync.js', 'build-emterp/dosbox-nosync.js.mem', 'build-emterp/dosbox-nosync.js.symbols',
-    ])
-        .pipe(gulp.dest('dist'));
-});
-
-gulp.task('rewriteDefaultVersion', function () {
-    return gulp.src(['build-emterp/dosbox-emterp.js', 'build-emterp/dosbox-emterp.js.mem', 'build-emterp/dosbox-emterp.js.symbols'])
-        .pipe(rename(function (path) {
-            path.basename = 'dosbox';
-            if (path.extname !== '.js') {
-                path.basename += ".js";
-            }
-        }))
-        .pipe(gulp.dest('dist'));
+    ]).pipe(gulp.dest('dist'));
 });
 
 gulp.task('copyWasm', function () {
     return gulp.src([
         'build/wdosbox.wasm',
-        'build/wdosbox-nosync.wasm',
-        'build-emterp/wdosbox-emterp.wasm',
-        'build/wdosbox-profiling.wasm',
-        'build/wdosbox-nosync-profiling.wasm',
-        'build-emterp/wdosbox-emterp-profiling.wasm',
     ]).pipe(rename({ extname: ".wasm.js" }))
         .pipe(gulp.dest('dist'));
 });

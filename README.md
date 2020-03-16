@@ -70,6 +70,19 @@ Dos has couple configuration [options](https://js-dos.com/6.22/docs/api/generate
 
 ## Archives
 
+### Experimental version
+
+Starting from 6.22.60 js-dos will provide only asyncify powered version, because it's most
+stable and have good performance. Current version is experemental and not recommended for production
+use. Please use LTS version, while new version is under developement.
+
+The main target of experimental version is to increase js-dos performance. On first step
+we will switch js-dos to sokol library instead of SDL.
+
+### LTS Version
+
+Version 6.22.59 is a recomended version to use.
+
 You can obtain latest build using this ([versions](http://js-dos.com/#js-dos-622-faq-changing-dosbox-variant)):
 
  - js-dos api: https://js-dos.com/6.22/current/js-dos.js
@@ -562,17 +575,11 @@ Building process have two steps:
 
 Project uses dosbox as emulation layer for running dos programs. You should build it before building javascript API. To do this you should have emscripten installed in your system and CMake. Build process should be easy if you familar with cmake, just run this commands:
 ```
-// set to llvm backend
+// set to emscripten backend
 mkdir build
 cd build
 emcmake cmake ..
-make wdosbox dosbox wdosbox-sync dosbox-sync
-
-// set to fastcomp backend
-mkdir build-emterp
-cd build-emterp
-emcmake cmake ..
-make wdosbox-emterp dosbox-emterp
+make wdosbox
 ```
 
 ### JavaScript API
@@ -585,14 +592,4 @@ gulp
 Output will be placed in dist folder. Also in dist folder you can find test page, you open it in browser. All test should pass.
 ```
 firefox dist/test/test.html
-```
-
-Additionaly you can run same tests on other variants of js-dos (emterp, nosync). BUT, not all tests will pass.
-
-```
-firefox dist/test/test-js.html
-firefox dist/test/test-emterp.html
-firefox dist/test/test-js-emterp.html
-firefox dist/test/test-nosync.html
-firefox dist/test/test-js-nosync.html
 ```

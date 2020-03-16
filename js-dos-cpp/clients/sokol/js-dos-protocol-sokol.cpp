@@ -222,7 +222,6 @@ extern "C" void client_run() {
         []() {
             sokolCleanup();
 #ifdef EMSCRIPTEN
-            emscripten_force_exit(0);
 #else
             std::terminate();
 #endif

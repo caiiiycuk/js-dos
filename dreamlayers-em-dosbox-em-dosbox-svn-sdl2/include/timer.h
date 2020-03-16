@@ -25,7 +25,7 @@
 #ifdef JSDOS
 #include <cstdint>
 uint32_t GetMsPassedFromStart();
-#define GetTicks()  GetMsPassedFromStart();
+#define GetTicks()  GetMsPassedFromStart()
 #else
 /* underlying clock rate in HZ */
 #include <SDL/SDL.h>

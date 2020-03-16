@@ -449,7 +449,7 @@ test("js-dos can simulate key events", (done) => {
                 };
 
                 setTimeout(keyPress, 2000);
-                setTimeout(screenshot, 5000);
+                setTimeout(screenshot, 3000);
             });
         });
     });
