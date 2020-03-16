@@ -18,6 +18,7 @@ CommandInterface
 
 ```
 #include <js-dos-ci.h>
+#include <js-dos-protocol.h>
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 extern "C" void destroySyncSleep();
@@ -26,22 +27,6 @@ extern "C" void destroySyncSleep();
 CommandInterface::CommandInterface(): m_events(new Events()) {
 #ifdef EMSCRIPTEN
   EM_ASM(({
-
-```
-
-
-
-
-
-
-
-export whole SDL
-
-
-  
-
-```
-    Module['SDL'] = SDL;
 
 ```
 
@@ -74,16 +59,6 @@ ios.swipe.fix
 
 ```
     Module['canvas'].addEventListener('touchmove', function(event) { event.preventDefault() }, true);
-
-    var fixSounds = function(event) {
-      if (SDL && SDL.audioContext && SDL.audioContext.state) {
-          if (SDL.audioContext.state !== 'running') {
-              SDL.audioContext.resume();
-          }
-      }
-    };
-    window.addEventListener("touchstart", fixSounds, true);
-    window.addEventListener("mousedown", fixSounds, true);    
   }));
 #endif
 }
@@ -109,7 +84,7 @@ is no safe
 CommandInterface::~CommandInterface() {
 #ifdef EMSCRIPTEN
     destroySyncSleep();
-    emscripten_force_exit(0);
+    client_exit();
 #endif
 }
 

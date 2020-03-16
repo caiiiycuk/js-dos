@@ -2,16 +2,23 @@ import * as assert from "assert";
 import { DosCommandInterface } from "../js-dos-ts/js-dos-ci";
 import { doThen } from "./do";
 
+const wrongTreshold = 10;
+
 // Compare
 // =======
 // Compare image from url, and screenshot from DosBox
 
 export function compareAndExit(imageUrl: string, ci: DosCommandInterface, done: () => void) {
-    compare(imageUrl, ci, (wrong) => {
-        assert.ok(wrong <= 10, "Image not same, wrong: " + wrong);
-        ci.exit();
-        done();
-    });
+    const fn = () => {
+        compare(imageUrl, ci, (wrong) => {
+            ci.exit();
+            assert.ok(wrong <= wrongTreshold, "Image not same, wrong: " + wrong);
+            done();
+        });
+    };
+
+    // give chance to render all queued frames
+    setTimeout(fn, 300);
 }
 
 const compare = (imageUrl: string, ci: DosCommandInterface, callback: (wrong: number) => void) => {
@@ -30,13 +37,14 @@ const compare = (imageUrl: string, ci: DosCommandInterface, callback: (wrong: nu
 
             const actualImage = new Image();
             actualImage.onload = () => {
-                /*
-                document.body.appendChild(img); // for comparisons
-                var div = document.createElement('div');
-                div.innerHTML = '^=expected, v=actual';
-                document.body.appendChild(div);
-                document.body.appendChild(actualImage); // to grab it for creating the test reference
-                */
+                const renderComparsion = () => {
+                    document.body.appendChild(document.createElement("hr"));
+                    document.body.appendChild(img); // for comparisons
+                    var div = document.createElement('div');
+                    div.innerHTML = '^=expected, v=actual';
+                    document.body.appendChild(div);
+                    document.body.appendChild(actualImage); // to grab it for creating the test reference
+                };
 
                 const actualCanvas = document.createElement("canvas");
                 actualCanvas.width = actualImage.width;
@@ -58,6 +66,9 @@ const compare = (imageUrl: string, ci: DosCommandInterface, callback: (wrong: nu
 
                 // floor, to allow some margin of error for antialiasing
                 const wrong = Math.floor(total / (img.width * img.height * 3));
+                if (wrong > wrongTreshold) {
+                    renderComparsion();
+                }
                 callback(wrong);
             };
             actualImage.src = actualUrl;

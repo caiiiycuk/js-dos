@@ -345,7 +345,7 @@ void KEYBOARD_AddKey(KBD_KEYS keytype,bool pressed) {
 		KEYBOARD_AddBuffer(55|(pressed?0:0x80));
 		return;
 	default:
-		E_Exit("Unsupported key press");
+		E_Exit("Unsupported key press, keyCode: %d", keytype);
 		break;
 	}
 	/* Add the actual key in the keyboard queue */

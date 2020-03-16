@@ -1,3 +1,4 @@
+
 /* tslint:disable:max-line-length */
 /* tslint:disable:no-console */
 
@@ -438,12 +439,17 @@ test("js-dos can simulate key events", (done) => {
     doReady(dos, (fs, main) => {
         doNext(fs.extract("digger.zip"), () => {
             doNext(main(["DIGGER.COM"]), (ci) => {
-                ci.simulateKeyPress(37); // left arrow
-                const fn = () => {
+                const keyPress = () => {
+                    ci.simulateKeyPress(263); // left arrow
+                };
+
+
+                const screenshot = () => {
                     compareAndExit("digger-end.png", ci, done);
                 };
 
-                setTimeout(fn, 5000);
+                setTimeout(keyPress, 2000);
+                setTimeout(screenshot, 5000);
             });
         });
     });

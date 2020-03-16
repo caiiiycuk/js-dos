@@ -1,7 +1,23 @@
 
-//
-// Created by caiiiycuk on 26.02.2020.
-//
+
+
+
+
+
+
+
+
+
+
+
+
+Created by caiiiycuk on 26.02.2020.
+
+
+
+  
+
+```
 
 #include <cstdarg>
 #include <config.h>
@@ -22,7 +38,21 @@
 std::mutex eventsMutex;
 #endif
 
-// TODO:
+
+```
+
+
+
+
+
+
+
+TODO:
+
+
+  
+
+```
 bool canUsePointerLock = false;
 bool isPointerLocked() {
     return false;
@@ -180,9 +210,37 @@ void Config_Add_Gui() {
 void Config_Emscripten() {
 #ifdef EMSCRIPTEN
     EM_ASM(
-        // Don't copy canvas image back into RAM in SDL_LockSurface()
+
+```
+
+
+
+
+
+
+
+Don't copy canvas image back into RAM in SDL_LockSurface()
+
+
+  
+
+```
         Module['screenIsReadOnly'] = true;
-        // set nearest neighbor scaling, for sharply upscaled pixels
+
+```
+
+
+
+
+
+
+
+set nearest neighbor scaling, for sharply upscaled pixels
+
+
+  
+
+```
         var canvasStyle = Module['canvas'].style;
         canvasStyle.imageRendering = "optimizeSpeed";
         canvasStyle.imageRendering = "-moz-crisp-edges";
@@ -192,22 +250,36 @@ void Config_Emscripten() {
         canvasStyle.imageRendering = "crisp-edges";
         canvasStyle.imageRendering = "pixelated";
     );
-    // register no-op callbacks for defered events
-// TODO: @caiiiycuk
-//    emscripten_set_mousedown_callback("#canvas", NULL, false, [](int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData) {
-//        if (canUsePointerLock && !isPointerLocked()) {
-//            emscripten_request_pointerlock("#canvas", false);
-//        }
-//        return 0;
-//    });
-//    emscripten_set_pointerlockchange_callback("#document", NULL, false,
-//        [](int eventType, const EmscriptenPointerlockChangeEvent *pointerlockChangeEvent, void *userData) -> EM_BOOL {
-//            if (canUsePointerLock) {
-//                GFX_CaptureMouse();
-//                return true;
-//            }
-//            return false;
-//        });
+
+```
+
+
+
+
+
+
+
+register no-op callbacks for defered events
+TODO: @caiiiycuk
+   emscripten_set_mousedown_callback("#canvas", NULL, false, [](int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData) {
+       if (canUsePointerLock && !isPointerLocked()) {
+           emscripten_request_pointerlock("#canvas", false);
+       }
+       return 0;
+   });
+   emscripten_set_pointerlockchange_callback("#document", NULL, false,
+       [](int eventType, const EmscriptenPointerlockChangeEvent *pointerlockChangeEvent, void *userData) -> EM_BOOL {
+           if (canUsePointerLock) {
+               GFX_CaptureMouse();
+               return true;
+           }
+           return false;
+       });
+
+
+  
+
+```
 #endif
 }
 
@@ -226,7 +298,21 @@ void GFX_ShowMsg(char const* format,...) {
 
 
 int jsdos_main(Config *config) {
-    // defined in control.h
+
+```
+
+
+
+
+
+
+
+defined in control.h
+
+
+  
+
+```
     control = config;
 
     Config_Add_Gui();
@@ -237,7 +323,21 @@ int jsdos_main(Config *config) {
     std::string config_file, config_path;
     Cross::GetPlatformConfigDir(config_path);
 
-    //First parse -userconf
+
+```
+
+
+
+
+
+
+
+First parse -userconf
+
+
+  
+
+```
     if (control->cmdline->FindExist("-userconf", true)) {
         config_file.clear();
         Cross::GetPlatformConfigDir(config_path);
@@ -245,30 +345,114 @@ int jsdos_main(Config *config) {
         config_path += config_file;
         control->ParseConfigFile(config_path.c_str());
         if (!control->configfiles.size()) {
-            //Try to create the userlevel configfile.
+
+```
+
+
+
+
+
+
+
+Try to create the userlevel configfile.
+
+
+  
+
+```
             config_file.clear();
             Cross::CreatePlatformConfigDir(config_path);
             Cross::GetPlatformConfigName(config_file);
             config_path += config_file;
             if (control->PrintConfig(config_path.c_str())) {
                 LOG_MSG("CONFIG: Generating default configuration.\nWriting it to %s", config_path.c_str());
-                //Load them as well. Makes relative paths much easier
+
+```
+
+
+
+
+
+
+
+Load them as well. Makes relative paths much easier
+
+
+  
+
+```
                 control->ParseConfigFile(config_path.c_str());
             }
         }
     }
 
-    //Second parse -conf switches
+
+```
+
+
+
+
+
+
+
+Second parse -conf switches
+
+
+  
+
+```
     while (control->cmdline->FindString("-conf", config_file, true)) {
         if (!control->ParseConfigFile(config_file.c_str())) {
-            // try to load it from the user directory
+
+```
+
+
+
+
+
+
+
+try to load it from the user directory
+
+
+  
+
+```
             control->ParseConfigFile((config_path + config_file).c_str());
         }
     }
-    // if none found => parse localdir conf
+
+```
+
+
+
+
+
+
+
+if none found => parse localdir conf
+
+
+  
+
+```
     if (!control->configfiles.size()) control->ParseConfigFile("dosbox.conf");
 
-    // if none found => parse userlevel conf
+
+```
+
+
+
+
+
+
+
+if none found => parse userlevel conf
+
+
+  
+
+```
     if (!control->configfiles.size()) {
         config_file.clear();
         Cross::GetPlatformConfigName(config_file);
@@ -276,14 +460,42 @@ int jsdos_main(Config *config) {
     }
 
     if (!control->configfiles.size()) {
-        //Try to create the userlevel configfile.
+
+```
+
+
+
+
+
+
+
+Try to create the userlevel configfile.
+
+
+  
+
+```
         config_file.clear();
         Cross::CreatePlatformConfigDir(config_path);
         Cross::GetPlatformConfigName(config_file);
         config_path += config_file;
         if (control->PrintConfig(config_path.c_str())) {
             LOG_MSG("CONFIG: Generating default configuration.\nWriting it to %s", config_path.c_str());
-            //Load them as well. Makes relative paths much easier
+
+```
+
+
+
+
+
+
+
+Load them as well. Makes relative paths much easier
+
+
+  
+
+```
             control->ParseConfigFile(config_path.c_str());
         } else {
             LOG_MSG("CONFIG: Using default settings. Create a configfile to change them");
@@ -294,20 +506,48 @@ int jsdos_main(Config *config) {
 #if (ENVIRON_LINKED)
     control->ParseEnv(environ);
 #endif
-//		UI_Init();
-//		if (control->cmdline->FindExist("-startui")) UI_Run(false);
+
+```
+
+
+
+
+
+
+
+	UI_Init();
+	if (control->cmdline->FindExist("-startui")) UI_Run(false);
+
+
+  
+
+```
     /* Init all the sections */
     control->Init();
     /* Some extra SDL Functions */
     Section_prop *sdl_sec = static_cast<Section_prop *>(control->GetSection("sdl"));
 
-//    @caiiiycuk: TODO
-//    if (control->cmdline->FindExist("-fullscreen") || sdl_sec->Get_bool("fullscreen")) {
-//        if(!sdl.desktop.fullscreen) { //only switch if not already in fullscreen
-//            GFX_SwitchFullScreen();
-//        }
-//    }
-//
+
+```
+
+
+
+
+
+
+
+   @caiiiycuk: TODO
+   if (control->cmdline->FindExist("-fullscreen") || sdl_sec->Get_bool("fullscreen")) {
+       if(!sdl.desktop.fullscreen) { //only switch if not already in fullscreen
+           GFX_SwitchFullScreen();
+       }
+   }
+
+
+
+  
+
+```
 
     /* Init the keyMapper */
     MAPPER_Init();
@@ -358,5 +598,12 @@ int main(int argc, char *argv[]) {
     Config config(&commandLine);
     return jsdos_main(&config);
 }
+
+
+
+
+```
+
+
 
 

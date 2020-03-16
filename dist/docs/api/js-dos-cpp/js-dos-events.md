@@ -10,6 +10,7 @@
 #include <js-dos-ci.h>
 #include <js-dos-events.h>
 #include <js-dos-json.h>
+#include <js-dos-protocol.h>
 #include <unordered_map>
 
 #include <SDL/SDL_events.h>
@@ -230,7 +231,7 @@ Events::Events(): browser(Browser::Other) {
   registerSendFn();
   registerExit();
   registerScreenshot();
-  registerPushSDLEvent();
+  registerKeyEvent();
 #ifdef EMSCRIPTEN
   browser = (Events::Browser) EM_ASM_INT((
     if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
@@ -311,162 +312,18 @@ void Events::supplyScreenshotIfNeeded() {
 #endif
 }
 
-void Events::fixEventKeyCode(SDL_Event* event) {
-
-```
-
-
-
-
-
-
-
-event->key.keysum.sym is used to map keys
-You can find correct key by logging CreateKeyBind
-
-
-
-
-
-
-
-
-printf("event-in  %d %d \n", event->key.keysym.sym, event->key.keysym.scancode);
-
-
-  
-
-```
-#ifdef EMSCRIPTEN
-  if (browser != Browser::Firefox) {
-    switch ((int)event->key.keysym.sym) {
-      case 186: { // ':'
-        event->key.keysym.sym = 59;
-      } break;
-      case 187: { // '='
-        event->key.keysym.sym = 61;
-      } break;
-      case 189: { // '-'
-        event->key.keysym.sym = 45;
-      } break;
-      default:;
-    }
-  }
-
-  switch ((int)event->key.keysym.sym) {
-    case 39: { // '\''
-      event->key.keysym.sym = 222;
-    } break;
-    default:;
-  }
-
-
-```
-
-
-
-
-
-
-
-printf("event-out  %d %d \n", event->key.keysym.sym, event->key.keysym.scancode);
-
-
-  
-
-```
-#endif
-}
-
-std::vector<SDL_Event> sdlEvents;
-int Events::pollSDLEvent(SDL_Event *event) {
-
-```
-
-
-
-
-
-
-
-TODO
-
-
-  
-
-```
-  auto result = 0;// SDL_PollEvent(event);
-  if (result == 0) {
-    if (!sdlEvents.empty()) {
-      *event = sdlEvents.back();
-      sdlEvents.pop_back();
-      result = 1;
-    }
-  }
-  if (result > 0 && (event->type == SDL_KEYDOWN || event->type == SDL_KEYUP)) {
-    fixEventKeyCode(event);
-  }
-  return result;
-}
-
-void Events::registerPushSDLEvent() {
+void Events::registerKeyEvent() {
 #ifdef EMSCRIPTEN
   getSendHandlers().insert(std::make_pair<>(
-          "sdl_key_event", [](const std::string &callback_name, const char *data,
-                              send_callback_fn callback_fn) {
-
-```
-
-
-
-
-
-
-
-typedef struct SDL_KeyboardEvent
-{
- Uint32 type;        /**< ::SDL_KEYDOWN or ::SDL_KEYUP */
- Uint32 windowID;    /**< The window with keyboard focus, if any */
- Uint8 state;        /**< ::SDL_PRESSED or ::SDL_RELEASED */
- Uint8 repeat;       /**< Non-zero if this is a key repeat */
- Uint8 padding2;
- Uint8 padding3;
- SDL_Keysym keysym;  /**< The key that was pressed or released */
-} SDL_KeyboardEvent;
-
-typedef struct SDL_Keysym
-{
-   SDL_Scancode scancode;      /**< SDL physical key code - see ::SDL_Scancode for details */
-   SDL_Keycode sym;            /**< SDL virtual key code - see ::SDL_Keycode for details */
-   Uint16 mod;                 /**< current key modifiers */
-   Uint32 unicode;             /**< \deprecated use SDL_TextInputEvent instead */
-} SDL_Keysym;
-
-
-  
-
-```
-              auto code = atoi(data);
-
-              SDL_Keysym keysym;
-              keysym.scancode = (SDL_Scancode) code;
-              keysym.sym = (SDL_Keycode) code;
-              keysym.mod = KMOD_NONE;
-              keysym.unicode = 0;
-
-              SDL_Event event;
-              event.key.type = SDL_KEYDOWN;
-              event.key.windowID = 0;
-              event.key.state = SDL_PRESSED;
-              event.key.repeat = 0;
-              event.key.keysym = keysym;
-              sdlEvents.insert(sdlEvents.begin(), event);
-
-              event.key.type = SDL_KEYUP;
-              event.key.state = SDL_RELEASED;
-              sdlEvents.insert(sdlEvents.begin(), event);
-              callback_fn(callback_name, jsonstream());
-          }));
+          "key_event", [](const std::string &callback_name, const char *data,
+                          send_callback_fn callback_fn) {
+                         auto length = strlen(data);
+                         auto pressed = data[length - 1] == 'p';
+                         const_cast<char*>(data)[length - 1] = 0;
+                         auto key = (KBD_KEYS) atoi(data);
+                         server_add_key(key, pressed);
+                         callback_fn(callback_name, jsonstream());
+                       }));
 #endif
 }
 

@@ -153,26 +153,14 @@ JS --> C++
 
 
 
-
-
-
-
-
-
-
-
-**sdl_event** - wrapper over SDL_PollEvent allows injecting custom events
-available events:
-* sdl_key_event - to send key press
+* key_event - to send key press
 
 
   
 
 ```
 private:
-    void registerPushSDLEvent();
-public:
-    int pollSDLEvent(SDL_Event *event);
+    void registerKeyEvent();
 
 private:
 
@@ -213,6 +201,7 @@ private:
 };
 
 #endif // _JSDOS_EVENTS_H_
+
 
 ```
 

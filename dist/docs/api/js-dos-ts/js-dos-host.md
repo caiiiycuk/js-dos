@@ -365,6 +365,7 @@ do not use dosbox.js, because it's not asm.js
                     promise.catch(onreject);
                     promise.then((wasmModule) => {
                         this.global.exports.instantiateWasm = (info: any, receiveInstance: any) => {
+                            info.env = info.env || {};
                             info.env.globalscall = (...args: any[]) => {
                                 if (module.onglobals) {
                                     module.onglobals.apply(null, args);

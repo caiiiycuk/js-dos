@@ -3,6 +3,12 @@
 //
 
 #include <js-dos-protocol.h>
+#include <js-dos-ci.h>
+
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
 
 #define SOKOL_NO_ENTRY
 #define SOKOL_IMPL
@@ -13,41 +19,43 @@
 #define SOKOL_GLCORE33
 #endif
 
-#include "sokol_app.h"
-#include "sokol_gfx.h"
-#include "sokol_audio.h"
+#include "sokol/sokol_app.h"
+#include "sokol/sokol_gfx.h"
+#include "sokol/sokol_audio.h"
 
 #ifdef EMSCRIPTEN
 #include "shaders.glsl100.h"
+
+#define WINDOW_WIDTH 320
+#define WINDOW_HEIGHT 200
 #else
 #include "shaders.glsl330.h"
-#endif
 
-#ifndef EMSCRIPTEN
 #include <mutex>
 std::mutex mutex;
-#endif
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 400
+#endif
 
+void sokolFrame();
 
 static float vertices[] = {
-        0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 1.0f,
-        1.0f, 1.0f, 1.0f, 1.0f
+    0.0f, 0.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 1.0f,
+    1.0f, 1.0f, 1.0f, 1.0f
 };
 
 static float verticesFlipped[] = {
-        0.0f, 0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, 1.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, 1.0f, 0.0f
+    0.0f, 0.0f, 0.0f, 1.0f,
+    1.0f, 0.0f, 1.0f, 1.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    1.0f, 1.0f, 1.0f, 0.0f
 };
 
 class GfxState {
-public:
+    public:
     int width;
     int height;
     sg_pass_action pass;
@@ -55,7 +63,7 @@ public:
     sg_bindings bind;
 
     GfxState(int width, int height) : width(width), height(height),
-        pass({}), pipeline({}), bind({}) {
+                                      pass({}), pipeline({}), bind({}) {
 
         sg_buffer_desc bufferDescription = {};
         bufferDescription.size = sizeof(vertices);
@@ -87,6 +95,8 @@ public:
     }
 };
 
+int renderedFrame = 0;
+int frameCount = 0;
 int frameWidth = 0;
 int frameHeight = 0;
 uint32_t *frameRgba = 0;
@@ -104,27 +114,33 @@ extern "C" void client_frame_set_size(int width, int height) {
     frameWidth = width;
     frameHeight = height;
     frameRgba = new uint32_t[width * height];
+
+#ifdef EMSCRIPTEN
+    emscripten_set_canvas_size(width, height);
+#endif
 }
 
-extern "C" void client_frame_open() {
-}
 
-extern "C" void client_frame_update_lines(int star, int count, uint32_t *rgba) {
+extern "C" void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(mutex);
 #endif
 
+    frameCount++;
     if (!frameRgba) {
         return;
     }
 
-    memcpy(&frameRgba[star * frameWidth], rgba, sizeof(uint32_t) * count * frameWidth);
+    for (uint32_t i = 0; i < count; ++i) {
+        uint32_t start = lines[i * 3];
+        uint32_t count = lines[i * 3 + 1];
+        uint32_t offset = lines[i * 3 + 2];
+        memcpy(&frameRgba[start * frameWidth], (char*) rgba + offset, sizeof(uint32_t) * count * frameWidth);
+        count--;
+    }
 }
 
-extern "C" void client_frame_close() {
-}
-
-extern "C" void client_sound_push(const float* samples, int num_samples) {
+extern "C" void client_sound_push(const float *samples, int num_samples) {
     saudio_push(samples, num_samples);
 }
 
@@ -153,7 +169,7 @@ void sokolFrame() {
     std::lock_guard<std::mutex> g(mutex);
 #endif
 
-    if (frameWidth == 0 || frameHeight == 0) {
+    if (frameWidth == 0 || frameHeight == 0 || renderedFrame == frameCount) {
         return;
     }
 
@@ -177,45 +193,63 @@ void sokolFrame() {
     sg_draw(0, 4, 1);
     sg_end_pass();
     sg_commit();
+
+    ci()->events()->frame();
+    renderedFrame = frameCount;
 }
 
 void sokolCleanup() {
     sg_shutdown();
 }
 
-void keyEvent(const sapp_event* event) {
+void keyEvent(const sapp_event *event) {
     server_add_key((KBD_KEYS) event->key_code, event->type == SAPP_EVENTTYPE_KEY_DOWN);
 }
-
+#include <ctime>
 extern "C" void client_run() {
     sapp_desc appDescription = {};
-    appDescription.init_cb = []() {
-                sokolInit();
-            };
-#ifndef EMSCRIPTEN
-    appDescription.frame_cb = []() {
-        sokolFrame();
-    };
+    appDescription.init_cb =
+        []() {
+            sokolInit();
+        };
+
+    appDescription.frame_cb =
+        []() {
+            sokolFrame();
+        };
+
+    appDescription.cleanup_cb =
+        []() {
+            sokolCleanup();
+#ifdef EMSCRIPTEN
+            emscripten_force_exit(0);
+#else
+            std::terminate();
 #endif
-    appDescription.cleanup_cb = []() {
-        sokolCleanup();
-#ifndef EMSCRIPTEN
-        std::terminate();
-#endif
-    };
-    appDescription.event_cb = [](const sapp_event* event) {
-        switch (event->type) {
+        };
+
+    appDescription.event_cb =
+        [](const sapp_event *event) {
+            switch (event->type) {
             case SAPP_EVENTTYPE_KEY_DOWN:
             case SAPP_EVENTTYPE_KEY_UP:
                 keyEvent(event);
-            break;
+                break;
             default:;
-        }
-    };
+            }
+        };
+
     appDescription.width = WINDOW_WIDTH;
     appDescription.height = WINDOW_HEIGHT;
     appDescription.ios_keyboard_resizes_canvas = false;
     appDescription.gl_force_gles2 = true;
+    appDescription.html5_ask_leave_site = false;
+    appDescription.html5_canvas_resize = true;
+    appDescription.html5_enable_shutdown = true;
 
     _sapp_run(&appDescription);
+}
+
+extern "C" void client_exit() {
+    sapp_quit(); 
 }

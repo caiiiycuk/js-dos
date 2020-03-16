@@ -25,7 +25,7 @@ if(${EMSCRIPTEN})
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString', 'UTF8ToString', 'callMain']\" \
 		-s NO_EXIT_RUNTIME=1 \
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
-	add_definitions(-DEMSCRIPTEN)		
+	add_definitions(-DEMSCRIPTEN)
 else()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
 #	add_definitions(-DC_DEBUG=1 -DC_HEAVY_DEBUG=1)

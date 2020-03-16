@@ -25,8 +25,8 @@ export class DosCommandInterface {
     private shellInputClients: Array<() => void> = [];
     private onstdout?: (data: string) => void = undefined;
     private keyEventConsumer: DosKeyEventConsumer = {
-        onPress: (keyCode) => this.simulateKeyEvent(keyCode, true),
-        onRelease: (keyCode) => this.simulateKeyEvent(keyCode, false),
+        onPress: (keyCode) => this.sendKeyEvent(keyCode, true),
+        onRelease: (keyCode) => this.sendKeyEvent(keyCode, false),
     };
     private fullscreenInitialCssStyle?: string;
 
@@ -270,29 +270,6 @@ resolves when commands sequence is executed
     }
 
 
-```
-
-
-
-
-
-
-
-* `simulateKeyEvent(keyCode, pressed)` - allows to simulate key press OR release on js-dos canvas
-
-
-  
-
-```
-    public simulateKeyEvent(keyCode: number, pressed: boolean): void {
-        const name = pressed ? "keydown" : "keyup";
-        const event = document.createEvent("KeyboardEvent") as any;
-        const getter: any = {
-            get() {
-                return this.keyCodeVal;
-            },
-        };
-
 
 ```
 
@@ -302,42 +279,16 @@ resolves when commands sequence is executed
 
 
 
-Chromium Hack
-
-
-  
-
-```
-        Object.defineProperty(event, "keyCode", getter);
-        Object.defineProperty(event, "which", getter);
-        Object.defineProperty(event, "charCode", getter);
-
-        event.initKeyboardEvent
-            ? event.initKeyboardEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, keyCode)
-            : event.initKeyEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, 0);
-
-        event.keyCodeVal = keyCode;
-        this.dos.canvas && this.dos.canvas.dispatchEvent(event);
-    }
-
-
-```
-
-
-
-
-
-
-
-* `simulateKeyPress(keyCode)` - allows to simulate key press AND release on js-dos canvas
+* `simulateKeyPress(keyCode)` - allows to simulate key press **AND** release event for key code
+see `sendKeyPress` to find meaning of keyCode
 
 
   
 
 ```
     public simulateKeyPress(keyCode: number): void {
-        this.simulateKeyEvent(keyCode, true);
-        setTimeout(() => this.simulateKeyEvent(keyCode, false), 100);
+        this.sendKeyEvent(keyCode, true);
+        setTimeout(() => this.sendKeyEvent(keyCode, false), 100);
     }
 
     public getParentDiv(): HTMLDivElement | null {
@@ -352,12 +303,31 @@ Chromium Hack
         return this.keyEventConsumer;
     }
 
-    private sendKeyPress(code: number) {
-        this.api.send("sdl_key_event", code + "");
+
+```
+
+
+
+
+
+
+
+* `sendKeyEvent(keyCode, pressed)` - use to send key press **OR** release event
+**keyCode** is a key code. Key codes are the same names and values as GLFW.
+To check the key code, look in ./dreamlayers-em-dosbox-em-dosbox-svn-sdl2/include/keyboard.h
+**pressed** is a flag that mean if key pressed or not
+
+
+  
+
+```
+    private sendKeyEvent(keyCode: number, pressed: boolean) {
+        this.api.send("key_event", keyCode + (pressed ? "p" : "r"));
     }
 
     private requestShellInput() {
-        this.sendKeyPress(13);
+        this.sendKeyEvent(257, true); // KEYCODE_ENTER
+        this.sendKeyEvent(257, false); // KEYCODE_ENTER
     }
 
     private onping(msg: string, args: any[]) {

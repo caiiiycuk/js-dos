@@ -70,8 +70,8 @@ enum KBD_KEYS {
     KBD_f9               = 298,
     KBD_f10              = 299,
     KBD_f11              = 300,
-    KBD_f12              = 301, 
-    
+    KBD_f12              = 301,
+
     /*Now the weirder keys */
     KBD_kp0             = 320,
     KBD_kp1             = 321,
@@ -90,7 +90,7 @@ enum KBD_KEYS {
     KBD_kpminus         = 333,
     KBD_kpplus          = 334,
     KBD_kpenter         = 335,
-    
+
     KBD_esc = 256,
     KBD_tab = 258,
     KBD_backspace = 259,

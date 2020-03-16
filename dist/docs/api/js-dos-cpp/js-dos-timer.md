@@ -1,6 +1,15 @@
-//
-// Created by caiiiycuk on 28.02.2020.
-//
+
+
+
+
+
+Created by caiiiycuk on 28.02.2020.
+
+
+
+  
+
+```
 
 #include <timer.h>
 #include <sys/time.h>
@@ -36,3 +45,10 @@ void Delay(int ms) {
     usleep(ms * 1000);
 #endif
 }
+
+
+```
+
+
+
+
