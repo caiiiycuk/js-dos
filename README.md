@@ -79,16 +79,21 @@ use. Please use LTS version, while new version is under developement.
 The main target of experimental version is to increase js-dos performance. On first step
 we will switch js-dos to sokol library instead of SDL.
 
+You can obtain latest build using this files **NOT RECOMMENDED**: 
+
+ - js-dos api: https://js-dos.com/6.22/current/js-dos.js
+ - dosbox: https://js-dos.com/6.22/current/wdosbox.js
+
 ### LTS Version
 
-Version 6.22.59 is a recomended version to use.
+Version 6.22.59 is a recommended version to use.
 
 You can obtain latest build using this ([versions](http://js-dos.com/#js-dos-622-faq-changing-dosbox-variant)):
 
- - js-dos api: https://js-dos.com/6.22/current/js-dos.js
- - default version: https://js-dos.com/6.22/current/wdosbox.js
- - emterpreter version: https://js-dos.com/6.22/current/wdosbox-emterp.wasm.js
- - nosync version: https://js-dos.com/6.22/current/wdosbox-nosync.wasm.js
+ - js-dos api: https://js-dos.com/6.22/lts/js-dos.js
+ - default version: https://js-dos.com/lts/wdosbox.js
+ - emterpreter version: https://js-dos.com/6.22/lts/wdosbox-emterp.wasm.js
+ - nosync version: https://js-dos.com/6.22/lts/wdosbox-nosync.wasm.js
 
 **NOTE**: do not try to use this links to serve your copy of dosbox. Because this links always pointing to latest
 version, and newest version can have breaking changes. Is better to use npx bootstrap command (above), or download latest

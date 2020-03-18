@@ -215,30 +215,12 @@ you can provide log function, to override logging, by default js-dos uses consol
 
 
 you can set alternative url for downloading js-dos script, default is `wdosbox.js`.
-Additionaly you can change which variant of js-dos script to use:
-
-* `wdosbox.js` - default variant. This version compiled with latest emscripten and in theory should work best
-* `wdosbox-emterp.js` - This version compiled with legacy fastcomp backend, can be useful in rare cases
-(e.g. if you have problems with default version)
-* `wdosbox-nosync.js` - Fastest possible version, but limited. You can't run console programs/shell
-emulation using it
-* `dosbox.js` - same as dosbox-emterp.js because default version can't be compiled to asm.js
-* `dosbox-emterp.js` - same as wdosbox-emterp.js but javascript (asm.js)
-* `dosbox-nosync.js` - same as wdosbox-nosync.js but javascript (asm.js)
-
-Also you can choose from profiling version of implementation: `wdosbox-profiling.js`,
-`wdosbox-emterp-profiling.js`, `wdosbox-nosync-profiling.js`
-
-Take in account even if you use wasm version of dosbox it will be automatically fallbacked
-to javascript version if wasm can't start.
-
-Default version have limitation and can't be compiled to asm.js, dosbox-emterp.js will be used as fallback
-for wdosbox.js
 
 
   
 
 ```
+
 }
 
 export const DosBoxConfigDefaults: DosBoxConfig = {
