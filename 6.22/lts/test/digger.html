@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>js-dos 6.22, Digger</title>
+  <script src="../js-dos.js"></script>
+  <style>
+    html, body, canvas, .dosbox-container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="jsdos"></canvas>
+  <script>
+    Dos(document.getElementById("jsdos"), {
+        wdosboxUrl: "../wdosbox.js",
+        cycles: 1000,
+        autolock: false,
+    }).ready(function (fs, main) {
+      fs.extract("https://js-dos.com/6.22/current/test/digger.zip").then(function () {
+        main(["-c", "DIGGER.COM"]).then(function (ci) {
+            window.ci = ci;
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

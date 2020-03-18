@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>js-dos 6.22, Dhrystone Benchmark</title>
+  <script src="../js-dos.js"></script>
+  <style>
+    html,
+    body,
+    canvas,
+    .dosbox-container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #results {
+      visibility: hidden;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+
+      color: white;
+      font-size: 5vh;
+      background: rgba(0.2, 0.2, 0.2, 0.8);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    #pctype {
+      font-size: 1.1em;
+      color: greenyellow;
+    }
+
+    #social {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #vk {
+      padding-left: 10px;
+    }
+  </style>
+  <script type="text/javascript" src="https://vk.com/js/api/share.js?93" charset="windows-1251"></script>
+</head>
+
+<body>
+  <canvas id="jsdos"></canvas>
+  <div id="results">
+    <p>Dhrystone rated your PC as <span id="pctype"></span></p>
+    <p>Microseconds for one run through Dhrystone: <span id="oneRunMSecs"></span></p>
+    <p>Dhrystone per Second: <span id="dhrystonesPerSec"></span></p>
+    <p>VAX MIPS rating: <span id="vaxMips"></span></p>
+    <div id="social">
+      <a id="tweet" href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text=""
+        data-url="https://js-dos.com/6.22/current/test/dhry2.html" data-show-count="false">Tweet</a>
+      <div id="vk" href="#"></div>
+    </div>
+  </div>
+  <script>
+    let dtimeIt = 0;
+    let dtimeStart = 0;
+    let dtime = 0;
+    Dos(document.getElementById("jsdos"), {
+      wdosboxUrl: "../wdosbox.js",
+      cycles: "max",
+      autolock: "false",
+    }).ready(function (fs, main) {
+      fs.extract("https://js-dos.com/6.22/current/test/dhry2.zip").then(function () {
+        main(["-c", "dhry_2.exe"]).then(function (ci) {
+          const numberOfRuns = /Number Of Runs:\s+([0-9.]+)/;
+          const result = {};
+          ci.listenStdout(function (message) {
+            const numberOfRunsMatch = numberOfRuns.exec(message);
+            if (message.startsWith("~>dtime")) {
+              dtimeIt++;
+              if (dtimeIt % 2 == 0) {
+                dtime = (performance.now() - dtimeStart) / 1000;
+              } else {
+                dtimeStart = performance.now();
+              }
+            } else if (numberOfRunsMatch) {
+              const runs = Number.parseFloat(numberOfRunsMatch[1]);
+              result['oneRunMSecs'] = Math.round(dtime * 1000000 / runs * 100) / 100;
+              result['dhrystonesPerSec'] = Math.round(runs / dtime * 100) / 100;
+              result['vaxMips'] = Math.round(result['dhrystonesPerSec'] / 1757 * 100) / 100; 
+
+              document.getElementById("results").style.visibility = "visible";
+              document.getElementById("oneRunMSecs").innerHTML = result["oneRunMSecs"];
+              document.getElementById("dhrystonesPerSec").innerHTML = result["dhrystonesPerSec"];
+              document.getElementById("vaxMips").innerHTML = result["vaxMips"];
+              document.getElementById("pctype").innerHTML = getComparablePc(result['vaxMips']);
+
+              var message = "#jsdos DOS Dhrystone benchmark rated your PC as " + getComparablePc(result['vaxMips']).trim() + "! Try again! ";
+              document.getElementById("tweet").dataset.text = message;
+              var twitterScript = document.createElement('script');
+              twitterScript.src = 'https://platform.twitter.com/widgets.js';
+              document.body.appendChild(twitterScript);
+
+              document.getElementById('vk').innerHTML = VK.Share.button({
+                url: 'https://js-dos.com/6.22/current/test/dhry2.html',
+                noparse: true,
+                title: message,
+              }, {
+                type: 'round_nocount',
+              });
+
+              setTimeout(function () {
+                ci.exit();
+              }, 1000)
+            }
+          });
+        });
+      });
+    });
+
+    function getComparablePc(mips) {
+      var index = 0;
+      while ((index * 2 + 1) < results.length) {
+        if (results[index * 2 + 1] >= mips) {
+          break;
+        }
+
+        index++;
+      }
+
+      index = Math.min((results.length / 2 - 1), index);
+      return results[index * 2];
+    }
+
+    // Reuslts from 
+    // http://www.roylongbottom.org.uk/dhrystone%20results.htm
+    var results = [
+      "AMD 80386 40MHz", 13.7,
+      "IBM 486D2 50MHz", 22.4,
+      "80486 DX2 66MHz", 35.3,
+      "IBM 486BL 100MHz", 40.9,
+      "AMD 5X86 133MHz", 84.5,
+      "Pentium 75MHz", 87.1,
+      "Cyrix P150 120MHz", 160,
+      "Pentium 100MHz", 122,
+      "Cyrix PP166 133MHz", 180,
+      "IBM 6x86 150MHz", 188,
+      "Pentium 133MHz", 181,
+      "Pentium 166MHz", 189,
+      "Cyrix PR233 188MHz", 232,
+      "Pentium 200MHz", 269,
+      "Pentium MMX 200MHz", 276,
+      "AMD K6 200MHz", 289,
+      "Pentium Pro 200MHz", 312,
+      "Celeron A 300MHz", 484,
+      "Pentium II 300MHz", 477,
+      "AMD K62 500MHz", 606,
+      "AMD K63 450MHz", 645,
+      "Pentium II 450MHz", 713,
+      "Celeron A 450MHz", 720,
+      "Pentium III 450MHz", 722,
+      "Pentium III 600MHz", 959,
+      "Athlon 600MHz", 942,
+      "Duron 600MHz", 999,
+      "Pentium III 1000MHz", 1595,
+      "PIII Tualatin 1200MHz", 1907,
+      "Pentium 4 1700MHz", 1843,
+      "Athlon Tbird 1000MHz", 1659,
+      "Duron 1000MHz", 1674,
+      "Celeron M 1295MHz", 2273,
+      "Atom 1600MHz", 1828,
+      "Pentium 4 1900MHz", 2003,
+      "Atom 1666MHz", 1948,
+      "P4 Xeon 2200MHz", 2265,
+      "Atom Z8300 1840MHz", 2686,
+      "Athlon 4 1600MHz", 2830,
+      "Pentium M 1862MHz", 3933,
+      "Ath4 Barton 1800MHz", 3172,
+      "Pentium 4E 3000MHz", 3553,
+      "Athlon XP 2080MHz", 3700,
+      "Turion 64 M 1900MHz", 3742,
+      "Pentium 4 3066MHz", 4012,
+      "Opteron 1991MHz", 3985,
+      "Core 2 Duo M 1830MHz", 4952,
+      "Athlon XP 2338MHz", 4160,
+      "Athlon 64 2150MHz", 4288,
+      "Pentium 4 3678MHz", 4227,
+      "Athlon 64 2211MHz", 4462,
+      "Celeron C2 M 2000MHz", 5275,
+      "Core 2 Duo 1 CP 2400MHz", 6446,
+      "Core i5 2467M 2300MHz", 4752,
+      "Phenom II 1 CP 3000MHz", 7615,
+      "Core i7 930 3066MHz", 8684,
+      "Core i7 860 3460MHz", 9978,
+      "Core i7 3930K 3800MHz", 11197,
+      "Core i7 4820K 3900MHz", 11867,
+      "Core i7 4820K 3900MHz", 11978,
+      "Core i7 3930K", 13877,
+    ];
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Mocha Tests</title>
+    <link href="https://unpkg.com/mocha@5.2.0/mocha.css" rel="stylesheet" />
+</head>
+
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="mocha"></div>
+    <script src="https://unpkg.com/chai/chai.js"></script>
+    <script src="https://unpkg.com/mocha@5.2.0/mocha.js"></script>
+    <script>
+        window.wdosboxUrl = '/wdosbox-nosync.js';
+        mocha.setup({
+            ui: 'qunit',
+            timeout: 60000
+        });
+    </script>
+    <script src="test.js"></script>
+    <script>
+        (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})();
+        mocha.run();
+    </script>
+</body>
+
+</html>
