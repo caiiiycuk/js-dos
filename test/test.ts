@@ -13,6 +13,7 @@ import { DosModule } from "../js-dos-ts/js-dos-module";
 import { DosOptions } from "../js-dos-ts/js-dos-options";
 import { compareAndExit } from "./compare";
 import { doCatch, doNext, doReady, doThen } from "./do";
+import { DosKeys } from "../js-dos-ts/js-dos-controller";
 
 const wdosboxUrl: string = (window as any).wdosboxUrl;
 suite("js-dos-host");
@@ -440,7 +441,7 @@ test("js-dos can simulate key events", (done) => {
         doNext(fs.extract("digger.zip"), () => {
             doNext(main(["DIGGER.COM"]), (ci) => {
                 const keyPress = () => {
-                    ci.simulateKeyPress(263); // left arrow
+                    ci.simulateKeyPress(DosKeys.KBD_left);
                 };
 
 

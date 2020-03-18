@@ -10,6 +10,7 @@ Is abstraction that allows you to control runned instance of js-dos
 
 ```
 import { DosModule } from "./js-dos-module";
+import { DosKeys } from "./js-dos-controller";
 
 export interface DosKeyEventConsumer {
     onPress(keyCode: number): void;
@@ -326,8 +327,8 @@ To check the key code, look in ./dreamlayers-em-dosbox-em-dosbox-svn-sdl2/includ
     }
 
     private requestShellInput() {
-        this.sendKeyEvent(257, true); // KEYCODE_ENTER
-        this.sendKeyEvent(257, false); // KEYCODE_ENTER
+        this.sendKeyEvent(DosKeys.KBD_enter, true);
+        this.sendKeyEvent(DosKeys.KBD_enter, false);
     }
 
     private onping(msg: string, args: any[]) {
