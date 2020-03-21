@@ -2,7 +2,7 @@ project(js-dos)
 cmake_minimum_required(VERSION 3.6)
 
 if(${EMSCRIPTEN})
-	set(OPT_FLAG "-O3")
+	set(OPT_FLAG "-Oz")
 	set(USE_PORTS "-s USE_ZLIB=1")
 	set(CMAKE_C_FLAGS "${OPT_FLAG} -w -Werror=return-type ${USE_PORTS}")
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} ${USE_PORTS}")
