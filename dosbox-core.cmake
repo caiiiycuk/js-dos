@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.6)
 
+set(CORE_FLAGS "-Oz -Werror=return-type -Wno-deprecated")
+
+if(${EMSCRIPTEN})
+else()
+	add_definitions(-DEMSCRIPTEN_KEEPALIVE=)
+	include_directories("${CMAKE_CURRENT_LIST_DIR}/dos-core/linux")
+endif()
+
 add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS -DJSDOS -DEMTERPRETER_SYNC)
 
 include_directories(
@@ -19,7 +27,7 @@ set(SOURCES_CORE_CXX11
 	"${CMAKE_CURRENT_LIST_DIR}/dos-core/js-dos-noop.cpp"
   )
 
-set_source_files_properties(${SOURCES_CORE_CXX11} PROPERTIES COMPILE_FLAGS "-std=c++11")
+set_source_files_properties(${SOURCES_CORE_CXX11} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++11")
 
 set(SOURCES_CORE
 	"${CMAKE_CURRENT_LIST_DIR}/dos-core/js-dos-debug.cpp"
@@ -151,3 +159,4 @@ set(SOURCES_CORE
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/libs/zmbv/zmbv.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/dreamlayers-em-dosbox-em-dosbox-svn-sdl2/src/libs/zmbv/zmbv_vfw.cpp"
 )
+set_source_files_properties(${SOURCES_CORE} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++03")

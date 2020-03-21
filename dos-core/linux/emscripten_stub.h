@@ -25,7 +25,7 @@
 extern "C" {
 #endif
 
-#if !__EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(JSDOS)
 #include <SDL/SDL.h> /* for SDL_Delay in async_call */
 #endif
 
@@ -121,10 +121,10 @@ inline void emscripten_set_main_loop_expected_blockers(int num) {}
 #if __EMSCRIPTEN__
 extern void emscripten_async_call(em_arg_callback_func func, void *arg, int millis);
 #else
-inline void emscripten_async_call(em_arg_callback_func func, void *arg, int millis) {
-    if (millis) SDL_Delay(millis);
-    func(arg);
-}
+//inline void emscripten_async_call(em_arg_callback_func func, void *arg, int millis) {
+//    if (millis) SDL_Delay(millis);
+//    func(arg);
+//}
 #endif
 
 
@@ -226,8 +226,8 @@ int emscripten_get_compiler_setting(const char *name);
 void emscripten_debugger(void);
 
 // Forward declare FILE from musl libc headers to avoid needing to #include <stdio.h> from emscripten.h
-struct _IO_FILE;
-typedef struct _IO_FILE FILE;
+//struct _IO_FILE;
+//typedef struct _IO_FILE FILE;
 
 char *emscripten_get_preloaded_image_data(const char *path, int *w, int *h);
 char *emscripten_get_preloaded_image_data_from_FILE(FILE *file, int *w, int *h);

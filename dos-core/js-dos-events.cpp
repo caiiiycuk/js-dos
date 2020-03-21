@@ -4,8 +4,6 @@
 #include <js-dos-protocol.h>
 #include <unordered_map>
 
-#include <SDL/SDL_events.h>
-
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #endif

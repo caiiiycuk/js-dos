@@ -27,11 +27,7 @@ if(${EMSCRIPTEN})
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
 	add_definitions(-DEMSCRIPTEN)
 else()
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=return-type -Wno-deprecated")
 #	add_definitions(-DC_DEBUG=1 -DC_HEAVY_DEBUG=1)
-	add_definitions(-DEMSCRIPTEN_KEEPALIVE=)
-
-	include_directories("${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/linux")
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/dosbox-core.cmake")
@@ -45,7 +41,7 @@ include_directories(
 set(SOURCES_CXX11
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/clients/sokol/js-dos-protocol-sokol.cpp"
 )
-set_source_files_properties(${SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "-std=c++11")
+set_source_files_properties(${SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "-Oz -std=c++11")
 
 set(SOURCES
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-3rdparty.c"

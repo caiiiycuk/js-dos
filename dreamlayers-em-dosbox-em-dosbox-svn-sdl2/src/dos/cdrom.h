@@ -22,17 +22,19 @@
 
 #define MAX_ASPI_CDROM	5
 
+#include <config.h>
 #include <string.h>
 #include <string>
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include "dosbox.h"
-#include "mem.h"
-#include "mixer.h"
-#include "SDL/SDL.h"
-#include "SDL/SDL_thread.h"
+#include <dosbox.h>
+#include <mem.h>
+#include <mixer.h>
+#include <sdl_stub.h>
+//#include "SDL/SDL.h"
+//#include "SDL/SDL_thread.h"
 
 #if defined(C_SDL_SOUND)
 #include "SDL_sound.h"
@@ -86,7 +88,7 @@ public:
 	virtual void	InitNewMedia		(void) {};
 };	
 
-#if !defined(EMSCRIPTEN) && !SDL_VERSION_ATLEAST(2,0,0)
+#if !defined(EMSCRIPTEN) && !SDL_VERSION_ATLEAST(2,0,0) && !JSDOS
 class CDROM_Interface_SDL : public CDROM_Interface
 {
 public:
@@ -212,7 +214,7 @@ static	void	CDAudioCallBack(Bitu len);
 static  struct imagePlayer {
 		CDROM_Interface_Image *cd;
 		MixerChannel   *channel;
-#ifndef EMSCRIPTEN
+#ifndef JSDOS
 		SDL_mutex 	*mutex;
 #endif
 		Bit8u   buffer[8192];
