@@ -348,15 +348,7 @@ extern "C" void server_add_key(KBD_KEYS key, bool pressed) {
 }
 
 int main(int argc, char *argv[]) {
-#ifdef EMSCRIPTEN
-    client_run();
-#else
-    std::thread client(client_run);
-#endif
-
     CommandLine commandLine(argc, argv);
     Config config(&commandLine);
     return jsdos_main(&config);
 }
-
-

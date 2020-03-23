@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 
-set(CORE_FLAGS "-Oz -Werror=return-type -Wno-deprecated")
+set(CORE_FLAGS "${OPT_FLAGS} -Werror=return-type -Wno-deprecated")
 
 if(${EMSCRIPTEN})
 else()

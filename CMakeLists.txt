@@ -1,8 +1,9 @@
 project(js-dos)
 cmake_minimum_required(VERSION 3.6)
 
+set(OPT_FLAG "-Oz")
+
 if(${EMSCRIPTEN})
-	set(OPT_FLAG "-Oz")
 	set(USE_PORTS "-s USE_ZLIB=1")
 	set(CMAKE_C_FLAGS "${OPT_FLAG} -w -Werror=return-type ${USE_PORTS}")
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} ${USE_PORTS}")
@@ -38,21 +39,26 @@ include_directories(
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/include/sokol"
 )
 
-set(SOURCES_CXX11
+set(CLIENT_SOURCES_CXX11
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/clients/sokol/js-dos-protocol-sokol.cpp"
 )
-set_source_files_properties(${SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "-Oz -std=c++11")
+set_source_files_properties(${CLIENT_SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++11")
 
-set(SOURCES
+set(CLIENT_SOURCES
 	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-3rdparty.c"
 )
 
 if(${EMSCRIPTEN})
-	add_library(bin-asyncify OBJECT ${SOURCES} ${SOURCES_CXX11} ${SOURCES_CORE} ${SOURCES_CORE_CXX11} ${SOURCES_3RDPARTY})
+	add_library(bin-asyncify OBJECT ${SOURCES_CORE} ${SOURCES_CORE_CXX11} ${SOURCES_3RDPARTY})
   target_compile_definitions(bin-asyncify PUBLIC -DASYNCIFY -Demscripten_sleep_with_yield=asyncify_sleep -Demscripten_sleep=asyncify_sleep)
 	add_executable(wdosbox $<TARGET_OBJECTS:bin-asyncify>)
 	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
 	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
+
+	add_library(client OBJECT ${CLIENT_SOURCES} ${CLIENT_SOURCES_CXX11})
+	add_executable(wclient $<TARGET_OBJECTS:client>)
+	set_target_properties(wclient PROPERTIES SUFFIX .js)
+	set_target_properties(wclient PROPERTIES LINK_FLAGS "-s WASM=1")
 else()
 	add_executable(bin ${SOURCES} ${SOURCES_CXX11} ${SOURCES_CORE} ${SOURCES_CORE_CXX11} ${SOURCES_3RDPARTY})
 	target_link_libraries(bin

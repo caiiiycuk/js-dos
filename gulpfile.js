@@ -64,12 +64,14 @@ gulp.task('generateBuildInfo', function () {
 
 gulp.task('copyAssets', function () {
     return gulp.src(['test/index.html',
-        'build/wdosbox.js', 'build/wdosbox.js.symbols',
+                     'build/wdosbox.js', 'build/wdosbox.js.symbols',
+                     'build/wclient.js.symbols',
     ]).pipe(gulp.dest('dist'));
 });
 
 gulp.task('copyWasm', function () {
     return gulp.src([
+        'build/wclient.wasm',
         'build/wdosbox.wasm',
     ]).pipe(rename({ extname: ".wasm.js" }))
         .pipe(gulp.dest('dist'));
@@ -123,7 +125,7 @@ gulp.task('default', ['test', 'generateBuildInfo', 'copyWasm', 'copyAssets', /* 
         return browserify({
             basedir: '.',
             debug: true,
-            entries: ['js-dos-ts/js-dos.ts'],
+            entries: ['js-dos-ts/js-dos.ts', 'build/wclient.js'],
             cache: {},
             packageCache: {}
         })

@@ -5,34 +5,6 @@ import CacheNoop from "./js-dos-cache-noop";
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
 
-// ### DosArchiveSource
-export interface DosArchiveSource {
-    // source (archive) to download and extract via `extractAll`
-
-    // **url** where archive is located
-    url: string;
-
-    // **mountPoint**
-    mountPoint: string;
-    // is a path to mount archive contents. There are two types of mountPoints:
-    //
-    // * path '/' which is a MEMFS that is live only in one ssesion.
-    // It means that after restart all progress will be erased.
-    //
-    // * any other path (e.g. '/game'). This path will be stored across sessions in indexed db. It means
-    // that progress will be there after browser restart.
-    //
-    // In other words, you can use path '/' to store temporal data, but others use to store
-    // content that need to be persisten.
-    //
-    // **NOTE**: because content of folder is stored in indexed db original archive is downloaded
-    // and extracted only once to avoid rewriting stored content! And you can't store different
-    // content (from different archives) into one path.
-
-    // **type** currently we support only zip archives
-    type?: "zip";
-}
-
 // ## DosFS
 export class DosFS {
     private dos: DosModule;

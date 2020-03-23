@@ -123,55 +123,8 @@ class DosHost {
         if (this.wasmSupported && isWasmUrl) {
             return this.compileWasmDosBox(url, cache, module);
         } else {
-            if (module.log) {
-                module.log("[WARN] Using js version of dosbox, perfomance can be lower then expected");
-                module.log("[DEBUG] Wasm supported: " + this.wasmSupported + ", url: " + url);
-            }
-
-            // fallback to js version if wasm not supported
-            if (isWasmUrl) {
-                url = url.substr(0, wIndex) + url.substr(wIndex + 1);
-                if (url.endsWith("dosbox.js")) {
-                    // do not use dosbox.js, because it's not asm.js
-                    url = url.replace("dosbox.js", "dosbox-emterp.js");
-                }
-            }
-            return this.compileJsDosBox(url, cache, module);
+            return Promise.reject("Starting from js-dos 6.22.60 js environment is not supported");
         }
-    }
-
-    private compileJsDosBox(url: string, cache: ICache, module: DosModule): Promise<any> {
-        return new Promise((resolve, reject) => {
-            const buildTotal = Build.jsSize;
-            const memUrl = url.replace(".js", ".js.mem");
-
-            // * Host download `dosbox.js`
-            new Xhr(url, {
-                cache,
-                progress: (total, loaded) => {
-                    if (module.onprogress) {
-                        module.onprogress("Resolving DosBox (" + url + ")", buildTotal,
-                        Math.min(buildTotal, loaded));
-                    }
-                },
-                fail: (url: string, status: number, message: string) => {
-                    reject("Can't download dosbox.js, code: " + status +
-                        ", message: " + message + ", url: " + url);
-                },
-                success: (response: string) => {
-                    if (module.onprogress !== undefined) {
-                        module.onprogress("Resolving DosBox (" + url + ")", buildTotal, buildTotal);
-                    }
-
-                    response +=
-                        /* tslint:disable:no-eval */
-                        eval.call(this, response);
-                        /* tslint:enable:no-eval */
-
-                    resolve(this.global.exports.WDOSBOX);
-                },
-            });
-        });
     }
 
     private compileWasmDosBox(url: string, cache: ICache, module: DosModule): Promise<any> {
@@ -179,7 +132,7 @@ class DosHost {
             const buildTotal = Build.wasmSize + Build.wasmJsSize;
             const wasmUrl = url.replace(".js", ".wasm.js");
 
-            // * Host downloads `wdosbox` asm + js scripts
+            // * Host downloads `wdosbox` wasm
             new Xhr(wasmUrl, {
                 cache,
                 responseType: "arraybuffer",

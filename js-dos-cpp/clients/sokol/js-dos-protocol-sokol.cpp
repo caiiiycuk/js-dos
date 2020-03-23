@@ -252,3 +252,12 @@ extern "C" void client_run() {
 extern "C" void client_exit() {
     sapp_quit(); 
 }
+
+int main(int argc, char *argv[]) {
+#ifdef EMSCRIPTEN
+    client_run();
+#else
+    std::thread client(client_run);
+#endif
+    return 0;
+}
