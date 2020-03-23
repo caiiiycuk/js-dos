@@ -1,7 +1,8 @@
 {
-    "files": ["js-dos-ts/js-dos.ts"],
+    "files": ["src/js-dos.ts"],
     "compilerOptions": {
-        "target": "es5",
+        "target": "es2015",
+        "outDir": "build",
         "allowJs": false,
         "skipLibCheck": true,
         "esModuleInterop": true,

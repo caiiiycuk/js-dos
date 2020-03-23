@@ -1,6 +1,5 @@
 // # DosCommandInterface
 // Is abstraction that allows you to control runned instance of js-dos
-import { DosModule } from "./js-dos-module";
 import { DosKeys } from "./js-dos-controller";
 
 export interface DosKeyEventConsumer {

@@ -6,12 +6,13 @@ import { Build } from "./js-dos-build";
 import { DosCommandInterface } from "./js-dos-ci";
 import getJsDosConfig from "./js-dos-conf";
 import { DosFS } from "./js-dos-fs";
-import { DosOptions } from "./js-dos-options";
+import { DosConfig, DosOptionBag, compileConfig } from "./js-dos-options";
 import { DosUi } from "./js-dos-ui";
 
-export class DosModule extends DosOptions {
+export class DosModule {
+    public config: DosConfig;
+
     public isValid: boolean = false;
-    public canvas: HTMLCanvasElement;
     public version = Build.version;
     public onglobals?: (...args: any[]) => void;
     public ci: Promise<DosCommandInterface>;
@@ -28,9 +29,8 @@ export class DosModule extends DosOptions {
 
     private ciResolveFn: (ci: DosCommandInterface) => void = () => {};
 
-    constructor(canvas: HTMLCanvasElement, onready: (runtime: DosRuntime) => void) {
-        super();
-        this.canvas = canvas;
+    constructor(options: DosOptionBag, onready: (runtime: DosRuntime) => void) {
+        this.config = compileConfig
         this.onready = onready;
         this.ci = new Promise<DosCommandInterface>((resolve) => {
             this.ciResolveFn = resolve;

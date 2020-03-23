@@ -35,8 +35,8 @@ export interface DosArchiveSource {
 // tslint:disable-next-line:max-classes-per-file
 export interface DosOptionBag {
     // ### element
-    element?: HTMLElement;
-    // * element is used as window for dosbox
+    element?: string | HTMLElement;
+    // * html element or id of element, which is used as window for dosbox
 
     // ### wdosboxUrl
     wdosboxUrl?: string;
@@ -94,7 +94,7 @@ export interface DosOptionBag {
 }
 
 export interface DosConfig {
-    element: HTMLElement;
+    element: string | HTMLElement;
     wdosboxUrl: string;
     cycles: number | string;
     autolock: boolean;
