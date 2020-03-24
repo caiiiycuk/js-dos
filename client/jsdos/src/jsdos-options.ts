@@ -38,9 +38,9 @@ export interface DosOptionBag {
     element?: string | HTMLElement;
     // * html element or id of element, which is used as window for dosbox
 
-    // ### wdosboxUrl
-    wdosboxUrl?: string;
-    // you can set alternative url for downloading js-dos script, default is `wdosbox.js`.
+    // ### jsdosUrl
+    jsdosUrl?: string;
+    // you can set alternative url for downloading js-dos script, default is `wjsdos-sokol.js`.
 
     // ### cycles
     cycles?: number | string;
@@ -94,7 +94,7 @@ export interface DosOptionBag {
 }
 
 export interface DosConfig {
-    element: string | HTMLElement;
+    element: HTMLElement;
     wdosboxUrl: string;
     cycles: number | string;
     autolock: boolean;
@@ -105,9 +105,17 @@ export interface DosConfig {
 }
 
 export function compileConfig(options: DosOptionBag): DosConfig {
+    let el: HTMLElement | string | null = options.element || "dosbox";
+    if (typeof el === "string") {
+        const id = el;
+        el = document.getElementById(id);
+        if (el == null) {
+            throw new Error("Element #" + id + " not found in DOM");
+        }
+    }
     return {
-        element: options.element || "dosbox",
-        wdosboxUrl: options.wdosboxUrl || "wdosbox.js",
+        element: el as HTMLElement,
+        wdosboxUrl: options.jsdosUrl || "wjsdos-sokol.js",
         cycles: options.cycles || "max",
         autolock: options.autolock || false,
         sources: options.sources || [],

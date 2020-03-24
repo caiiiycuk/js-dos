@@ -1,5 +1,5 @@
-import { ICache } from "./js-dos-cache";
-import CacheNoop from "./js-dos-cache-noop";
+import { ICache } from "./jsdos-cache";
+import CacheNoop from "./jsdos-cache-noop";
 
 // # Xhr
 // `Xhr` is small wrapper over XMLHttpRequest, that provides some
@@ -38,7 +38,7 @@ export class Xhr {
         this.cache = options.cache || new CacheNoop();
 
         if (this.options.method  === "GET") {
-            this.cache.get(this.resource, (data) => {
+            this.cache.get(this.resource, (data: any) => {
                 if (this.options.success !== undefined) {
                     this.options.success(data);
                 }

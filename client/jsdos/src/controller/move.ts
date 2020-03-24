@@ -1,4 +1,4 @@
-import { DosKeyEventConsumer } from "../js-dos-ci";
+import { DosKeyEventConsumer } from "../jsdos-ci";
 
 interface IPos {
     x: number;

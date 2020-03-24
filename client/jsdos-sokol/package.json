@@ -1,0 +1,10 @@
+{
+  "name": "jsdos-sokol",
+  "version": "1.0.0",
+  "description": "Middleware based on sokol library",
+  "author": "caiiiycuk@gmail.com",
+  "devDependencies": {
+    "tslint": "^6.1.0",
+    "typescript": "^3.8.3"
+  }
+}

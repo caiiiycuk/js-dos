@@ -1,16 +1,16 @@
 // # DosCommandInterface
 // Is abstraction that allows you to control runned instance of js-dos
-import { DosKeys } from "./js-dos-controller";
+import { DosKeys } from "./jsdos-controller";
+import { DosConfig } from "./jsdos-options";
+import { DosMiddleware } from "./jsdos-middleware";
 
 export interface DosKeyEventConsumer {
     onPress(keyCode: number): void;
     onRelease(keyCode: number): void;
 }
 export class DosCommandInterface {
-    public dos: DosModule;
-    private em: any; // typeof Module;
-    private api: LowLevelApi;
-    private onready: (ci: DosCommandInterface) => void;
+    public config: DosConfig;
+    public middleware: DosMiddleware;
 
     private shellInputQueue: string[] = [];
     private shellInputClients: Array<() => void> = [];
@@ -21,24 +21,16 @@ export class DosCommandInterface {
     };
     private fullscreenInitialCssStyle?: string;
 
-    constructor(dos: DosModule, onready: (ci: DosCommandInterface) => void) {
-        this.dos = dos;
-        this.em = (dos as any);
-        this.api = (dos as any);
-        this.api.ping = (msg: string, ...args: any[]) => {
-            this.onping(msg, args);
-        };
-        this.onready = onready;
-    }
+    constructor(config: DosConfig,
+                middleware: DosMiddleware,
+                ready: (ci: DosCommandInterface) => void) {
+        this.config = config;
+        this.middleware = middleware;
 
-    // * `width()` - return dosbox window width in pixels
-    public width() {
-        return this.dos.canvas.width;
-    }
-
-    // * `height()` - return dosbox window height in pixels
-    public height() {
-        return this.dos.canvas.height;
+        this.middleware.onReady(() => { ready(this); });
+        this.middleware.onFrame(() => { /**/ });
+        this.middleware.onShellInput(() => this.onShellInput());
+        this.middleware.onStdout((message: string) => {/**/});
     }
 
     // * `fullscreen()` - enters fullscreen mode
@@ -74,7 +66,7 @@ export class DosCommandInterface {
         if (parent !== null && parent.className === "dosbox-container") {
             requestFn(parent);
         } else {
-            requestFn(this.dos.canvas);
+            requestFn(this.config.element);
         }
     }
 
@@ -99,7 +91,7 @@ export class DosCommandInterface {
         if (parent !== null && parent.className === "dosbox-container") {
             requestFn(parent);
         } else {
-            requestFn(this.dos.canvas);
+            requestFn(this.config.element);
         }
     }
 
@@ -129,7 +121,7 @@ export class DosCommandInterface {
     // * `screenshot()` - get screnshot of canvas as ImageData
     public screenshot() {
         return new Promise((resolve) => {
-            this.api.send("screenshot", "", (data) => {
+            this.middleware.requestScreenshot((data) => {
                 resolve(data);
             });
         });
@@ -138,14 +130,11 @@ export class DosCommandInterface {
     // * `exit()` - immediately exit from runtime
     public exit() {
         try {
-            this.dos.terminate();
-            this.api.send("exit");
+            this.middleware.exit();
         } catch (e) {
-            return 0;
         }
 
-        this.dos.error("Runtime is still alive!");
-        return -1;
+        return 0;
     }
 
 
@@ -157,8 +146,8 @@ export class DosCommandInterface {
     }
 
     public getParentDiv(): HTMLDivElement | null {
-        if (this.dos.canvas.parentElement instanceof HTMLDivElement) {
-            return this.dos.canvas.parentElement;
+        if (this.config.element.parentElement instanceof HTMLDivElement) {
+            return this.config.element.parentElement;
         }
 
         return null;
@@ -173,7 +162,7 @@ export class DosCommandInterface {
     // To check the key code, look in ./dreamlayers-em-dosbox-em-dosbox-svn-sdl2/include/keyboard.h
     // **pressed** is a flag that mean if key pressed or not
     private sendKeyEvent(keyCode: number, pressed: boolean) {
-        this.api.send("key_event", keyCode + (pressed ? "p" : "r"));
+        this.middleware.sendkey(keyCode, pressed);
     }
 
     private requestShellInput() {
@@ -181,62 +170,12 @@ export class DosCommandInterface {
         this.sendKeyEvent(DosKeys.KBD_enter, false);
     }
 
-    private onping(msg: string, args: any[]) {
-        switch (msg) {
-            case "ready":
-                this.onready(this);
-                break;
-            case "frame":
-                this.onframe();
-                break;
-            case "shell_input":
-                if (this.shellInputQueue.length === 0) {
-                    return;
-                }
-
-                const buffer: number = args[0];
-                const maxLength: number = args[1];
-
-                const cmd = this.shellInputQueue.shift();
-                const cmdLength = this.em.lengthBytesUTF8(cmd) + 1;
-
-                if (cmdLength > maxLength) {
-                    if (this.dos.onerror !== undefined) {
-                        this.dos.onerror("Can't execute cmd '" + cmd +
-                            "', because it's bigger then max cmd length " + maxLength);
-                    }
-                    return;
-                }
-
-                this.em.stringToUTF8(cmd, buffer, cmdLength);
-
-                if (this.shellInputQueue.length === 0) {
-                    for (const resolve of this.shellInputClients) {
-                        resolve();
-                    }
-                    this.shellInputClients = [];
-                } else {
-                    this.requestShellInput();
-                }
-                break;
-            case "write_stdout":
-                const data: string = args[0];
-                if (this.onstdout) {
-                    this.onstdout(data);
-                }
-                break;
-            default:
-            /* do nothing */
+    private onShellInput() {
+        if (this.shellInputQueue.length === 0) {
+            return;
         }
+
+        this.requestShellInput();
     }
 
-    private onframe() {
-        this.dos.tick();
-    }
-
-}
-
-interface LowLevelApi {
-    send: (event: string, msg?: any, callback?: (msg: string) => void) => void;
-    ping: (msg: string) => void;
 }

@@ -1,5 +1,5 @@
-import { DosKeyEventConsumer } from "../js-dos-ci";
-import * as DosDom from "../js-dos-dom";
+import { DosKeyEventConsumer } from "../jsdos-ci";
+import * as DosDom from "../jsdos-dom";
 
 export interface QwertyOptions {
     uppercase: boolean;

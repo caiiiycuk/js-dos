@@ -1,5 +1,5 @@
 {
-    "files": ["src/js-dos.ts"],
+    "files": ["src/jsdos-sokol.ts"],
     "compilerOptions": {
         "target": "es2015",
         "outDir": "build",

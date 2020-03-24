@@ -9,6 +9,7 @@
 #include <keyboard.h>
 
 extern "C" void client_run();
+extern "C" void client_ping(const char* message);
 extern "C" void client_frame_set_size(int width, int height);
 extern "C" void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba);
 extern "C" void client_sound_push(const float* samples, int num_samples);
