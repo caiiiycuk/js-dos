@@ -2,7 +2,6 @@
 #define _JSDOS_API_H_
 
 #include <js-dos-events.h>
-#include <memory>
 #include <string>
 
 // CommandInterace
@@ -13,7 +12,7 @@ class CommandInterface {
 private:
   friend CommandInterface *ci();
 
-  std::unique_ptr<Events> m_events;
+  Events* m_events;
   CommandInterface();
 
 public:

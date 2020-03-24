@@ -23,14 +23,15 @@ CommandInterface::CommandInterface(): m_events(new Events()) {
 // whole environment. Any other calls to any API
 // is no safe
 CommandInterface::~CommandInterface() {
+    delete m_events;
+    client_exit();
 #ifdef EMSCRIPTEN
     destroySyncSleep();
-    client_exit();
     emscripten_force_exit(0);
 #endif
 }
 
-Events *CommandInterface::events() { return m_events.get(); }
+Events *CommandInterface::events() { return m_events; }
 
 // Singleton of CommandInterface
 CommandInterface *ci() {

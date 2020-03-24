@@ -23,8 +23,8 @@
 #define PIT_TICK_RATE 1193182
 
 #ifdef JSDOS
-#include <cstdint>
-uint32_t GetMsPassedFromStart();
+typedef unsigned int mstime;
+mstime GetMsPassedFromStart();
 #define GetTicks()  GetMsPassedFromStart()
 #else
 /* underlying clock rate in HZ */

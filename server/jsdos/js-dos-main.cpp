@@ -347,7 +347,7 @@ extern "C" void server_add_key(KBD_KEYS key, bool pressed) {
     keyEvents.push_back({ key, pressed });
 }
 
-int main(int argc, char *argv[]) {
+extern "C" int server_run(int argc, char** argv) {
     CommandLine commandLine(argc, argv);
     Config config(&commandLine);
     return jsdos_main(&config);

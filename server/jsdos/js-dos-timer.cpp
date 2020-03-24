@@ -16,7 +16,7 @@ double GetCurrentTimeMs() {
     return tp.tv_sec * 1000 + tp.tv_usec / 1000;
 }
 
-uint32_t GetMsPassedFromStart() {
+mstime GetMsPassedFromStart() {
     static double startedAt = GetCurrentTimeMs();
     return GetCurrentTimeMs() - startedAt;
 }

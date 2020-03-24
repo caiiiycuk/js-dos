@@ -28,24 +28,25 @@ if(${EMSCRIPTEN})
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
 	add_definitions(-DEMSCRIPTEN)
 else()
+	set(CMAKE_C_COMPILER "/usr/bin/clang")
+	set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 #	add_definitions(-DC_DEBUG=1 -DC_HEAVY_DEBUG=1)
 endif()
 
-include("${CMAKE_CURRENT_LIST_DIR}/dosbox-core.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/3rd-party/3rd-party.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../../server/server.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../../3rd-party/3rd-party.cmake")
 
 include_directories(
-	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/include"
-	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/include/sokol"
+	"${CMAKE_CURRENT_LIST_DIR}/cpp/sokol"
 )
 
 set(CLIENT_SOURCES_CXX11
-	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/clients/sokol/js-dos-protocol-sokol.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/cpp/sokol/js-dos-protocol-sokol.cpp"
 )
 set_source_files_properties(${CLIENT_SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++11")
 
 set(CLIENT_SOURCES
-	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-3rdparty.c"
+#	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-3rdparty.c"
 )
 
 if(${EMSCRIPTEN})
@@ -53,14 +54,14 @@ if(${EMSCRIPTEN})
   target_compile_definitions(bin-asyncify PUBLIC -DASYNCIFY -Demscripten_sleep_with_yield=asyncify_sleep -Demscripten_sleep=asyncify_sleep)
 	add_executable(wdosbox $<TARGET_OBJECTS:bin-asyncify>)
 	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
-	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/asyncify.txt")
+	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../server/asyncify.txt")
 
 	add_library(client OBJECT ${CLIENT_SOURCES} ${CLIENT_SOURCES_CXX11})
 	add_executable(wclient $<TARGET_OBJECTS:client>)
 	set_target_properties(wclient PROPERTIES SUFFIX .js)
 	set_target_properties(wclient PROPERTIES LINK_FLAGS "-s WASM=1")
 else()
-	add_executable(bin ${SOURCES} ${SOURCES_CXX11} ${SOURCES_CORE} ${SOURCES_CORE_CXX11} ${SOURCES_3RDPARTY})
+	add_executable(bin ${CLIENT_SOURCES} ${CLIENT_SOURCES_CXX11} ${SOURCES_CORE} ${SOURCES_CORE_CXX11} ${SOURCES_3RDPARTY})
 	target_link_libraries(bin
 		X11  z ncurses dl GL  pthread asound
 	  )

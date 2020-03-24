@@ -31,6 +31,7 @@
 #else
 #include "shaders.glsl330.h"
 
+#include <thread>
 #include <mutex>
 std::mutex mutex;
 
@@ -223,8 +224,10 @@ extern "C" void client_run() {
             sokolCleanup();
 #ifdef EMSCRIPTEN
 #else
+            // TODO: valid exit
             std::terminate();
 #endif
+//    server_exit();
         };
 
     appDescription.event_cb =
@@ -250,7 +253,7 @@ extern "C" void client_run() {
 }
 
 extern "C" void client_exit() {
-    sapp_quit(); 
+    sapp_quit();
 }
 
 int main(int argc, char *argv[]) {
@@ -259,5 +262,5 @@ int main(int argc, char *argv[]) {
 #else
     std::thread client(client_run);
 #endif
-    return 0;
+    return server_run(argc, argv);
 }

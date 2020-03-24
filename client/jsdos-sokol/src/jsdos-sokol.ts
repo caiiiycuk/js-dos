@@ -5,7 +5,7 @@ import { ICache } from "../../jsdos/src/jsdos-cache";
 
 import instanitateWasm from "../../jsdos/src/jsdos-wasm";
 
-async function initSokolMiddleware(config: DosConfig, cache: ICache): Promise<DosMiddleware> {
+async function initMiddleware(config: DosConfig, cache: ICache): Promise<DosMiddleware> {
     await instanitateWasm(config.wdosboxUrl, cache, config.onprogress);
     const module = (window as any).Module;
     const middleware: DosMiddleware = {
@@ -21,7 +21,7 @@ async function initSokolMiddleware(config: DosConfig, cache: ICache): Promise<Do
     return middleware;
 }
 
-const Dos = createDosFactory(initSokolMiddleware);
+const Dos = createDosFactory(initMiddleware);
 
 export default Dos;
 (window as any).Dos = Dos;

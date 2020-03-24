@@ -211,7 +211,7 @@ static Bitu Normal_Loop(void) {
 
 	Bits ret;
 #if defined(JSDOS) && defined(EMTERPRETER_SYNC)
-    static uint32_t lastSleepTime = GetTicks();
+    static mstime lastSleepTime = GetTicks();
     if (nosleep_lock == 0 && GetTicks() - lastSleepTime > LOOP_EXECUTION_TIME) {
         DelayWithYield(0);
         lastSleepTime = GetTicks();
@@ -440,9 +440,9 @@ static void em_main_loop(void) {
     // to solve this we will try to emulate as much as
     // we can while we fit into 60 fps (16ms)
 
-    uint32_t startedAt = GetTicks();
-    uint32_t usedTime;
-    uint32_t count = 0;
+    mstime startedAt = GetTicks();
+    mstime usedTime;
+    mstime count = 0;
     Bitu ret;
 
     do {
@@ -471,7 +471,7 @@ void DOSBOX_RunMachine(void){
         return;
 	}
 #endif
-    uint32_t ticksStart = GetTicks();
+    mstime ticksStart = GetTicks();
 	Bitu ret;
 	do {
 		ret=(*loop)();
