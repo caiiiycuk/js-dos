@@ -1,19 +1,21 @@
 // # DosCommandInterface
 // Is abstraction that allows you to control runned instance of js-dos
+import { DosConfig } from "../../shared/jsdos-options";
+import { DosCommandInterface } from "../../shared/jsdos-ci";
+import { DosMiddleware } from "../../shared/jsdos-shared";
+
 import { DosKeys } from "./jsdos-controller";
-import { DosConfig } from "./jsdos-options";
-import { DosMiddleware } from "./jsdos-middleware";
 
 export interface DosKeyEventConsumer {
     onPress(keyCode: number): void;
     onRelease(keyCode: number): void;
 }
-export class DosCommandInterface {
+export class JsDosCommandInterface implements DosCommandInterface {
     public config: DosConfig;
     public middleware: DosMiddleware;
 
     private shellInputQueue: string[] = [];
-    private shellInputClients: Array<() => void> = [];
+    private shellInputClients: (() => void)[] = [];
     private onstdout?: (data: string) => void = undefined;
     private keyEventConsumer: DosKeyEventConsumer = {
         onPress: (keyCode) => this.sendKeyEvent(keyCode, true),
@@ -27,10 +29,10 @@ export class DosCommandInterface {
         this.config = config;
         this.middleware = middleware;
 
-        this.middleware.onReady(() => { ready(this); });
-        this.middleware.onFrame(() => { /**/ });
-        this.middleware.onShellInput(() => this.onShellInput());
-        this.middleware.onStdout((message: string) => {/**/});
+        // this.middleware.onReady(() => { ready(this); });
+        // this.middleware.onFrame(() => { /**/ });
+        // this.middleware.onShellInput(() => this.onShellInput());
+        // this.middleware.onStdout((message: string) => {/**/});
     }
 
     // * `fullscreen()` - enters fullscreen mode
@@ -48,6 +50,7 @@ export class DosCommandInterface {
                 element.msRequestFullscreen();
             } else if (element.webkitEnterFullscreen) {
                 element.webkitEnterFullscreen();
+
             } else {
                 this.fullscreenInitialCssStyle = (element as HTMLElement).style.cssText;
                 (element as HTMLElement).style.cssText = `
@@ -120,19 +123,20 @@ export class DosCommandInterface {
 
     // * `screenshot()` - get screnshot of canvas as ImageData
     public screenshot() {
-        return new Promise((resolve) => {
-            this.middleware.requestScreenshot((data) => {
-                resolve(data);
-            });
+        return new Promise<ImageData>((resolve) => {
+            // this.middleware.requestScreenshot((data) => {
+            //     resolve(data);
+            // });
         });
     }
 
     // * `exit()` - immediately exit from runtime
     public exit() {
-        try {
-            this.middleware.exit();
-        } catch (e) {
-        }
+        // try {
+        //     this.middleware.exit();
+        // } catch (e) {
+        //     // nothing to do
+        // }
 
         return 0;
     }
@@ -162,7 +166,7 @@ export class DosCommandInterface {
     // To check the key code, look in ./dreamlayers-em-dosbox-em-dosbox-svn-sdl2/include/keyboard.h
     // **pressed** is a flag that mean if key pressed or not
     private sendKeyEvent(keyCode: number, pressed: boolean) {
-        this.middleware.sendkey(keyCode, pressed);
+        // this.middleware.sendkey(keyCode, pressed);
     }
 
     private requestShellInput() {

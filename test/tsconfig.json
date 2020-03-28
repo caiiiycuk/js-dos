@@ -1,0 +1,17 @@
+{
+    "files": ["src/test-sokol.ts"],
+    "compilerOptions": {
+        "target": "es2015",
+        "outDir": "../build",
+        "allowJs": false,
+        "skipLibCheck": true,
+        "esModuleInterop": false,
+        "allowSyntheticDefaultImports": true,
+        "strict": false,
+        "forceConsistentCasingInFileNames": false,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": false
+      }
+}

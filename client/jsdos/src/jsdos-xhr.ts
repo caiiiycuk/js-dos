@@ -1,4 +1,4 @@
-import { ICache } from "./jsdos-cache";
+import { ICache } from "../../shared/jsdos-cache";
 import CacheNoop from "./jsdos-cache-noop";
 
 // # Xhr

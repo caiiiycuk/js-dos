@@ -2,6 +2,7 @@
 // [DosCommandInterface](https;//js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
 // constants are from GLFW keycodes
 
+// tslint:disable:variable-name
 class DosKeyCodes {
     public KBD_NONE = 0;
     public KBD_0 = 48;
@@ -109,7 +110,7 @@ class DosKeyCodes {
     public KBD_up = 265;
     public KBD_down = 264;
     public KBD_right = 262;
-    public KBD_extra_lt_gt = 348; //???
+    public KBD_extra_lt_gt = 348; // ???
 };
 
 export const DosKeys = new DosKeyCodes();

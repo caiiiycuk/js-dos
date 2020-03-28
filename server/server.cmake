@@ -29,7 +29,7 @@ set(SOURCES_CORE_CXX11
 
 set_source_files_properties(${SOURCES_CORE_CXX11} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++11")
 
-set(SOURCES_CORE
+set(SOURCES_CORE_CXX03
 	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-debug.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-debug-mem.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-asyncify.cpp"
@@ -160,4 +160,6 @@ set(SOURCES_CORE
 #	"${CMAKE_CURRENT_LIST_DIR}/dosbox/src/libs/zmbv/zmbv_vfw.cpp"
 )
 
-set_source_files_properties(${SOURCES_CORE} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++03")
+set_source_files_properties(${SOURCES_CORE_CXX03} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++03")
+
+set(SOURCES_CORE ${SOURCES_CORE_CXX11} ${SOURCES_CORE_CXX03})

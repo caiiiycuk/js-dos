@@ -1,28 +1,38 @@
-import createDosFactory from "../../jsdos/src/jsdos";
-import { DosConfig } from "../../jsdos/src/jsdos-options";
-import { DosMiddleware } from "../../jsdos/src/jsdos-middleware";
-import { ICache } from "../../jsdos/src/jsdos-cache";
+import { Build } from "./jsdos-sokol-build";
+import { DosOptionsBag } from "../../shared/jsdos-options";
+import { DosFactory, DosMiddleware, DosClient } from "../../shared/jsdos-shared";
+import { DosCommandInterface } from "../../shared/jsdos-ci";
 
-import instanitateWasm from "../../jsdos/src/jsdos-wasm";
+class DosSokolDirectImpl implements DosMiddleware {
+    public buildInfo() {
+        return Build;
+    }
 
-async function initMiddleware(config: DosConfig, cache: ICache): Promise<DosMiddleware> {
-    await instanitateWasm(config.wdosboxUrl, cache, config.onprogress);
-    const module = (window as any).Module;
-    const middleware: DosMiddleware = {
-        onReady: (cb: () => void) => void {},
-        onFrame: (cb: () => void) => void {},
-        onShellInput: (cb: () => void) => void {},
-        onStdout: (cb: (message: string) => void) => void {},
-
-        sendkey: (keycode: number, pressed: boolean) => void {},
-        requestScreenshot: (cb: (image: ImageData) => void) => void {},
-        exit: () => void {},
-    };
-    return middleware;
+    public async run(jsdos: DosClient): Promise<DosCommandInterface> {
+        const config = jsdos.getConfig();
+        const module = await jsdos.loadWasmModule(config.jsdosUrl,
+                                                  () => { /**/ });
+        throw new Error("Not implemented yet");
+    }
 }
 
-const Dos = createDosFactory(initMiddleware);
+class DosSokolWorkerImpl implements DosMiddleware {
+    public buildInfo() {
+        return Build;
+    }
 
-export default Dos;
-(window as any).Dos = Dos;
+    public async run(jsdos: DosClient): Promise<DosCommandInterface> {
+        const config = jsdos.getConfig();
+        const module = await jsdos.loadWasmModule(config.jsdosUrl,
+                                                  () => { /**/ });
+        throw new Error("Not implemented yet");
+    }
+}
 
+const DosSokol = new DosSokolDirectImpl();
+export const DosSokolWorker = new DosSokolWorkerImpl();
+
+export default DosSokol;
+
+(window as any).DosSokol = DosSokol;
+(window as any).DosSokolWorker = DosSokolWorker;

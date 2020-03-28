@@ -1,4 +1,4 @@
-import { ICache } from "./jsdos-cache";
+import { ICache } from "../../shared/jsdos-cache";
 
 export default class CacheDb implements ICache {
 

@@ -20,7 +20,7 @@ if(${EMSCRIPTEN})
 		-s ALLOW_MEMORY_GROWTH=1 \
 		-s INVOKE_RUN=0 \
 		-s MODULARIZE=1 \
-		-s EXPORT_NAME='WDOSBOX' \
+		-s EXPORT_NAME='WSOKOL' \
 		-s FORCE_FILESYSTEM=1 -lidbfs.js \
 		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency','FS', 'FS_createPath', 'FS_createPreloadedFile', \
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString', 'UTF8ToString', 'callMain']\" \
@@ -40,28 +40,26 @@ include_directories(
 	"${CMAKE_CURRENT_LIST_DIR}/cpp/sokol"
 )
 
-set(CLIENT_SOURCES_CXX11
+set(SOURCES_SOKOL_CXX11
 	"${CMAKE_CURRENT_LIST_DIR}/cpp/sokol/js-dos-protocol-sokol.cpp"
 )
-set_source_files_properties(${CLIENT_SOURCES_CXX11} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++11")
+set_source_files_properties(${SOURCES_SOKOL_CXX11} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++11")
 
-set(CLIENT_SOURCES
+set(SOURCES_SOKOL_CXX03
 #	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/js-dos-3rdparty.c"
 )
+set_source_files_properties(${SOURCES_SOKOL_CXX03} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++03")
+
+set(SOURCES ${SOURCES_SOKOL_CXX11} ${SOURCES_SOKOL_CXX03} ${SOURCES_CORE} ${SOURCES_3RDPARTY})
 
 if(${EMSCRIPTEN})
-	add_library(bin-asyncify OBJECT ${SOURCES_CORE} ${SOURCES_CORE_CXX11} ${SOURCES_3RDPARTY})
+	add_library(bin-asyncify OBJECT ${SOURCES})
   target_compile_definitions(bin-asyncify PUBLIC -DASYNCIFY -Demscripten_sleep_with_yield=asyncify_sleep -Demscripten_sleep=asyncify_sleep)
-	add_executable(wdosbox $<TARGET_OBJECTS:bin-asyncify>)
-	set_target_properties(wdosbox PROPERTIES SUFFIX .js)
-	set_target_properties(wdosbox PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../server/asyncify.txt")
-
-	add_library(client OBJECT ${CLIENT_SOURCES} ${CLIENT_SOURCES_CXX11})
-	add_executable(wclient $<TARGET_OBJECTS:client>)
-	set_target_properties(wclient PROPERTIES SUFFIX .js)
-	set_target_properties(wclient PROPERTIES LINK_FLAGS "-s WASM=1")
+	add_executable(wsokol $<TARGET_OBJECTS:bin-asyncify>)
+	set_target_properties(wsokol PROPERTIES SUFFIX .js)
+	set_target_properties(wsokol PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../server/asyncify.txt")
 else()
-	add_executable(bin ${CLIENT_SOURCES} ${CLIENT_SOURCES_CXX11} ${SOURCES_CORE} ${SOURCES_CORE_CXX11} ${SOURCES_3RDPARTY})
+	add_executable(bin ${SOURCES})
 	target_link_libraries(bin
 		X11  z ncurses dl GL  pthread asound
 	  )

@@ -3,8 +3,7 @@
 // features that supported in current environment
 
 /* tslint:disable:member-ordering */
-import { Build } from "./jsdos-build";
-import { ICache } from "./jsdos-cache";
+import { ICache } from "../../shared/jsdos-cache";
 import { Xhr } from "./jsdos-xhr";
 
 class Host {
@@ -65,11 +64,11 @@ class Host {
     }
 }
 
-const host = new Host();
+export const host = new Host();
 
-export default function instantiateWasm(url: string,
-                                        cache: ICache,
-                                        onprogress: (stage: string, total: number, loaded: number) => void) {
+export default function loadWasmModule(url: string,
+                                       cache: ICache,
+                                       onprogress: (stage: string, total: number, loaded: number) => void) {
     return new Promise<void>((resolve, reject) => {
         const fromIndex = url.lastIndexOf("/");
         const wIndex = url.indexOf("w", fromIndex);
