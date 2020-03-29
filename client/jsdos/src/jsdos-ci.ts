@@ -123,7 +123,7 @@ export class JsDosCommandInterface implements DosCommandInterface {
 
     // * `screenshot()` - get screnshot of canvas as ImageData
     public screenshot() {
-        return new Promise<ImageData>((resolve) => {
+        return new Promise<string>((resolve) => {
             // this.middleware.requestScreenshot((data) => {
             //     resolve(data);
             // });

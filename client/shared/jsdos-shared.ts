@@ -22,11 +22,13 @@ export interface DosClient {
     getCache: () => ICache;
 
     loadWasmModule: (url: string,
+                     moduleName: string,
                      onprogress: (stage: string, total: number, loaded: number) => void) => Promise<void>;
 }
 
 
 export interface DosMiddleware {
+    defaultUrl: string;
     buildInfo: () => BuildInfo;
     run: (client: DosClient) => Promise<DosCommandInterface>;
 };

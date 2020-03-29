@@ -67,18 +67,23 @@ class Host {
 export const host = new Host();
 
 export default function loadWasmModule(url: string,
+                                       moduleName: string,
                                        cache: ICache,
                                        onprogress: (stage: string, total: number, loaded: number) => void) {
-    return new Promise<void>((resolve, reject) => {
+    const globals: any = window;
+    if (!globals.exports) {
+        globals.exports = {};
+    }
+    return new Promise<any>((resolve, reject) => {
         const fromIndex = url.lastIndexOf("/");
         const wIndex = url.indexOf("w", fromIndex);
         const isWasmUrl = wIndex === fromIndex + 1 && wIndex >= 0;
 
         if (!host.wasmSupported || !isWasmUrl) {
-            throw new Error("Starting from js-dos 6.22.60 js environment is not supported");
+            reject(new Error("Starting from js-dos 6.22.60 js environment is not supported"));
         }
 
-        const wasmUrl = url.replace(".js", ".wasm.js");
+        const wasmUrl = url.replace(".js", ".wasm");
         // * Download wasm file
         new Xhr(wasmUrl, {
             cache,
@@ -87,14 +92,14 @@ export default function loadWasmModule(url: string,
                 onprogress("Resolving DosBox (" + url + ")", total, loaded);
             },
             fail: (url: string, status: number, message: string) => {
-                reject("Can't download wasm, code: " + status +
-                    ", message: " + message + ", url: " + url);
+                reject(new Error("Can't download wasm, code: " + status +
+                    ", message: " + message + ", url: " + url));
             },
             success: (response: any) => {
                 // * Compile wasm module
                 const promise = WebAssembly.compile(response);
                 const onreject = (reason: any) => {
-                    reject(reason + "");
+                    reject(new Error(reason + ""));
                 };
                 promise.catch(onreject);
                 promise.then((wasmModule) => {
@@ -114,15 +119,15 @@ export default function loadWasmModule(url: string,
                             onprogress("Resolving DosBox", total, loaded);
                         },
                         fail: (url: string, status: number, message: string) => {
-                            reject("Can't download wdosbox.js, code: " + status +
-                                ", message: " + message + ", url: " + url);
+                            reject(new Error("Can't download wdosbox.js, code: " + status +
+                                ", message: " + message + ", url: " + url));
                         },
                         success: (response: string) => {
                             response +=
                             /* tslint:disable:no-eval */
                             eval.call(window, response);
                             /* tslint:enable:no-eval */
-                            resolve();
+                            resolve(globals.exports[moduleName]);
                         },
                     });
                 });

@@ -1,9 +1,18 @@
 import { Build } from "./jsdos-sokol-build";
-import { DosOptionsBag } from "../../shared/jsdos-options";
+import { DosOptionsBag, DosConfig } from "../../shared/jsdos-options";
 import { DosFactory, DosMiddleware, DosClient } from "../../shared/jsdos-shared";
 import { DosCommandInterface } from "../../shared/jsdos-ci";
+import { SokolCommandInterface } from "./jsdos-sokol-ci";
+
+function onprogress(config: DosConfig) {
+    return (stage: string, total: number, loaded: number) => {
+        config.onprogress(stage, total, loaded);
+    };
+}
 
 class DosSokolDirectImpl implements DosMiddleware {
+    public defaultUrl = "wsokol.js";
+
     public buildInfo() {
         return Build;
     }
@@ -11,12 +20,15 @@ class DosSokolDirectImpl implements DosMiddleware {
     public async run(jsdos: DosClient): Promise<DosCommandInterface> {
         const config = jsdos.getConfig();
         const module = await jsdos.loadWasmModule(config.jsdosUrl,
-                                                  () => { /**/ });
-        throw new Error("Not implemented yet");
+                                                  "WSOKOL",
+                                                  onprogress(config));
+        return new SokolCommandInterface(module);
     }
 }
 
 class DosSokolWorkerImpl implements DosMiddleware {
+    public defaultUrl = "wsokol.js";
+
     public buildInfo() {
         return Build;
     }
@@ -24,8 +36,9 @@ class DosSokolWorkerImpl implements DosMiddleware {
     public async run(jsdos: DosClient): Promise<DosCommandInterface> {
         const config = jsdos.getConfig();
         const module = await jsdos.loadWasmModule(config.jsdosUrl,
-                                                  () => { /**/ });
-        throw new Error("Not implemented yet");
+                                                  "WSOKOL",
+                                                  onprogress(config));
+        return new SokolCommandInterface(module);
     }
 }
 

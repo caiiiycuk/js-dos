@@ -16,7 +16,7 @@ import loadWasmModule from "./jsdos-wasm";
 import Move from "./controller/move";
 import Qwerty from "./controller/qwerty";
 
-function compileConfig(options: DosOptionsBag): DosConfig {
+function compileConfig(options: DosOptionsBag, middlewareUrl: string): DosConfig {
     let el: HTMLElement | string | null = options.element || "dosbox";
     if (typeof el === "string") {
         const id = el;
@@ -27,7 +27,7 @@ function compileConfig(options: DosOptionsBag): DosConfig {
     }
     return {
         element: el as HTMLElement,
-        jsdosUrl: options.jsdosUrl || "wjsdos-sokol.js",
+        jsdosUrl: options.middlewareUrl || middlewareUrl,
         cycles: options.cycles || "max",
         autolock: options.autolock || false,
         sources: options.sources || [],
@@ -39,17 +39,13 @@ function compileConfig(options: DosOptionsBag): DosConfig {
             // tslint:disable-next-line:no-console
             console.log(message);
         },
-        onerror: options.onerror || function(message: string) {
-            // tslint:disable-next-line:no-console
-            console.error(message);
-        },
     };
 }
 
 function openCache(version: string, config: DosConfig): Promise<ICache> {
     return new Promise((resolve, reject) => {
         new CacheDb(version, resolve, (msg: string) => {
-            config.onerror("Can't initalize cache, cause: " + msg);
+            config.log("WARN! Can't initalize cache, cause: " + msg);
             reject(new CacheNoop());
         });
     });
@@ -62,15 +58,16 @@ const Dos: DosFactory =
                     options?: DosOptionsBag): Promise<DosCommandInterface> {
         options = options || {};
         options.element = element;
-        const config = compileConfig(options);
+        const config = compileConfig(options, middleware.defaultUrl);
         const cache = await openCache(middleware.buildInfo().version,
                                 config);
         const jsdos: DosClient = {
             getConfig: () => config,
             getCache: () => cache,
             loadWasmModule: (url: string,
+                             moduleName: string,
                              onprogress: (stage: string, total: number, loaded: number) => void) => {
-                return loadWasmModule(url, cache, onprogress);
+                                 return loadWasmModule(url, moduleName, cache, onprogress);
             }
         };
 

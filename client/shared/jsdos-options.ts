@@ -38,9 +38,9 @@ export interface DosOptionsBag {
     element?: string | HTMLElement;
     // * html element or id of element, which is used as window for dosbox
 
-    // ### jsdosUrl
-    jsdosUrl?: string;
-    // you can set alternative url for downloading js-dos script, default is `wjsdos-sokol.js`.
+    // ### middlewareUrl
+    middlewareUrl?: string;
+    // you can set alternative url for downloading middleware module, each module have it's default
 
     // ### cycles
     cycles?: number | string;
@@ -81,12 +81,6 @@ export interface DosOptionsBag {
     // * `total` - total bytes to download on current stage
     // * `loaded` - downloaded bytes
 
-    // ### onerror
-    onerror?: (message: string) => void;
-    // this function is called when error happens
-    //
-    // * `message` - infomation about error
-
     // ### log
     log?: (message: string) => void;
     // you can provide log function, to override logging, by default js-dos uses console.log as implementation
@@ -100,6 +94,5 @@ export interface DosConfig {
     autolock: boolean;
     sources: DosArchiveSource[];
     onprogress: (stage: string, total: number, loaded: number) => void;
-    onerror: (message: string) => void;
     log: (message: string) => void;
 }

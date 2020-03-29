@@ -15,6 +15,7 @@ const tsify = require("tsify");
 
 function clean() {
     return del(["dist/jsdos-sokol*",
+                "dist/wsokol*",
                 "client/jsdos-sokol/src/jsdos-sokol-build.ts"], { force: true });
 };
 
@@ -23,6 +24,13 @@ function generateBuildTs(cb: () => void) {
                       "client/jsdos-sokol/build/wsokol.wasm",
                       "client/jsdos-sokol/src/jsdos-sokol-build.ts");
     cb();
+};
+
+function copyAssets() {
+    return src(['client/jsdos-sokol/build/wsokol.js',
+                'client/jsdos-sokol/build/wsokol.js.symbols',
+                'client/jsdos-sokol/build/wsokol.wasm'])
+        .pipe(dest('dist'));
 };
 
 function js() {
@@ -50,4 +58,4 @@ function js() {
         .pipe(dest("dist"));
 };
 
-export const sokol = series(clean, generateBuildTs, js);
+export const sokol = series(clean, copyAssets, generateBuildTs, js);

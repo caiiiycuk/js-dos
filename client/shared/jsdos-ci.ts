@@ -19,8 +19,8 @@ export interface DosCommandInterface {
     // resolves when commands sequence is executed
     shell: (...cmd: string[]) => void;
 
-    // * `screenshot()` - get screnshot of canvas as ImageData
-    screenshot: () => Promise<ImageData>;
+    // * `screenshot()` - get screnshot of canvas as ImageData url
+    screenshot: () => Promise<string>;
 
     // * `exit()` - immediately exit from runtime
     exit: () => void;
