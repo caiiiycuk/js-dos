@@ -5,6 +5,9 @@
 #include <js-dos-protocol.h>
 #include <js-dos-ci.h>
 
+#include "jsdos-protocol-sokol.h"
+#include "jsdos-messaging.h"
+
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #include <emscripten/html5.h>
@@ -101,6 +104,18 @@ int frameCount = 0;
 int frameWidth = 0;
 int frameHeight = 0;
 uint32_t *frameRgba = 0;
+
+extern "C" int EMSCRIPTEN_KEEPALIVE client_frame_width() {
+    return frameWidth;
+}
+
+extern "C" int EMSCRIPTEN_KEEPALIVE client_frame_height() {
+    return frameHeight;
+}
+
+extern "C" void* EMSCRIPTEN_KEEPALIVE client_frame_rgba() {
+    return frameRgba;
+}
 
 GfxState *state = 0;
 
@@ -252,11 +267,12 @@ extern "C" void client_run() {
     _sapp_run(&appDescription);
 }
 
-extern "C" void client_exit() {
+extern "C" void EMSCRIPTEN_KEEPALIVE client_exit() {
     sapp_quit();
 }
 
 int main(int argc, char *argv[]) {
+    // initMessaging();
 #ifdef EMSCRIPTEN
     client_run();
 #else

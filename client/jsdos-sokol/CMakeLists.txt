@@ -41,7 +41,8 @@ include_directories(
 )
 
 set(SOURCES_SOKOL_CXX11
-	"${CMAKE_CURRENT_LIST_DIR}/cpp/sokol/js-dos-protocol-sokol.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/cpp/sokol/jsdos-protocol-sokol.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/cpp/sokol/jsdos-messaging.cpp"
 )
 set_source_files_properties(${SOURCES_SOKOL_CXX11} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++11")
 

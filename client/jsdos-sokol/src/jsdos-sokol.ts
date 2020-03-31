@@ -1,6 +1,6 @@
 import { Build } from "./jsdos-sokol-build";
 import { DosOptionsBag, DosConfig } from "../../shared/jsdos-options";
-import { DosFactory, DosMiddleware, DosClient } from "../../shared/jsdos-shared";
+import { DosFactory, DosMiddleware, DosClient, DosModule } from "../../shared/jsdos-shared";
 import { DosCommandInterface } from "../../shared/jsdos-ci";
 import { SokolCommandInterface } from "./jsdos-sokol-ci";
 
@@ -9,7 +9,6 @@ function onprogress(config: DosConfig) {
         config.onprogress(stage, total, loaded);
     };
 }
-
 class DosSokolDirectImpl implements DosMiddleware {
     public defaultUrl = "wsokol.js";
 
@@ -22,7 +21,17 @@ class DosSokolDirectImpl implements DosMiddleware {
         const module = await jsdos.loadWasmModule(config.jsdosUrl,
                                                   "WSOKOL",
                                                   onprogress(config));
-        return new SokolCommandInterface(module);
+        return new Promise<DosCommandInterface>((resolve) => {
+            const Module = <DosModule> {
+                canvas: jsdos.getConfig().element,
+                ping: console.log,
+                onRuntimeInitialized() {
+                    resolve(new SokolCommandInterface(this));
+                }
+            };
+
+            module.instantiate(Module);
+        });
     }
 }
 

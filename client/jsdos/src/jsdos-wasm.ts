@@ -5,6 +5,7 @@
 /* tslint:disable:member-ordering */
 import { ICache } from "../../shared/jsdos-cache";
 import { Xhr } from "./jsdos-xhr";
+import { WasmModule, DosModule } from "../../shared/jsdos-shared";
 
 class Host {
     public wasmSupported = false;
@@ -66,6 +67,22 @@ class Host {
 
 export const host = new Host();
 
+export class CompiledModule implements WasmModule {
+    private module: any;
+    private instantiateWasm: any;
+
+    constructor(module: any, instantiateWasm: any) {
+        this.module = module;
+        this.instantiateWasm = instantiateWasm;
+    }
+
+    instantiate(module: DosModule) {
+        (module as any).instantiateWasm = this.instantiateWasm;
+        new this.module(module);
+    }
+
+}
+
 export default function loadWasmModule(url: string,
                                        moduleName: string,
                                        cache: ICache,
@@ -74,7 +91,7 @@ export default function loadWasmModule(url: string,
     if (!globals.exports) {
         globals.exports = {};
     }
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<WasmModule>((resolve, reject) => {
         const fromIndex = url.lastIndexOf("/");
         const wIndex = url.indexOf("w", fromIndex);
         const isWasmUrl = wIndex === fromIndex + 1 && wIndex >= 0;
@@ -103,7 +120,7 @@ export default function loadWasmModule(url: string,
                 };
                 promise.catch(onreject);
                 promise.then((wasmModule) => {
-                    (window as any).instantiateWasm = (info: any, receiveInstance: any) => {
+                    const instantiateWasm = (info: any, receiveInstance: any) => {
                         info.env = info.env || {};
                         return WebAssembly.instantiate(wasmModule, info)
                             .catch(onreject)
@@ -127,7 +144,8 @@ export default function loadWasmModule(url: string,
                             /* tslint:disable:no-eval */
                             eval.call(window, response);
                             /* tslint:enable:no-eval */
-                            resolve(globals.exports[moduleName]);
+                            resolve(new CompiledModule(globals.exports[moduleName],
+                                                       instantiateWasm));
                         },
                     });
                 });

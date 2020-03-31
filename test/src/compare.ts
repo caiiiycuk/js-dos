@@ -14,6 +14,7 @@ export function compareAndExit(imageUrl: string, ci: DosCommandInterface) {
                 .then((wrong) => {
                     ci.exit();
                     assert.ok(wrong <= wrongTreshold, "Image not same, wrong: " + wrong);
+                    resolve();
                 })
                 .catch(reject);
         };
@@ -25,6 +26,16 @@ export function compareAndExit(imageUrl: string, ci: DosCommandInterface) {
 
 const compare = (imageUrl: string, ci: DosCommandInterface) => {
     return ci.screenshot()
+        .then((imageData: ImageData) => {
+            const canvas = document.createElement("canvas");
+            canvas.width = imageData.width;
+            canvas.height = imageData.height;
+
+            var ctx = canvas.getContext("2d");
+            ctx.putImageData(imageData, 0, 0);
+
+            return canvas.toDataURL("image/png");
+        })
         .then((actualUrl: string) => new Promise<number>((resolve) => {
             const img = new Image();
             img.onload = () => {

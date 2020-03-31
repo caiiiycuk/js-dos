@@ -1,6 +1,11 @@
 // # DosCommandInterface
 // Is abstraction that allows you to control runned instance of jsdos
 
+export interface DosKeyEventConsumer {
+    onPress(keyCode: number): void;
+    onRelease(keyCode: number): void;
+}
+
 export interface DosCommandInterface {
     // * `fullscreen()` - enters fullscreen mode
     // This function can be called anywhere, but for web security reasons its associated request can only be raised
@@ -19,8 +24,8 @@ export interface DosCommandInterface {
     // resolves when commands sequence is executed
     shell: (...cmd: string[]) => void;
 
-    // * `screenshot()` - get screnshot of canvas as ImageData url
-    screenshot: () => Promise<string>;
+    // * `screenshot()` - get screnshot of canvas as ImageData 
+    screenshot: () => Promise<ImageData>;
 
     // * `exit()` - immediately exit from runtime
     exit: () => void;

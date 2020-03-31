@@ -5,6 +5,7 @@ export class SokolCommandInterface implements DosCommandInterface {
 
     constructor(module: any) {
         this.module = module;
+        this.module.callMain([]);
     }
 
     public fullscreen() {
@@ -23,8 +24,18 @@ export class SokolCommandInterface implements DosCommandInterface {
         throw new Error("not implemented");
     }
 
-    public screenshot() {
-        return Promise.reject(new Error("not implemented"));
+    public screenshot(): Promise<ImageData> {
+        const width = this.module._client_frame_width();
+        const height = this.module._client_frame_height();
+        const rgbaPtr = this.module._client_frame_rgba();
+
+        const rgba = new Uint8ClampedArray(this.module.HEAPU8.buffer, rgbaPtr, width * height * 4);
+
+        for (let next = 3; next < rgba.byteLength; next = next + 4) {
+            rgba[next] = 255;
+        }
+
+        return Promise.resolve(new ImageData(rgba, width, height));
     }
 
     public exit() {
@@ -34,4 +45,5 @@ export class SokolCommandInterface implements DosCommandInterface {
     public simulateKeyPress(keyCode: number) {
         throw new Error("not implemented");
     }
+
 }

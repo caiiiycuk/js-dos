@@ -17,28 +17,28 @@ include_directories(
 )
 
 set(SOURCES_CORE_CXX11
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-timer.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-ci.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-events.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-json.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-main.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-mixer.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-mapper-noop.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-noop.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-timer.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-ci.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-events.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-json.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-main.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-mixer.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-mapper-noop.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-noop.cpp"
   )
 
 set_source_files_properties(${SOURCES_CORE_CXX11} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++11")
 
 set(SOURCES_CORE_CXX03
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-debug.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-debug-mem.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-asyncify.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/jsdos/js-dos-core.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-debug.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-debug-mem.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-asyncify.cpp"
+	"${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-core.cpp"
 #sdl
 #	"${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/sdlmain.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/mixer.cpp"
 #	"${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/sdl_mapper.cpp"
-#	"${CMAKE_CURRENT_LIST_DIR}/js-dos-cpp/gui/sdlmain.cpp"
+#	"${CMAKE_CURRENT_LIST_DIR}/jsdos-cpp/gui/sdlmain.cpp"
 #sokol
 	"${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dosbox.cpp"
 	"${CMAKE_CURRENT_LIST_DIR}/dosbox/src/cpu/core_simple.cpp"

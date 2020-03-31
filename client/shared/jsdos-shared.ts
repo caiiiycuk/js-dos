@@ -17,13 +17,21 @@ export type DosFactory = (element: HTMLElement | string,
                           middleware: DosMiddleware,
                           options?: DosOptionsBag) => Promise<DosCommandInterface>;
 
+export interface DosModule {
+    onRuntimeInitialized: () => void;
+}
+
+export interface WasmModule {
+    instantiate: (module: DosModule) => void;
+}
+
 export interface DosClient {
     getConfig: () => DosConfig;
     getCache: () => ICache;
 
     loadWasmModule: (url: string,
                      moduleName: string,
-                     onprogress: (stage: string, total: number, loaded: number) => void) => Promise<void>;
+                     onprogress: (stage: string, total: number, loaded: number) => void) => Promise<WasmModule>;
 }
 
 
