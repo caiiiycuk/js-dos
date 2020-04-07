@@ -28,7 +28,7 @@
 #include "pic.h"
 #include "fpu.h"
 
-#include <js-dos-core.h>
+#include <jsdos-core.h>
 static CoreSimple& core = *getCoreSimple();
 
 #if C_DEBUG

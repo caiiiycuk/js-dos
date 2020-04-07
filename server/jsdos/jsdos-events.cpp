@@ -1,7 +1,7 @@
-#include <js-dos-ci.h>
-#include <js-dos-events.h>
-#include <js-dos-json.h>
-#include <js-dos-protocol.h>
+#include <jsdos-ci.h>
+#include <jsdos-events.h>
+#include <jsdos-json.h>
+#include <jsdos-protocol.h>
 #include <unordered_map>
 
 #ifdef EMSCRIPTEN

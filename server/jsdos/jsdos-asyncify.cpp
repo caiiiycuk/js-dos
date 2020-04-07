@@ -43,13 +43,14 @@ bool initSyncSleep() {
                     }
 
                     Module.sync_wakeUp = wakeUp;
-                    window.postMessage({ type: "sync_sleep_message", id: Module.sync_id }, "*");
+                    if (typeof self !== "undefined") {
+                        postMessage({ type: "sync_sleep_message", id: Module.sync_id });
+                    } else {
+                        window.postMessage({ type: "sync_sleep_message", id: Module.sync_id }, "*");
+                    }
                 };
 
                 Module.receive = function(ev) {
-                    if (ev.source !== window) {
-                        return;
-                    }
                     var data = ev.data;
                     if (ev.data.type === "sync_sleep_message" && Module.sync_id == ev.data.id) {
                         ev.stopPropagation();
@@ -62,7 +63,11 @@ bool initSyncSleep() {
                     }
                 };
 
-                window.addEventListener("message", Module.receive, true);
+                if (typeof self !== "undefined") {
+                    self.addEventListener("message", Module.receive, true);
+                } else {
+                    window.addEventListener("message", Module.receive, true);
+                }
             }));
 
     return true;
@@ -70,7 +75,11 @@ bool initSyncSleep() {
 
 extern "C" void destroySyncSleep() {
     EM_ASM(({
-                window.removeEventListener("message", Module.receive);
+                if (typeof self !== "undefined") {
+                    self.removeEventListener("message", Module.receive);
+                } else {
+                    window.removeEventListener("message", Module.receive);
+                }
                 Module.alive = false;
                 delete Module.sync_sleep;
             }));

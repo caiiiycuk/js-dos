@@ -10,14 +10,15 @@ if(${EMSCRIPTEN})
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \
 		${USE_PORTS} \
 		${OPT_FLAG} \
+    -O1 -g \
 		-s TOTAL_STACK=1MB \
 		-s MALLOC=emmalloc \
 		--emit-symbol-map \
-		-s EXIT_RUNTIME=1 \
 		-s ASSERTIONS=0 \
 		-s SAFE_HEAP=0 \
 		-s TOTAL_MEMORY=67108864 \
 		-s ALLOW_MEMORY_GROWTH=1 \
+		-s EXIT_RUNTIME=0 \
 		-s INVOKE_RUN=0 \
 		-s MODULARIZE=1 \
 		-s EXPORT_NAME='WSOKOL' \
@@ -42,7 +43,6 @@ include_directories(
 
 set(SOURCES_SOKOL_CXX11
 	"${CMAKE_CURRENT_LIST_DIR}/cpp/sokol/jsdos-protocol-sokol.cpp"
-	"${CMAKE_CURRENT_LIST_DIR}/cpp/sokol/jsdos-messaging.cpp"
 )
 set_source_files_properties(${SOURCES_SOKOL_CXX11} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++11")
 

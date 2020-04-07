@@ -2,16 +2,13 @@
 // Created by caiiiycuk on 27.02.2020.
 //
 
-#include <js-dos-protocol.h>
-#include <js-dos-ci.h>
-
-#include "jsdos-protocol-sokol.h"
-#include "jsdos-messaging.h"
-
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #endif
+
+#include <jsdos-protocol.h>
+#include <jsdos-ci.h>
 
 #define SOKOL_NO_ENTRY
 #define SOKOL_IMPL
@@ -42,7 +39,42 @@ std::mutex mutex;
 #define WINDOW_HEIGHT 400
 #endif
 
+int renderedFrame = 0;
+int frameCount = 0;
+int frameWidth = 0;
+int frameHeight = 0;
+uint32_t *frameRgba = 0;
+
+#include "jsdos-protocol-dr.h"
+#include "jsdos-protocol-wc.h"
+#include "jsdos-protocol-ws.h"
+
+std::function<void(void)> onSokolInit;
+std::function<void(int, int)> on_client_frame_set_size;
+std::function<void(uint32_t *, uint32_t, void *)> on_client_frame_update_lines;
+
 void sokolFrame();
+
+
+enum MessagingType {
+                    DIRECT = 1,
+                    WORKER_CLIENT = 2,
+                    WORKER = 3,
+};
+
+MessagingType initMessagingType() {
+    MessagingType messagingType = DIRECT;
+
+#ifdef EMSCRIPTEN
+    messagingType =
+        (MessagingType) EM_ASM_INT((
+                                    return Module.messagingType || 3 /* WORKER */;
+                                    ));
+#endif
+    return messagingType;
+}
+
+const MessagingType messagingType = initMessagingType();
 
 static float vertices[] = {
     0.0f, 0.0f, 0.0f, 0.0f,
@@ -99,11 +131,6 @@ class GfxState {
     }
 };
 
-int renderedFrame = 0;
-int frameCount = 0;
-int frameWidth = 0;
-int frameHeight = 0;
-uint32_t *frameRgba = 0;
 
 extern "C" int EMSCRIPTEN_KEEPALIVE client_frame_width() {
     return frameWidth;
@@ -123,17 +150,7 @@ extern "C" void client_frame_set_size(int width, int height) {
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(mutex);
 #endif
-
-    if (frameRgba) {
-        delete[] frameRgba;
-    }
-    frameWidth = width;
-    frameHeight = height;
-    frameRgba = new uint32_t[width * height];
-
-#ifdef EMSCRIPTEN
-    emscripten_set_canvas_size(width, height);
-#endif
+    on_client_frame_set_size(width, height);
 }
 
 
@@ -141,23 +158,13 @@ extern "C" void client_frame_update_lines(uint32_t *lines, uint32_t count, void 
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(mutex);
 #endif
-
-    frameCount++;
-    if (!frameRgba) {
-        return;
-    }
-
-    for (uint32_t i = 0; i < count; ++i) {
-        uint32_t start = lines[i * 3];
-        uint32_t count = lines[i * 3 + 1];
-        uint32_t offset = lines[i * 3 + 2];
-        memcpy(&frameRgba[start * frameWidth], (char*) rgba + offset, sizeof(uint32_t) * count * frameWidth);
-        count--;
-    }
+    on_client_frame_update_lines(lines, count, rgba);
 }
 
 extern "C" void client_sound_push(const float *samples, int num_samples) {
-    saudio_push(samples, num_samples);
+    if (messagingType == WORKER) {
+        saudio_push(samples, num_samples);
+    }
 }
 
 
@@ -178,6 +185,8 @@ void sokolInit() {
 
     saudio_setup(&audioDescription);
     assert(saudio_isvalid());
+
+    onSokolInit();
 }
 
 void sokolFrame() {
@@ -242,7 +251,6 @@ extern "C" void client_run() {
             // TODO: valid exit
             std::terminate();
 #endif
-//    server_exit();
         };
 
     appDescription.event_cb =
@@ -268,15 +276,65 @@ extern "C" void client_run() {
 }
 
 extern "C" void EMSCRIPTEN_KEEPALIVE client_exit() {
-    sapp_quit();
+    if (messagingType == DIRECT) {
+        server_exit([]() {
+                        sapp_quit();
+                    });
+    }
+
+    if (messagingType == WORKER_CLIENT) {
+        sapp_quit();
+    }
+}
+
+extern "C" int EMSCRIPTEN_KEEPALIVE run() {
+    int argc = 0;
+    char** argv = 0;
+
+
+    switch (messagingType) {
+        case WORKER: {
+            printf("sokol started in WORKER mode\n");
+            on_client_frame_set_size = &ws_client_frame_set_size;
+            on_client_frame_update_lines = &ws_client_frame_update_lines;
+            return server_run(argc, argv);
+        }
+
+        case DIRECT: {
+            printf("sokol started in DIRECT mode\n");
+            onSokolInit = &dr_sokolInit;
+            on_client_frame_set_size = &dr_client_frame_set_size;
+            on_client_frame_update_lines = &dr_client_frame_update_lines;
+
+#ifdef EMSCRIPTEN
+            client_run();
+#else
+            std::thread client(client_run);
+#endif
+            return server_run(argc, argv);
+        }
+
+        case WORKER_CLIENT: {
+            printf("sokol started in WORKER_CLIENT mode\n");
+            onSokolInit = &wc_sokolInit;
+            on_client_frame_set_size = &dr_client_frame_set_size;
+            on_client_frame_update_lines = &dr_client_frame_update_lines;
+
+#ifdef EMSCRIPTEN
+            client_run();
+#else
+            abort();
+#endif
+            return 0;
+        }
+    }
 }
 
 int main(int argc, char *argv[]) {
-    // initMessaging();
-#ifdef EMSCRIPTEN
-    client_run();
-#else
-    std::thread client(client_run);
-#endif
-    return server_run(argc, argv);
+    if (messagingType == WORKER) {
+        ws_init();
+    }
+
+    printf("return 0;\n");
+    return 0;
 }

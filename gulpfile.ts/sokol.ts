@@ -4,6 +4,7 @@ import del from "del";
 import sourcemaps from "gulp-sourcemaps";
 import uglify from "gulp-uglify";
 import size from "gulp-size";
+import rename from "gulp-rename";
 import browserify from "browserify";
 import buffer from "vinyl-buffer";
 import source from "vinyl-source-stream";
@@ -12,6 +13,8 @@ import generateBuildInfo from "./build-info";
 
 // tslint:disable-next-line:no-var-requires
 const tsify = require("tsify");
+// tslint:disable-next-line:no-var-requires
+const footer = require("gulp-footer");
 
 function clean() {
     return del(["dist/jsdos-sokol*",
@@ -58,4 +61,19 @@ function js() {
         .pipe(dest("dist"));
 };
 
-export const sokol = series(clean, copyAssets, generateBuildTs, js);
+function workerJs() {
+    return src("dist/wsokol.js")
+        .pipe(footer(`
+var module = {
+    onRuntimeInitialized: function() {
+        console.log("worker runtime is ready");
+        module.callMain([]);
+    }
+};
+new WSOKOL(module);
+`))
+        .pipe(rename("wsokol-worker.js"))
+        .pipe(dest("dist"));
+}
+
+export const sokol = series(clean, copyAssets, generateBuildTs, js, workerJs);

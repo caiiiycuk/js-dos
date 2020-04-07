@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
-#include <js-dos-ci.h>
+#include <jsdos-ci.h>
 
 #include "dosbox.h"
 #include "bios.h"

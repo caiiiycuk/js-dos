@@ -1,6 +1,6 @@
 import { Build } from "./jsdos-sokol-build";
-import { DosOptionsBag, DosConfig } from "../../shared/jsdos-options";
-import { DosFactory, DosMiddleware, DosClient, DosModule } from "../../shared/jsdos-shared";
+import { DosConfig } from "../../shared/jsdos-options";
+import { DosMiddleware, DosClient, DosModule } from "../../shared/jsdos-shared";
 import { DosCommandInterface } from "../../shared/jsdos-ci";
 import { SokolCommandInterface } from "./jsdos-sokol-ci";
 
@@ -16,22 +16,8 @@ class DosSokolDirectImpl implements DosMiddleware {
         return Build;
     }
 
-    public async run(jsdos: DosClient): Promise<DosCommandInterface> {
-        const config = jsdos.getConfig();
-        const module = await jsdos.loadWasmModule(config.jsdosUrl,
-                                                  "WSOKOL",
-                                                  onprogress(config));
-        return new Promise<DosCommandInterface>((resolve) => {
-            const Module = <DosModule> {
-                canvas: jsdos.getConfig().element,
-                ping: console.log,
-                onRuntimeInitialized() {
-                    resolve(new SokolCommandInterface(this));
-                }
-            };
-
-            module.instantiate(Module);
-        });
+    public run(jsdos: DosClient): Promise<DosCommandInterface> {
+        return doRun(jsdos, 1 /* DIRECT */);
     }
 }
 
@@ -42,13 +28,30 @@ class DosSokolWorkerImpl implements DosMiddleware {
         return Build;
     }
 
-    public async run(jsdos: DosClient): Promise<DosCommandInterface> {
-        const config = jsdos.getConfig();
-        const module = await jsdos.loadWasmModule(config.jsdosUrl,
-                                                  "WSOKOL",
-                                                  onprogress(config));
-        return new SokolCommandInterface(module);
+    public run(jsdos: DosClient): Promise<DosCommandInterface> {
+        return doRun(jsdos, 2 /* WORKER_CLIENT */);
     }
+}
+
+async function doRun(jsdos: DosClient, messagingType: number): Promise<DosCommandInterface> {
+    const config = jsdos.getConfig();
+    const module = await jsdos.loadWasmModule(config.jsdosUrl,
+                                              "WSOKOL",
+                                              onprogress(config));
+    return new Promise<DosCommandInterface>((resolve) => {
+        const Module = <DosModule> {
+            config,
+            messagingType,
+            canvas: jsdos.getConfig().element,
+            ping: console.log,
+            onRuntimeInitialized() {
+                const module: any = this;
+                new SokolCommandInterface(module, resolve);
+            }
+        };
+
+        module.instantiate(Module);
+    });
 }
 
 const DosSokol = new DosSokolDirectImpl();

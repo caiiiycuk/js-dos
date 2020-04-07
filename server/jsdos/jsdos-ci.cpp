@@ -1,21 +1,22 @@
 // CommandInterface
 // =================================
-#include <js-dos-ci.h>
-#include <js-dos-protocol.h>
+#include <jsdos-ci.h>
+#include <jsdos-protocol.h>
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 extern "C" void destroySyncSleep();
 #endif
 
 CommandInterface::CommandInterface(): m_events(new Events()) {
-#ifdef EMSCRIPTEN
-  EM_ASM(({
-    // ios.iframe.fix
-    Module['canvas'].addEventListener('touchstart', function(event) {}, true);
-    // ios.swipe.fix
-    Module['canvas'].addEventListener('touchmove', function(event) { event.preventDefault() }, true);
-  }));
-#endif
+    // TODO: @caiiiycuk
+// #ifdef EMSCRIPTEN
+//   EM_ASM(({
+//     // ios.iframe.fix
+//     Module['canvas'].addEventListener('touchstart', function(event) {}, true);
+//     // ios.swipe.fix
+//     Module['canvas'].addEventListener('touchmove', function(event) { event.preventDefault() }, true);
+//   }));
+// #endif
 }
 
 // When CommandInterface is destroyed, it means

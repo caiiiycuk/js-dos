@@ -3,9 +3,11 @@ import { DosCommandInterface } from "../../shared/jsdos-ci";
 export class SokolCommandInterface implements DosCommandInterface {
     public module: any;
 
-    constructor(module: any) {
+    constructor(module: any, ready: (ci: DosCommandInterface) => void) {
         this.module = module;
+        this.module.ready = () => ready(this);
         this.module.callMain([]);
+        this.module._run();
     }
 
     public fullscreen() {

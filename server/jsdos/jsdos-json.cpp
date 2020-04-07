@@ -1,7 +1,7 @@
 // JsonStream
 // ==========
 
-#include <js-dos-json.h>
+#include <jsdos-json.h>
 
 jsonstream::jsonstream() : keyNext(true) {}
 

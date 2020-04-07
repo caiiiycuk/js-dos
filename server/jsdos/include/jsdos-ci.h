@@ -1,7 +1,7 @@
 #ifndef _JSDOS_API_H_
 #define _JSDOS_API_H_
 
-#include <js-dos-events.h>
+#include <jsdos-events.h>
 #include <string>
 
 // CommandInterace

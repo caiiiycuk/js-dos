@@ -29,7 +29,7 @@
 #include "fpu.h"
 #include "paging.h"
 
-#include <js-dos-core.h>
+#include <jsdos-core.h>
 static CorePrefetch& core = *getCorePrefetch();
 
 #if C_DEBUG

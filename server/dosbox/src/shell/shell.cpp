@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <js-dos-ci.h>
+#include <jsdos-ci.h>
 #include "dosbox.h"
 #include "regs.h"
 #include "control.h"

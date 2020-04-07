@@ -2,7 +2,7 @@
 // Created by caiiiycuk on 28.02.2020.
 // originally was mixer.cpp
 //
-#include <js-dos-protocol.h>
+#include <jsdos-protocol.h>
 
 #include <string.h>
 #include <stdlib.h>

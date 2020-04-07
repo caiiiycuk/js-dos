@@ -9,7 +9,7 @@
 #include <video.h>
 #include <programs.h>
 
-#include <js-dos-protocol.h>
+#include <jsdos-protocol.h>
 #include <mapper.h>
 
 #ifdef EMSCRIPTEN
@@ -183,14 +183,14 @@ void Config_Emscripten() {
         // Don't copy canvas image back into RAM in SDL_LockSurface()
         Module['screenIsReadOnly'] = true;
         // set nearest neighbor scaling, for sharply upscaled pixels
-        var canvasStyle = Module['canvas'].style;
-        canvasStyle.imageRendering = "optimizeSpeed";
-        canvasStyle.imageRendering = "-moz-crisp-edges";
-        canvasStyle.imageRendering = "-o-crisp-edges";
-        canvasStyle.imageRendering = "-webkit-optimize-contrast";
-        canvasStyle.imageRendering = "optimize-contrast";
-        canvasStyle.imageRendering = "crisp-edges";
-        canvasStyle.imageRendering = "pixelated";
+        // var canvasStyle = Module['canvas'].style;
+        // canvasStyle.imageRendering = "optimizeSpeed";
+        // canvasStyle.imageRendering = "-moz-crisp-edges";
+        // canvasStyle.imageRendering = "-o-crisp-edges";
+        // canvasStyle.imageRendering = "-webkit-optimize-contrast";
+        // canvasStyle.imageRendering = "optimize-contrast";
+        // canvasStyle.imageRendering = "crisp-edges";
+        // canvasStyle.imageRendering = "pixelated";
     );
     // register no-op callbacks for defered events
 // TODO: @caiiiycuk
@@ -339,7 +339,7 @@ void GFX_Events() {
 }
 
 
-extern "C" void server_add_key(KBD_KEYS key, bool pressed) {
+void server_add_key(KBD_KEYS key, bool pressed) {
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(eventsMutex);
 #endif
@@ -347,7 +347,7 @@ extern "C" void server_add_key(KBD_KEYS key, bool pressed) {
     keyEvents.push_back({ key, pressed });
 }
 
-extern "C" int server_run(int argc, char** argv) {
+int server_run(int argc, char** argv) {
     CommandLine commandLine(argc, argv);
     Config config(&commandLine);
     return jsdos_main(&config);
