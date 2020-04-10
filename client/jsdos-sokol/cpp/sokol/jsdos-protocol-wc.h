@@ -2,7 +2,7 @@ void wc_sokolInit() {
 #ifdef EMSCRIPTEN
     EM_ASM(({
                 Module.worker = new Worker(Module.config.jsdosUrl
-                                           .replace(".js", "-worker.js"));
+                                           .replace("-client.js", "-worker.js"));
 
                 function sendMessage(name) {
                     Module.worker.postMessage({

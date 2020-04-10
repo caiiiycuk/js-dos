@@ -58,8 +58,6 @@
 #include "cross.h"
 #include "control.h"
 
-#include <js-dos-ci.h>
-
 #define MAPPERFILE "mapper-" VERSION ".map"
 //#define DISABLE_JOYSTICK
 
@@ -1589,8 +1587,6 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 	default:
 		break;
 	}
-
-	ci()->events()->frame();
 }
 
 
@@ -2274,7 +2270,7 @@ void GFX_Events() {
 		MAPPER_UpdateJoysticks();
 	}
 #endif
-	while (ci()->events()->pollSDLEvent(&event)) {
+	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 #if SDL_VERSION_ATLEAST(2,0,0)
 		case SDL_WINDOWEVENT:

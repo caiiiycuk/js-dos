@@ -25,7 +25,6 @@ CommandInterface::CommandInterface(): m_events(new Events()) {
 // is no safe
 CommandInterface::~CommandInterface() {
     delete m_events;
-    client_exit();
 #ifdef EMSCRIPTEN
     destroySyncSleep();
     emscripten_force_exit(0);

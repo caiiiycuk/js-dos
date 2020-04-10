@@ -27,8 +27,8 @@ export interface DosCommandInterface {
     // * `screenshot()` - get screnshot of canvas as ImageData 
     screenshot: () => Promise<ImageData>;
 
-    // * `exit()` - immediately exit from runtime
-    exit: () => void;
+    // * `exit()` - exit from runtime
+    exit: () => Promise<void>;
 
     // * `simulateKeyPress(keyCode)` - allows to simulate key press **AND** release event for key code
     // see `sendKeyPress` to find meaning of keyCode

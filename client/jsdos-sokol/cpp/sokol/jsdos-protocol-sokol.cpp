@@ -49,9 +49,9 @@ uint32_t *frameRgba = 0;
 #include "jsdos-protocol-wc.h"
 #include "jsdos-protocol-ws.h"
 
-std::function<void(void)> onSokolInit;
-std::function<void(int, int)> on_client_frame_set_size;
-std::function<void(uint32_t *, uint32_t, void *)> on_client_frame_update_lines;
+void(*onSokolInit)(void);
+void(*on_client_frame_set_size)(int, int);
+void(*on_client_frame_update_lines)(uint32_t *, uint32_t, void *);
 
 void sokolFrame();
 
@@ -225,6 +225,11 @@ void sokolFrame() {
 
 void sokolCleanup() {
     sg_shutdown();
+#ifdef EMSCRIPTEN
+    EM_ASM((
+            Module.exit();
+            ));
+#endif
 }
 
 void keyEvent(const sapp_event *event) {
@@ -277,9 +282,8 @@ extern "C" void client_run() {
 
 extern "C" void EMSCRIPTEN_KEEPALIVE client_exit() {
     if (messagingType == DIRECT) {
-        server_exit([]() {
-                        sapp_quit();
-                    });
+        server_exit();
+        return;
     }
 
     if (messagingType == WORKER_CLIENT) {
@@ -295,30 +299,32 @@ extern "C" int EMSCRIPTEN_KEEPALIVE run() {
     switch (messagingType) {
         case WORKER: {
             printf("sokol started in WORKER mode\n");
-            on_client_frame_set_size = &ws_client_frame_set_size;
-            on_client_frame_update_lines = &ws_client_frame_update_lines;
+            on_client_frame_set_size = ws_client_frame_set_size;
+            on_client_frame_update_lines = ws_client_frame_update_lines;
             return server_run(argc, argv);
         }
 
         case DIRECT: {
             printf("sokol started in DIRECT mode\n");
-            onSokolInit = &dr_sokolInit;
-            on_client_frame_set_size = &dr_client_frame_set_size;
-            on_client_frame_update_lines = &dr_client_frame_update_lines;
+            onSokolInit = dr_sokolInit;
+            on_client_frame_set_size = dr_client_frame_set_size;
+            on_client_frame_update_lines = dr_client_frame_update_lines;
 
 #ifdef EMSCRIPTEN
             client_run();
 #else
             std::thread client(client_run);
 #endif
-            return server_run(argc, argv);
+            server_run(argc, argv);
+            sapp_quit();
+            return 0;
         }
 
         case WORKER_CLIENT: {
             printf("sokol started in WORKER_CLIENT mode\n");
-            onSokolInit = &wc_sokolInit;
-            on_client_frame_set_size = &dr_client_frame_set_size;
-            on_client_frame_update_lines = &dr_client_frame_update_lines;
+            onSokolInit = wc_sokolInit;
+            on_client_frame_set_size = dr_client_frame_set_size;
+            on_client_frame_update_lines = dr_client_frame_update_lines;
 
 #ifdef EMSCRIPTEN
             client_run();
@@ -335,6 +341,9 @@ int main(int argc, char *argv[]) {
         ws_init();
     }
 
+#ifndef EMSCRIPTEN
+    return run();
+#endif
     printf("return 0;\n");
     return 0;
 }

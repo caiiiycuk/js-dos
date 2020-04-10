@@ -9,7 +9,6 @@
 #include <emscripten.h>
 #endif
 
-#include <functional>
 #include <stdint.h>
 #include <keyboard.h>
 
@@ -21,6 +20,6 @@ extern "C" void EMSCRIPTEN_KEEPALIVE client_exit();
 
 extern int server_run(int argc, char** argv);
 extern void server_add_key(KBD_KEYS key, bool pressed);
-extern void server_exit(const std::function<void()>& cb);
+extern void server_exit();
 
 #endif //JS_DOS_JS_DOS_PROTOCOL_H

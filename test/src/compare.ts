@@ -12,9 +12,9 @@ export function compareAndExit(imageUrl: string, ci: DosCommandInterface) {
         const fn = () => {
             compare(imageUrl, ci)
                 .then((wrong) => {
-                    ci.exit();
+                    const exitPromise = ci.exit();
                     assert.ok(wrong <= wrongTreshold, "Image not same, wrong: " + wrong);
-                    resolve();
+                    exitPromise.then(resolve).catch(reject);
                 })
                 .catch(reject);
         };

@@ -47,7 +47,9 @@
 #include "ints/int10.h"
 #include "render.h"
 #include "pci_bus.h"
+
 #include <jsdos-debug-mem.h>
+#include <jsdos-flags.h>
 
 #if 1 // !SDL_VERSION_ATLEAST(2,0,0)
 #define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)
@@ -461,11 +463,6 @@ static void em_main_loop(void) {
 }
 #endif
 
-std::function<void()> exit_requestor = 0;
-void server_exit(const std::function<void()>& cb) {
-    exit_requestor = cb;
-}
-
 void DOSBOX_RunMachine(void){
 #if defined(JSDOS) && !defined(EMTERPRETER_SYNC)
 	if (runcount == 0) {
@@ -479,9 +476,10 @@ void DOSBOX_RunMachine(void){
     mstime ticksStart = GetTicks();
 	Bitu ret;
 	do {
-      if (exit_requestor) {
-          break;
-      }
+    if (isNormalState() && (RuntimeFlags & EXIT_REQUESTED)) {
+        break;
+    }
+
 		ret=(*loop)();
 #if defined(JSDOS) && !defined(EMTERPRETER_SYNC)
 		/* These should be very short operations, like interrupts.
@@ -495,10 +493,6 @@ void DOSBOX_RunMachine(void){
 		}
 #endif
 	} while (!ret);
-
-  if (exit_requestor && nosleep_lock == 0) {
-      exit_requestor();
-  }
 }
 
 static void DOSBOX_UnlockSpeed( bool pressed ) {

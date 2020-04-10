@@ -32,7 +32,10 @@ function generateBuildTs(cb: () => void) {
 function copyAssets() {
     return src(['client/jsdos-sokol/build/wsokol.js',
                 'client/jsdos-sokol/build/wsokol.js.symbols',
-                'client/jsdos-sokol/build/wsokol.wasm'])
+                'client/jsdos-sokol/build/wsokol.wasm',
+                'client/jsdos-sokol/build/wsokol-client.js',
+                'client/jsdos-sokol/build/wsokol-client.js.symbols',
+                'client/jsdos-sokol/build/wsokol-client.wasm'])
         .pipe(dest('dist'));
 };
 

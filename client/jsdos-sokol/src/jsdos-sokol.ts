@@ -22,7 +22,7 @@ class DosSokolDirectImpl implements DosMiddleware {
 }
 
 class DosSokolWorkerImpl implements DosMiddleware {
-    public defaultUrl = "wsokol.js";
+    public defaultUrl = "wsokol-client.js";
 
     public buildInfo() {
         return Build;
@@ -36,7 +36,7 @@ class DosSokolWorkerImpl implements DosMiddleware {
 async function doRun(jsdos: DosClient, messagingType: number): Promise<DosCommandInterface> {
     const config = jsdos.getConfig();
     const module = await jsdos.loadWasmModule(config.jsdosUrl,
-                                              "WSOKOL",
+                                              messagingType == 1 ? "WSOKOL" : "WSOKOL_CLIENT",
                                               onprogress(config));
     return new Promise<DosCommandInterface>((resolve) => {
         const Module = <DosModule> {

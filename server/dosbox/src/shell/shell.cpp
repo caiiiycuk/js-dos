@@ -20,13 +20,15 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
-#include <jsdos-ci.h>
 #include "dosbox.h"
 #include "regs.h"
 #include "control.h"
 #include "shell.h"
 #include "callback.h"
 #include "support.h"
+
+#include <jsdos-ci.h>
+#include <jsdos-flags.h>
 
 Bitu call_shellstop;
 /* Larger scope so shell_del autoexec can use it to
@@ -312,6 +314,11 @@ void DOS_Shell::Run(void) {
 		WriteOut(MSG_Get("SHELL_STARTUP_SUB"),VERSION);
 	}
 	do {
+      if (RuntimeFlags & JsDosRuntimeFlag::EXIT_REQUESTED) {
+          exit = true;
+          break;
+      }
+
 		if (bf){
 			if(bf->ReadLine(input_line)) {
 				if (echo) {

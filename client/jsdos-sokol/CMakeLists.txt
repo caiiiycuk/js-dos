@@ -21,7 +21,6 @@ if(${EMSCRIPTEN})
 		-s EXIT_RUNTIME=0 \
 		-s INVOKE_RUN=0 \
 		-s MODULARIZE=1 \
-		-s EXPORT_NAME='WSOKOL' \
 		-s FORCE_FILESYSTEM=1 -lidbfs.js \
 		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['getMemory', 'addRunDependency', 'removeRunDependency','FS', 'FS_createPath', 'FS_createPreloadedFile', \
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString', 'UTF8ToString', 'callMain']\" \
@@ -51,16 +50,23 @@ set(SOURCES_SOKOL_CXX03
 )
 set_source_files_properties(${SOURCES_SOKOL_CXX03} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++03")
 
-set(SOURCES ${SOURCES_SOKOL_CXX11} ${SOURCES_SOKOL_CXX03} ${SOURCES_CORE} ${SOURCES_3RDPARTY})
+set(SOURCES ${SOURCES_CORE} ${SOURCES_3RDPARTY})
 
 if(${EMSCRIPTEN})
+  add_library(sokol OBJECT ${SOURCES_SOKOL_CXX11} ${SOURCES_SOKOL_CXX03})
 	add_library(bin-asyncify OBJECT ${SOURCES})
+  target_compile_definitions(sokol PUBLIC -DASYNCIFY -Demscripten_sleep_with_yield=asyncify_sleep -Demscripten_sleep=asyncify_sleep)
   target_compile_definitions(bin-asyncify PUBLIC -DASYNCIFY -Demscripten_sleep_with_yield=asyncify_sleep -Demscripten_sleep=asyncify_sleep)
-	add_executable(wsokol $<TARGET_OBJECTS:bin-asyncify>)
+	add_executable(wsokol $<TARGET_OBJECTS:bin-asyncify> $<TARGET_OBJECTS:sokol>)
+
 	set_target_properties(wsokol PROPERTIES SUFFIX .js)
-	set_target_properties(wsokol PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../server/asyncify.txt")
+	set_target_properties(wsokol PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../server/asyncify.txt -s EXPORT_NAME='WSOKOL'")
+
+	add_executable(wsokol-client $<TARGET_OBJECTS:sokol>)
+	set_target_properties(wsokol-client PROPERTIES SUFFIX .js)
+	set_target_properties(wsokol-client PROPERTIES LINK_FLAGS "-s WASM=1 -s EXPORT_NAME='WSOKOL_CLIENT'")
 else()
-	add_executable(bin ${SOURCES})
+	add_executable(bin ${SOURCES} ${SOURCES_SOKOL_CXX11} ${SOURCES_SOKOL_CXX03})
 	target_link_libraries(bin
 		X11  z ncurses dl GL  pthread asound
 	  )

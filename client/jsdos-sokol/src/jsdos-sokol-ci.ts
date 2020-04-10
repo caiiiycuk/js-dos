@@ -40,8 +40,11 @@ export class SokolCommandInterface implements DosCommandInterface {
         return Promise.resolve(new ImageData(rgba, width, height));
     }
 
-    public exit() {
-        this.module._client_exit();
+    public exit(): Promise<void> {
+        return new Promise((resolve) => {
+            this.module.exit = resolve;
+            this.module._client_exit();
+        });
     }
 
     public simulateKeyPress(keyCode: number) {

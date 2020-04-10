@@ -21,6 +21,8 @@
 #include "../ints/int10.h"
 #include <string.h>
 
+#include <jsdos-flags.h>
+
 #define NUMBER_ANSI_DATA 10
 
 class device_CON : public DOS_Device {
@@ -60,6 +62,10 @@ bool device_CON::Read(Bit8u * data,Bit16u * size) {
 		readcache=0;
 	}
 	while (*size>count) {
+    if (RuntimeFlags & EXIT_REQUESTED) {
+      break;
+    }
+
 		reg_ah=(IS_EGAVGA_ARCH)?0x10:0x0;
 		CALLBACK_RunRealInt(0x16);
 		switch(reg_al) {
