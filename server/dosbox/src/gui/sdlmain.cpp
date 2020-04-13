@@ -15,7 +15,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-
+#include <jsdos-support.h>
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -382,7 +382,7 @@ static void GFX_SetIcon() {
 static void KillSwitch(bool pressed) {
 	if (!pressed)
 		return;
-	throw 1;
+	jsdos::requestExit();
 }
 
 #ifdef JSDOS
@@ -413,7 +413,11 @@ static Bitu Pause_Loop(void) {
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 
-			case SDL_QUIT: KillSwitch(true); break;
+			case SDL_QUIT: {
+			    KillSwitch(true);
+			    return 0;
+			}
+			break;
 #if SDL_VERSION_ATLEAST(2,0,0)
 			case SDL_WINDOWEVENT:
 				if (event.window.event == SDL_WINDOWEVENT_RESTORED) {
@@ -2415,7 +2419,10 @@ void GFX_Events() {
 						SDL_WaitEvent(&ev);
 
 						switch (ev.type) {
-						case SDL_QUIT: throw(0); break; // a bit redundant at linux at least as the active events gets before the quit event.
+						case SDL_QUIT: {
+                            jsdos::requestExit();
+                            return;
+                        } break; // a bit redundant at linux at least as the active events gets before the quit event.
 						case SDL_ACTIVEEVENT:     // wait until we get window focus back
 							if (ev.active.state & (SDL_APPINPUTFOCUS | SDL_APPACTIVE)) {
 								// We've got focus back, so unpause and break out of the loop
@@ -2450,9 +2457,10 @@ void GFX_Events() {
 			//GFX_HandleVideoResize(event.resize.w, event.resize.h);
 			break;
 #endif
-		case SDL_QUIT:
-			throw(0);
-			break;
+		case SDL_QUIT: {
+            jsdos::requestExit();
+            return;
+        } break;
 #if !SDL_VERSION_ATLEAST(2,0,0)
 		case SDL_VIDEOEXPOSE:
 			if (sdl.draw.callback) sdl.draw.callback( GFX_CallBackRedraw );
@@ -2823,7 +2831,7 @@ static void erasemapperfile() {
 
 //extern void UI_Init(void);
 int main(int argc, char* argv[]) {
-	try {
+//	try {
 		CommandLine com_line(argc,argv);
 		Config myconf(&com_line);
 		control=&myconf;
@@ -3080,30 +3088,30 @@ int main(int argc, char* argv[]) {
 		/* Start up main machine */
 		control->StartUp();
 		/* Shutdown everything */
-	} catch (char * error) {
-#if defined (WIN32)
-		sticky_keys(true);
-#endif
-		GFX_ShowMsg("Exit to error: %s",error);
-		fflush(NULL);
-		if(sdl.wait_on_error) {
-			//TODO Maybe look for some way to show message in linux?
-#if (C_DEBUG)
-			GFX_ShowMsg("Press enter to continue");
-			fflush(NULL);
-			fgetc(stdin);
-#elif defined(WIN32)
-			Sleep(5000);
-#endif
-		}
-
-	}
-	catch (int){
-		; //nothing, pressed killswitch
-	}
-	catch(...){
-		; // Unknown error, let's just exit.
-	}
+//	} catch (char * error) {
+//#if defined (WIN32)
+//		sticky_keys(true);
+//#endif
+//		GFX_ShowMsg("Exit to error: %s",error);
+//		fflush(NULL);
+//		if(sdl.wait_on_error) {
+//			//TODO Maybe look for some way to show message in linux?
+//#if (C_DEBUG)
+//			GFX_ShowMsg("Press enter to continue");
+//			fflush(NULL);
+//			fgetc(stdin);
+//#elif defined(WIN32)
+//			Sleep(5000);
+//#endif
+//		}
+//
+//	}
+//	catch (int){
+//		; //nothing, pressed killswitch
+//	}
+//	catch(...){
+//		; // Unknown error, let's just exit.
+//	}
 #if defined (WIN32)
 	sticky_keys(true); //Might not be needed if the shutdown function switches to windowed mode, but it doesn't hurt
 #endif

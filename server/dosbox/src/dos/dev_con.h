@@ -21,7 +21,7 @@
 #include "../ints/int10.h"
 #include <string.h>
 
-#include <jsdos-flags.h>
+#include <jsdos-support.h>
 
 #define NUMBER_ANSI_DATA 10
 
@@ -62,7 +62,7 @@ bool device_CON::Read(Bit8u * data,Bit16u * size) {
 		readcache=0;
 	}
 	while (*size>count) {
-    if (RuntimeFlags & EXIT_REQUESTED) {
+    if (jsdos::isExitRequested()) {
       break;
     }
 

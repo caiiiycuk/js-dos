@@ -4,9 +4,10 @@ void wc_sokolInit() {
                 Module.worker = new Worker(Module.config.jsdosUrl
                                            .replace("-client.js", "-worker.js"));
 
-                function sendMessage(name) {
+                function sendMessage(name, props) {
                     Module.worker.postMessage({
-                                               name
+                                               name,
+                                               props
                         });
                 };
                 Module.sendMessage = sendMessage;
@@ -33,7 +34,6 @@ void wc_sokolInit() {
                                                                        );
                                      } break;
                                      case "ws-update-lines": {
-                                         console.log("wc ws-update-lines");
                                          var frame_update_lines = data.props;
                                          for (var line of frame_update_lines) {
                                              var ptr = Module._dr_client_frame_data_ptr(line.start);
@@ -41,11 +41,30 @@ void wc_sokolInit() {
                                          }
                                          Module._dr_client_update_frame();
                                      } break;
+                                     case "ws-exit": {
+                                         Module.worker.terminate();
+                                         try {
+                                             Module._exitRuntime();
+                                         } catch (e) {
+                                             if (e.name !== "ExitStatus") {
+                                                 throw e;
+                                             }
+                                         }
+                                     } break;
                                      default: {
                                          console.log("wc " + JSON.stringify(data));
                                      } break;
                                  }
                 };
             }));
+#endif
+}
+
+void wc_sokolCleanup() {
+    sg_shutdown();
+#ifdef EMSCRIPTEN
+    EM_ASM((
+            Module.sendMessage("wc-exit");
+            ));
 #endif
 }

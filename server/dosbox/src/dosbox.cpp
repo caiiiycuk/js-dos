@@ -49,7 +49,7 @@
 #include "pci_bus.h"
 
 #include <jsdos-debug-mem.h>
-#include <jsdos-flags.h>
+#include <jsdos-support.h>
 
 #if 1 // !SDL_VERSION_ATLEAST(2,0,0)
 #define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)
@@ -410,24 +410,6 @@ void DOSBOX_SetNormalLoop() {
  * This tries to ensure that screen will be visible. In other situations
  * this is used to display the screen to help diagnosis.
  */
-static int em_exitarg;
-static void em_exit_loop(void) {
-	static int counter = 0;
-	if (++counter < 500) {
-		PIC_RunQueue();
-		TIMER_AddTick();
-	} else {
-		emscripten_cancel_main_loop();
-		emscripten_force_exit(em_exitarg);
-	}
-}
-
-void em_exit(int exitarg) {
-	em_exitarg = exitarg;
-	emscripten_cancel_main_loop();
-	emscripten_set_main_loop(em_exit_loop, 0, 1);
-}
-
 static void em_main_loop(void) {
     if (doHeapOperation()) {
         return;
@@ -457,8 +439,7 @@ static void em_main_loop(void) {
 		/* Here, the function which called emscripten_set_main_loop() should
 		 * return, but that call stack is gone, so emulation ends.
 		 */
-		LOG_MSG("Emulation ended because program exited.");
-		em_exit(0);
+		E_Exit("Emulation ended because program exited.");
 	}
 }
 #endif
@@ -476,7 +457,7 @@ void DOSBOX_RunMachine(void){
     mstime ticksStart = GetTicks();
 	Bitu ret;
 	do {
-    if (isNormalState() && (RuntimeFlags & EXIT_REQUESTED)) {
+    if (isNormalState() && (jsdos::isExitRequested())) {
         break;
     }
 

@@ -1,7 +1,7 @@
 project(dosbox)
 cmake_minimum_required(VERSION 3.6)
 
-set(OPT_FLAG "-Oz")
+set(OPT_FLAG "-Oz -fno-exceptions")
 set(USE_SDL ON)
 
 set(CMAKE_C_COMPILER "/usr/bin/clang")

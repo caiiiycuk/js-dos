@@ -17,6 +17,7 @@
  */
 
 
+#include <jsdos-support.h>
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -182,8 +183,6 @@ void E_Exit(const char * format,...) {
 
 #ifdef JSDOS
 	puts(buf);
-	em_exit(1);
-#else
-	throw(buf);
+	jsdos::requestExit();
 #endif
 }

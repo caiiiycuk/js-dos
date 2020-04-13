@@ -1,6 +1,4 @@
-extern "C" int EMSCRIPTEN_KEEPALIVE run();
-
-void ws_init() {
+void ws_init_runtime() {
 #ifdef EMSCRIPTEN
     EM_ASM(({
                 function sendMessage(name, props) {
@@ -22,8 +20,17 @@ void ws_init() {
 
                                  switch (data.name) {
                                      case "wc-run": {
-                                         Module._run();
+                                         Module._runRuntime();
                                          sendMessage("ws-server-ready");
+                                     } break;
+                                     case "wc-exit": {
+                                         try {
+                                             Module._ws_exit();
+                                         } catch (e) {
+                                             if (e.name !== "ExitStatus") {
+                                                 throw e;
+                                             }
+                                         }
                                      } break;
                                      default: {
                                          console.log("ws " + JSON.stringify(data));
@@ -72,4 +79,21 @@ void ws_client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
                 delete Module.frame_update_lines;
             }));
 #endif
+}
+
+extern "C" void EMSCRIPTEN_KEEPALIVE ws_exit() {
+    server_exit();
+}
+
+void ws_exit_runtime() {
+#ifdef EMSCRIPTEN
+    EM_ASM(({
+                Module.exit =
+                    function () {
+                                 Module.sendMessage("ws-exit");
+                }
+            }));
+#endif
+
+    exitRuntime();
 }

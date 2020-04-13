@@ -10,7 +10,7 @@
 #include <programs.h>
 
 #include <jsdos-protocol.h>
-#include <jsdos-flags.h>
+#include <jsdos-support.h>
 #include <mapper.h>
 
 #ifdef EMSCRIPTEN
@@ -349,9 +349,8 @@ void server_add_key(KBD_KEYS key, bool pressed) {
 }
 
 
-int RuntimeFlags = JsDosRuntimeFlag::NONE;
 void server_exit() {
-    RuntimeFlags = RuntimeFlags || JsDosRuntimeFlag::EXIT_REQUESTED;
+    jsdos::requestExit();
 }
 
 int server_run(int argc, char** argv) {

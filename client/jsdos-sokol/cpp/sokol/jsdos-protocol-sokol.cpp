@@ -8,7 +8,6 @@
 #endif
 
 #include <jsdos-protocol.h>
-#include <jsdos-ci.h>
 
 #define SOKOL_NO_ENTRY
 #define SOKOL_IMPL
@@ -45,16 +44,18 @@ int frameWidth = 0;
 int frameHeight = 0;
 uint32_t *frameRgba = 0;
 
+extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime();
+extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime();
+
 #include "jsdos-protocol-dr.h"
 #include "jsdos-protocol-wc.h"
 #include "jsdos-protocol-ws.h"
 
-void(*onSokolInit)(void);
 void(*on_client_frame_set_size)(int, int);
 void(*on_client_frame_update_lines)(uint32_t *, uint32_t, void *);
 
-void sokolFrame();
-
+void(*onSokolInit)(void);
+void(*onSokolCleanup)(void);
 
 enum MessagingType {
                     DIRECT = 1,
@@ -219,24 +220,18 @@ void sokolFrame() {
     sg_end_pass();
     sg_commit();
 
-    ci()->events()->frame();
     renderedFrame = frameCount;
 }
 
 void sokolCleanup() {
-    sg_shutdown();
-#ifdef EMSCRIPTEN
-    EM_ASM((
-            Module.exit();
-            ));
-#endif
+    onSokolCleanup();
 }
 
 void keyEvent(const sapp_event *event) {
     server_add_key((KBD_KEYS) event->key_code, event->type == SAPP_EVENTTYPE_KEY_DOWN);
 }
-#include <ctime>
-extern "C" void client_run() {
+
+void client_run() {
     sapp_desc appDescription = {};
     appDescription.init_cb =
         []() {
@@ -251,11 +246,6 @@ extern "C" void client_run() {
     appDescription.cleanup_cb =
         []() {
             sokolCleanup();
-#ifdef EMSCRIPTEN
-#else
-            // TODO: valid exit
-            std::terminate();
-#endif
         };
 
     appDescription.event_cb =
@@ -280,33 +270,29 @@ extern "C" void client_run() {
     _sapp_run(&appDescription);
 }
 
-extern "C" void EMSCRIPTEN_KEEPALIVE client_exit() {
-    if (messagingType == DIRECT) {
-        server_exit();
-        return;
-    }
 
-    if (messagingType == WORKER_CLIENT) {
-        sapp_quit();
-    }
+extern "C" void EMSCRIPTEN_KEEPALIVE client_exit() {
+    sapp_quit();
 }
 
-extern "C" int EMSCRIPTEN_KEEPALIVE run() {
+extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime() {
     int argc = 0;
     char** argv = 0;
-
 
     switch (messagingType) {
         case WORKER: {
             printf("sokol started in WORKER mode\n");
             on_client_frame_set_size = ws_client_frame_set_size;
             on_client_frame_update_lines = ws_client_frame_update_lines;
-            return server_run(argc, argv);
+            server_run(argc, argv);
+            ws_exit_runtime();
+            return 0;
         }
 
         case DIRECT: {
             printf("sokol started in DIRECT mode\n");
             onSokolInit = dr_sokolInit;
+            onSokolCleanup = dr_sokolCleanup;
             on_client_frame_set_size = dr_client_frame_set_size;
             on_client_frame_update_lines = dr_client_frame_update_lines;
 
@@ -316,13 +302,19 @@ extern "C" int EMSCRIPTEN_KEEPALIVE run() {
             std::thread client(client_run);
 #endif
             server_run(argc, argv);
-            sapp_quit();
+#ifdef EMSCRIPTEN
+            exitRuntime();
+#else
+            client.join();
             return 0;
+#endif
+
         }
 
         case WORKER_CLIENT: {
             printf("sokol started in WORKER_CLIENT mode\n");
             onSokolInit = wc_sokolInit;
+            onSokolCleanup = wc_sokolCleanup;
             on_client_frame_set_size = dr_client_frame_set_size;
             on_client_frame_update_lines = dr_client_frame_update_lines;
 
@@ -333,17 +325,38 @@ extern "C" int EMSCRIPTEN_KEEPALIVE run() {
 #endif
             return 0;
         }
+
+        default: {
+            printf("unknown messagingType %d\n", messagingType);
+            abort();
+        }
     }
+}
+
+extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime() {
+#ifdef EMSCRIPTEN
+    EM_ASM(({
+                if (!Module.exit) {
+                    var message = "ERR! exitRuntime called without request" +
+                        ", asyncify state: " + Asyncify.state;
+                    Module.err(message);
+                    return;
+                }
+                Module.exit();
+            }));
+
+    emscripten_force_exit(0);
+#endif
 }
 
 int main(int argc, char *argv[]) {
     if (messagingType == WORKER) {
-        ws_init();
+        ws_init_runtime();
     }
 
-#ifndef EMSCRIPTEN
-    return run();
+#ifdef EMSCRIPTEN
+    emscripten_exit_with_live_runtime();
 #endif
-    printf("return 0;\n");
+
     return 0;
 }

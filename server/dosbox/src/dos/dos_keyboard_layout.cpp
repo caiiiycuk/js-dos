@@ -44,15 +44,15 @@ static FILE* OpenDosboxFile(const char* name) {
 	localDrive* ldp=0;
 	// try to build dos name
 	if (DOS_MakeName(name,fullname,&drive)) {
-		try {
+//		try {
 			// try to open file on mounted drive first
 			ldp=dynamic_cast<localDrive*>(Drives[drive]);
 			if (ldp) {
 				FILE *tmpfile=ldp->GetSystemFilePtr(fullname, "rb");
 				if (tmpfile != NULL) return tmpfile;
 			}
-		}
-		catch(...) {}
+//		}
+//		catch(...) {}
 	}
 	FILE *tmpfile=fopen(name, "rb");
 	return tmpfile;
@@ -1289,7 +1289,7 @@ public:
 	}
 };
 
-static DOS_KeyboardLayout* test;
+static DOS_KeyboardLayout* test = 0;
 
 void DOS_KeyboardLayout_ShutDown(Section* /*sec*/) {
 	delete test;	

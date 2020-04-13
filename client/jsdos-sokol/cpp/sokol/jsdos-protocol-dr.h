@@ -4,6 +4,11 @@ void dr_sokolInit() {
 #endif
 }
 
+void dr_sokolCleanup() {
+    sg_shutdown();
+    server_exit();
+}
+
 void dr_client_frame_set_size(int width, int height) {
     if (frameRgba) {
         delete[] frameRgba;

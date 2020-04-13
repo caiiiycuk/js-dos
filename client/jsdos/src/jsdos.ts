@@ -43,10 +43,10 @@ function compileConfig(options: DosOptionsBag, middlewareUrl: string): DosConfig
 }
 
 function openCache(version: string, config: DosConfig): Promise<ICache> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         new CacheDb(version, resolve, (msg: string) => {
             config.log("WARN! Can't initalize cache, cause: " + msg);
-            reject(new CacheNoop());
+            resolve(new CacheNoop());
         });
     });
 }

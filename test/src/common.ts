@@ -106,6 +106,7 @@ export function testCommons(middleware: DosMiddleware) {
                                  middlewareUrl: "/" + middleware.defaultUrl,
                              });
         assert.ok(ci);
+        await ci.exit();
     });
 
     test("js-dos can take screenshot of canvas", async () => {

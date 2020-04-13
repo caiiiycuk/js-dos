@@ -43,7 +43,9 @@ async function doRun(jsdos: DosClient, messagingType: number): Promise<DosComman
             config,
             messagingType,
             canvas: jsdos.getConfig().element,
-            ping: console.log,
+            ping: () => {/**/},
+            log: config.log,
+            err: config.log,
             onRuntimeInitialized() {
                 const module: any = this;
                 new SokolCommandInterface(module, resolve);

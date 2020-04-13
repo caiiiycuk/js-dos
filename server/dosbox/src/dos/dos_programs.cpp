@@ -537,7 +537,7 @@ private:
 		localDrive* ldp=0;
 		if (!DOS_MakeName(const_cast<char*>(filename),fullname,&drive)) return NULL;
 
-		try {		
+//		try {
 			ldp=dynamic_cast<localDrive*>(Drives[drive]);
 			if(!ldp) return NULL;
 
@@ -566,10 +566,10 @@ private:
 			}
 
 			return tmpfile;
-		}
-		catch(...) {
-			return NULL;
-		}
+//		}
+//		catch(...) {
+//			return NULL;
+//		}
 	}
    
 	FILE *getFSFile(char const * filename, Bit32u *ksize, Bit32u *bsize,bool tryload=false) {
@@ -911,7 +911,7 @@ public:
 		localDrive* ldp=0;
 		if (!DOS_MakeName((char *)temp_line.c_str(),fullname,&drive)) return;
 
-		try {
+//		try {
 			/* try to read ROM file into buffer */
 			ldp=dynamic_cast<localDrive*>(Drives[drive]);
 			if(!ldp) return;
@@ -963,10 +963,10 @@ public:
 				else WriteOut(MSG_Get("PROGRAM_LOADROM_BASIC_LOADED"));
 			}
 			else WriteOut(MSG_Get("PROGRAM_LOADROM_UNRECOGNIZED"));
-		}
-		catch(...) {
-			return;
-		}
+//		}
+//		catch(...) {
+//			return;
+//		}
 	}
 };
 

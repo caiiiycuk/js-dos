@@ -39,7 +39,10 @@ void Value::destroy() throw(){
 
 Value& Value::copy(Value const& in) throw(WrongType) {
 	if (this != &in) { //Selfassigment!
-		if(type != V_NONE && type != in.type) throw WrongType();
+		if(type != V_NONE && type != in.type) {
+		    printf("throw WrongType();\n");
+		    abort();
+		}
 		destroy();
 		plaincopy(in);
 	}
@@ -56,27 +59,42 @@ void Value::plaincopy(Value const& in) throw(){
 }
 
 Value::operator bool () const throw(WrongType) {
-	if(type != V_BOOL) throw WrongType();
+	if(type != V_BOOL) {
+	    printf("throw WrongType();\n");
+	    abort();
+	}
 	return _bool;
 }
 
 Value::operator Hex () const throw(WrongType) {
-	if(type != V_HEX) throw WrongType();
+	if(type != V_HEX) {
+	    printf("throw WrongType();\n");
+	    abort();
+	}
 	return _hex;
 }
 
 Value::operator int () const throw(WrongType) {
-	if(type != V_INT) throw WrongType();
+	if(type != V_INT) {
+        printf("throw WrongType();\n");
+        abort();
+	}
 	return _int;
 }
 
 Value::operator double () const throw(WrongType) {
-	if(type != V_DOUBLE) throw WrongType();
+	if(type != V_DOUBLE) {
+	    printf("throw WrongType();\n");
+	    abort();
+	}
 	return _double;
 }
 
 Value::operator char const* () const throw(WrongType) {
-	if(type != V_STRING) throw WrongType();
+	if(type != V_STRING) {
+	    printf("throw WrongType();\n");
+	    abort();
+	}
 	return _string->c_str();
 }
 
@@ -109,9 +127,15 @@ bool Value::SetValue(string const& in,Etype _type) throw(WrongType) {
 	/* Throw exception if the current type isn't the wanted type 
 	 * Unless the wanted type is current.
 	 */
-	if(_type == V_CURRENT && type == V_NONE) throw WrongType();
+	if(_type == V_CURRENT && type == V_NONE) {
+	    printf("throw WrongType();\n");
+	    abort();
+	}
 	if(_type != V_CURRENT) { 
-		if(type != V_NONE && type != _type) throw WrongType();
+		if(type != V_NONE && type != _type) {
+		    printf("throw WrongType();\n");
+		    abort();
+		}
 		type = _type;
 	}
 	bool retval = true;
@@ -134,10 +158,11 @@ bool Value::SetValue(string const& in,Etype _type) throw(WrongType) {
 
 		case V_NONE:
 		case V_CURRENT:
-		default:
-			/* Shouldn't happen!/Unhandled */
-			throw WrongType();
-			break;
+		default: {
+            /* Shouldn't happen!/Unhandled */
+            printf("throw WrongType();\n");
+            abort();
+        } break;
 	}
 	return retval;
 }
@@ -872,12 +897,12 @@ bool Config::ParseConfigFile(char const * const configfilename){
 		}
 			break;
 		default:
-			try {
+//			try {
 				if(currentsection) currentsection->HandleInputline(gegevens);
-			} catch(const char* message) {
-				message=0;
-				//EXIT with message
-			}
+//			} catch(const char* message) {
+//				message=0;
+//				//EXIT with message
+//			}
 			break;
 		}
 	}

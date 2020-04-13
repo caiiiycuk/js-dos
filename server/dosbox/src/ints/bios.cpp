@@ -32,6 +32,7 @@
 #include "setup.h"
 #include "serialport.h"
 #include <time.h>
+#include <stdlib.h>
 
 #if defined(DB_HAVE_CLOCK_GETTIME) && ! defined(WIN32)
 //time.h is already included
@@ -999,7 +1000,7 @@ static Bitu Reboot_Handler(void) {
 	LOG_MSG(text);
 	double start = PIC_FullIndex();
 	while((PIC_FullIndex()-start)<3000) CALLBACK_Idle();
-	throw 1;
+	abort();
 	return CBRET_NONE;
 }
 

@@ -2239,20 +2239,30 @@ EMSCRIPTEN_KEEPALIVE int _sapp_html5_get_ask_leave_site(void) {
     return _sapp.html5_ask_leave_site ? 1 : 0;
 }
 
-EM_JS(void, sapp_js_hook_beforeunload, (void), {
-    window.addEventListener('beforeunload', function(_sapp_event) {
+EM_JS(void, sapp_add_js_hook_beforeunload, (void), {
+    Module.sokol_beforeunload = function(_sapp_event) {
         if (__sapp_html5_get_ask_leave_site() != 0) {
             _sapp_event.preventDefault();
             _sapp_event.returnValue = ' ';
         }
-    });
+    };
+    window.addEventListener('beforeunload', Module.sokol_beforeunload);
 });
 
-EM_JS(void, sapp_js_init_clipboard, (void), {
-    window.addEventListener('paste', function(event) {
+EM_JS(void, sapp_remove_js_hook_beforeunload, (void), {
+    window.removeEventListener('beforeunload', Module.sokol_beforeunload);
+});
+
+EM_JS(void, sapp_add_js_hook_clipboard, (void), {
+    Module.sokol_paste = function(event) {
         var pasted_str = event.clipboardData.getData('text');
         ccall('_sapp_emsc_onpaste', 'void', ['string'], [pasted_str]);
-    });
+    };
+    window.addEventListener('paste', Module.sokol_paste);
+});
+
+EM_JS(void, sapp_remove_js_hook_clipboard, (void), {
+    window.removeEventListener('paste', Module.sokol_paste);
 });
 
 EM_JS(void, sapp_js_write_clipboard, (const char* c_str), {
@@ -2774,10 +2784,6 @@ _SOKOL_PRIVATE void _sapp_emsc_init_keytable(void) {
     _sapp.keycodes[224] = SAPP_KEYCODE_LEFT_SUPER;
 }
 
-_SOKOL_PRIVATE void _sapp_emsc_init_clipboard(void) {
-    sapp_js_init_clipboard();
-}
-
 _SOKOL_PRIVATE void _sapp_emsc_register_events() {
     emscripten_set_mousedown_callback(_sapp.html5_canvas_name, 0, true, _sapp_emsc_mouse_cb);
     emscripten_set_mouseup_callback(_sapp.html5_canvas_name, 0, true, _sapp_emsc_mouse_cb);
@@ -2795,6 +2801,11 @@ _SOKOL_PRIVATE void _sapp_emsc_register_events() {
     emscripten_set_webglcontextlost_callback(_sapp.html5_canvas_name, 0, true, _sapp_emsc_context_cb);
     emscripten_set_webglcontextrestored_callback(_sapp.html5_canvas_name, 0, true, _sapp_emsc_context_cb);
     emscripten_request_animation_frame_loop(_sapp_emsc_frame, 0);
+
+    sapp_add_js_hook_beforeunload();
+    if (_sapp.clipboard_enabled) {
+        sapp_add_js_hook_clipboard();
+    }
 }
 
 _SOKOL_PRIVATE void _sapp_emsc_unregister_events() {
@@ -2813,14 +2824,16 @@ _SOKOL_PRIVATE void _sapp_emsc_unregister_events() {
     emscripten_set_touchcancel_callback(_sapp.html5_canvas_name, 0, true, 0);
     emscripten_set_webglcontextlost_callback(_sapp.html5_canvas_name, 0, true, 0);
     emscripten_set_webglcontextrestored_callback(_sapp.html5_canvas_name, 0, true, 0);
+
+    sapp_remove_js_hook_beforeunload();
+    if (_sapp.clipboard_enabled) {
+        sapp_add_js_hook_clipboard();
+    }
 }
 
 _SOKOL_PRIVATE void _sapp_run(const sapp_desc* desc) {
     _sapp_init_state(desc);
     _sapp_emsc_init_keytable();
-    if (_sapp.clipboard_enabled) {
-        _sapp_emsc_init_clipboard();
-    }
     double w, h;
     if (_sapp.desc.html5_canvas_resize) {
         w = (double) _sapp.desc.width;
@@ -2870,8 +2883,6 @@ _SOKOL_PRIVATE void _sapp_run(const sapp_desc* desc) {
 
     _sapp.valid = true;
     _sapp_emsc_register_events();
-    sapp_js_hook_beforeunload();
-
     // NOT A BUG: do not call _sapp_discard_state()
 }
 

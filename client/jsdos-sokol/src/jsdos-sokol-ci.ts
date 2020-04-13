@@ -7,7 +7,7 @@ export class SokolCommandInterface implements DosCommandInterface {
         this.module = module;
         this.module.ready = () => ready(this);
         this.module.callMain([]);
-        this.module._run();
+        this.module._runRuntime();
     }
 
     public fullscreen() {
