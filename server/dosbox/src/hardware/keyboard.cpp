@@ -17,8 +17,6 @@
  */
 
 
-#include <cstdio>
-
 #include "dosbox.h"
 #include "keyboard.h"
 #include "inout.h"
@@ -347,7 +345,7 @@ void KEYBOARD_AddKey(KBD_KEYS keytype,bool pressed) {
 		KEYBOARD_AddBuffer(55|(pressed?0:0x80));
 		return;
 	default:
-		printf("Unsupported key press, keyCode: %d\n", (int) keytype);
+		LOG(LOG_KEYBOARD, LOG_WARN)("Unsupported key press, keyCode: %d\n", (int) keytype);
 		return;
 		break;
 	}
