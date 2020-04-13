@@ -11,6 +11,8 @@ import source from "vinyl-source-stream";
 
 import generateBuildInfo from "./build-info";
 
+import make from "./cmake";
+
 // tslint:disable-next-line:no-var-requires
 const tsify = require("tsify");
 // tslint:disable-next-line:no-var-requires
@@ -22,20 +24,24 @@ function clean() {
                 "client/jsdos-sokol/src/jsdos-sokol-build.ts"], { force: true });
 };
 
+async function wasm() {
+    await make("client/jsdos-sokol/", "build/wsokol");
+}
+
 function generateBuildTs(cb: () => void) {
-    generateBuildInfo("client/jsdos-sokol/build/wsokol.js",
-                      "client/jsdos-sokol/build/wsokol.wasm",
+    generateBuildInfo("build/wsokol/wsokol.js",
+                      "build/wsokol/wsokol.wasm",
                       "client/jsdos-sokol/src/jsdos-sokol-build.ts");
     cb();
 };
 
 function copyAssets() {
-    return src(['client/jsdos-sokol/build/wsokol.js',
-                'client/jsdos-sokol/build/wsokol.js.symbols',
-                'client/jsdos-sokol/build/wsokol.wasm',
-                'client/jsdos-sokol/build/wsokol-client.js',
-                'client/jsdos-sokol/build/wsokol-client.js.symbols',
-                'client/jsdos-sokol/build/wsokol-client.wasm'])
+    return src(['build/wsokol/wsokol.js',
+                'build/wsokol/wsokol.js.symbols',
+                'build/wsokol/wsokol.wasm',
+                'build/wsokol/wsokol-client.js',
+                'build/wsokol/wsokol-client.js.symbols',
+                'build/wsokol/wsokol-client.wasm'])
         .pipe(dest('dist'));
 };
 
@@ -79,4 +85,4 @@ new WSOKOL(module);
         .pipe(dest("dist"));
 }
 
-export const sokol = series(clean, copyAssets, generateBuildTs, js, workerJs);
+export const sokol = series(clean, wasm, copyAssets, generateBuildTs, js, workerJs);
