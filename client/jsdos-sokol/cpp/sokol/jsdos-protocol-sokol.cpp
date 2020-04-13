@@ -356,7 +356,8 @@ int main(int argc, char *argv[]) {
 
 #ifdef EMSCRIPTEN
     emscripten_exit_with_live_runtime();
+#else
+    runRuntime();
 #endif
-
     return 0;
 }

@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.6)
-
 set(CORE_FLAGS "${OPT_FLAGS} -Werror=return-type -Wno-deprecated")
 
 if (${EMSCRIPTEN})
@@ -152,25 +150,25 @@ set(SOURCES_CORE_CXX03
         #	"${CMAKE_CURRENT_LIST_DIR}/dosbox/src/libs/zmbv/zmbv_vfw.cpp"
         )
 
-if (USE_SDL)
-    list(APPEND SOURCES_CORE_CXX03
-            "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/sdlmain.cpp"
-            "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/mixer.cpp"
-            "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/sdl_mapper.cpp"
-            #"${CMAKE_CURRENT_LIST_DIR}/jsdos-cpp/gui/sdlmain.cpp"
-            )
-else ()
-    list(APPEND SOURCES_CORE_CXX03
-            )
-    list(APPEND SOURCES_CORE_CXX11
-            "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-main.cpp"
-            "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-mixer.cpp"
-            "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-mapper-noop.cpp"
-            "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-noop.cpp"
-            )
-endif ()
+set(SOURCES_SDL_CXX03
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/sdlmain.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/mixer.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/sdl_mapper.cpp"
+        #"${CMAKE_CURRENT_LIST_DIR}/jsdos-cpp/gui/sdlmain.cpp"
+        )
+
+set(SOURCES_JSDOS_CXX11
+        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-main.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-mixer.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-mapper-noop.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-noop.cpp"
+        )
 
 set_source_files_properties(${SOURCES_CORE_CXX03} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++03 -Wno-switch")
 set_source_files_properties(${SOURCES_CORE_CXX11} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++11")
+set_source_files_properties(${SOURCES_SDL_CXX03} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++03 -Wno-switch")
+set_source_files_properties(${SOURCES_JSDOS_CXX11} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++11")
 
-set(SOURCES_CORE ${SOURCES_CORE_CXX11} ${SOURCES_CORE_CXX03})
+set(SOURCES_SERVER_CORE ${SOURCES_CORE_CXX11} ${SOURCES_CORE_CXX03})
+set(SOURCES_SERVER_SDL ${SOURCES_SERVER_CORE} ${SOURCES_SDL_CXX03})
+set(SOURCES_SERVER_JSDOS ${SOURCES_SERVER_CORE} ${SOURCES_JSDOS_CXX11})

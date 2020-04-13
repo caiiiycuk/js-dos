@@ -25,23 +25,23 @@ function clean() {
 };
 
 async function wasm() {
-    await make("client/jsdos-sokol/", "build/wsokol");
+    await make(".", "build/wasm", "wsokol", "wsokol-client");
 }
 
 function generateBuildTs(cb: () => void) {
-    generateBuildInfo("build/wsokol/wsokol.js",
-                      "build/wsokol/wsokol.wasm",
+    generateBuildInfo("build/wasm/wsokol.js",
+                      "build/wasm/wsokol.wasm",
                       "client/jsdos-sokol/src/jsdos-sokol-build.ts");
     cb();
 };
 
 function copyAssets() {
-    return src(['build/wsokol/wsokol.js',
-                'build/wsokol/wsokol.js.symbols',
-                'build/wsokol/wsokol.wasm',
-                'build/wsokol/wsokol-client.js',
-                'build/wsokol/wsokol-client.js.symbols',
-                'build/wsokol/wsokol-client.wasm'])
+    return src(['build/wasm/wsokol.js',
+                'build/wasm/wsokol.js.symbols',
+                'build/wasm/wsokol.wasm',
+                'build/wasm/wsokol-client.js',
+                'build/wasm/wsokol-client.js.symbols',
+                'build/wasm/wsokol-client.wasm'])
         .pipe(dest('dist'));
 };
 
