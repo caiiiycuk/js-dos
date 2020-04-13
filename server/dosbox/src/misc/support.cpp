@@ -170,19 +170,16 @@ double ConvDblWord(char * word) {
 }
 
 
-static char buf[1024];           //greater scope as else it doesn't always gets thrown right (linux/gcc2.95)
 void E_Exit(const char * format,...) {
 #if C_DEBUG && C_HEAVY_DEBUG
  	DEBUG_HeavyWriteLogInstruction();
 #endif
 	va_list msg;
 	va_start(msg,format);
-	vsprintf(buf,format,msg);
+    LOG_ERR(format, msg);
 	va_end(msg);
-	strcat(buf,"\n");
 
 #ifdef JSDOS
-	puts(buf);
 	jsdos::requestExit();
 #endif
 }

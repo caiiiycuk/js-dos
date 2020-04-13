@@ -28,57 +28,29 @@ enum LOG_TYPES {
 	LOG_MOUSE,LOG_BIOS,LOG_GUI,LOG_MISC,
 	LOG_IO,
 	LOG_PCI,
+	LOG_MSG,
 	LOG_MAX
 };
 
 enum LOG_SEVERITIES {
 	LOG_NORMAL = 0,
 	LOG_WARN,
-	LOG_ERROR
+	LOG_ERROR,
+	LOG_SEVERITY_MAX,
 };
-
-#if C_DEBUG
-class LOG 
-{ 
-	LOG_TYPES       d_type;
-	LOG_SEVERITIES  d_severity;
-public:
-
-	LOG (LOG_TYPES type , LOG_SEVERITIES severity):
-		d_type(type),
-		d_severity(severity)
-		{}
-	void operator() (char const* buf, ...) GCC_ATTRIBUTE(__format__(__printf__, 2, 3));  //../src/debug/debug_gui.cpp
-
-};
-
-void DEBUG_ShowMsg(char const* format,...) GCC_ATTRIBUTE(__format__(__printf__, 1, 2));
-#define LOG_MSG DEBUG_ShowMsg
-
-#else  //C_DEBUG
 
 class Logger {
 private:
 	LOG_TYPES       d_type;
 	LOG_SEVERITIES  d_severity;
 public:
-	Logger(LOG_TYPES type, LOG_SEVERITIES severity): d_type(type), d_severity(severity) {
-	}
-
-	void operator() (char const* buf, ...) {
-	}
+	Logger(LOG_TYPES type, LOG_SEVERITIES severity);
+	void operator() (char const* format, ...);
 };
 
-Logger& getLogger() {
-    static Logger loggers[] = {
-
-    };
-}
-
-void GFX_ShowMsg(char const* format,...) GCC_ATTRIBUTE(__format__(__printf__, 1, 2));
-#define LOG_MSG GFX_ShowMsg
-
-#endif //C_DEBUG
-
+Logger& getLogger(LOG_TYPES type, LOG_SEVERITIES severity);
+#define LOG(type,severity) getLogger(type,severity)
+#define LOG_MSG(format,...)  getLogger(LOG_MSG, LOG_NORMAL)(format, ##__VA_ARGS__)
+#define LOG_ERR(format,...)  getLogger(LOG_MSG, LOG_ERROR)(format, ##__VA_ARGS__)
 
 #endif //DOSBOX_LOGGING_H

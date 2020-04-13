@@ -3,10 +3,10 @@
 // gulpfile.js --> generateBuildInfo
 
 export const Build = {
-    version: "6.22.59 (6eef62bcef84102a22a1d597b704833f)",
-    jsVersion: "f1b345f355985f867b216065066c9a2ba49d77c8",
+    version: "6.22.59 (d36e24f6f95de822925dc68fca79e52b)",
+    jsVersion: "fe4d7fb76c2e6323af7f1e0666c3c1ccec647bc3",
     wasmJsSize:  339835,
-    wasmVersion: "8e7d10737c68f766851055db210fb6ef",
-    wasmSize: 1638681,
-    buildSeed:  1586755827214,
+    wasmVersion: "e2e9cbdb74d277a3230c7dd31d6ad19e",
+    wasmSize: 1653857,
+    buildSeed:  1586761180679,
 };

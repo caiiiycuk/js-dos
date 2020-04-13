@@ -30,6 +30,7 @@ set(SOURCES_CORE_CXX03
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-asyncify.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-core.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-support.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-log.cpp"
 
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/cpu/core_simple.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/cpu/paging.cpp"
