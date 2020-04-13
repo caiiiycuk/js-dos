@@ -19,7 +19,7 @@
 #ifndef DOSBOX_LOGGING_H
 #define DOSBOX_LOGGING_H
 enum LOG_TYPES {
-	LOG_ALL,
+	LOG_ALL = 0,
 	LOG_VGA, LOG_VGAGFX,LOG_VGAMISC,LOG_INT10,
 	LOG_SB,LOG_DMACONTROL,
 	LOG_FPU,LOG_CPU,LOG_PAGING,
@@ -32,7 +32,7 @@ enum LOG_TYPES {
 };
 
 enum LOG_SEVERITIES {
-	LOG_NORMAL,
+	LOG_NORMAL = 0,
 	LOG_WARN,
 	LOG_ERROR
 };
@@ -57,30 +57,24 @@ void DEBUG_ShowMsg(char const* format,...) GCC_ATTRIBUTE(__format__(__printf__, 
 
 #else  //C_DEBUG
 
-struct LOG
-{
-	LOG(LOG_TYPES , LOG_SEVERITIES )										{ }
-	void operator()(char const* )													{ }
-	void operator()(char const* , double )											{ }
-	void operator()(char const* , double , double )								{ }
-	void operator()(char const* , double , double , double )					{ }
-	void operator()(char const* , double , double , double , double )					{ }
-	void operator()(char const* , double , double , double , double , double )					{ }
-	void operator()(char const* , double , double , double , double , double , double )					{ }
-	void operator()(char const* , double , double , double , double , double , double , double)					{ }
+class Logger {
+private:
+	LOG_TYPES       d_type;
+	LOG_SEVERITIES  d_severity;
+public:
+	Logger(LOG_TYPES type, LOG_SEVERITIES severity): d_type(type), d_severity(severity) {
+	}
 
+	void operator() (char const* buf, ...) {
+	}
+};
 
+Logger& getLogger() {
+    static Logger loggers[] = {
 
-	void operator()(char const* , char const* )									{ }
-	void operator()(char const* , char const* , double )							{ }
-	void operator()(char const* , char const* , double ,double )				{ }
-	void operator()(char const* , double , char const* )						{ }
-	void operator()(char const* , double , double, char const* )						{ }
-	void operator()(char const* , char const*, char const*)				{ }
+    };
+}
 
-	void operator()(char const* , double , double , double , char const* )					{ }
-}; //add missing operators to here
-	//try to avoid anything smaller than bit32...
 void GFX_ShowMsg(char const* format,...) GCC_ATTRIBUTE(__format__(__printf__, 1, 2));
 #define LOG_MSG GFX_ShowMsg
 

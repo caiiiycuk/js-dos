@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.6)
 
 set(OPT_FLAG "-Oz -fno-exceptions")
 
-
 if(${EMSCRIPTEN})
 	add_definitions(-DEMSCRIPTEN)
 else()
