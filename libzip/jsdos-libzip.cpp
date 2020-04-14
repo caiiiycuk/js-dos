@@ -1,4 +1,5 @@
-#include <js-dos-3rdparty.h>
+#include <zip.h>
+#include <jsdos-libzip.h>
 
 #include <stdio.h>
 #include <stdlib.h>

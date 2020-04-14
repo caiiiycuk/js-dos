@@ -1,7 +1,7 @@
 /* tslint:disable:max-line-length */
 /* tslint:disable:no-console */
 
-import { testBundle } from "./test-bundle";
+// import { testBundle } from "./test-bundle";
 import { testLoader } from "./test-loader";
 import { testMiddleware } from "./test-middleware";
 
@@ -9,7 +9,7 @@ import DosSokol, { DosSokolWorker } from "../../client/jsdos-sokol/src/jsdos-sok
 
 const middles = [ DosSokol, DosSokolWorker ];
 
-testBundle();
+// testBundle();
 
 testLoader();
 

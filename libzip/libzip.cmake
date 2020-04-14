@@ -130,3 +130,12 @@ include_directories(
         "${CMAKE_CURRENT_LIST_DIR}/libzip-1.5/"
         "${CMAKE_CURRENT_LIST_DIR}/libzip-1.5/lib/"
 )
+
+if (${EMSCRIPTEN})
+    add_executable(wlibzip ${SOURCES_LIBZIP} "${CMAKE_CURRENT_LIST_DIR}/jsdos-libzip-js.cpp")
+    set_target_properties(wlibzip PROPERTIES SUFFIX .js)
+    set_target_properties(wlibzip PROPERTIES LINK_FLAGS "-s WASM=1 -s EXPORT_NAME='WLIBZIP'")
+else ()
+    add_executable(libzip ${SOURCES_LIBZIP} "${CMAKE_CURRENT_LIST_DIR}/jsdos-libzip-js.cpp")
+    target_link_libraries(libzip z)
+endif ()
