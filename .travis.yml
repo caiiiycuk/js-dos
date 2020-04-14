@@ -10,7 +10,6 @@ script:
   - source ./emsdk_env.sh
   - cd ..
   - source /etc/environment
-  - nvm use 11.8
   - npm install -g gulp
   - npm install
   - gulp
