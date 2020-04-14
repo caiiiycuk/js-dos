@@ -9,7 +9,6 @@ script:
   - ./emsdk activate latest
   - source ./emsdk_env.sh
   - cd ..
-  - source /etc/environment
   - npm install -g gulp
   - npm install
   - gulp
