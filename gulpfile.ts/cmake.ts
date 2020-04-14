@@ -17,15 +17,15 @@ export default async function make(listsPath: string,
     }
 
     process.chdir(buildPath);
-    await ninjaBuild(...targets);
+    await makeBuild(...targets);
     process.chdir(cwd);
 }
 
-async function ninjaBuild(...targets: string[]) {
-    await execute("ninja", "-j4", ...targets);
+async function makeBuild(...targets: string[]) {
+    await execute("make", "-j4", ...targets);
 }
 
 async function emcmake(listsPath: string,
                        buildPath: string) {
-    await execute("emcmake", "cmake", "-GNinja", listsPath);
+    await execute("emcmake", "cmake", listsPath);
 }
