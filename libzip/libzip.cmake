@@ -1,3 +1,7 @@
+if (${EMSCRIPTEN})
+    set(LIBZIP_LINK_FLAGS "-s TOTAL_MEMORY=16777216")
+endif ()
+
 SET(SOURCES_LIBZIP
         "${CMAKE_CURRENT_LIST_DIR}/libzip-1.5/lib/zip_add_entry.c"
         "${CMAKE_CURRENT_LIST_DIR}/libzip-1.5/lib/zip_new.c"
@@ -134,7 +138,7 @@ include_directories(
 if (${EMSCRIPTEN})
     add_executable(wlibzip ${SOURCES_LIBZIP} "${CMAKE_CURRENT_LIST_DIR}/jsdos-libzip-js.cpp")
     set_target_properties(wlibzip PROPERTIES SUFFIX .js)
-    set_target_properties(wlibzip PROPERTIES LINK_FLAGS "-s WASM=1 -s EXPORT_NAME='WLIBZIP'")
+    set_target_properties(wlibzip PROPERTIES LINK_FLAGS "${LIBZIP_LINK_FLAGS} -s WASM=1 -s EXPORT_NAME='WLIBZIP'")
 else ()
     add_executable(libzip ${SOURCES_LIBZIP} "${CMAKE_CURRENT_LIST_DIR}/jsdos-libzip-js.cpp")
     target_link_libraries(libzip z)
