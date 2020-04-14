@@ -11,6 +11,7 @@ else()
 #	add_definitions(-DC_DEBUG=1 -DC_HEAVY_DEBUG=1)
 endif()
 
+include("${CMAKE_CURRENT_LIST_DIR}/libzip/libzip.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/server/server.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/client/jsdos-sokol/sokol.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/client/dosbox/dosbox.cmake")

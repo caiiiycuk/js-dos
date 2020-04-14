@@ -22,8 +22,6 @@ if (${EMSCRIPTEN})
 		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
 endif ()
 
-include("${CMAKE_CURRENT_LIST_DIR}/../../3rd-party/3rd-party.cmake")
-
 include_directories(
         "${CMAKE_CURRENT_LIST_DIR}/cpp/sokol"
 )
@@ -39,7 +37,7 @@ set(SOURCES_SOKOL_CXX03
 set_source_files_properties(${SOURCES_SOKOL_CXX11} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++11")
 set_source_files_properties(${SOURCES_SOKOL_CXX03} PROPERTIES COMPILE_FLAGS "${OPT_FLAGS} -std=c++03")
 
-set(SOURCES_SERVER_SOKOL ${SOURCES_SERVER_JSDOS} ${SOURCES_3RDPARTY})
+set(SOURCES_SERVER_SOKOL ${SOURCES_SERVER_JSDOS} ${SOURCES_LIBZIP})
 
 if (${EMSCRIPTEN})
     add_library(sokol-client OBJECT ${SOURCES_SOKOL_CXX11} ${SOURCES_SOKOL_CXX03})

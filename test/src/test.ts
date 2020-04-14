@@ -1,15 +1,18 @@
 /* tslint:disable:max-line-length */
 /* tslint:disable:no-console */
 
-import { testLoader, testCommons } from "./common";
+import { testBundle } from "./test-bundle";
+import { testLoader } from "./test-loader";
+import { testMiddleware } from "./test-middleware";
+
 import DosSokol, { DosSokolWorker } from "../../client/jsdos-sokol/src/jsdos-sokol";
 
 const middles = [ DosSokol, DosSokolWorker ];
 
-suite("WASM loader");
+testBundle();
+
 testLoader();
 
 for (const middleware of middles) {
-    suite("Common tests [" + middleware.constructor.name + "]");
-    testCommons(middleware);
+    testMiddleware(middleware);
 }

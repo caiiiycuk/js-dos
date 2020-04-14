@@ -2,7 +2,7 @@ import BuildInfo from "../../shared/jsdos-buildinfo";
 import { DosKeys } from "./jsdos-controller";
 
 import { DosFactory, DosClient, DosMiddleware } from "../../shared/jsdos-shared";
-import { DosOptionsBag, DosConfig } from "../../shared/jsdos-options";
+import { JsDosOptionsBag, JsDosOptions } from "../../shared/jsdos-options";
 import { DosCommandInterface } from "../../shared/jsdos-ci";
 
 
@@ -16,7 +16,7 @@ import loadWasmModule from "./jsdos-wasm";
 import Move from "./controller/move";
 import Qwerty from "./controller/qwerty";
 
-function compileConfig(options: DosOptionsBag, middlewareUrl: string): DosConfig {
+function compileConfig(options: JsDosOptionsBag, middlewareUrl: string): JsDosOptions {
     let el: HTMLElement | string | null = options.element || "dosbox";
     if (typeof el === "string") {
         const id = el;
@@ -27,10 +27,8 @@ function compileConfig(options: DosOptionsBag, middlewareUrl: string): DosConfig
     }
     return {
         element: el as HTMLElement,
-        jsdosUrl: options.middlewareUrl || middlewareUrl,
-        cycles: options.cycles || "max",
-        autolock: options.autolock || false,
-        sources: options.sources || [],
+        bundle: "",
+        middlewareUrl: options.middlewareUrl || middlewareUrl,
         onprogress: options.onprogress || function(stage: string, total: number, loaded: number) {
             // tslint:disable-next-line:no-console
             console.log(stage, loaded * 100 / total, "%");
@@ -42,7 +40,7 @@ function compileConfig(options: DosOptionsBag, middlewareUrl: string): DosConfig
     };
 }
 
-function openCache(version: string, config: DosConfig): Promise<ICache> {
+function openCache(version: string, config: JsDosOptions): Promise<ICache> {
     return new Promise((resolve) => {
         new CacheDb(version, resolve, (msg: string) => {
             config.log("WARN! Can't initalize cache, cause: " + msg);
@@ -55,7 +53,7 @@ function openCache(version: string, config: DosConfig): Promise<ICache> {
 const Dos: DosFactory =
     async function (element: HTMLElement | string,
                     middleware: DosMiddleware,
-                    options?: DosOptionsBag): Promise<DosCommandInterface> {
+                    options?: JsDosOptionsBag): Promise<DosCommandInterface> {
         options = options || {};
         options.element = element;
         const config = compileConfig(options, middleware.defaultUrl);

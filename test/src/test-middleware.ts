@@ -1,14 +1,14 @@
 import { assert } from "chai";
 import { compareAndExit } from "./compare"
 
-import { ICache } from "../../client/shared/jsdos-cache";
 import { DosMiddleware } from "../../client/shared/jsdos-shared";
 
 import Dos from "../../client/jsdos/src/jsdos";
-import CacheNoop from "../../client/jsdos/src/jsdos-cache-noop";
 
 
-export function testCommons(middleware: DosMiddleware) {
+export function testMiddleware(middleware: DosMiddleware) {
+    suite("Common tests [" + middleware.constructor.name + "]");
+
     test("js-dos can't start without canvas", async () => {
         try {
             await Dos(null, middleware);

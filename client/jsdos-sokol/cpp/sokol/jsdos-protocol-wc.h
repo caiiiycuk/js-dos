@@ -1,7 +1,7 @@
 void wc_sokolInit() {
 #ifdef EMSCRIPTEN
     EM_ASM(({
-                Module.worker = new Worker(Module.config.jsdosUrl
+                Module.worker = new Worker(Module.config.middlewareUrl
                                            .replace("-client.js", "-worker.js"));
 
                 function sendMessage(name, props) {

@@ -1,5 +1,5 @@
 import BuildInfo from "./jsdos-buildinfo"
-import { DosOptionsBag, DosConfig } from "./jsdos-options";
+import { JsDosOptionsBag, JsDosOptions } from "./jsdos-options";
 import { DosCommandInterface } from "./jsdos-ci";
 
 import { ICache } from "./jsdos-cache";
@@ -15,7 +15,7 @@ import { ICache } from "./jsdos-cache";
 // optional configuration object
 export type DosFactory = (element: HTMLElement | string,
                           middleware: DosMiddleware,
-                          options?: DosOptionsBag) => Promise<DosCommandInterface>;
+                          options?: JsDosOptionsBag) => Promise<DosCommandInterface>;
 
 export interface DosModule {
     onRuntimeInitialized: () => void;
@@ -26,7 +26,7 @@ export interface WasmModule {
 }
 
 export interface DosClient {
-    getConfig: () => DosConfig;
+    getConfig: () => JsDosOptions;
     getCache: () => ICache;
 
     loadWasmModule: (url: string,
