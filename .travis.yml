@@ -1,6 +1,4 @@
-language: node_js
-node_js:
-  - "11.8"
+compiler: clang
 
 script:
   - mkdir travis-build
