@@ -1,39 +1,30 @@
 #include <zip.h>
 #include <jsdos-libzip.h>
 
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cerrno>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <fcntl.h>
-#include <string>
 
-#include <fstream>
+const char *libzipTempArchive = "libzip-temp-archive.zip";
 
-std::string libzipTempArchive = "libzip-temp-archive.zip";
+ZipArchive *readZipArchiveFile(const char *path) {
+    FILE *file;
+    char *buffer;
+    long length;
 
-ZipArchive* readZipArchiveFile(const std::string &path) {
-    std::ifstream file(path,
-                       std::ifstream::ate | std::ifstream::binary | std::ifstream::in);
+    file = fopen(path, "rb");
+    fseek(file, 0, SEEK_END);
+    length = ftell(file);
+    rewind(file);
 
-    int32_t length;
-
-    file.is_open();
-    length = file.tellg();
-
-    if (length <= 0) {
-        fprintf(stderr, "zip_from_fs: archive is empty\n");
-        return nullptr;
-    }
-
-    char *buffer = (char*) malloc(length + 4);
-    file.seekg(0, std::ios::beg);
-    file.read(buffer + 4, length);
-    file.close();
-
+    buffer = (char *) malloc(length * sizeof(char) + sizeof(uint32_t));
+    fread(buffer + sizeof(uint32_t), length, 1, file);
+    fclose(file);
     ((uint32_t*) buffer)[0] = (uint32_t) length;
     return (ZipArchive*) buffer;
 }
@@ -47,90 +38,100 @@ void safe_create_dir(const char *dir) {
     }
 }
 
-static bool is_dir(const std::string& dir) {
+static int is_dir(const char *dir) {
     struct stat st;
-    ::stat(dir.c_str(), &st);
+    stat(dir, &st);
     return S_ISDIR(st.st_mode);
 }
 
 
-bool zip_recursively(zip *zipArchive, const char* directory) {
+int zip_recursively(zip_t *zipArchive, const char *directory) {
+    struct dirent *dirp;
+
     DIR *dp = opendir(directory);
-    if (dp == nullptr) {
+    if (dp == 0) {
         fprintf(stderr, "zip_from_fs: can't open directory %s\n", directory);
-        return false;
+        return 0;
     }
 
-    struct dirent *dirp;
-    while ((dirp = readdir(dp)) != nullptr) {
-        if (dirp->d_name != std::string(".") && dirp->d_name != std::string("..") &&
-            dirp->d_name != libzipTempArchive) {
-            std::string nameInFs = std::string(directory) + "/" + dirp->d_name;
-            std::string nameInArchive = nameInFs.substr(2);
+    while ((dirp = readdir(dp)) != 0) {
+        if (strcmp(dirp->d_name, ".") != 0 && strcmp(dirp->d_name, "..") != 0 &&
+            strcmp(dirp->d_name, libzipTempArchive) != 0) {
+            int nameLength = strlen(directory) + strlen(dirp->d_name) + 2;
+            char *nameInFs = (char*) malloc(nameLength);
+            strcpy(nameInFs, directory);
+            strcat(nameInFs, "/");
+            strcat(nameInFs, dirp->d_name);
+            char *nameInArchive = nameInFs + 2;
             if (is_dir(nameInFs)) {
-                if (zip_dir_add(zipArchive, nameInArchive.c_str(), ZIP_FL_ENC_UTF_8) == -1) {
-                    fprintf(stderr, "zip_from_fs: can't create directory %s, cause %s\n", nameInFs.c_str(), zip_strerror(zipArchive));
-                    return false;
+                if (zip_dir_add(zipArchive, nameInArchive, ZIP_FL_ENC_UTF_8) == -1) {
+                    fprintf(stderr, "zip_from_fs: can't create directory %s, cause %s\n", nameInFs,
+                            zip_strerror(zipArchive));
+                    return 0;
                 }
-                if (!zip_recursively(zipArchive, nameInFs.c_str())) {
-                    return false;
+                if (!zip_recursively(zipArchive, nameInFs)) {
+                    return 0;
                 }
             } else {
-                zip_source_t *source = zip_source_file(zipArchive, nameInArchive.c_str(), 0, 0);
-                if (source == nullptr) {
-                    fprintf(stderr, "zip_from_fs: can't create file %s, cause %s\n", nameInFs.c_str(), zip_strerror(zipArchive));
-                    return false;
+                zip_source_t *source = zip_source_file(zipArchive, nameInArchive, 0, 0);
+                if (source == 0) {
+                    fprintf(stderr, "zip_from_fs: can't create file %s, cause %s\n", nameInFs,
+                            zip_strerror(zipArchive));
+                    return 0;
                 }
-                auto index = zip_file_add(zipArchive, nameInArchive.c_str(), source, ZIP_FL_ENC_UTF_8);
+                auto index = zip_file_add(zipArchive, nameInArchive, source, ZIP_FL_ENC_UTF_8);
                 if (index == -1) {
                     zip_source_free(source);
-                    fprintf(stderr, "zip_from_fs: can't create file %s, cause %s\n", nameInFs.c_str(), zip_strerror(zipArchive));
-                    return false;
+                    fprintf(stderr, "zip_from_fs: can't create file %s, cause %s\n", nameInFs,
+                            zip_strerror(zipArchive));
+                    return 0;
                 } else {
                     if (zip_set_file_compression(zipArchive, index, ZIP_CM_DEFLATE, 9) == -1) {
-                        fprintf(stderr, "zip_from_fs: can't set compression level for %s, cause %s\n", nameInFs.c_str(), zip_strerror(zipArchive));
-                        return false;
+                        fprintf(stderr, "zip_from_fs: can't set compression level for %s, cause %s\n", nameInFs,
+                                zip_strerror(zipArchive));
+                        return 0;
                     }
                 }
             }
+            free(nameInFs);
         }
     }
-    ::closedir(dp);
-    return true;
+    closedir(dp);
+    return 1;
 }
 
-ZipArchive* EMSCRIPTEN_KEEPALIVE zip_from_fs() {
+ZipArchive *EMSCRIPTEN_KEEPALIVE zip_from_fs() {
     struct zip *zipArchive;
     char buf[100];
     int err;
 
-    if ((zipArchive = zip_open(libzipTempArchive.c_str(), ZIP_CREATE | ZIP_TRUNCATE, &err)) == NULL) {
+    if ((zipArchive = zip_open(libzipTempArchive, ZIP_CREATE | ZIP_TRUNCATE, &err)) == NULL) {
         zip_error_to_str(buf, sizeof(buf), err, errno);
         fprintf(stderr, "zip_from_fs: can't open zip archive: %s\n", buf);
-        return nullptr;
+        return 0;
     }
 
 
-    bool success = zip_recursively(zipArchive, ".");
+    int success = zip_recursively(zipArchive, ".");
     if (zip_close(zipArchive) == -1) {
-        fprintf(stderr, "zip_to_fs: can't close zip archive\n");
-        return nullptr;
+        fprintf(stderr, "zip_to_fs: can't close zip archive %s\n", zip_strerror(zipArchive));
+        return 0;
     }
 
     if (!success) {
-        return nullptr;
+        return 0;
     }
 
     ZipArchive* archive = readZipArchiveFile(libzipTempArchive);
 
-    if (remove(libzipTempArchive.c_str()) != 0) {
+    if (remove(libzipTempArchive) != 0) {
         fprintf(stderr, "fs_to_zip: unable to delete archive\n");
     }
 
     return archive;
 }
 
-int EMSCRIPTEN_KEEPALIVE zip_to_fs(const void *data, uint32_t length) {
+int EMSCRIPTEN_KEEPALIVE zip_to_fs(const char *data, uint32_t length) {
     struct zip *zipArchive;
     struct zip_file *zipFile;
     struct zip_stat zipStat;
@@ -140,7 +141,7 @@ int EMSCRIPTEN_KEEPALIVE zip_to_fs(const void *data, uint32_t length) {
     int fd;
     long long sum;
 
-    FILE *archive = fopen(libzipTempArchive.c_str(), "wb");
+    FILE *archive = fopen(libzipTempArchive, "wb");
     if (!archive) {
         fprintf(stderr, "zip_to_fs: unable to create archive file\n");
         return 1;
@@ -148,7 +149,7 @@ int EMSCRIPTEN_KEEPALIVE zip_to_fs(const void *data, uint32_t length) {
     fwrite(data, length, 1, archive);
     fclose(archive);
 
-    if ((zipArchive = zip_open(libzipTempArchive.c_str(), 0, &err)) == nullptr) {
+    if ((zipArchive = zip_open(libzipTempArchive, 0, &err)) == 0) {
         zip_error_to_str(buf, sizeof(buf), err, errno);
         fprintf(stderr, "zip_to_fs: can't open zip archive: %s\n", buf);
         return 1;
@@ -197,7 +198,7 @@ int EMSCRIPTEN_KEEPALIVE zip_to_fs(const void *data, uint32_t length) {
         return 1;
     }
 
-    if (remove(libzipTempArchive.c_str()) != 0) {
+    if (remove(libzipTempArchive) != 0) {
         fprintf(stderr, "zip_to_fs: unable to delete archive\n");
         return 1;
     }
@@ -205,7 +206,7 @@ int EMSCRIPTEN_KEEPALIVE zip_to_fs(const void *data, uint32_t length) {
     return 0;
 }
 
-void EMSCRIPTEN_KEEPALIVE libzip_exit() {
+void EMSCRIPTEN_KEEPALIVE libzip_destroy() {
 #ifdef EMSCRIPTEN
     emscripten_force_exit(0);
 #endif

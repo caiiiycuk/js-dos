@@ -1,6 +1,6 @@
 import { Build } from "./jsdos-sokol-build";
 import { JsDosOptions } from "../../shared/jsdos-options";
-import { DosMiddleware, DosClient, DosModule } from "../../shared/jsdos-shared";
+import { DosMiddleware, DosClient } from "../../shared/jsdos-shared";
 import { DosCommandInterface } from "../../shared/jsdos-ci";
 import { SokolCommandInterface } from "./jsdos-sokol-ci";
 
@@ -35,24 +35,22 @@ class DosSokolWorkerImpl implements DosMiddleware {
 
 async function doRun(jsdos: DosClient, messagingType: number): Promise<DosCommandInterface> {
     const config = jsdos.getConfig();
-    const module = await jsdos.loadWasmModule(config.middlewareUrl,
+    const wasm = await jsdos.loadWasmModule(config.middlewareUrl,
                                               messagingType == 1 ? "WSOKOL" : "WSOKOL_CLIENT",
                                               onprogress(config));
     return new Promise<DosCommandInterface>((resolve) => {
-        const Module = <DosModule> {
+        const module = {
             config,
             messagingType,
             canvas: jsdos.getConfig().element,
             ping: () => {/**/},
             log: config.log,
             err: config.log,
-            onRuntimeInitialized() {
-                const module: any = this;
-                new SokolCommandInterface(module, resolve);
-            }
         };
 
-        module.instantiate(Module);
+        wasm.instantiate(module).then(() => {
+            new SokolCommandInterface(module, resolve);
+        })
     });
 }
 

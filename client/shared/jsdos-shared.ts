@@ -17,12 +17,8 @@ export type DosFactory = (element: HTMLElement | string,
                           middleware: DosMiddleware,
                           options?: JsDosOptionsBag) => Promise<DosCommandInterface>;
 
-export interface DosModule {
-    onRuntimeInitialized: () => void;
-}
-
 export interface WasmModule {
-    instantiate: (module: DosModule) => void;
+    instantiate: (module?: any) => Promise<any>;
 }
 
 export interface DosClient {

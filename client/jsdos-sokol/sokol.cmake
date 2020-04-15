@@ -1,8 +1,5 @@
 if (${EMSCRIPTEN})
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \
-        -O1 -g \
-		-lidbfs.js \
-    ")
+    set(SOKOL_LINK_FLAGS "-O1 -g -lidbfs.js")
 endif ()
 
 include_directories(
@@ -30,11 +27,11 @@ if (${EMSCRIPTEN})
 
     add_executable(wsokol $<TARGET_OBJECTS:sokol-server> $<TARGET_OBJECTS:sokol-client>)
     set_target_properties(wsokol PROPERTIES SUFFIX .js)
-    set_target_properties(wsokol PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../server/asyncify.txt -s EXPORT_NAME='WSOKOL'")
+    set_target_properties(wsokol PROPERTIES LINK_FLAGS "${SOKOL_LINK_FLAGS} -s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../server/asyncify.txt -s EXPORT_NAME='WSOKOL'")
 
     add_executable(wsokol-client $<TARGET_OBJECTS:sokol-client>)
     set_target_properties(wsokol-client PROPERTIES SUFFIX .js)
-    set_target_properties(wsokol-client PROPERTIES LINK_FLAGS "-s WASM=1 -s EXPORT_NAME='WSOKOL_CLIENT'")
+    set_target_properties(wsokol-client PROPERTIES LINK_FLAGS "${SOKOL_LINK_FLAGS} -s WASM=1 -s EXPORT_NAME='WSOKOL_CLIENT'")
 else ()
     add_executable(sokol ${SOURCES_SERVER_SOKOL} ${SOURCES_SOKOL_CXX11} ${SOURCES_SOKOL_CXX03})
     target_link_libraries(sokol

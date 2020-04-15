@@ -6,16 +6,18 @@
 #endif
 #endif
 
-#include <cstdint>
+#include <stdint.h>
 
-struct ZipArchive {
+struct zipArchive {
     uint32_t length;
     char* data;
 };
 
-extern "C" ZipArchive* EMSCRIPTEN_KEEPALIVE zip_from_fs();
+typedef struct zipArchive ZipArchive;
 
-extern "C" int EMSCRIPTEN_KEEPALIVE zip_to_fs(const char *data, uint32_t length);
+ZipArchive* EMSCRIPTEN_KEEPALIVE zip_from_fs();
 
-extern "C" void EMSCRIPTEN_KEEPALIVE libzip_exit();
+int EMSCRIPTEN_KEEPALIVE zip_to_fs(const char *data, uint32_t length);
+
+void EMSCRIPTEN_KEEPALIVE libzip_destroy();
 

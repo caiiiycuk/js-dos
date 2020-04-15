@@ -1,9 +1,8 @@
 import { assert } from "chai";
-import { host } from "../../client/jsdos/src/jsdos-wasm";
-import loadWasmModule from "../../client/jsdos/src/jsdos-wasm";
+import loadWasmModule, { host } from "../../client/shared/jsdos-wasm";
 
 import { ICache } from "../../client/shared/jsdos-cache";
-import CacheNoop from "../../client/jsdos/src/jsdos-cache-noop";
+import CacheNoop from "../../client/shared/jsdos-cache-noop";
 
 export function testLoader() {
     suite("WASM loader");
@@ -82,8 +81,8 @@ export function testLoader() {
                                  () => assert.fail("downloading..."));
             assert.fail();
         } catch (e) {
-            assert.ok("CompileError: wasm validation error: at offset 0: failed to match magic number" == e.message ||
-                "CompileError: WebAssembly.compile(): BufferSource argument is empty" == e.message);
+            assert.ok("wasm validation error: at offset 0: failed to match magic number" == e.message ||
+                "WebAssembly.compile(): BufferSource argument is empty" == e.message);
         }
     });
 }

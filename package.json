@@ -4,7 +4,7 @@
   "description": "Easiest API to run dos programs in browser",
   "main": "dist/js-dos.js",
   "types": "dist/typescript/js-dos.ts",
-  "browserslist": "> 0.25%, not dead, ie >= 11",
+  "browserslist": "> 0.25%, not dead",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/caiiiycuk/js-dos.git"

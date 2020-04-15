@@ -7,10 +7,10 @@ import { DosCommandInterface } from "../../shared/jsdos-ci";
 
 
 import { ICache } from "../../shared/jsdos-cache";
+import CacheNoop from "../../shared/jsdos-cache-noop";
 import CacheDb from "./jsdos-cache-db";
-import CacheNoop from "./jsdos-cache-noop";
 
-import loadWasmModule from "./jsdos-wasm";
+import loadWasmModule from "../../shared/jsdos-wasm";
 
 
 import Move from "./controller/move";
@@ -74,7 +74,7 @@ const Dos: DosFactory =
 
 export default Dos;
 
-(window as any).Dos = Dos; 
+(window as any).Dos = Dos;
 (window as any).DosKeys = DosKeys;
 (window as any).DosController = {
     Qwerty,

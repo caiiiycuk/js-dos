@@ -3,13 +3,27 @@
 // features that supported in current environment
 
 /* tslint:disable:member-ordering */
-import { ICache } from "../../shared/jsdos-cache";
+import { ICache } from "./jsdos-cache";
 import { Xhr } from "./jsdos-xhr";
-import { WasmModule, DosModule } from "../../shared/jsdos-shared";
+import { WasmModule } from "./jsdos-shared";
+
+interface Globals {
+    exports: {[moduleName: string]: any},
+    compiled: {[moduleName: string]: Promise<WasmModule>},
+}
 
 class Host {
     public wasmSupported = false;
+    public globals: Globals;
     constructor() {
+        this.globals = window as any;
+        if (!this.globals.exports) {
+            this.globals.exports = {};
+        }
+        if (!this.globals.compiled) {
+            this.globals.compiled = {};
+        }
+
         // ### WebAssembly
         // Host able to detect is WebAssembly supported or not,
         // this information is stored in `Host.wasmSupported` variable
@@ -76,22 +90,34 @@ export class CompiledModule implements WasmModule {
         this.instantiateWasm = instantiateWasm;
     }
 
-    instantiate(module: DosModule) {
-        (module as any).instantiateWasm = this.instantiateWasm;
+    instantiate(module?: any): Promise<any> {
+        module = module || {};
+        module.instantiateWasm = this.instantiateWasm;
         new this.module(module);
+        return new Promise<any>((resolve) => {
+            module.then(() => {
+                delete module.then;
+                resolve(module);
+            });
+        });
     }
 
+}
+
+interface WasmModuleData {
+    script: string,
+    binary: ArrayBuffer,
 }
 
 export default function loadWasmModule(url: string,
                                        moduleName: string,
                                        cache: ICache,
                                        onprogress: (stage: string, total: number, loaded: number) => void) {
-    const globals: any = window;
-    if (!globals.exports) {
-        globals.exports = {};
+    if (host.globals.compiled[moduleName] !== undefined) {
+        return host.globals.compiled[moduleName];
     }
-    return new Promise<WasmModule>((resolve, reject) => {
+
+    const dataPromise =  new Promise<WasmModuleData>((resolve, reject) => {
         const fromIndex = url.lastIndexOf("/");
         const wIndex = url.indexOf("w", fromIndex);
         const isWasmUrl = wIndex === fromIndex + 1 && wIndex >= 0;
@@ -112,44 +138,59 @@ export default function loadWasmModule(url: string,
                 reject(new Error("Can't download wasm, code: " + status +
                     ", message: " + message + ", url: " + url));
             },
-            success: (response: any) => {
-                // * Compile wasm module
-                const promise = WebAssembly.compile(response);
-                const onreject = (reason: any) => {
-                    reject(new Error(reason + ""));
-                };
-                promise.catch(onreject);
-                promise.then((wasmModule) => {
-                    const instantiateWasm = (info: any, receiveInstance: any) => {
-                        info.env = info.env || {};
-                        return WebAssembly.instantiate(wasmModule, info)
-                            .catch(onreject)
-                            .then((instance) => {
-                                receiveInstance(instance, wasmModule);
-                            });
-                    };
-
-                    // * Download and eval js part of wasm module
-                    new Xhr(url, {
-                        cache,
-                        progress: (total, loaded) => {
-                            onprogress("Resolving DosBox", total, loaded);
-                        },
-                        fail: (url: string, status: number, message: string) => {
-                            reject(new Error("Can't download wdosbox.js, code: " + status +
-                                ", message: " + message + ", url: " + url));
-                        },
-                        success: (response: string) => {
-                            response +=
-                            /* tslint:disable:no-eval */
-                            eval.call(window, response);
-                            /* tslint:enable:no-eval */
-                            resolve(new CompiledModule(globals.exports[moduleName],
-                                                       instantiateWasm));
-                        },
-                    });
+            success: (binary: ArrayBuffer) => {
+                // * Download and eval js part of wasm module
+                new Xhr(url, {
+                    cache,
+                    progress: (total, loaded) => {
+                        onprogress("Resolving DosBox", total, loaded);
+                    },
+                    fail: (url: string, status: number, message: string) => {
+                        reject(new Error("Can't download wdosbox.js, code: " + status +
+                            ", message: " + message + ", url: " + url));
+                    },
+                    success: (script: string) => {
+                        resolve({
+                            script,
+                            binary,
+                        });
+                    },
                 });
             }
         });
     });
+
+    const compiledPromise = dataPromise
+        .then((data) => WebAssembly.compile(data.binary)
+        .then((wasmModule) => {
+
+            const instantiateWasm = (info: any, receiveInstance: any) => {
+                info.env = info.env || {};
+                WebAssembly.instantiate(wasmModule, info)
+                    .then((instance) => receiveInstance(instance, wasmModule));
+                return; // no-return
+            };
+
+            /* tslint:disable:no-eval */
+            // eval.call(window, data.script);
+            const s = document.createElement("script");
+            s.src = url;
+            document.body.appendChild(s);
+            /* tslint:enable:no-eval */
+
+            delete data.script;
+            delete data.binary;
+
+            return new Promise<WasmModule>((resolve) => {
+                s.onload = () => {
+                resolve(new CompiledModule(host.globals.exports[moduleName],
+                                           instantiateWasm));
+                }
+            });
+        }));
+
+    if (moduleName) {
+        host.globals.compiled[moduleName] = compiledPromise;
+    }
+    return compiledPromise;
 }

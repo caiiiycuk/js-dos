@@ -1,5 +1,7 @@
 {
     "files": ["gulpfile.ts/index.ts",
+              "libzip/ts/src/jsdos-libzip.ts",
+              "client/jsdos/src/jsdos.ts",
               "client/jsdos-sokol/src/jsdos-sokol.ts"],
     "compilerOptions": {
         "target": "es2015",
