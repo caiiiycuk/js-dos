@@ -33,12 +33,84 @@ export default class LibZip {
         }
     }
 
+    // ### writeFile
+    async writeFile(file: string, body: ArrayBuffer | Uint8Array | string): Promise<void> {
+        // Allow to create file in FS, it will be created relatively cwd
+        // All directories will be created
+        //
+        // windows style path are also valid, but **drive letter is ignored**
+        // if you pass only filename, then file will be writed in cwd
+        //
+        // body can be string or ArrayBuffer or Uint8Array
+        file = this.normalizeFilename(file);
+
+        if (body instanceof ArrayBuffer) {
+            body = new Uint8Array(body);
+        }
+
+        const parts = file.split("/");
+
+        if (parts.length === 0) {
+            throw new Error("Can't create file '" + file + "', because it's not valid file path");
+        }
+
+        const filename = parts[parts.length - 1].trim();
+
+        if (filename.length === 0) {
+            throw new Error("Can't create file '" + file + "', because file name is empty");
+        }
+
+        /* i < parts.length - 1, because last part is file name */
+        const path = this.createPath(parts, 0, parts.length - 1);
+        this.module.FS.writeFile(path + "/" + filename, body);
+    }
+
+    async readFile(file: string, encoding: "binary" | "utf8" = "utf8"): Promise<string|Uint8Array> {
+        file = this.normalizeFilename(file);
+        return this.module.FS.readFile(file, { encoding });
+    }
+
+
+    exists(file: string): boolean {
+        file = this.normalizeFilename(file);
+        try {
+            this.module.FS.lookupPath(file);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+
     destroy(): any {
         try {
             this.module._libzip_destroy();
         } catch (e) {
             return e;
         }
+    }
+
+    private normalizeFilename(file: string): string {
+        file = file.replace(new RegExp("^[a-zA-z]+:"), "").replace(new RegExp("\\\\", "g"), "/");
+        while (file[0] === "/") {
+            file = file.substr(1);
+        }
+        return file;
+    }
+
+    private createPath(parts: string[], begin: number, end: number) {
+        let path = ".";
+        for (let i = begin; i < end; ++i) {
+            const part = parts[i].trim();
+            if (part.length === 0) {
+                continue;
+            }
+
+            this.module.FS.createPath(path, part, true, true);
+            path = path + "/" + part;
+        }
+
+        return path;
     }
 
 }
