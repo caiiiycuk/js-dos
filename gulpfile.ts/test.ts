@@ -26,6 +26,7 @@ function js() {
         packageCache: {}
     })
         .plugin(tsify, {
+            "target": "esnext",
             "esModuleInterop": false,
             "allowSyntheticDefaultImports": true,
             "strict": false,

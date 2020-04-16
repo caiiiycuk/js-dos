@@ -4,7 +4,7 @@
               "client/jsdos/src/jsdos.ts",
               "client/jsdos-sokol/src/jsdos-sokol.ts"],
     "compilerOptions": {
-        "target": "es2015",
+        "target": "esnext",
         "outDir": "build",
         "allowJs": false,
         "skipLibCheck": true,

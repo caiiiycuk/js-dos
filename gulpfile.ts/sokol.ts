@@ -52,7 +52,9 @@ function js() {
         cache: {},
         packageCache: {}
     })
-        .plugin(tsify)
+        .plugin(tsify, {
+            "target": "esnext",
+        })
         .transform("babelify", {
             presets: [["@babel/preset-env", {
                 "useBuiltIns": "usage",

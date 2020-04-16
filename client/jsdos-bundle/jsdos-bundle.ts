@@ -1,30 +1,7 @@
 // # DosBundle
 // Is a complete bundle that contains everything needed to start dosbox server
-// TODO: link to cpp code
 
-export interface DosFile {
-    // **path**
-    path: string;
-    // is a path where to place file (relative to mountPoint)
-
-    // **contents**
-    contents: Uint8Array;
-    // content of file
-
-    // **mutablr**
-    mutable: boolean;
-    // should save any changes of this file between sessions
-}
-
-export interface DosMountPoint {
-    // **mountPoint**
-    mountPoint: string;
-    // is a path to mount archive contents
-
-    // **files**
-    files: DosFile[];
-    // files that will be created in mount point
-}
+import { DosConfig, createDosConfig } from "./jsdos-conf";
 
 export interface DosOptionsBag {
     // ### cycles
@@ -51,13 +28,11 @@ export interface DosOptionsBag {
     //    Then js-dos will take exclusive control and lock mouse inside js-dos container (you can't leave it).
     //    This will happen after first click, and you can unlock mouse by pressing `CTRL+F10` or `ESC`.
     //
-    // ### mounts
-    mounts?: DosMountPoint[];
-    // list of mount points to mount on dosbox filesystem
 }
 
 export interface DosBundle {
     cycles: number |string;
     autolock: boolean;
-    mounts: DosMountPoint[];
 }
+
+
