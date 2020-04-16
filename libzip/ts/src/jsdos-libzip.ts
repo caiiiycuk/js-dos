@@ -1,5 +1,5 @@
 export default class LibZip {
-    private module: any;
+    public module: any;
 
     constructor(module: any) {
         this.module = module;
@@ -8,7 +8,7 @@ export default class LibZip {
     zipFromFs(): Promise<Uint8Array> {
         const ptr = this.module._zip_from_fs();
         if (ptr === 0) {
-            return Promise.reject("Can't create zip, see more info in logs");
+            return Promise.reject(new Error("Can't create zip, see more info in logs"));
         }
 
         const length = this.module.HEAPU32[ptr / 4];
@@ -28,13 +28,17 @@ export default class LibZip {
         if (retcode === 0) {
             return Promise.resolve();
         } else {
-            return Promise.reject("Can't extract zip, retcode " +
-                retcode + ", see more info in logs");
+            return Promise.reject(new Error("Can't extract zip, retcode " +
+                retcode + ", see more info in logs"));
         }
     }
 
-    destroy() {
-        this.module._libzip_destroy();
+    destroy(): any {
+        try {
+            this.module._libzip_destroy();
+        } catch (e) {
+            return e;
+        }
     }
 
 }

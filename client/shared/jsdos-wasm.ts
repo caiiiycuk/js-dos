@@ -172,21 +172,14 @@ export default function loadWasmModule(url: string,
             };
 
             /* tslint:disable:no-eval */
-            // eval.call(window, data.script);
-            const s = document.createElement("script");
-            s.src = url;
-            document.body.appendChild(s);
+            eval.call(window, data.script);
             /* tslint:enable:no-eval */
 
             delete data.script;
             delete data.binary;
 
-            return new Promise<WasmModule>((resolve) => {
-                s.onload = () => {
-                resolve(new CompiledModule(host.globals.exports[moduleName],
-                                           instantiateWasm));
-                }
-            });
+            return new CompiledModule(host.globals.exports[moduleName],
+                                      instantiateWasm);
         }));
 
     if (moduleName) {

@@ -6,9 +6,10 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/stat.h>
 #include <dirent.h>
 #include <fcntl.h>
+
+#include <sys/stat.h>
 
 const char *libzipTempArchive = "libzip-temp-archive.zip";
 
@@ -17,7 +18,12 @@ ZipArchive *readZipArchiveFile(const char *path) {
     char *buffer;
     long length;
 
-    file = fopen(path, "rb");
+    file = fopen(libzipTempArchive, "rb");
+    if (!file) {
+        fprintf(stderr, "zip_from_fs: can't open file file: '%s', errno: %d\n", path, errno);
+        return 0;
+    }
+
     fseek(file, 0, SEEK_END);
     length = ftell(file);
     rewind(file);
@@ -114,7 +120,7 @@ ZipArchive *EMSCRIPTEN_KEEPALIVE zip_from_fs() {
 
     int success = zip_recursively(zipArchive, ".");
     if (zip_close(zipArchive) == -1) {
-        fprintf(stderr, "zip_to_fs: can't close zip archive %s\n", zip_strerror(zipArchive));
+        fprintf(stderr, "zip_from_fs: can't close zip archive %s\n", zip_strerror(zipArchive));
         return 0;
     }
 
@@ -122,10 +128,14 @@ ZipArchive *EMSCRIPTEN_KEEPALIVE zip_from_fs() {
         return 0;
     }
 
+    if (chmod(libzipTempArchive, S_IRWXU | S_IRWXG | S_IRWXO) != 0) {
+        fpintf(stderr, "zip_from_fs : unable to set read mode for archive\n");
+    }
+
     ZipArchive* archive = readZipArchiveFile(libzipTempArchive);
 
     if (remove(libzipTempArchive) != 0) {
-        fprintf(stderr, "fs_to_zip: unable to delete archive\n");
+        fprintf(stderr, "zip_from_fs: unable to delete archive\n");
     }
 
     return archive;
@@ -194,7 +204,7 @@ int EMSCRIPTEN_KEEPALIVE zip_to_fs(const char *data, uint32_t length) {
         }
     }
     if (zip_close(zipArchive) == -1) {
-        fprintf(stderr, "zip_to_fs: can't close zip archive\n");
+        fprintf(stderr, "zip_to_fs: can't close zip archive %s\n", zip_strerror(zipArchive));
         return 1;
     }
 
