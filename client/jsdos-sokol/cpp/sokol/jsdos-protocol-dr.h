@@ -1,22 +1,5 @@
 void dr_init_runtime() {
-#ifdef EMSCRIPTEN
-    EM_ASM(({
-                Module.FS.chdir("/home/web_user");
-
-                const bytes = Module.bundle;
-                delete Module.bundle;
-
-                const buffer = Module._malloc(bytes.length);
-                Module.HEAPU8.set(bytes, buffer);
-                const retcode = Module._zip_to_fs(buffer, bytes.length);
-                Module._free(buffer);
-
-                if (retcode !== 0) {
-                    Module.err("Unable to extract bundle archive\n");
-                    Module._abort();
-                }
-            }));
-#endif
+    extractBundleToFs();
 }
 
 void dr_sokolInit() {

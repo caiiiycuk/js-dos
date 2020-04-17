@@ -22,7 +22,10 @@ void wc_sokolInit() {
 
                                  switch (data.name) {
                                      case "ws-ready": {
-                                         sendMessage("wc-run");
+                                         sendMessage("wc-run", {
+                                             bundle: Module.bundle
+                                             });
+                                         delete Module.bundle;
                                      } break;
                                      case "ws-server-ready": {
                                          Module.ready();

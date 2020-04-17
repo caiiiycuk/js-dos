@@ -1,5 +1,5 @@
 if (${EMSCRIPTEN})
-    set(SOKOL_LINK_FLAGS "-O1 -g -lidbfs.js")
+    set(SOKOL_LINK_FLAGS "")
 endif ()
 
 include_directories(

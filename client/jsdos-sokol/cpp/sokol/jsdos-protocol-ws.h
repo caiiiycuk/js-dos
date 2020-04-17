@@ -20,6 +20,8 @@ void ws_init_runtime() {
 
                                  switch (data.name) {
                                      case "wc-run": {
+                                         Module.bundle = data.props.bundle;
+                                         Module._extractBundleToFs();
                                          Module._runRuntime();
                                          sendMessage("ws-server-ready");
                                      } break;

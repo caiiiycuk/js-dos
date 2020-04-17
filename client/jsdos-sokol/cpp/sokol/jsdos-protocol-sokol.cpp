@@ -46,6 +46,7 @@ uint32_t *frameRgba = 0;
 
 extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime();
 extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime();
+extern "C" void EMSCRIPTEN_KEEPALIVE extractBundleToFs();
 
 #include "jsdos-protocol-dr.h"
 #include "jsdos-protocol-wc.h"
@@ -76,6 +77,27 @@ MessagingType initMessagingType() {
 }
 
 const MessagingType messagingType = initMessagingType();
+
+extern "C" void EMSCRIPTEN_KEEPALIVE extractBundleToFs() {
+#ifdef EMSCRIPTEN
+        EM_ASM(({
+                    Module.FS.chdir("/home/web_user");
+
+                    const bytes = Module.bundle;
+                    delete Module.bundle;
+
+                    const buffer = Module._malloc(bytes.length);
+                    Module.HEAPU8.set(bytes, buffer);
+                    const retcode = Module._zip_to_fs(buffer, bytes.length);
+                    Module._free(buffer);
+
+                    if (retcode !== 0) {
+                        Module.err("Unable to extract bundle archive\n");
+                        Module._abort();
+                    }
+                }));
+#endif
+}
 
 static float vertices[] = {
     0.0f, 0.0f, 0.0f, 0.0f,
