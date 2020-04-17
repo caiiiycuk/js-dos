@@ -1,37 +1,42 @@
-import { ICache } from "./jsdos-cache";
+import { Cache, XhrOptions } from "../../interface/jsdos-interface";
 import CacheNoop from "./jsdos-cache-noop";
 
-// # Xhr
-// `Xhr` is small wrapper over XMLHttpRequest, that provides some
+// # XhrRequest
+// `XhrRequest` is small wrapper over XMLHttpRequest, that provides some
 // handy methods
 
-// You can configre Xhr with XhrOptions object:
-interface XhrOptions {
-    cache: ICache;
-    method?: string;
+
+export async function XhrRequest(url: string, options: XhrOptions): Promise<string | ArrayBuffer> {
+    return await new Promise<string | ArrayBuffer>((resolve, reject) => {
+        new Xhr(url, {
+            ...options,
+            success: resolve,
+            fail: (message: string) => {
+                reject(new Error(message));
+            }
+        });
+    });
+};
+
+// private implementation
+interface XhrOptionsInternal extends XhrOptions {
     success?: (response: any) => void;
-    progress?: (total: number, loaded: number) => void;
-    fail?: (url: string, status: number, message: string) => void;
-    data?: string;
-    responseType?: XMLHttpRequestResponseType;
+    fail?: (message: string) => void;
 }
-// * `method` - "GET" | "POST"
 // * `success` - callback when resource is downloaded
-// * `progress` - callback for progress
 // * `fail` - fail callback
-// * `data` - data for POST request, should typeof `application/x-www-form-urlencoded`
-// * `responseType` - XMLHttpRequestResponseType
+
 
 // Class Xhr does not have any public methods
-export class Xhr {
-    private cache: ICache;
+class Xhr {
+    private cache: Cache;
     private resource: string;
-    private options: XhrOptions;
+    private options: XhrOptionsInternal;
     private xhr: XMLHttpRequest | null = null;
     private total: number = 0;
     private loaded: number = 0;
 
-    constructor(url: string, options: XhrOptions) {
+    constructor(url: string, options: XhrOptionsInternal) {
         this.resource = url;
         this.options = options;
         this.options.method = options.method || "GET";
@@ -71,7 +76,7 @@ export class Xhr {
         if (typeof (errorListener = this.xhr).addEventListener === "function") {
             errorListener.addEventListener("error", (evt) => {
                 if (this.options.fail) {
-                    this.options.fail(this.resource, (this.xhr as XMLHttpRequest).status, "connection problem");
+                    this.options.fail("Unalbe to download '" + this.resource + "', code: " + (this.xhr as XMLHttpRequest).status);
                     return delete this.options.fail;
                 }
             });
@@ -102,10 +107,11 @@ export class Xhr {
                     return this.options.success(xhr.response);
                 }
             } else if (this.options.fail) {
-                this.options.fail(this.resource, xhr.status, "connection problem");
+                this.options.fail("Unable to download '" + this.resource + "', code: " + xhr.status);
                 return delete this.options.fail;
             }
         }
     }
 
 }
+

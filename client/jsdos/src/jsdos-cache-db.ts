@@ -1,13 +1,13 @@
-import { ICache } from "../../shared/jsdos-cache";
+import { Cache } from "../../interface/jsdos-interface";
 
-export default class CacheDb implements ICache {
+export default class CacheDb implements Cache {
 
     public version: string;
     private storeName: string = "files";
     private indexedDB: IDBFactory;
     private db: IDBDatabase | null = null;
 
-    constructor(version: string, onready: (cache: ICache) => void, onerror: (msg: string) => void) {
+    constructor(version: string, onready: (cache: Cache) => void, onerror: (msg: string) => void) {
         this.version = version;
         this.indexedDB = window.indexedDB || (window as any).mozIndexedDB
             || (window as any).webkitIndexedDB || (window as any).msIndexedDB;

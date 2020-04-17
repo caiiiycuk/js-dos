@@ -267,7 +267,10 @@ int jsdos_main(Config *config) {
         }
     }
     // if none found => parse localdir conf
-    if (!control->configfiles.size()) control->ParseConfigFile("dosbox.conf");
+    if (!control->configfiles.size()) {
+        printf("Parsing default config .jsdos/dosbox.conf\n");
+        control->ParseConfigFile(".jsdos/dosbox.conf");
+    }
 
     // if none found => parse userlevel conf
     if (!control->configfiles.size()) {
@@ -353,8 +356,8 @@ void server_exit() {
     jsdos::requestExit();
 }
 
-int server_run(int argc, char** argv) {
-    CommandLine commandLine(argc, argv);
+int server_run() {
+    CommandLine commandLine(0, 0);
     Config config(&commandLine);
     return jsdos_main(&config);
 }

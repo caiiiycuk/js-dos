@@ -1,4 +1,4 @@
-import { DosKeyEventConsumer } from "../../../shared/jsdos-ci";
+import { DosKeyEventConsumer } from "../../../interface/jsdos-interface";
 import * as DosDom from "../jsdos-dom";
 
 export interface QwertyOptions {

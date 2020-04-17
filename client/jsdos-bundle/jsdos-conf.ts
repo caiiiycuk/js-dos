@@ -93,7 +93,7 @@ export class AutoexecCategory implements DosConfigCategory {
     name = "autoexec";
     description = "Lines in this section will be run at startup";
     options = {
-        lines: {
+        script: {
             name: "lines",
             description: "Use \\n to separate lines",
             value: "",
@@ -244,7 +244,14 @@ function writeCategory(section: DosConfigCategory): string {
 
 function writeAutoexec(section: AutoexecCategory): string {
     return `[autoexec]
-${section.options.lines.value}
+echo off
+mount c .
+c:
+
+type jsdos~1/readme.txt
+echo on
+
+${section.options.script.value}
 
 # Generated using https://js-dos.com
 # █▀▀▀▀▀█ █  ▄▄▄▀▀█ █▀▀▀▀▀█

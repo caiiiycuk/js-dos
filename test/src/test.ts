@@ -6,7 +6,7 @@ import { testLibZip } from "./test-libzip";
 import { testConf } from "./test-conf";
 import { testMiddleware } from "./test-middleware";
 
-import DosSokol, { DosSokolWorker } from "../../client/jsdos-sokol/src/jsdos-sokol";
+import { DosSokol, DosSokolWorker } from "../../client/jsdos-sokol/src/jsdos-sokol";
 
 const middles = [ DosSokol, DosSokolWorker ];
 

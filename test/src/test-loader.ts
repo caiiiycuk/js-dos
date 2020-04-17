@@ -1,8 +1,8 @@
 import { assert } from "chai";
-import loadWasmModule, { host } from "../../client/shared/jsdos-wasm";
+import loadWasmModule, { host } from "../../client/jsdos/src/jsdos-wasm";
 
-import { ICache } from "../../client/shared/jsdos-cache";
-import CacheNoop from "../../client/shared/jsdos-cache-noop";
+import { Cache } from "../../client/interface/jsdos-interface";
+import CacheNoop from "../../client/jsdos/src/jsdos-cache-noop";
 
 export function testLoader() {
     suite("WASM loader");
@@ -24,7 +24,7 @@ export function testLoader() {
             await loadWasmModule("wrongurl.js", "", new CacheNoop(), () => { /**/ });
             assert.fail();
         } catch (e) {
-            assert.equal("Can\'t download wasm, code: 404, message: connection problem, url: wrongurl.wasm", e.message);
+            assert.equal("Unable to download 'wrongurl.wasm', code: 404", e.message);
         }
     });
 
@@ -33,7 +33,7 @@ export function testLoader() {
 
         let cacheGetUsed = false;
         let cachePutUsed = false;
-        class TestCache implements ICache {
+        class TestCache implements Cache {
             public put(key: string, data: any, onflush: () => void) {
                 cachePutUsed = cachePutUsed || (key === moduleUrl.replace(".js", ".wasm") && data instanceof ArrayBuffer && (data as ArrayBuffer).byteLength > 0);
                 onflush();
@@ -62,7 +62,7 @@ export function testLoader() {
     test("loader should never load module twice", async () => {
         const moduleUrl = "/wsokol.js";
 
-        class TestCache implements ICache {
+        class TestCache implements Cache {
             public put(key: string, data: any, onflush: () => void) {
                 assert.fail();
             }

@@ -1,8 +1,8 @@
 void wc_sokolInit() {
 #ifdef EMSCRIPTEN
     EM_ASM(({
-                Module.worker = new Worker(Module.config.middlewareUrl
-                                           .replace("-client.js", "-worker.js"));
+                Module.worker = new Worker(Module.config.pathPrefix +
+                                           "wsokol-worker.js");
 
                 function sendMessage(name, props) {
                     Module.worker.postMessage({

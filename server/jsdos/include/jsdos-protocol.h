@@ -18,7 +18,7 @@ extern "C" void EMSCRIPTEN_KEEPALIVE client_frame_update_lines(uint32_t *lines, 
 extern "C" void EMSCRIPTEN_KEEPALIVE client_sound_push(const float* samples, int num_samples);
 extern "C" void EMSCRIPTEN_KEEPALIVE client_exit();
 
-extern int server_run(int argc, char** argv);
+extern int server_run();
 extern void server_add_key(KBD_KEYS key, bool pressed);
 extern void server_exit();
 

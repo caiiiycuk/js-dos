@@ -1,10 +1,13 @@
-import { DosCommandInterface } from "../../shared/jsdos-ci";
+import { DosCommandInterface } from "../../interface/jsdos-interface";
 
 export class SokolCommandInterface implements DosCommandInterface {
     public module: any;
 
-    constructor(module: any, ready: (ci: DosCommandInterface) => void) {
+    constructor(module: any,
+                bundle: ArrayBuffer,
+                ready: (ci: DosCommandInterface) => void) {
         this.module = module;
+        this.module.bundle = new Uint8Array(bundle);
         this.module.ready = () => ready(this);
         this.module.callMain([]);
         this.module._runRuntime();

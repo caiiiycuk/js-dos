@@ -251,6 +251,13 @@ keyboardlayout=auto
 
 ipx=false
 [autoexec]
+echo off
+mount c .
+c:
+
+type jsdos~1/readme.txt
+echo on
+
 
 
 # Generated using https://js-dos.com

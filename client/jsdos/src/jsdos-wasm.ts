@@ -3,9 +3,8 @@
 // features that supported in current environment
 
 /* tslint:disable:member-ordering */
-import { ICache } from "./jsdos-cache";
-import { Xhr } from "./jsdos-xhr";
-import { WasmModule } from "./jsdos-shared";
+import { Cache, WasmModule } from "../../interface/jsdos-interface";
+import { XhrRequest } from "./jsdos-xhr";
 
 interface Globals {
     exports: {[moduleName: string]: any},
@@ -111,79 +110,58 @@ interface WasmModuleData {
 
 export default function loadWasmModule(url: string,
                                        moduleName: string,
-                                       cache: ICache,
+                                       cache: Cache,
                                        onprogress: (stage: string, total: number, loaded: number) => void) {
     if (host.globals.compiled[moduleName] !== undefined) {
         return host.globals.compiled[moduleName];
     }
 
-    const dataPromise =  new Promise<WasmModuleData>((resolve, reject) => {
+    async function load() {
         const fromIndex = url.lastIndexOf("/");
         const wIndex = url.indexOf("w", fromIndex);
         const isWasmUrl = wIndex === fromIndex + 1 && wIndex >= 0;
 
         if (!host.wasmSupported || !isWasmUrl) {
-            reject(new Error("Starting from js-dos 6.22.60 js environment is not supported"));
+            throw new Error("Starting from js-dos 6.22.60 js environment is not supported");
         }
 
         const wasmUrl = url.replace(".js", ".wasm");
-        // * Download wasm file
-        new Xhr(wasmUrl, {
+        const binaryPromise = XhrRequest(wasmUrl, {
             cache,
             responseType: "arraybuffer",
             progress: (total, loaded) => {
                 onprogress("Resolving DosBox (" + url + ")", total, loaded);
             },
-            fail: (url: string, status: number, message: string) => {
-                reject(new Error("Can't download wasm, code: " + status +
-                    ", message: " + message + ", url: " + url));
-            },
-            success: (binary: ArrayBuffer) => {
-                // * Download and eval js part of wasm module
-                new Xhr(url, {
-                    cache,
-                    progress: (total, loaded) => {
-                        onprogress("Resolving DosBox", total, loaded);
-                    },
-                    fail: (url: string, status: number, message: string) => {
-                        reject(new Error("Can't download wdosbox.js, code: " + status +
-                            ", message: " + message + ", url: " + url));
-                    },
-                    success: (script: string) => {
-                        resolve({
-                            script,
-                            binary,
-                        });
-                    },
-                });
-            }
         });
-    });
+        const scriptPromise = XhrRequest(url, {
+            cache,
+            progress: (total, loaded) => {
+                onprogress("Resolving DosBox", total, loaded);
+            },
+        });
 
-    const compiledPromise = dataPromise
-        .then((data) => WebAssembly.compile(data.binary)
-        .then((wasmModule) => {
+        const [binary, script] = await Promise.all([binaryPromise, scriptPromise]);
+        const wasmModule = await WebAssembly.compile(binary as ArrayBuffer);
+        const instantiateWasm = (info: any, receiveInstance: any) => {
+            info.env = info.env || {};
+            WebAssembly.instantiate(wasmModule, info)
+                .then((instance) => receiveInstance(instance, wasmModule));
+            return; // no-return
+        };
 
-            const instantiateWasm = (info: any, receiveInstance: any) => {
-                info.env = info.env || {};
-                WebAssembly.instantiate(wasmModule, info)
-                    .then((instance) => receiveInstance(instance, wasmModule));
-                return; // no-return
-            };
+        /* tslint:disable:no-eval */
+        eval.call(window, script as string);
+        /* tslint:enable:no-eval */
 
-            /* tslint:disable:no-eval */
-            eval.call(window, data.script);
-            /* tslint:enable:no-eval */
+        return new CompiledModule(host.globals.exports[moduleName],
+                                  instantiateWasm);
+    };
 
-            delete data.script;
-            delete data.binary;
-
-            return new CompiledModule(host.globals.exports[moduleName],
-                                      instantiateWasm);
-        }));
+    const promise = load();
 
     if (moduleName) {
-        host.globals.compiled[moduleName] = compiledPromise;
+        host.globals.compiled[moduleName] = promise;
     }
-    return compiledPromise;
+
+    return promise;
 }

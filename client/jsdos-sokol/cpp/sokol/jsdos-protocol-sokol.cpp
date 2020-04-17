@@ -276,15 +276,12 @@ extern "C" void EMSCRIPTEN_KEEPALIVE client_exit() {
 }
 
 extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime() {
-    int argc = 0;
-    char** argv = 0;
-
     switch (messagingType) {
         case WORKER: {
             printf("sokol started in WORKER mode\n");
             on_client_frame_set_size = ws_client_frame_set_size;
             on_client_frame_update_lines = ws_client_frame_update_lines;
-            server_run(argc, argv);
+            server_run();
             ws_exit_runtime();
             return 0;
         }
@@ -301,7 +298,7 @@ extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime() {
 #else
             std::thread client(client_run);
 #endif
-            server_run(argc, argv);
+            server_run();
 #ifdef EMSCRIPTEN
             exitRuntime();
 #else
@@ -350,8 +347,15 @@ extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime() {
 }
 
 int main(int argc, char *argv[]) {
-    if (messagingType == WORKER) {
-        ws_init_runtime();
+    switch (messagingType) {
+        case DIRECT: {
+            dr_init_runtime();
+        } break;
+        case WORKER: {
+            ws_init_runtime();
+        } break;
+        default: {
+        } break;
     }
 
 #ifdef EMSCRIPTEN

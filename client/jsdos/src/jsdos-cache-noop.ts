@@ -1,6 +1,6 @@
-import { ICache } from "./jsdos-cache";
+import { Cache } from "../../interface/jsdos-interface";
 
-export default class CacheNoop implements ICache {
+export default class CacheNoop implements Cache {
     public put(key: string, data: any, onflush: () => void) {
         // nothing
     }

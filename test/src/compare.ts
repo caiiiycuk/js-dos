@@ -1,19 +1,17 @@
 import { assert } from "chai";
-import { DosCommandInterface } from "../../client/shared/jsdos-ci";
-
-const wrongTreshold = 10;
+import { DosCommandInterface } from "../../client/interface/jsdos-interface";
 
 // Compare
 // =======
 // Compare image from url, and screenshot from DosBox
 
-export function compareAndExit(imageUrl: string, ci: DosCommandInterface) {
+export function compareAndExit(imageUrl: string, ci: DosCommandInterface, threshold: number = 10) {
     return new Promise((resolve, reject) => {
         const fn = () => {
-            compare(imageUrl, ci)
+            compare(imageUrl, ci, threshold)
                 .then((wrong) => {
                     const exitPromise = ci.exit();
-                    assert.ok(wrong <= wrongTreshold, "Image not same, wrong: " + wrong);
+                    assert.ok(wrong <= threshold, "Image not same, wrong: " + wrong);
                     exitPromise.then(resolve).catch(reject);
                 })
                 .catch(reject);
@@ -24,7 +22,7 @@ export function compareAndExit(imageUrl: string, ci: DosCommandInterface) {
     });
 }
 
-const compare = (imageUrl: string, ci: DosCommandInterface) => {
+const compare = (imageUrl: string, ci: DosCommandInterface, threshold: number) => {
     return ci.screenshot()
         .then((imageData: ImageData) => {
             const canvas = document.createElement("canvas");
@@ -80,7 +78,7 @@ const compare = (imageUrl: string, ci: DosCommandInterface) => {
 
                     // floor, to allow some margin of error for antialiasing
                     const wrong = Math.floor(total / (img.width * img.height * 3));
-                    if (wrong > wrongTreshold) {
+                    if (wrong > threshold) {
                         renderComparsion();
                     }
                     resolve(wrong);

@@ -1,11 +1,17 @@
 export default class LibZip {
     public module: any;
+    private home: string;
 
-    constructor(module: any) {
+    constructor(module: any, home: string) {
         this.module = module;
+        this.home = home;
+        this.module.callMain([]);
+        this.chdirToHome();
     }
 
     zipFromFs(): Promise<Uint8Array> {
+        this.chdirToHome();
+
         const ptr = this.module._zip_from_fs();
         if (ptr === 0) {
             return Promise.reject(new Error("Can't create zip, see more info in logs"));
@@ -19,6 +25,8 @@ export default class LibZip {
     }
 
     zipToFs(zipArchive: Uint8Array): Promise<void> {
+        this.chdirToHome();
+
         const bytes = new Uint8Array(zipArchive);
         const buffer = this.module._malloc(bytes.length);
         this.module.HEAPU8.set(bytes, buffer);
@@ -111,6 +119,10 @@ export default class LibZip {
         }
 
         return path;
+    }
+
+    private chdirToHome() {
+        this.module.FS.chdir(this.home);
     }
 
 }

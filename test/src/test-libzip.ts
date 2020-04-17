@@ -1,17 +1,13 @@
 import { assert } from "chai";
 
-import loadWasmModule from "../../client/shared/jsdos-wasm";
-import CacheNoop from "../../client/shared/jsdos-cache-noop";
+import loadWasmModule from "../../client/jsdos/src/jsdos-wasm";
+import CacheNoop from "../../client/jsdos/src/jsdos-cache-noop";
 import LibZip from "../../libzip/ts/src/jsdos-libzip";
-
-const home = "/home/web_user";
 
 async function makeLibZip() {
     const wasm = await loadWasmModule("/wlibzip.js", "WLIBZIP", new CacheNoop(), () => {});
     const module = await wasm.instantiate();
-    module.callMain([]);
-    module.FS.chdir(home);
-    return new LibZip(module);
+    return new LibZip(module, "/home/web_user");
 }
 
 function destroy(libzip: LibZip) {

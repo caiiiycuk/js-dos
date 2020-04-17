@@ -129,7 +129,7 @@ ZipArchive *EMSCRIPTEN_KEEPALIVE zip_from_fs() {
     }
 
     if (chmod(libzipTempArchive, S_IRWXU | S_IRWXG | S_IRWXO) != 0) {
-        fpintf(stderr, "zip_from_fs : unable to set read mode for archive\n");
+        fprintf(stderr, "zip_from_fs : unable to set read mode for archive\n");
     }
 
     ZipArchive* archive = readZipArchiveFile(libzipTempArchive);
