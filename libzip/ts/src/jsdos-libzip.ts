@@ -24,14 +24,19 @@ export default class LibZip {
         return Promise.resolve(archive);
     }
 
-    zipToFs(zipArchive: Uint8Array): Promise<void> {
-        this.chdirToHome();
+    zipToFs(zipArchive: Uint8Array, path: string = "/"): Promise<void> {
+        path = this.normalizeFilename(path);
+        const pathParts = this.normalizeFilename(path).split("/");
+        this.createPath(pathParts, 0, pathParts.length);
+        this.chdir(path);
 
         const bytes = new Uint8Array(zipArchive);
         const buffer = this.module._malloc(bytes.length);
         this.module.HEAPU8.set(bytes, buffer);
         const retcode = this.module._zip_to_fs(buffer, bytes.length);
         this.module._free(buffer);
+
+        this.chdirToHome();
 
         if (retcode === 0) {
             return Promise.resolve();
@@ -123,6 +128,10 @@ export default class LibZip {
 
     private chdirToHome() {
         this.module.FS.chdir(this.home);
+    }
+
+    private chdir(path: string) {
+        this.module.FS.chdir(this.home + "/" + path);
     }
 
 }

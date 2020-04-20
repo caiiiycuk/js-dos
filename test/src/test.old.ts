@@ -137,28 +137,6 @@ test("js-dos-fs can mount multiple persistent point [existent db]", (done) => {
 
 suite("js-dos");
 
-
-test("js-dos can create and read dosbox.conf", (done) => {
-    const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
-        jsdosUrl,
-        onerror: (message) => {
-            assert.fail();
-        },
-    });
-
-    doReady(dos, (fs, main) => {
-        fs.createFile("dosbox.conf", `
-            [autoexec]
-            mount c .
-            c:
-            type dosbox~1.con
-        `);
-        doNext(main(["-conf", "dosbox.conf"]), (ci) => {
-            compareAndExit("dosboxconf.png", ci, done);
-        });
-    });
-});
-
 test("js-dos can run digger.zip", (done) => {
     const dos = Dos(document.getElementById("canvas") as HTMLCanvasElement, {
         jsdosUrl,

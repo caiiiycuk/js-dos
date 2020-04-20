@@ -19,10 +19,10 @@ class DosSokolWorkerImpl implements DosMiddleware {
 async function doRun(jsdos: DosClient,
                      messagingType: number): Promise<DosCommandInterface> {
     const config = jsdos.config;
-    const wasmPromise = jsdos.loadWasmModule(messagingType === 1 ? "wsokol.js" : "wsokol-client.js",
+    const wasmPromise = jsdos.createWasmModule(messagingType === 1 ? "wsokol.js" : "wsokol-client.js",
                                              messagingType === 1 ? "WSOKOL" : "WSOKOL_CLIENT",
                                              () => {});
-    const bundlePromise = jsdos.loadResource(config.bundleUrl, {
+    const bundlePromise = jsdos.createResource(config.bundleUrl, {
         cache: jsdos.cache,
         responseType: "arraybuffer",
     });

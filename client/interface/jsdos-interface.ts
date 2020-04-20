@@ -14,16 +14,18 @@ export interface XhrOptions {
 // * `data` - data for POST request, should typeof `application/x-www-form-urlencoded`
 // * `responseType` - XMLHttpRequestResponseType
 
+export type ProgressFn = (stage: string, total: number, loaded: number) => void;
+export type ResourceFactory = (url: string, options: XhrOptions) => Promise<string | ArrayBuffer>;
+export type WasmModuleFactory = (url: string,
+                                 moduleName: string,
+                                 onprogress: ProgressFn) => Promise<WasmModule>;
+
 export interface DosClient {
     config: JsDosConfig;
     cache: Cache;
-
-    loadResource(url: string, options: XhrOptions): Promise<string | ArrayBuffer>;
-    loadWasmModule: (url: string,
-                     moduleName: string,
-                     onprogress: (stage: string, total: number, loaded: number) => void) => Promise<WasmModule>;
+    createResource: ResourceFactory;
+    createWasmModule: WasmModuleFactory;
 }
-
 
 export interface DosMiddleware {
     buildInfo: BuildInfo;

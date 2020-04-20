@@ -3,6 +3,7 @@
 
 import { testLoader } from "./test-loader";
 import { testLibZip } from "./test-libzip";
+import { testBundle } from "./test-bundle";
 import { testConf } from "./test-conf";
 import { testMiddleware } from "./test-middleware";
 
@@ -13,6 +14,7 @@ const middles = [ DosSokol, DosSokolWorker ];
 testLoader();
 testLibZip();
 testConf();
+testBundle();
 
 for (const middleware of middles) {
     testMiddleware(middleware);

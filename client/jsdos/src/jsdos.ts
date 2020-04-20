@@ -1,5 +1,5 @@
 import { DosClient, DosMiddleware, WasmModule,
-         JsDosConfig, DosCommandInterface, Cache } from "../../interface/jsdos-interface";
+    JsDosConfig, DosCommandInterface, Cache, ProgressFn, WasmModuleFactory } from "../../interface/jsdos-interface";
 
 import { DosKeys } from "./jsdos-controller";
 
@@ -113,10 +113,8 @@ function openCache(config: JsDosConfig): Promise<Cache> {
     });
 }
 
-async function createLibZip(loadWasmModule: (url: string,
-                                             moduleName: string,
-                                             onprogress: (stage: string, total: number, loaded: number) => void) => Promise<WasmModule>): Promise<LibZip> {
-    const wasm = await loadWasmModule("wlibzip.js",
+async function createLibZip(createWasmModule: WasmModuleFactory): Promise<LibZip> {
+    const wasm = await createWasmModule("wlibzip.js",
                                       "WLIBZIP",
                                       () => {});
     const module = await wasm.instantiate();
@@ -130,13 +128,14 @@ const Dos: DosFactory =
                     options?: JsDosOptionsBag): Promise<DosCommandInterface> {
         options = options || {};
         const config = await compileConfig(element, middleware, options);
-        const loadWasmModule =
+        const createWasmModule =
             (url: string,
              moduleName: string,
-             onprogress: (stage: string, total: number, loaded: number) => void) => {
+             onprogress: ProgressFn) => {
                  return doLoadWasmModule(config.pathPrefix + url,
                                        moduleName, cache, onprogress);
              };
+        const createResource = XhrRequest;
         const cache = await openCache(config);
         let bundle: DosBundle | string;
 
@@ -153,16 +152,16 @@ const Dos: DosFactory =
             config.bundleUrl = bundle;
         } else {
             shouldRevokeUrl = true;
-            const libzip = await createLibZip(loadWasmModule);
-            config.bundleUrl = await bundle.toUrl(libzip);
+            const libzip = await createLibZip(createWasmModule);
+            config.bundleUrl = await bundle.toUrl(libzip, cache, createResource);
             libzip.destroy();
         }
 
         const jsdos: DosClient = {
             config,
             cache,
-            loadResource: XhrRequest,
-            loadWasmModule,
+            createResource,
+            createWasmModule,
         };
 
         const ci = await middleware.run(jsdos);

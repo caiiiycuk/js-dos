@@ -10,6 +10,7 @@ import Dos from "../../client/jsdos/src/jsdos";
 export function testMiddleware(middleware: DosMiddleware) {
     testCommon(middleware);
     testConf(middleware);
+    testStorage(middleware);
 }
 
 function testCommon(middleware: DosMiddleware) {
@@ -44,5 +45,21 @@ function testConf(middleware: DosMiddleware) {
         const ci = await Dos("jsdos", middleware, { pathPrefix: "/" });
         assert.ok(ci);
         await compareAndExit("jsdos-conf.png", ci, 0);
+    });
+
+    test("should modify dosbox.conf through api", async () => {
+        const ci = await Dos("jsdos", middleware, {
+            pathPrefix: "/",
+            bundle: new DosBundle().autoexec("type jsdos~1/dosbox~1.con"),
+        });
+        assert.ok(ci);
+        await compareAndExit("dosboxconf.png", ci, 0);
+    });
+}
+
+function testStorage(middleware: DosMiddleware) {
+    suite("Storage tests [" + middleware.constructor.name + "]");
+
+    test("should provide dosbox.conf for dosbox", async () => {
     });
 }

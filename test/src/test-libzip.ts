@@ -1,20 +1,6 @@
 import { assert } from "chai";
 
-import loadWasmModule from "../../client/jsdos/src/jsdos-wasm";
-import CacheNoop from "../../client/jsdos/src/jsdos-cache-noop";
-import LibZip from "../../libzip/ts/src/jsdos-libzip";
-
-async function makeLibZip() {
-    const wasm = await loadWasmModule("/wlibzip.js", "WLIBZIP", new CacheNoop(), () => {});
-    const module = await wasm.instantiate();
-    return new LibZip(module, "/home/web_user");
-}
-
-function destroy(libzip: LibZip) {
-    const exitStatus = libzip.destroy();
-    assert.equal(exitStatus.name, "ExitStatus");
-    assert.equal(exitStatus.status, 0);
-}
+import { makeLibZip, destroy } from "./libzip";
 
 export function testLibZip() {
     suite("libzip");
@@ -63,6 +49,24 @@ export function testLibZip() {
         assert.equal(await libzip.readFile("dir1/file1"), "dir1-file1-contents");
         assert.equal(await libzip.readFile("dir1/file2"), "dir1-file2-contents");
         assert.equal(await libzip.readFile("dir1/dir2/file1"), "dir1-dir2-file1-contents");
+
+        destroy(libzip);
+    });
+
+    test("libzip extract archive to fs [in folder]", async () => {
+        const libzip = await makeLibZip();
+
+        assert.ok(!libzip.exists("file1"));
+        assert.ok(!libzip.exists("dir1/file1"));
+        assert.ok(!libzip.exists("dir1/file2"));
+        assert.ok(!libzip.exists("dir1/dir2/file1"));
+
+        await libzip.zipToFs(archive, "/test/");
+
+        assert.equal(await libzip.readFile("/test/file1"), "file1-contents");
+        assert.equal(await libzip.readFile("/test/dir1/file1"), "dir1-file1-contents");
+        assert.equal(await libzip.readFile("/test/dir1/file2"), "dir1-file2-contents");
+        assert.equal(await libzip.readFile("/test/dir1/dir2/file1"), "dir1-dir2-file1-contents");
 
         destroy(libzip);
     });
