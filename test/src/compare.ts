@@ -5,7 +5,7 @@ import { DosCommandInterface } from "../../client/interface/jsdos-interface";
 // =======
 // Compare image from url, and screenshot from DosBox
 
-export function compareAndExit(imageUrl: string, ci: DosCommandInterface, threshold: number = 10) {
+export function compareAndExit(imageUrl: string, ci: DosCommandInterface, threshold: number = 0) {
     return new Promise((resolve, reject) => {
         const fn = () => {
             compare(imageUrl, ci, threshold)

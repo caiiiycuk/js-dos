@@ -44,14 +44,37 @@ export class SokolCommandInterface implements DosCommandInterface {
     }
 
     public exit(): Promise<void> {
-        return new Promise((resolve) => {
-            this.module.exit = resolve;
-            this.module._client_exit();
-        });
+        return this.persist()
+            .catch(this.module.err)
+            .then(() => new Promise((resolve) => {
+                this.module.bundleCache.close();
+                this.module.exit = resolve;
+                this.module._client_exit();
+            }));
     }
 
     public simulateKeyPress(keyCode: number) {
-        throw new Error("not implemented");
+        return Promise.reject(new Error("Not implemented"));
+    }
+
+    public persist(): Promise<void> {
+        if (!this.module.persistency) {
+            return Promise.resolve();
+        }
+
+        return new Promise((resolve, reject) => {
+            this.module.persist = (archive: Uint8Array) => {
+                this.module.bundleCache.put(this.module.config.bundleUrl, archive)
+                    .then(resolve).catch(reject);
+                delete this.module.persist;
+            }
+
+            try {
+                this.module._packFsToBundle();
+            } catch (e) {
+                reject(e);
+            }
+        });
     }
 
 }

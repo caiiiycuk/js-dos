@@ -93,9 +93,44 @@ extern "C" void EMSCRIPTEN_KEEPALIVE extractBundleToFs() {
 
                     if (retcode !== 0) {
                         Module.err("Unable to extract bundle archive\n");
-                        Module._abort();
+                        return;
                     }
+
+                    try {
+                        Module.FS.readFile("/home/web_user/.jsdos/dosbox.conf");
+                    } catch (e) {
+                        Module.err("Broken bundle, .jsdos/dosbox.conf not found");
+                        return;
+                    }
+
                 }));
+#endif
+}
+
+extern "C" void EMSCRIPTEN_KEEPALIVE packFsToBundle() {
+    if (messagingType == WORKER_CLIENT) {
+        wc_packFsToBundle();
+        return;
+    }
+
+#ifdef EMSCRIPTEN
+    EM_ASM(({
+                Module.FS.chdir("/home/web_user");
+
+                const ptr = Module._zip_from_fs();
+                if (ptr === 0) {
+                    Module.err("Can't create zip, see more info in logs");
+                    Module._abort();
+                    return;
+                }
+
+                const length = Module.HEAPU32[ptr / 4];
+                const memory = Module.HEAPU8;
+                const archive = memory.slice(ptr + 4, ptr + 4 + length);
+                Module._free(ptr);
+
+                Module.persist(archive);
+            }));
 #endif
 }
 

@@ -6,7 +6,7 @@ import LibZip from "../../libzip/ts/src/jsdos-libzip";
 
 import { createDosConfig, toDosboxConf, DosConfig } from "../../client/jsdos-bundle/jsdos-conf";
 import { XhrRequest } from "../../client/jsdos/src/jsdos-xhr";
-import CacheNoop from "../../client/jsdos/src/jsdos-cache-noop";
+import CacheNoop from "../../client/jsdos-cache/jsdos-cache-noop";
 
 async function toFs(bundle: DosBundle,
                     cb: (libzip: LibZip) => Promise<void>) {
@@ -18,6 +18,23 @@ async function toFs(bundle: DosBundle,
     await unpacker.zipToFs(array);
     await cb(unpacker);
     destroy(unpacker);
+}
+
+async function save(bundle: DosBundle) {
+    const packer = await makeLibZip();
+    const url = await bundle.toUrl(packer, new CacheNoop(), XhrRequest);
+    destroy(packer);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "archive.zip";
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, 0);
 }
 
 export function testBundle() {

@@ -4,8 +4,8 @@ import { DosClient, DosMiddleware, WasmModule,
 import { DosKeys } from "./jsdos-controller";
 
 
-import CacheNoop from "./jsdos-cache-noop";
-import CacheDb from "./jsdos-cache-db";
+import CacheNoop from "../../jsdos-cache/jsdos-cache-noop";
+import CacheDb from "../../jsdos-cache/jsdos-cache-db";
 
 import doLoadWasmModule from "./jsdos-wasm";
 import { XhrRequest } from "./jsdos-xhr";
@@ -33,6 +33,10 @@ export interface JsDosOptionsBag {
     // it's a bundle that contains everyting to run dos system:
     // configuration, fs, etc. Can be an url
 
+    // ### presistencyKey
+    persistencyKey?: string;
+    // if set, then file system will be stored between browser sessions
+
     // ### onprogress
     onprogress?: (stage: string, total: number, loaded: number) => void;
     // progress event listener, it is fired when loading progress is changed
@@ -47,6 +51,14 @@ export interface JsDosOptionsBag {
     // ### log
     log?: (...args: any[]) => void;
     // you can provide log function, to override logging, by default js-dos uses console.log as implementation
+
+    // ### warn
+    warn?: (...args: any[]) => void;
+    // you can provide log function, to override logging, by default js-dos uses console.warn as implementation
+
+    // ### err
+    err?: (...args: any[]) => void;
+    // you can provide log function, to override logging, by default js-dos uses console.error as implementation
 }
 
 // When you call `Dos(canvas, middleware, options)` jsdos behind the scene
@@ -80,6 +92,16 @@ async function compileConfig(element: HTMLElement | string,
         console.log.apply(null, args);
     };
 
+    const warn = options.warn || function (...args: any) {
+        // tslint:disable-next-line:no-console
+        console.warn.apply(null, args);
+    };
+
+    const err = options.err || function (...args: any) {
+        // tslint:disable-next-line:no-console
+        console.error.apply(null, args);
+    };
+
     let pathPrefix = options.pathPrefix || "";
     if (pathPrefix.length > 0 && pathPrefix[pathPrefix.length - 1] !== "/") {
         pathPrefix += "/";
@@ -90,27 +112,26 @@ async function compileConfig(element: HTMLElement | string,
         element: el as HTMLElement,
         pathPrefix,
         bundleUrl: "",
+        persistencyKey: options.persistencyKey || "",
         onprogress: options.onprogress || function(stage: string, total: number, loaded: number) {
-            // tslint:disable-next-line:no-console
-            console.log(stage, loaded * 100 / total, "%");
+            log(stage, loaded * 100 / total, "%");
         },
         log,
         warn: (...args: any) => {
-            log("WARN! ", ...args);
+            warn("WARN!", ...args);
         },
         err: (...args: any) => {
-            log("ERR! ", ...args);
+            err("ERR!", ...args);
         },
     };
 }
 
 function openCache(config: JsDosConfig): Promise<Cache> {
-    return new Promise((resolve) => {
-        new CacheDb(config.buildInfo.version, resolve, (msg: string) => {
-            config.warn("Can't initalize cache, cause: ", msg);
-            resolve(new CacheNoop());
-        });
-    });
+    return CacheDb(config.buildInfo.version)
+        .catch((e) => {
+            config.warn("Can't initilize cache, cause: ", e.message);
+            return new CacheNoop();
+        })
 }
 
 async function createLibZip(createWasmModule: WasmModuleFactory): Promise<LibZip> {
@@ -151,6 +172,10 @@ const Dos: DosFactory =
         if (typeof bundle === "string") {
             config.bundleUrl = bundle;
         } else {
+            if (config.persistencyKey.length > 0) {
+                config.err("Persistency key can be used only with bundle url, persistnecy was disabled");
+                config.persistencyKey = "";
+            }
             shouldRevokeUrl = true;
             const libzip = await createLibZip(createWasmModule);
             config.bundleUrl = await bundle.toUrl(libzip, cache, createResource);
@@ -164,9 +189,29 @@ const Dos: DosFactory =
             createWasmModule,
         };
 
+        const err = config.err;
+        let startupErrorLog: string | undefined;
+        config.err = (...args: any[]) => {
+            startupErrorLog = (startupErrorLog || "") + args.join(" ") + "\n";
+        };
+
         const ci = await middleware.run(jsdos);
+        config.err = err;
+
         if (shouldRevokeUrl) {
             URL.revokeObjectURL(config.bundleUrl);
+        }
+
+
+        const exit = ci.exit;
+        ci.exit = () => {
+            cache.close();
+            return exit.apply(ci);
+        };
+
+        if (startupErrorLog !== undefined) {
+            await ci.exit();
+            throw new Error(startupErrorLog);
         }
 
         return ci;

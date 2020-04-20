@@ -10,6 +10,15 @@ void ws_init_runtime() {
                 Module.sendMessage = sendMessage;
                 Module.ping = function(msg) {
                 };
+                Module.log = function() {
+                                         sendMessage("ws-log", { args: Array.prototype.slice.call(arguments) });
+                };
+                Module.warn = function() {
+                                          sendMessage("ws-warn", { args: Array.prototype.slice.call(arguments) });
+                };
+                Module.err = function() {
+                                         sendMessage("ws-err", { args: Array.prototype.slice.call(arguments) });
+                };
 
                 onmessage =
                     function(e) {
@@ -32,6 +41,17 @@ void ws_init_runtime() {
                                              if (e.name !== "ExitStatus") {
                                                  throw e;
                                              }
+                                         }
+                                     } break;
+                                     case "wc-pack-fs-to-bundle": {
+                                         try {
+                                             Module.persist = function(archive) {
+                                                                                 sendMessage("ws-persist", { bundle: archive });
+                                             };
+                                             Module._packFsToBundle();
+                                             delete Module.persist;
+                                         } catch (e) {
+                                             Module.err(e.message);
                                          }
                                      } break;
                                      default: {

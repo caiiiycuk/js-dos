@@ -1,5 +1,5 @@
 import { Cache, XhrOptions } from "../../interface/jsdos-interface";
-import CacheNoop from "./jsdos-cache-noop";
+import CacheNoop from "../../jsdos-cache/jsdos-cache-noop";
 
 // # XhrRequest
 // `XhrRequest` is small wrapper over XMLHttpRequest, that provides some
@@ -43,13 +43,15 @@ class Xhr {
         this.cache = options.cache || new CacheNoop();
 
         if (this.options.method  === "GET") {
-            this.cache.get(this.resource, (data: any) => {
-                if (this.options.success !== undefined) {
-                    this.options.success(data);
-                }
-            }, () => {
-                this.makeHttpRequest();
-            });
+            this.cache.get(this.resource)
+                .then((data: string | ArrayBuffer) => {
+                    if (this.options.success !== undefined) {
+                        this.options.success(data);
+                    }
+                })
+                .catch(() => {
+                    this.makeHttpRequest();
+                });
         }
     }
 
@@ -101,7 +103,7 @@ class Xhr {
                     }
 
                     if (this.options.method === "GET" && this.resource.indexOf("?") < 0) {
-                        this.cache.put(this.resource, xhr.response, () => { /**/ });
+                        this.cache.put(this.resource, xhr.response);
                     }
 
                     return this.options.success(xhr.response);

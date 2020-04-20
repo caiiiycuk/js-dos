@@ -1,6 +1,9 @@
 import { Build } from "./jsdos-sokol-build";
-import { DosCommandInterface, JsDosConfig, DosMiddleware, DosClient } from "../../interface/jsdos-interface";
+import { DosCommandInterface, Cache, DosMiddleware, DosClient } from "../../interface/jsdos-interface";
 import { SokolCommandInterface } from "./jsdos-sokol-ci";
+
+import CacheDb from "../../jsdos-cache/jsdos-cache-db";
+import CacheNoop from "../../jsdos-cache/jsdos-cache-noop";
 
 class DosSokolDirectImpl implements DosMiddleware {
     buildInfo = Build;
@@ -22,8 +25,20 @@ async function doRun(jsdos: DosClient,
     const wasmPromise = jsdos.createWasmModule(messagingType === 1 ? "wsokol.js" : "wsokol-client.js",
                                              messagingType === 1 ? "WSOKOL" : "WSOKOL_CLIENT",
                                              () => {});
+
+    const persistency = config.persistencyKey.length > 0;
+    let bundleCache: Cache = new CacheNoop();
+
+    if (persistency) {
+        bundleCache = await CacheDb(config.persistencyKey)
+            .catch((e) => {
+                config.warn("Cache is not supported, cause:", e.message, "persistency will not work");
+                return new CacheNoop();
+            });
+    }
+
     const bundlePromise = jsdos.createResource(config.bundleUrl, {
-        cache: jsdos.cache,
+        cache: bundleCache,
         responseType: "arraybuffer",
     });
 
@@ -38,6 +53,8 @@ async function doRun(jsdos: DosClient,
             log: config.log,
             warn: config.warn,
             err: config.err,
+            bundleCache,
+            persistency,
         };
 
         wasm.instantiate(module).then(() => {

@@ -14,7 +14,7 @@ export interface DosArchiveSource {
 
     // **path**
     path: string;
-    
+
     // **type**
     type?: "zip";
     // archive type, now only Zip is supported

@@ -1,7 +1,7 @@
 import { assert } from "chai";
 
 import loadWasmModule from "../../client/jsdos/src/jsdos-wasm";
-import CacheNoop from "../../client/jsdos/src/jsdos-cache-noop";
+import CacheNoop from "../../client/jsdos-cache/jsdos-cache-noop";
 import LibZip from "../../libzip/ts/src/jsdos-libzip";
 
 export async function makeLibZip() {

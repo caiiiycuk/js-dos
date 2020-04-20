@@ -2,7 +2,7 @@ import { assert } from "chai";
 import loadWasmModule, { host } from "../../client/jsdos/src/jsdos-wasm";
 
 import { Cache } from "../../client/interface/jsdos-interface";
-import CacheNoop from "../../client/jsdos/src/jsdos-cache-noop";
+import CacheNoop from "../../client/jsdos-cache/jsdos-cache-noop";
 
 export function testLoader() {
     suite("WASM loader");
@@ -34,14 +34,17 @@ export function testLoader() {
         let cacheGetUsed = false;
         let cachePutUsed = false;
         class TestCache implements Cache {
-            public put(key: string, data: any, onflush: () => void) {
-                cachePutUsed = cachePutUsed || (key === moduleUrl.replace(".js", ".wasm") && data instanceof ArrayBuffer && (data as ArrayBuffer).byteLength > 0);
-                onflush();
+            public close() {
             }
 
-            public get(key: string, ondata: (data: any) => void, onerror: (msg: string) => void) {
+            public put(key: string, data: ArrayBuffer): Promise<void> {
+                cachePutUsed = cachePutUsed || (key === moduleUrl.replace(".js", ".wasm") && data instanceof ArrayBuffer && (data as ArrayBuffer).byteLength > 0);
+                return Promise.resolve();
+            }
+
+            public get(key: string, defaultValue?: string | ArrayBuffer): Promise<string|ArrayBuffer> {
                 cacheGetUsed = cacheGetUsed || key === moduleUrl.replace(".js", ".wasm");
-                onerror("not in cache");
+                return Promise.reject(new Error("not in cache"));
             }
 
             public forEach(each: (key: string, value: any) => void, onend: () => void) {
@@ -63,12 +66,15 @@ export function testLoader() {
         const moduleUrl = "/wsokol.js";
 
         class TestCache implements Cache {
-            public put(key: string, data: any, onflush: () => void) {
+            public close() {
+            }
+
+            public put(key: string, data: ArrayBuffer): Promise<void> {
                 assert.fail();
             }
 
-            public get(key: string, ondata: (data: any) => void, onerror: (msg: string) => void) {
-                ondata(new Int8Array([]));
+            public get(key: string, defaultValue?: string | ArrayBuffer): Promise<string|ArrayBuffer> {
+                return Promise.resolve(new Int8Array([]));
             }
 
             public forEach(each: (key: string, value: any) => void, onend: () => void) {

@@ -10,7 +10,7 @@ import Dos from "../../client/jsdos/src/jsdos";
 export function testMiddleware(middleware: DosMiddleware) {
     testCommon(middleware);
     testConf(middleware);
-    testStorage(middleware);
+    testPersistency(middleware);
 }
 
 function testCommon(middleware: DosMiddleware) {
@@ -39,7 +39,7 @@ function testCommon(middleware: DosMiddleware) {
 }
 
 function testConf(middleware: DosMiddleware) {
-    suite("Shell tests [" + middleware.constructor.name + "]");
+    suite("Conf tests [" + middleware.constructor.name + "]");
 
     test("should provide dosbox.conf for dosbox", async () => {
         const ci = await Dos("jsdos", middleware, { pathPrefix: "/" });
@@ -55,11 +55,52 @@ function testConf(middleware: DosMiddleware) {
         assert.ok(ci);
         await compareAndExit("dosboxconf.png", ci, 0);
     });
+
+    test("middleware should not start without jsdos conf", async () => {
+        try {
+            const ci = await Dos("jsdos", middleware, {
+                pathPrefix: "/",
+                bundle: "digger.zip",
+            });
+            assert.fail();
+        } catch (e) {
+            assert.equal("Broken bundle, .jsdos/dosbox.conf not found\n", e.message);
+        }
+    });
 }
 
-function testStorage(middleware: DosMiddleware) {
-    suite("Storage tests [" + middleware.constructor.name + "]");
+function testPersistency(middleware: DosMiddleware) {
+    suite("Persistency tests [" + middleware.constructor.name + "]");
 
-    test("should provide dosbox.conf for dosbox", async () => {
+    test("should store fs updates between sessions [empty db]", async () => {
+        await new Promise((resolve, reject) => {
+            const request = indexedDB.deleteDatabase("js-dos-cache (test-jsdos)");
+            request.onerror = (err: any) => {
+                console.log("err", err);
+                reject(err);
+            }
+            request.onsuccess = resolve;
+        });
+
+        const ci = await Dos("jsdos", middleware, {
+            pathPrefix: "/",
+            bundle: "digger.jsdos",
+            persistencyKey: "test-jsdos",
+        });
+        assert.ok(ci);
+
+        // await ci.persist(); - called autmatically on exit
+        await compareAndExit("persistent-mount.png", ci);
+    });
+
+    test("should store fs updates between sessions [existent db]", async () => {
+        const ci = await Dos("jsdos", middleware, {
+            pathPrefix: "/",
+            bundle: "digger.jsdos",
+            persistencyKey: "test-jsdos",
+        });
+        assert.ok(ci);
+
+        await compareAndExit("persistent-mount-second.png", ci);
     });
 }

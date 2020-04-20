@@ -1,3 +1,8 @@
+export interface BuildInfo {
+    version: string;
+    buildSeed: number;
+}
+
 export interface WasmModule {
     instantiate: (module?: any) => Promise<any>;
 }
@@ -68,6 +73,9 @@ export interface DosCommandInterface {
     // * `simulateKeyPress(keyCode)` - allows to simulate key press **AND** release event for key code
     // see `sendKeyPress` to find meaning of keyCode
     simulateKeyPress: (keyCode: number) => void;
+
+    // will store all changes made in FS, if persistencyKey is set
+    persist(): Promise<void>;
 }
 
 
@@ -78,6 +86,8 @@ export interface JsDosConfig {
     pathPrefix: string;
     bundleUrl: string;
 
+    persistencyKey: string;
+
     onprogress: (stage: string, total: number, loaded: number) => void;
 
     log: (...args: any[]) => void;
@@ -87,12 +97,8 @@ export interface JsDosConfig {
 
 // ### Cache
 export interface Cache {
-    put: (key: string, data: any, onflush: () => void) => void;
-    get: (key: string, ondata: (data: any) => void, onerror: (msg: string) => void) => void;
+    put: (key: string, data: string | ArrayBuffer) => Promise<void>;
+    get: (key: string, defaultValue?: string | ArrayBuffer) => Promise<string | ArrayBuffer>;
     forEach: (each: (key: string, value: any) => void, onend: () => void) => void;
-}
-
-export interface BuildInfo {
-    version: string;
-    buildSeed: number;
+    close: () => void;
 }

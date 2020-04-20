@@ -54,12 +54,32 @@ void wc_sokolInit() {
                                              }
                                          }
                                      } break;
+                                     case "ws-log": {
+                                         Module.log.apply(null, data.props.args);
+                                     } break;
+                                     case "ws-warn": {
+                                         Module.warn.apply(null, data.props.args);
+                                     } break;
+                                     case "ws-err": {
+                                         Module.err.apply(null, data.props.args);
+                                     } break;
+                                     case "ws-persist": {
+                                         Module.persist(data.props.bundle);
+                                     } break;
                                      default: {
                                          console.log("wc " + JSON.stringify(data));
                                      } break;
                                  }
                 };
             }));
+#endif
+}
+
+void wc_packFsToBundle() {
+#ifdef EMSCRIPTEN
+    EM_ASM((
+            Module.sendMessage("wc-pack-fs-to-bundle");
+            ));
 #endif
 }
 
