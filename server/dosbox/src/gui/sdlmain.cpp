@@ -3132,3 +3132,6 @@ void GFX_GetSize(int &width, int &height, bool &fullscreen) {
 	height = sdl.draw.height;
 	fullscreen = sdl.desktop.fullscreen;
 }
+
+void client_stdout(const char* data, uint32_t amount) {
+}
