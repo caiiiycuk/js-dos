@@ -27,7 +27,6 @@
 #include "callback.h"
 #include "support.h"
 
-#include <jsdos-ci.h>
 #include <jsdos-support.h>
 
 Bitu call_shellstop;
@@ -334,7 +333,6 @@ void DOS_Shell::Run(void) {
 		} else {
 			if (echo) ShowPrompt();
 			InputCommand(input_line);
-			ci()->events()->shell_input(input_line, CMD_MAXLINE);
 			ParseLine(input_line);
 			if (echo && !bf) WriteOut_NoParsing("\n");
 		}

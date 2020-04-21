@@ -21,10 +21,6 @@ export class SokolCommandInterface implements DosCommandInterface {
         throw new Error("not implemented");
     }
 
-    public shell(...cmd: string[]) {
-        throw new Error("not implemented");
-    }
-
     public screenshot(): Promise<ImageData> {
         const width = this.module._getFrameWidth();
         const height = this.module._getFrameHeight();

@@ -55,11 +55,6 @@ export interface DosCommandInterface {
     // * `exitFullscreen()` allows you to leave fullscreen entered with `fullscreen()` call
     exitFullscreen: () => void;
 
-    // * `shell([cmd1, cmd2, ...])` - executes passed commands
-    // in dosbox shell if it's runned, returns Promise that
-    // resolves when commands sequence is executed
-    shell: (...cmd: string[]) => void;
-
     // * `screenshot()` - get screnshot of canvas as ImageData 
     screenshot: () => Promise<ImageData>;
 

@@ -16,10 +16,6 @@ include_directories(
 
 set(SOURCES_CORE_CXX11
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-timer.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-ci.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-events.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-json.cpp"
-
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dosbox.cpp"
         )
 
