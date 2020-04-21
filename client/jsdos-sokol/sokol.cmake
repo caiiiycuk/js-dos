@@ -8,6 +8,7 @@ include_directories(
 
 set(SOURCES_SOKOL_CXX11
         "${CMAKE_CURRENT_LIST_DIR}/cpp/sokol/jsdos-protocol-sokol.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/cpp/sokol/jsdos-protocol-js.cpp"
         )
 
 set(SOURCES_SOKOL_CXX03

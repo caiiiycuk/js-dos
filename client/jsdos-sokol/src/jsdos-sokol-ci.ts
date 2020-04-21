@@ -30,9 +30,9 @@ export class SokolCommandInterface implements DosCommandInterface {
     }
 
     public screenshot(): Promise<ImageData> {
-        const width = this.module._client_frame_width();
-        const height = this.module._client_frame_height();
-        const rgbaPtr = this.module._client_frame_rgba();
+        const width = this.module._getFrameWidth();
+        const height = this.module._getFrameHeight();
+        const rgbaPtr = this.module._getFrameRgba();
 
         const rgba = new Uint8ClampedArray(this.module.HEAPU8.buffer, rgbaPtr, width * height * 4);
 
@@ -49,7 +49,7 @@ export class SokolCommandInterface implements DosCommandInterface {
             .then(() => new Promise((resolve) => {
                 this.module.bundleCache.close();
                 this.module.exit = resolve;
-                this.module._client_exit();
+                this.module._requestExit();
             }));
     }
 

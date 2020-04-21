@@ -1,11 +1,14 @@
+#ifdef EMSCRIPTEN
+EM_JS(void, dr_sokolInit, (), {
+    Module.ready();
+  });
+#else
+void dr_sokolInit() {
+}
+#endif
+
 void dr_init_runtime() {
     extractBundleToFs();
-}
-
-void dr_sokolInit() {
-#ifdef EMSCRIPTEN
-    EM_ASM(Module.ready());
-#endif
 }
 
 void dr_sokolCleanup() {
@@ -13,7 +16,7 @@ void dr_sokolCleanup() {
     server_exit();
 }
 
-void dr_client_frame_set_size(int width, int height) {
+extern "C" void EMSCRIPTEN_KEEPALIVE dr_client_frame_set_size(int width, int height) {
     if (frameRgba) {
         delete[] frameRgba;
     }

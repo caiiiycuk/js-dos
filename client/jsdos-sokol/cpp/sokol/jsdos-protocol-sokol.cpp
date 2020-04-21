@@ -8,6 +8,7 @@
 #endif
 
 #include <jsdos-protocol.h>
+#include "jsdos-protocol-js.h"
 
 #define SOKOL_NO_ENTRY
 #define SOKOL_IMPL
@@ -40,15 +41,10 @@ std::mutex mutex;
 
 int renderedFrame = 0;
 int frameCount = 0;
-int frameWidth = 0;
-int frameHeight = 0;
-uint32_t *frameRgba = 0;
 
-extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime();
-extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime();
-extern "C" void EMSCRIPTEN_KEEPALIVE extractBundleToFs();
-extern "C" void EMSCRIPTEN_KEEPALIVE packFsToBundle();
-extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed);
+extern int frameWidth = 0;
+extern int frameHeight = 0;
+extern uint32_t *frameRgba = 0;
 
 #include "jsdos-protocol-dr.h"
 #include "jsdos-protocol-wc.h"
@@ -60,93 +56,17 @@ void(*on_client_frame_update_lines)(uint32_t *, uint32_t, void *);
 void(*onSokolInit)(void);
 void(*onSokolCleanup)(void);
 
-enum MessagingType {
-                    DIRECT = 1,
-                    WORKER_CLIENT = 2,
-                    WORKER = 3,
-};
-
+#ifdef EMSCRIPTEN
+EM_JS(MessagingType, initMessagingType, (), {
+    return Module.messagingType || 3 /* WORKER */;
+  });
+#else
 MessagingType initMessagingType() {
-    MessagingType messagingType = DIRECT;
-
-#ifdef EMSCRIPTEN
-    messagingType =
-        (MessagingType) EM_ASM_INT(({
-              return Module.messagingType || 3 /* WORKER */;
-            }));
+  return DIRECT;
+}
 #endif
-    return messagingType;
-}
 
-const MessagingType messagingType = initMessagingType();
-
-extern "C" void EMSCRIPTEN_KEEPALIVE extractBundleToFs() {
-#ifdef EMSCRIPTEN
-        EM_ASM(({
-                    Module.FS.chdir("/home/web_user");
-
-                    const bytes = Module.bundle;
-                    delete Module.bundle;
-
-                    const buffer = Module._malloc(bytes.length);
-                    Module.HEAPU8.set(bytes, buffer);
-                    const retcode = Module._zip_to_fs(buffer, bytes.length);
-                    Module._free(buffer);
-
-                    if (retcode !== 0) {
-                        Module.err("Unable to extract bundle archive\n");
-                        return;
-                    }
-
-                    try {
-                        Module.FS.readFile("/home/web_user/.jsdos/dosbox.conf");
-                    } catch (e) {
-                        Module.err("Broken bundle, .jsdos/dosbox.conf not found");
-                        return;
-                    }
-
-                }));
-#endif
-}
-
-extern "C" void EMSCRIPTEN_KEEPALIVE packFsToBundle() {
-    if (messagingType == WORKER_CLIENT) {
-        wc_packFsToBundle();
-        return;
-    }
-
-#ifdef EMSCRIPTEN
-    EM_ASM(({
-                Module.FS.chdir("/home/web_user");
-
-                const ptr = Module._zip_from_fs();
-                if (ptr === 0) {
-                    Module.err("Can't create zip, see more info in logs");
-                    Module._abort();
-                    return;
-                }
-
-                const length = Module.HEAPU32[ptr / 4];
-                const memory = Module.HEAPU8;
-                const archive = memory.slice(ptr + 4, ptr + 4 + length);
-                Module._free(ptr);
-
-                Module.persist(archive);
-            }));
-#endif
-}
-
-extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed) {
-  switch (messagingType) {
-    case DIRECT:
-    case WORKER: {
-      server_add_key(key, pressed);
-    } break;
-    case WORKER_CLIENT: {
-      wc_addKey(key, pressed);
-    } break;
-  }
-}
+extern const MessagingType messagingType = initMessagingType();
 
 static float vertices[] = {
     0.0f, 0.0f, 0.0f, 0.0f,
@@ -204,21 +124,9 @@ class GfxState {
 };
 
 
-extern "C" int EMSCRIPTEN_KEEPALIVE client_frame_width() {
-    return frameWidth;
-}
-
-extern "C" int EMSCRIPTEN_KEEPALIVE client_frame_height() {
-    return frameHeight;
-}
-
-extern "C" void* EMSCRIPTEN_KEEPALIVE client_frame_rgba() {
-    return frameRgba;
-}
-
 GfxState *state = 0;
 
-extern "C" void client_frame_set_size(int width, int height) {
+void client_frame_set_size(int width, int height) {
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(mutex);
 #endif
@@ -226,14 +134,14 @@ extern "C" void client_frame_set_size(int width, int height) {
 }
 
 
-extern "C" void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
+void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(mutex);
 #endif
     on_client_frame_update_lines(lines, count, rgba);
 }
 
-extern "C" void client_sound_push(const float *samples, int num_samples) {
+void client_sound_push(const float *samples, int num_samples) {
     if (messagingType == WORKER) {
         saudio_push(samples, num_samples);
     }
@@ -342,11 +250,11 @@ void client_run() {
 }
 
 
-extern "C" void EMSCRIPTEN_KEEPALIVE client_exit() {
+void client_exit() {
     sapp_quit();
 }
 
-extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime() {
+extern "C" void EMSCRIPTEN_KEEPALIVE runRuntime() {
     switch (messagingType) {
         case WORKER: {
             printf("sokol started in WORKER mode\n");
@@ -354,7 +262,7 @@ extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime() {
             on_client_frame_update_lines = ws_client_frame_update_lines;
             server_run();
             ws_exit_runtime();
-            return 0;
+            return;
         }
 
         case DIRECT: {
@@ -374,7 +282,7 @@ extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime() {
             exitRuntime();
 #else
             client.join();
-            return 0;
+            return;
 #endif
 
         }
@@ -391,7 +299,7 @@ extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime() {
 #else
             abort();
 #endif
-            return 0;
+            return;
         }
 
         default: {
@@ -399,22 +307,6 @@ extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime() {
             abort();
         }
     }
-}
-
-extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime() {
-#ifdef EMSCRIPTEN
-    EM_ASM(({
-                if (!Module.exit) {
-                    var message = "ERR! exitRuntime called without request" +
-                        ", asyncify state: " + Asyncify.state;
-                    Module.err(message);
-                    return;
-                }
-                Module.exit();
-            }));
-
-    emscripten_force_exit(0);
-#endif
 }
 
 int main(int argc, char *argv[]) {
