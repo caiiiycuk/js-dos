@@ -53,6 +53,7 @@ async function doRun(jsdos: DosClient,
             log: config.log,
             warn: config.warn,
             err: config.err,
+            stdout: config.stdout,
             bundleCache,
             persistency,
         };
@@ -65,7 +66,6 @@ async function doRun(jsdos: DosClient,
 
 export const DosSokol = new DosSokolDirectImpl();
 export const DosSokolWorker = new DosSokolWorkerImpl();
-
 
 (window as any).DosSokol = DosSokol;
 (window as any).DosSokolWorker = DosSokolWorker;

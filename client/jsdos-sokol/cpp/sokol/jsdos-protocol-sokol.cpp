@@ -53,6 +53,7 @@ extern uint32_t *frameRgba = 0;
 
 void (*on_client_frame_set_size)(int, int);
 void (*on_client_frame_update_lines)(uint32_t *, uint32_t, void *);
+void (*on_client_stdout)(const char*, uint32_t);
 
 void (*onSokolInit)(void);
 void (*onSokolCleanup)(void);
@@ -128,8 +129,12 @@ void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
   on_client_frame_update_lines(lines, count, rgba);
 }
 
+void client_stdout(const char* data, uint32_t amount) {
+  on_client_stdout(data, amount);
+}
+
 void client_sound_push(const float *samples, int num_samples) {
-  if (messagingType == WORKER) {
+  if (messagingType == DIRECT) {
     saudio_push(samples, num_samples);
   }
 }
@@ -191,8 +196,8 @@ void sokolFrame() {
 void sokolCleanup() { onSokolCleanup(); }
 
 void keyEvent(const sapp_event *event) {
-  server_add_key((KBD_KEYS)event->key_code,
-                 event->type == SAPP_EVENTTYPE_KEY_DOWN);
+  addKey((KBD_KEYS)event->key_code,
+         event->type == SAPP_EVENTTYPE_KEY_DOWN);
 }
 
 void client_run() {
@@ -232,6 +237,7 @@ extern "C" void EMSCRIPTEN_KEEPALIVE runRuntime() {
       printf("sokol started in WORKER mode\n");
       on_client_frame_set_size = ws_client_frame_set_size;
       on_client_frame_update_lines = ws_client_frame_update_lines;
+      on_client_stdout = ws_client_stdout;
       server_run();
       ws_exit_runtime();
       return;
@@ -243,6 +249,7 @@ extern "C" void EMSCRIPTEN_KEEPALIVE runRuntime() {
       onSokolCleanup = dr_sokolCleanup;
       on_client_frame_set_size = dr_client_frame_set_size;
       on_client_frame_update_lines = dr_client_frame_update_lines;
+      on_client_stdout = dr_client_stdout;
 
 #ifdef EMSCRIPTEN
       client_run();
@@ -264,6 +271,7 @@ extern "C" void EMSCRIPTEN_KEEPALIVE runRuntime() {
       onSokolCleanup = wc_sokolCleanup;
       on_client_frame_set_size = dr_client_frame_set_size;
       on_client_frame_update_lines = dr_client_frame_update_lines;
+      on_client_stdout = dr_client_stdout;
 
 #ifdef EMSCRIPTEN
       client_run();

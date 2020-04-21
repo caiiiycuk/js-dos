@@ -55,10 +55,6 @@ export interface DosCommandInterface {
     // * `exitFullscreen()` allows you to leave fullscreen entered with `fullscreen()` call
     exitFullscreen: () => void;
 
-    // * `listenStdout()` - redirect everything that printed by dosbox into
-    // console to passed function
-    listenStdout: (onstdout: (data: string) => void) => void;
-
     // * `shell([cmd1, cmd2, ...])` - executes passed commands
     // in dosbox shell if it's runned, returns Promise that
     // resolves when commands sequence is executed
@@ -95,6 +91,7 @@ export interface JsDosConfig {
     log: (...args: any[]) => void;
     warn: (...args: any[]) => void;
     err: (...args: any[]) => void;
+    stdout: (message: string) => void;
 }
 
 // ### Cache

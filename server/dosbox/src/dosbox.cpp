@@ -320,14 +320,14 @@ void increaseticks() { //Make it return ticksRemain and set it in the function a
 
 		if (new_cmax < CPU_CYCLES_LOWER_LIMIT)
 			new_cmax = CPU_CYCLES_LOWER_LIMIT;
-		LOG(LOG_MISC,LOG_ERROR)("cyclelog: current %06d   cmax %06d   ratio  %05d  done %03d   sched %03d Add %d rr %4.2f",
-			CPU_CycleMax,
-			new_cmax,
-			ratio,
-			ticksDone,
-			ticksScheduled,
-			ticksAdded,
-			ratioremoved);
+//		LOG(LOG_MISC,LOG_ERROR)("cyclelog: current %06d   cmax %06d   ratio  %05d  done %03d   sched %03d Add %d rr %4.2f",
+//			CPU_CycleMax,
+//			new_cmax,
+//			ratio,
+//			ticksDone,
+//			ticksScheduled,
+//			ticksAdded,
+//			ratioremoved);
 		/* ratios below 1% are considered to be dropouts due to
 		   temporary load imbalance, the cycles adjusting is skipped */
 		if (ratio > 10) {

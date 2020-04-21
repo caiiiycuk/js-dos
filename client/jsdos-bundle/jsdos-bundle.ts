@@ -34,6 +34,11 @@ export class DosBundle {
         return this;
     }
 
+    cycles(cycles: string): DosBundle {
+        this.config.cpu.options.cycles.value = cycles;
+        return this;
+    }
+
     // ### extract
     extract(url: string, path: string = "/", type: "zip" = "zip"): DosBundle {
         // simplified version of extractAll, works only for one archive. It calls extractAll inside.

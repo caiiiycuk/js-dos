@@ -17,11 +17,12 @@
  */
 
 
+#include <jsdos-protocol.h>
+
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
 #include <ctype.h>
-#include <jsdos-ci.h>
 
 #include "dosbox.h"
 #include "bios.h"
@@ -407,7 +408,7 @@ bool DOS_WriteFile(Bit16u entry,Bit8u * data,Bit16u * amount,bool fcb) {
 	Bit16u towrite=*amount;
 
 	if (entry == STDOUT && towrite > 0) {
-	    ci()->events()->write_stdout(reinterpret_cast<const char *>(data), towrite);
+    client_stdout(reinterpret_cast<const char *>(data), towrite);
 	}
 
 	bool ret=Files[handle]->Write(data,&towrite);

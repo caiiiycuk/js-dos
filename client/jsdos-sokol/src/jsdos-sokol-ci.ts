@@ -21,10 +21,6 @@ export class SokolCommandInterface implements DosCommandInterface {
         throw new Error("not implemented");
     }
 
-    public listenStdout(onstdout: (data: string) => void) {
-        throw new Error("not implemented");
-    }
-
     public shell(...cmd: string[]) {
         throw new Error("not implemented");
     }

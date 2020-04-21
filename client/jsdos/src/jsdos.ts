@@ -59,6 +59,10 @@ export interface JsDosOptionsBag {
     // ### err
     err?: (...args: any[]) => void;
     // you can provide log function, to override logging, by default js-dos uses console.error as implementation
+
+    // ### stdout
+    stdout?: (...args: any[]) => void;
+    // you can provide log function to listen dosbox stdout, default implementation is empty
 }
 
 // When you call `Dos(canvas, middleware, options)` jsdos behind the scene
@@ -122,6 +126,8 @@ async function compileConfig(element: HTMLElement | string,
         },
         err: (...args: any) => {
             err("ERR!", ...args);
+        },
+        stdout: options.stdout || function() {
         },
     };
 }
@@ -220,6 +226,7 @@ const Dos: DosFactory =
 export default Dos;
 
 (window as any).Dos = Dos;
+(window as any).DosBundle = DosBundle;
 (window as any).DosKeys = DosKeys;
 (window as any).DosController = {
     Qwerty,

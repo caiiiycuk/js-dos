@@ -88,9 +88,14 @@ EM_JS(void, emsc_end_frame_update, (), {
 EM_JS(void, emsc_ws_exit_runtime, (), {
     Module.exit = function() { Module.sendMessage("ws-exit"); };
   });
+
+EM_JS(void, ws_client_stdout, (const char* data, uint32_t amount), {
+    Module.sendMessage("ws-stdout", UTF8ToString(data, amount));
+  });
 // clang-format on
 #else
 void ws_init_runtime() {}
+void ws_client_stdout() {}
 #endif
 
 void ws_client_frame_set_size(int width, int height) {

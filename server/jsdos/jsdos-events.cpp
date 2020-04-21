@@ -216,14 +216,3 @@ void Events::shell_input(char *input_line, int length) {
     }), input_line, length);
 #endif
 }
-
-void Events::write_stdout(const char* data, size_t amount) {
-#ifdef EMSCRIPTEN
-    EM_ASM_ARGS((
-        const data = UTF8ToString($0, $1);
-        Module['ping']('write_stdout', data);
-    ), data, amount);
-#else
-    printf("%s", data);
-#endif
-}

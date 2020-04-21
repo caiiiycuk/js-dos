@@ -1,7 +1,16 @@
 #ifdef EMSCRIPTEN
-EM_JS(void, dr_sokolInit, (), { Module.ready(); });
+// clang-format off
+EM_JS(void, dr_sokolInit, (), {
+    Module.ready();
+  });
+
+EM_JS(void, dr_client_stdout, (const char* data, uint32_t amount), {
+    Module.stdout(UTF8ToString(data, amount));
+  });
+// clang-format on
 #else
 void dr_sokolInit() {}
+void dr_client_stdout() {}
 #endif
 
 void dr_init_runtime() { extractBundleToFs(); }

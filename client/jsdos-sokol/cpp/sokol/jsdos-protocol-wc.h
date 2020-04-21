@@ -64,6 +64,9 @@ EM_JS(void, wc_sokolInit, (), {
         case "ws-err": {
           Module.err.apply(null, data.props.args);
         } break;
+        case "ws-stdout": {
+          Module.stdout(data.props);
+        } break;
         case "ws-persist": {
           Module.persist(data.props.bundle);
         } break;
