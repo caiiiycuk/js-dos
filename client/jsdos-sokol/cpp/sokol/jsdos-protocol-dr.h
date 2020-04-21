@@ -10,7 +10,7 @@ EM_JS(void, dr_client_stdout, (const char* data, uint32_t amount), {
 // clang-format on
 #else
 void dr_sokolInit() {}
-void dr_client_stdout() {}
+void dr_client_stdout(const char*, uint32_t) {}
 #endif
 
 void dr_init_runtime() { extractBundleToFs(); }

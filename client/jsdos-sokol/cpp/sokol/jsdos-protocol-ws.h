@@ -95,7 +95,7 @@ EM_JS(void, ws_client_stdout, (const char* data, uint32_t amount), {
 // clang-format on
 #else
 void ws_init_runtime() {}
-void ws_client_stdout() {}
+void ws_client_stdout(const char *, uint32_t) {}
 #endif
 
 void ws_client_frame_set_size(int width, int height) {
