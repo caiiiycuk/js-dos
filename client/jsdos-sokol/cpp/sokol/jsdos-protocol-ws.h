@@ -79,10 +79,23 @@ void ws_client_frame_set_size(int width, int height) {
 }
 
 void ws_client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
+    static long frameCount = 0;
+    static mstime startedAt = GetMsPassedFromStart();
+    static mstime lastReportTime = GetMsPassedFromStart();
+
+    mstime now = GetMsPassedFromStart();
+
+    frameCount++;
+    if (now - lastReportTime > 3000) {
+        lastReportTime = now;
+        printf("FPS %d\n", frameCount * 1000 / (now - startedAt));
+    }
+
 #ifdef EMSCRIPTEN
     EM_ASM(({
                 Module.frame_update_lines = [];
             }));
+
     for (uint32_t i = 0; i < count; ++i) {
         uint32_t start = lines[i * 3];
         uint32_t count = lines[i * 3 + 1];
@@ -90,10 +103,11 @@ void ws_client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
         EM_ASM(({
                     Module.frame_update_lines.push({
                         start: $0,
-                        heapu8: Module.HEAPU8.subarray($1, $1 + $2)
+                        heapu8: Module.HEAPU8.slice($1, $1 + $2)
                         });
                 }), start, (char*) rgba + offset, sizeof(uint32_t) * count * frameWidth);
     }
+
     EM_ASM(({
                 if (Module.frame_update_lines.length > 0) {
                     Module.sendMessage("ws-update-lines", Module.frame_update_lines);
