@@ -54,7 +54,14 @@ export class SokolCommandInterface implements DosCommandInterface {
     }
 
     public simulateKeyPress(keyCode: number) {
-        return Promise.reject(new Error("Not implemented"));
+        this.sendKeyEvent(keyCode, true);
+        setTimeout(() => {
+            this.sendKeyEvent(keyCode, false);
+        }, 0);
+    }
+
+    public sendKeyEvent(keyCode: number, pressed: boolean) {
+        this.module._addKey(keyCode, pressed);
     }
 
     public persist(): Promise<void> {

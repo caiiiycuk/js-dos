@@ -74,6 +74,8 @@ export interface DosCommandInterface {
     // see `sendKeyPress` to find meaning of keyCode
     simulateKeyPress: (keyCode: number) => void;
 
+    sendKeyEvent: (keyCode: number, pressed: boolean) => void;
+
     // will store all changes made in FS, if persistencyKey is set
     persist(): Promise<void>;
 }

@@ -1,7 +1,7 @@
 import { DosClient, DosMiddleware, WasmModule,
     JsDosConfig, DosCommandInterface, Cache, ProgressFn, WasmModuleFactory } from "../../interface/jsdos-interface";
 
-import { DosKeys } from "./jsdos-controller";
+import { DosKeys } from "./jsdos-keys";
 
 
 import CacheNoop from "../../jsdos-cache/jsdos-cache-noop";

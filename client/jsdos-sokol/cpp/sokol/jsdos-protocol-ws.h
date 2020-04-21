@@ -54,6 +54,9 @@ void ws_init_runtime() {
                 Module.err(e.message);
               }
             } break;
+            case "wc-add-key": {
+              Module._addKey(data.props.key, data.props.pressed);
+            } break;
             default: {
               console.log("ws " + JSON.stringify(data));
             } break;

@@ -5,6 +5,7 @@ import { DosBundle } from "../../client/jsdos-bundle/jsdos-bundle";
 import { DosMiddleware } from "../../client/interface/jsdos-interface";
 
 import Dos from "../../client/jsdos/src/jsdos";
+import { DosKeys } from "../../client/jsdos/src/jsdos-keys";
 
 
 export function testMiddleware(middleware: DosMiddleware) {
@@ -129,4 +130,31 @@ function testDigger(middleware: DosMiddleware) {
 
         await compareAndExit("digger.png", ci);
     });
+
+    test("can simulate key events", async () => {
+        const ci = await Dos("jsdos", middleware, {
+            pathPrefix: "/",
+            bundle: new DosBundle()
+                .extract("digger.zip")
+                .autoexec("DIGGER.COM"),
+        });
+        assert.ok(ci);
+
+        await new Promise((resolve, reject) => {
+            const keyPress = () => {
+                ci.simulateKeyPress(DosKeys.KBD_left);
+            };
+
+            const screenshot = () => {
+                compareAndExit("digger-end.png", ci)
+                    .then(resolve)
+                    .catch(reject);
+            };
+
+            setTimeout(keyPress, 2000);
+            setTimeout(screenshot, 3000);
+        });
+    });
+
+
 }

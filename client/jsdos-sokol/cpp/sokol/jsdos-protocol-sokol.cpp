@@ -47,6 +47,8 @@ uint32_t *frameRgba = 0;
 extern "C" int EMSCRIPTEN_KEEPALIVE runRuntime();
 extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime();
 extern "C" void EMSCRIPTEN_KEEPALIVE extractBundleToFs();
+extern "C" void EMSCRIPTEN_KEEPALIVE packFsToBundle();
+extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed);
 
 #include "jsdos-protocol-dr.h"
 #include "jsdos-protocol-wc.h"
@@ -69,9 +71,9 @@ MessagingType initMessagingType() {
 
 #ifdef EMSCRIPTEN
     messagingType =
-        (MessagingType) EM_ASM_INT((
-                                    return Module.messagingType || 3 /* WORKER */;
-                                    ));
+        (MessagingType) EM_ASM_INT(({
+              return Module.messagingType || 3 /* WORKER */;
+            }));
 #endif
     return messagingType;
 }
@@ -132,6 +134,18 @@ extern "C" void EMSCRIPTEN_KEEPALIVE packFsToBundle() {
                 Module.persist(archive);
             }));
 #endif
+}
+
+extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed) {
+  switch (messagingType) {
+    case DIRECT:
+    case WORKER: {
+      server_add_key(key, pressed);
+    } break;
+    case WORKER_CLIENT: {
+      wc_addKey(key, pressed);
+    } break;
+  }
 }
 
 static float vertices[] = {
