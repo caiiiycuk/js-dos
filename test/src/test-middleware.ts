@@ -11,6 +11,7 @@ export function testMiddleware(middleware: DosMiddleware) {
     testCommon(middleware);
     testConf(middleware);
     testPersistency(middleware);
+    testDigger(middleware);
 }
 
 function testCommon(middleware: DosMiddleware) {
@@ -38,8 +39,7 @@ function testCommon(middleware: DosMiddleware) {
     });
 }
 
-function testConf(middleware: DosMiddleware) {
-    suite("Conf tests [" + middleware.constructor.name + "]");
+function testConf(middleware: DosMiddleware) {suite("Conf tests [" + middleware.constructor.name + "]");
 
     test("should provide dosbox.conf for dosbox", async () => {
         const ci = await Dos("jsdos", middleware, { pathPrefix: "/" });
@@ -102,5 +102,31 @@ function testPersistency(middleware: DosMiddleware) {
         assert.ok(ci);
 
         await compareAndExit("persistent-mount-second.png", ci);
+    });
+
+    test("should ignore cache when persitency key not set", async () => {
+        const ci = await Dos("jsdos", middleware, {
+            pathPrefix: "/",
+            bundle: "digger.jsdos",
+        });
+        assert.ok(ci);
+
+        await compareAndExit("persistent-mount.png", ci);
+    });
+}
+
+function testDigger(middleware: DosMiddleware) {
+    suite("Digger tests [" + middleware.constructor.name + "]");
+
+    test("can run digger.jsdos", async () => {
+        const ci = await Dos("jsdos", middleware, {
+            pathPrefix: "/",
+            bundle: new DosBundle()
+                .extract("digger.zip")
+                .autoexec("DIGGER.COM"),
+        });
+        assert.ok(ci);
+
+        await compareAndExit("digger.png", ci);
     });
 }
