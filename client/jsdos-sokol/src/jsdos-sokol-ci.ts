@@ -57,7 +57,7 @@ export class SokolCommandInterface implements DosCommandInterface {
         this.sendKeyEvent(keyCode, true);
         setTimeout(() => {
             this.sendKeyEvent(keyCode, false);
-        }, 0);
+        }, 16);
     }
 
     public sendKeyEvent(keyCode: number, pressed: boolean) {

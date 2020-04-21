@@ -154,63 +154,24 @@ static int runcount = 0;
 
 
 #if defined(EMTERPRETER_SYNC) && defined(EMSCRIPTEN)
-bool isNormalState() {
 #if defined(ASYNCIFY)
-    return EM_ASM_INT((
-       return Asyncify.state === 0 ? 1 : 0;
-    )) == 1;
+EM_JS(bool, isNormalState, (), {
+    return Asyncify.state === 0 ? 1 : 0;
+  });
 #else
-    return EM_ASM_INT((
-        return EmterpreterAsync.state === 0 ? 1 : 0;
-    )) == 1;
+EM_JS(bool, isNormalState, (), {
+    return EmterpreterAsync.state === 0 ? 1 : 0;
+  });
 #endif
-}
 #else
 bool isNormalState() {
-    return true;
+  return true;
 }
 #endif
-
-bool doHeapOperation() {
-    if (ticksLocked) {
-        return false;
-    }
-
-    if (!isNormalState()) {
-        return false;
-    }
-
-    bool heapChanged = false;
-#ifdef EMSCRIPTEN
-    heapChanged = EM_ASM_INT((
-        if (Module.heapOperation !== undefined) {
-            Module.heapOperation();
-            return 1;
-        };
-
-        return 0;
-    )) == 1;
-#endif
-
-    if (heapChanged) {
-        ticksLocked = false;
-        ticksRemain=5;
-        ticksLast = GetTicks();
-        ticksAdded = 0;
-        ticksDone = 0;
-        ticksScheduled = 0;
-    }
-
-    return heapChanged;
-}
 
 void increaseticks();
 
 static Bitu Normal_Loop(void) {
-	if (doHeapOperation()) {
-		return 0;
-	}
-
 	Bits ret;
 #if defined(JSDOS) && defined(EMTERPRETER_SYNC)
     static mstime lastSleepTime = GetTicks();
@@ -411,10 +372,6 @@ void DOSBOX_SetNormalLoop() {
  * this is used to display the screen to help diagnosis.
  */
 static void em_main_loop(void) {
-    if (doHeapOperation()) {
-        return;
-    }
-
     //@caiiiycuk: this function is usually called from
     // requestAnimationFrame OR setTimeout.
     // minimal browser interval is ~5 ms for setTimeout

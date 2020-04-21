@@ -11,16 +11,13 @@ void GFX_SetTitle(Bit32s cycles, Bits frameskip, bool paused) {
 }
 
 void restart_program(std::vector<std::string> & parameters) {
-    abort();
 }
 
-// TODO: need to implement
 void Mouse_AutoLock(bool enable) {
 }
 
 void GFX_CaptureMouse(void) {
 }
-
 
 void GFX_LosingFocus(void) {
 }

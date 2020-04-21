@@ -146,7 +146,7 @@ function testDigger(middleware: DosMiddleware) {
             };
 
             const screenshot = () => {
-                compareAndExit("digger-end.png", ci)
+                compareAndExit("digger-end.png", ci, 2)
                     .then(resolve)
                     .catch(reject);
             };

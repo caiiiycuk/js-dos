@@ -88,8 +88,8 @@ EM_JS(void, wc_addKey, (KBD_KEYS key, bool pressed), {
 // clang-format on
 #else
 void wc_sokolInit() {}
-void wc_packFsToBundle() {}
-void wc_addKey(KBD_KEYS key, bool pressed) {}
+extern "C" void wc_packFsToBundle() {}
+extern "C" void wc_addKey(KBD_KEYS key, bool pressed) {}
 #endif
 
 void wc_sokolCleanup() {
