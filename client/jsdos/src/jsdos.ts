@@ -15,7 +15,7 @@ import Move from "./controller/move";
 import Qwerty from "./controller/qwerty";
 import { DosBundle } from "../../jsdos-bundle/jsdos-bundle";
 
-import LibZip from "../../../libzip/ts/src/jsdos-libzip";
+import LibZip from "../../../native/libzip/ts/src/jsdos-libzip";
 
 // # DosOptions
 // Is a options object that you pass to constructor of

@@ -28,7 +28,7 @@ if (${EMSCRIPTEN})
 
     add_executable(wsokol $<TARGET_OBJECTS:sokol-server> $<TARGET_OBJECTS:sokol-client>)
     set_target_properties(wsokol PROPERTIES SUFFIX .js)
-    set_target_properties(wsokol PROPERTIES LINK_FLAGS "${SOKOL_LINK_FLAGS} -s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../server/asyncify.txt -s EXPORT_NAME='WSOKOL'")
+    set_target_properties(wsokol PROPERTIES LINK_FLAGS "${SOKOL_LINK_FLAGS} -s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../native/jsdos/asyncify.txt -s EXPORT_NAME='WSOKOL'")
 
     add_executable(wsokol-client $<TARGET_OBJECTS:sokol-client>)
     set_target_properties(wsokol-client PROPERTIES SUFFIX .js)

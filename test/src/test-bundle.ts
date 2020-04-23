@@ -2,7 +2,7 @@ import { assert } from "chai";
 
 import { makeLibZip, destroy } from "./libzip";
 import { DosBundle } from "../../client/jsdos-bundle/jsdos-bundle";
-import LibZip from "../../libzip/ts/src/jsdos-libzip";
+import LibZip from "../../native/libzip/ts/src/jsdos-libzip";
 
 import { createDosConfig, toDosboxConf, DosConfig } from "../../client/jsdos-bundle/jsdos-conf";
 import { XhrRequest } from "../../client/jsdos/src/jsdos-xhr";
