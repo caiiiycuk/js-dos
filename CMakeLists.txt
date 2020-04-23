@@ -38,5 +38,5 @@ endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/native/libzip/libzip.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/native/jsdos/jsdos.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/client/jsdos-sokol/sokol.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/client/dosbox/dosbox.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/server/jsdos-sokol/sokol.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/server/dosbox/dosbox.cmake")

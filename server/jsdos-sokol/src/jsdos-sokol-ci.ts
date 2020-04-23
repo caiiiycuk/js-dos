@@ -1,4 +1,4 @@
-import { DosCommandInterface } from "../../interface/jsdos-interface";
+import { DosCommandInterface } from "../../../client/interface/jsdos-interface";
 
 export class SokolCommandInterface implements DosCommandInterface {
     public module: any;

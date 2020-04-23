@@ -21,7 +21,7 @@ const footer = require("gulp-footer");
 function clean() {
     return del(["dist/jsdos-sokol*",
                 "dist/wsokol*",
-                "client/jsdos-sokol/src/jsdos-sokol-build.ts"], { force: true });
+                "server/jsdos-sokol/src/jsdos-sokol-build.ts"], { force: true });
 };
 
 async function wasm() {
@@ -31,7 +31,7 @@ async function wasm() {
 function generateBuildTs(cb: () => void) {
     generateBuildInfo("build/wasm/wsokol.js",
                       "build/wasm/wsokol.wasm",
-                      "client/jsdos-sokol/src/jsdos-sokol-build.ts");
+                      "server/jsdos-sokol/src/jsdos-sokol-build.ts");
     cb();
 };
 
@@ -48,7 +48,7 @@ function copyAssets() {
 function js() {
     return browserify({
         debug: true,
-        entries: ["client/jsdos-sokol/src/jsdos-sokol.ts"],
+        entries: ["server/jsdos-sokol/src/jsdos-sokol.ts"],
         cache: {},
         packageCache: {}
     })

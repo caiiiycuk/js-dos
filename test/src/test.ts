@@ -7,7 +7,7 @@ import { testBundle } from "./test-bundle";
 import { testConf } from "./test-conf";
 import { testMiddleware } from "./test-middleware";
 
-import { DosSokol, DosSokolWorker } from "../../client/jsdos-sokol/src/jsdos-sokol";
+import { DosSokol, DosSokolWorker } from "../../server/jsdos-sokol/src/jsdos-sokol";
 
 const middles = [ DosSokol, DosSokolWorker ];
 

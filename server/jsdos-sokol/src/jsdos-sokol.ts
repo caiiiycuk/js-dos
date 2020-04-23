@@ -1,9 +1,9 @@
 import { Build } from "./jsdos-sokol-build";
-import { DosCommandInterface, Cache, DosMiddleware, DosClient } from "../../interface/jsdos-interface";
+import { DosCommandInterface, Cache, DosMiddleware, DosClient } from "../../../client/interface/jsdos-interface";
 import { SokolCommandInterface } from "./jsdos-sokol-ci";
 
-import CacheDb from "../../jsdos-cache/jsdos-cache-db";
-import CacheNoop from "../../jsdos-cache/jsdos-cache-noop";
+import CacheDb from "../../../client/jsdos-cache/jsdos-cache-db";
+import CacheNoop from "../../../client/jsdos-cache/jsdos-cache-noop";
 
 class DosSokolDirectImpl implements DosMiddleware {
     buildInfo = Build;
