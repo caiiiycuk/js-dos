@@ -1,3 +1,18 @@
+export interface Logger {
+    onLog: (...args: any[]) => void;
+    onWarn: (...args: any[]) => void;
+    onErr: (...args: any[]) => void;
+    onStdout: (message: string) => void;
+}
+
+export interface ServerConfig {
+    pathPrefix: string;
+    log: (...args: any[]) => void;
+    warn: (...args: any[]) => void;
+    err: (...args: any[]) => void;
+    stdout: (message: string) => void;
+}
+
 export interface BuildInfo {
     version: string;
     buildSeed: number;
@@ -68,7 +83,7 @@ export interface DosCommandInterface {
     sendKeyEvent: (keyCode: number, pressed: boolean) => void;
 
     // will store all changes made in FS, if persistencyKey is set
-    persist(): Promise<void>;
+    persist(): Promise<Uint8Array>;
 }
 
 

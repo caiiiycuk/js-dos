@@ -56,9 +56,9 @@ export class SokolCommandInterface implements DosCommandInterface {
         this.module._addKey(keyCode, pressed);
     }
 
-    public persist(): Promise<void> {
+    public persist(): Promise<Uint8Array> {
         if (!this.module.persistency) {
-            return Promise.resolve();
+            return Promise.resolve(new Uint8Array());
         }
 
         return new Promise((resolve, reject) => {
