@@ -1,8 +1,7 @@
 import { assert } from "chai";
-import loadWasmModule, { host } from "../../client/jsdos/src/jsdos-wasm";
 
-import { Cache } from "../../client/interface/jsdos-interface";
-import CacheNoop from "../../client/jsdos-cache/jsdos-cache-noop";
+import { loadWasmModule, host } from "../../src/modules";
+import { Cache, CacheNoop } from "../../src/cache";
 
 export function testLoader() {
     suite("WASM loader");
@@ -29,7 +28,7 @@ export function testLoader() {
     });
 
     test("loader should show progress loading and use cache", async () => {
-        const moduleUrl = "/wsokol.js"
+        const moduleUrl = "/wdirect.js"
 
         let cacheGetUsed = false;
         let cachePutUsed = false;
@@ -63,7 +62,7 @@ export function testLoader() {
     });
 
     test("loader should never load module twice", async () => {
-        const moduleUrl = "/wsokol.js";
+        const moduleUrl = "/wdirect.js";
 
         class TestCache implements Cache {
             public close() {

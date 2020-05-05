@@ -1,17 +1,20 @@
 import { assert } from "chai";
 
-import { makeLibZip, destroy } from "./libzip";
-import { DosBundle } from "../../client/jsdos-bundle/jsdos-bundle";
-import LibZip from "../../native/libzip/ts/src/jsdos-libzip";
+import { createDosConfig, toDosboxConf, DosConfig } from "../../src/dos/bundle/dos-conf";
+import DosBundle from "../../src/dos/bundle/dos-bundle";
 
-import { createDosConfig, toDosboxConf, DosConfig } from "../../client/jsdos-bundle/jsdos-conf";
-import { XhrRequest } from "../../client/jsdos/src/jsdos-xhr";
-import CacheNoop from "../../client/jsdos-cache/jsdos-cache-noop";
+import { makeLibZip, destroy } from "./libzip";
+import LibZip from "../../native/libzip/ts/src/jsdos-libzip";
+import { CacheNoop } from "../../src/cache";
+
+import Emulators from "../../src/emulators";
+
+Emulators.pathPrefix = "/";
 
 async function toFs(bundle: DosBundle,
                     cb: (libzip: LibZip) => Promise<void>) {
     const packer = await makeLibZip();
-    const array = await bundle.toUint8Array(packer, new CacheNoop(), XhrRequest);
+    const array = await bundle.toUint8Array();
     destroy(packer);
 
     const unpacker = await makeLibZip();
@@ -20,28 +23,28 @@ async function toFs(bundle: DosBundle,
     destroy(unpacker);
 }
 
-async function save(bundle: DosBundle) {
-    const packer = await makeLibZip();
-    const url = await bundle.toUrl(packer, new CacheNoop(), XhrRequest);
-    destroy(packer);
+// async function save(bundle: DosBundle) {
+//     const packer = await makeLibZip();
+//     const url = await bundle.toUrl(packer, new CacheNoop(), XhrRequest);
+//     destroy(packer);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "archive.zip";
-    document.body.appendChild(a);
-    a.click();
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = "archive.zip";
+//     document.body.appendChild(a);
+//     a.click();
 
-    setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-    }, 0);
-}
+//     setTimeout(() => {
+//         document.body.removeChild(a);
+//         URL.revokeObjectURL(url);
+//     }, 0);
+// }
 
 export function testBundle() {
     suite("bundle");
 
     test("bundle should contain default dosbox.conf", async () => {
-        await toFs(new DosBundle(), async (fs) => {
+        await toFs(await Emulators.dosBundle(), async (fs) => {
             const conf = await fs.readFile(".jsdos/dosbox.conf");
             assert.ok(conf);
             const expected = await toDosboxConf(createDosConfig());
@@ -50,7 +53,7 @@ export function testBundle() {
     });
 
     test("bundle should download and extract archive to root", async () => {
-        const dosBundle = new DosBundle()
+        const dosBundle = (await Emulators.dosBundle())
             .extract("digger.zip", "/");
 
         await toFs(dosBundle, async (fs) => {
@@ -62,19 +65,19 @@ export function testBundle() {
     });
 
     test("bundle should download and extract archive to path", async () => {
-        const dosBundle = new DosBundle()
+        const dosBundle = (await Emulators.dosBundle())
             .extract("digger.zip", "test");
 
         await toFs(dosBundle, async (fs) => {
             const conf = await fs.readFile(".jsdos/dosbox.conf");
             const digger = await fs.readFile("/test/DIGGER.COM", "binary");
             assert.ok(conf);
-            assert.ok(digger);
+            assert.ok(digger)
         });
     });
 
     test("bundle should extract multiple archive to paths", async () => {
-        const dosBundle = new DosBundle()
+        const dosBundle = (await Emulators.dosBundle())
             .extract("digger.zip", "/test")
             .extract("arkanoid.zip", "/arkanoid");
 

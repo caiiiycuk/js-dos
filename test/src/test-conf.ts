@@ -1,6 +1,6 @@
 import { assert } from "chai";
 
-import { createDosConfig, toDosboxConf, DosConfig } from "../../client/jsdos-bundle/jsdos-conf";
+import { createDosConfig, toDosboxConf, DosConfig } from "../../src/dos/bundle/dos-conf";
 
 function config(cb: (c: DosConfig) => void): DosConfig {
     const config = createDosConfig();
