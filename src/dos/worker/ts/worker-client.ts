@@ -1,4 +1,5 @@
 import  { Logger } from "../../../emulators";
+import { WasmModule } from "../../../modules";
 
 type ClientMessage = "wc-run" | "wc-pack-fs-to-bundle" | "wc-add-key" | "wc-exit";
 type ServerMessage = "ws-ready" | "ws-server-ready" | "ws-frame-set-size" |
@@ -25,7 +26,7 @@ export class WorkerClient {
     private host: WorkerHost;
     private ready: () => void;
 
-    constructor(workerUrl: string,
+    constructor(wasmModule: WasmModule,
                 bundle: Uint8Array,
                 host: WorkerHost,
                 ready: () => void) {

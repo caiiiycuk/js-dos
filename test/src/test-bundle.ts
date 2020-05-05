@@ -9,8 +9,6 @@ import { CacheNoop } from "../../src/cache";
 
 import Emulators from "../../src/emulators";
 
-Emulators.pathPrefix = "/";
-
 async function toFs(bundle: DosBundle,
                     cb: (libzip: LibZip) => Promise<void>) {
     const packer = await makeLibZip();
@@ -40,7 +38,7 @@ async function toFs(bundle: DosBundle,
 //     }, 0);
 // }
 
-export function testBundle() {
+export function testDosBundle() {
     suite("bundle");
 
     test("bundle should contain default dosbox.conf", async () => {

@@ -13,19 +13,19 @@ export default function DosWorker(wasm: WasmModule,
                 startupErrorLog = (startupErrorLog || "") + args.join(" ") + "\n";
             }
 
-            // new WorkerCommandInterface(workerUrl,
-            //                            bundle,
-            //                            logger,
-            //                            (ci) => {
-            //                                if (startupErrorLog !== undefined) {
-            //                                    ci.exit()
-            //                                        .then(() => reject(new Error(startupErrorLog)))
-            //                                        .catch(reject);
-            //                                } else {
-            //                                    logger.onErr = onErr;
-            //                                    resolve(ci);
-            //                                }
-            //                            });
+            new WorkerCommandInterface(wasm,
+                                       bundle,
+                                       logger,
+                                       (ci) => {
+                                           if (startupErrorLog !== undefined) {
+                                               ci.exit()
+                                                   .then(() => reject(new Error(startupErrorLog)))
+                                                   .catch(reject);
+                                           } else {
+                                               logger.onErr = onErr;
+                                               resolve(ci);
+                                           }
+                                       });
         } catch (e) {
             reject(e);
         }
@@ -47,12 +47,12 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
     private logger: Logger;
 
-    constructor(workerUrl: string,
+    constructor(wasmModule: WasmModule,
                 bundle: Uint8Array,
                 logger: Logger,
                 ready: (ci: CommandInterface) => void) {
         this.logger = logger;
-        this.client = new WorkerClient(workerUrl, bundle, this, () => {
+        this.client = new WorkerClient(wasmModule, bundle, this, () => {
             ready(this);
         });
     }
@@ -103,14 +103,6 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
             delete this.exitPromise;
             delete this.exitResolve;
         }
-    }
-
-    fullscreen() {
-        throw new Error("not implemented");
-    }
-
-    exitFullscreen() {
-        throw new Error("not implemented");
     }
 
     screenshot(): Promise<ImageData> {

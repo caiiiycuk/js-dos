@@ -1,11 +1,11 @@
 import { assert } from "chai";
-import { DosCommandInterface } from "../../client/interface/jsdos-interface";
+import { CommandInterface } from "../../src/emulators";
 
 // Compare
 // =======
 // Compare image from url, and screenshot from DosBox
 
-export function compareAndExit(imageUrl: string, ci: DosCommandInterface, threshold: number = 0) {
+export function compareAndExit(imageUrl: string, ci: CommandInterface, threshold: number = 0) {
     return new Promise((resolve, reject) => {
         const fn = () => {
             compare(imageUrl, ci, threshold)
@@ -22,7 +22,7 @@ export function compareAndExit(imageUrl: string, ci: DosCommandInterface, thresh
     });
 }
 
-const compare = (imageUrl: string, ci: DosCommandInterface, threshold: number) => {
+const compare = (imageUrl: string, ci: CommandInterface, threshold: number) => {
     return ci.screenshot()
         .then((imageData: ImageData) => {
             const canvas = document.createElement("canvas");

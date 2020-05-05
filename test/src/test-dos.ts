@@ -1,47 +1,43 @@
 import { assert } from "chai";
 import { compareAndExit } from "./compare"
 
-import { DosBundle } from "../../client/jsdos-bundle/jsdos-bundle";
-import { DosCommandInterface } from "../../client/interface/jsdos-interface";
+import DosBundle from "../../src/dos/bundle/dos-bundle";
+import Emulators, { CommandInterface } from "../../src/emulators";
 
-import Dos from "../../client/jsdos/src/jsdos";
-import { DosKeys } from "../../client/jsdos/src/jsdos-keys";
+import { HTTPRequest } from "../../src/http";
+import { CacheNoop } from "../../src/cache";
 
-import { makeLibZip, destroy } from "./libzip";
-import CacheNoop from "../../client/jsdos-cache/jsdos-cache-noop";
-import { XhrRequest } from "../../client/jsdos/src/jsdos-xhr";
+import { Keys } from "../../src/keys";
 
-export type CIFactory = (bundle: Uint8Array) => Promise<DosCommandInterface>;
+type CIFactory = (bundle: Uint8Array) => Promise<CommandInterface>;
 
-export function testCI(factory: CIFactory, name: string) {
+export function testDos() {
+    testServer((bundle) => Emulators.dosDirect(bundle), "dosDirect");
+    testServer((bundle) => Emulators.dosWorker(bundle), "dosWorker");
+}
+
+function testServer(factory: CIFactory, name: string) {
     suite(name + ".common");
-
-    async function toBuffer(bundle: DosBundle) {
-        const packer = await makeLibZip();
-        const buffer = await bundle.toUint8Array(packer, new CacheNoop(), XhrRequest);
-        destroy(packer);
-        return buffer;
-    }
 
     async function CI(bundle: DosBundle | Promise<DosBundle>) {
         bundle = await Promise.resolve(bundle);
-        return await factory(await toBuffer(bundle));
+        return await factory(await bundle.toUint8Array());
     }
 
     test(name + " can take screenshot of dosbox", async () => {
-        const ci = await CI(new DosBundle());
+        const ci = await CI(Emulators.dosBundle());
         assert.ok(ci);
         await compareAndExit("init.png", ci);
     });
 
     test(name + " should provide dosbox.conf for dosbox", async () => {
-        const ci = await CI(new DosBundle());
+        const ci = await CI(Emulators.dosBundle());
         assert.ok(ci);
         await compareAndExit("jsdos-conf.png", ci, 0);
     });
 
     test(name + " should modify dosbox.conf through api", async () => {
-        const ci = await CI(new DosBundle()
+        const ci = await CI((await Emulators.dosBundle())
             .autoexec("type jsdos~1/dosbox~1.con"));
         assert.ok(ci);
         await compareAndExit("dosboxconf.png", ci, 0);
@@ -49,7 +45,7 @@ export function testCI(factory: CIFactory, name: string) {
 
     test(name + " should not start without jsdos conf", async () => {
         try {
-            const buffer = await XhrRequest("digger.zip", {
+            const buffer = await HTTPRequest("digger.zip", {
                 cache: new CacheNoop(),
                 responseType: "arraybuffer",
             });
@@ -64,7 +60,7 @@ export function testCI(factory: CIFactory, name: string) {
 
     let cachedBundle: Uint8Array = new Uint8Array();
     test(name + " should store fs updates between sessions [empty db]", async () => {
-        const buffer = await XhrRequest("digger.jsdos", {
+        const buffer = await HTTPRequest("digger.jsdos", {
             cache: new CacheNoop(),
             responseType: "arraybuffer",
         });
@@ -85,7 +81,7 @@ export function testCI(factory: CIFactory, name: string) {
     suite(name + ".digger");
 
     test(name + " can run digger.jsdos", async () => {
-        const ci = await CI(new DosBundle()
+        const ci = await CI((await Emulators.dosBundle())
             .extract("digger.zip")
             .autoexec("DIGGER.COM"));
         assert.ok(ci);
@@ -93,14 +89,14 @@ export function testCI(factory: CIFactory, name: string) {
     });
 
     test("can simulate key events", async () => {
-        const ci = await CI(new DosBundle()
+        const ci = await CI((await Emulators.dosBundle())
             .extract("digger.zip")
             .autoexec("DIGGER.COM"));
         assert.ok(ci);
 
         await new Promise((resolve, reject) => {
             const keyPress = () => {
-                ci.simulateKeyPress(DosKeys.KBD_left);
+                ci.simulateKeyPress(Keys.KBD_left);
             };
 
             const screenshot = () => {

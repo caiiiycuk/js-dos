@@ -54,14 +54,6 @@ class DirectCommandInterface implements CommandInterface {
         this.module._runRuntime();
     }
 
-    fullscreen() {
-        throw new Error("not implemented");
-    }
-
-    exitFullscreen() {
-        throw new Error("not implemented");
-    }
-
     screenshot(): Promise<ImageData> {
         const width = this.module._getFrameWidth();
         const height = this.module._getFrameHeight();
