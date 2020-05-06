@@ -1,10 +1,6 @@
 {
     "files": ["gulpfile.ts/index.ts",
-              "native/libzip/ts/src/jsdos-libzip.ts",
-              "client/jsdos/src/jsdos.ts",
-              "server/jsdos-worker/ts/direct.ts",
-              "server/jsdos-worker/ts/worker.ts",
-              "server/jsdos-sokol/src/jsdos-sokol.ts"],
+              "src/emulators.ts"],
     "compilerOptions": {
         "target": "esnext",
         "outDir": "build",

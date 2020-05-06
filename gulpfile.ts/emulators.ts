@@ -1,4 +1,6 @@
-import { src, dest, series } from "gulp";
+import * as fs from "fs";
+
+import { src, dest, series, parallel } from "gulp";
 import del from "del";
 
 import sourcemaps from "gulp-sourcemaps";
@@ -15,13 +17,14 @@ const tsify = require("tsify");
 const footer = require("gulp-footer");
 
 function clean() {
-    return del(["dist/jsdos.*"], { force: true });
+    return del(["dist/emulators*",
+                "build/wworker-footer*"], { force: true });
 };
 
 function js() {
     return browserify({
         debug: true,
-        entries: ["client/jsdos/src/jsdos.ts"],
+        entries: ["src/emulators.ts"],
         cache: {},
         packageCache: {}
     })
@@ -36,13 +39,19 @@ function js() {
             extensions: [".ts"]
         })
         .bundle()
-        .pipe(source("jsdos.js"))
+        .pipe(source("emulators.js"))
         .pipe(buffer())
         .pipe(sourcemaps.init({ loadMaps: true }))
         .pipe(uglify())
         .pipe(sourcemaps.write("./"))
         .pipe(size({ showFiles: true, showTotal: false }))
         .pipe(dest("dist"));
-};
+}
 
-export const jsdos = series(clean, js);
+function workerJs() {
+    return src("dist/wworker.js")
+        .pipe(footer(fs.readFileSync("src/dos/worker/ts/worker-server.js")))
+        .pipe(dest("dist"));
+}
+
+export const emulators = series(clean, parallel(js, workerJs));

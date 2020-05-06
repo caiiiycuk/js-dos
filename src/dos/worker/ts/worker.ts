@@ -2,7 +2,8 @@ import { CommandInterface, Logger } from "../../../emulators";
 import { WasmModule } from "../../../modules";
 import { WorkerClient, WorkerHost, FrameLine } from "./worker-client";
 
-export default function DosWorker(wasm: WasmModule,
+export default function DosWorker(workerUrl: string,
+                                  wasm: WasmModule,
                                   bundle: Uint8Array,
                                   logger: Logger): Promise<CommandInterface> {
     return new Promise<CommandInterface>((resolve, reject) => {
@@ -13,7 +14,8 @@ export default function DosWorker(wasm: WasmModule,
                 startupErrorLog = (startupErrorLog || "") + args.join(" ") + "\n";
             }
 
-            new WorkerCommandInterface(wasm,
+            new WorkerCommandInterface(workerUrl,
+                                       wasm,
                                        bundle,
                                        logger,
                                        (ci) => {
@@ -47,14 +49,19 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
     private logger: Logger;
 
-    constructor(wasmModule: WasmModule,
+    constructor(workerUrl: string,
+                wasmModule: WasmModule,
                 bundle: Uint8Array,
                 logger: Logger,
                 ready: (ci: CommandInterface) => void) {
         this.logger = logger;
-        this.client = new WorkerClient(wasmModule, bundle, this, () => {
-            ready(this);
-        });
+        this.client = new WorkerClient(workerUrl,
+                                       wasmModule,
+                                       bundle,
+                                       this,
+                                       () => {
+                                           ready(this);
+                                       });
     }
 
     onFrameSize(width: number, height: number) {

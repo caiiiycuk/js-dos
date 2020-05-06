@@ -45,7 +45,7 @@ class EmulatorsImpl {
     async dosWorker(bundle: Uint8Array): Promise<CommandInterface> {
         const modules = await this.wasmModules();
         const dosWorkerWasm = await modules.dosWorker();
-        return DosWorker(dosWorkerWasm, bundle, this.logger);
+        return DosWorker(this.pathPrefix + "wworker.js", dosWorkerWasm, bundle, this.logger);
     }
 
     wasmModules(): Promise<IWasmModules> {

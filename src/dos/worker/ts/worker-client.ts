@@ -1,7 +1,8 @@
 import  { Logger } from "../../../emulators";
 import { WasmModule } from "../../../modules";
 
-type ClientMessage = "wc-run" | "wc-pack-fs-to-bundle" | "wc-add-key" | "wc-exit";
+type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" |
+    "wc-add-key" | "wc-exit";
 type ServerMessage = "ws-ready" | "ws-server-ready" | "ws-frame-set-size" |
     "ws-update-lines" | "ws-log" | "ws-warn" | "ws-err" | "ws-stdout" |
     "ws-exit" | "ws-persist";
@@ -26,7 +27,8 @@ export class WorkerClient {
     private host: WorkerHost;
     private ready: () => void;
 
-    constructor(wasmModule: WasmModule,
+    constructor(workerUrl: string,
+                wasmModule: WasmModule,
                 bundle: Uint8Array,
                 host: WorkerHost,
                 ready: () => void) {
@@ -50,6 +52,9 @@ export class WorkerClient {
 
             this.onMessage(data.name, data.props || {});
         }
+
+        wasmModule.instantiate({});
+        this.sendMessage("wc-install", { module: (wasmModule as any).wasmModule });
     }
 
     sendMessage(name: ClientMessage, props?: {[key: string]: any}) {

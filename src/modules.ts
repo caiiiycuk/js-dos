@@ -183,7 +183,8 @@ export function loadWasmModule(url: string,
         eval.call(window, script as string);
         /* tslint:enable:no-eval */
 
-        return new CompiledModule(host.globals.exports[moduleName],
+        return new CompiledModule(wasmModule,
+                                  host.globals.exports[moduleName],
                                   instantiateWasm);
     };
 
@@ -197,10 +198,12 @@ export function loadWasmModule(url: string,
 }
 
 class CompiledModule implements WasmModule {
+    public wasmModule: WebAssembly.Module;
     private module: any;
     private instantiateWasm: any;
 
-    constructor(module: any, instantiateWasm: any) {
+    constructor(wasmModule: WebAssembly.Module, module: any, instantiateWasm: any) {
+        this.wasmModule = wasmModule;
         this.module = module;
         this.instantiateWasm = instantiateWasm;
     }
