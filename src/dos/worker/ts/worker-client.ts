@@ -102,6 +102,7 @@ export class WorkerClient {
                 this.host.onPersist(props.bundle);
             } break;
             default: {
+                // tslint:disable-next-line:no-console
                 console.log("Unknown worker message", name);
             } break;
         };

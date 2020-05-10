@@ -33,6 +33,7 @@ export function testLoader() {
         let cacheGetUsed = false;
         let cachePutUsed = false;
         class TestCache implements Cache {
+            // tslint:disable-next-line:no-empty
             public close() {
             }
 
@@ -65,6 +66,7 @@ export function testLoader() {
         const moduleUrl = "/wdirect.js";
 
         class TestCache implements Cache {
+            // tslint:disable-next-line:no-empty
             public close() {
             }
 

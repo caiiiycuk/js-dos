@@ -145,7 +145,7 @@ function validateCategory(category: DosConfigCategory, valid: DosConfigCategory)
 
             if (validOption.allowedValues.length > 0) {
                 const value = next.value;
-                const allowedValue = validOption.allowedValues.find((v) => v == value);
+                const allowedValue = validOption.allowedValues.find((v) => v === value);
 
                 if (categoryName === "cpu" &&
                     next.name === "cycles" &&
@@ -265,7 +265,7 @@ ${section.options.script.value}
 # ▀▀▀ ▀ ▀ █▄█ ▀█▄▄█▀▀▀█▀▀
 # █▀▀▀▀▀█ ▄▄▄ ▄ ▄ █ ▀ █▄▄▄▄
 # █ ███ █ ▀█▀▀▄▀▀▄████▀▀█▄█
-# █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█ 
+# █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█
 # ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
 `;
 }

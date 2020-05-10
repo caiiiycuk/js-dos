@@ -17,14 +17,18 @@ class EmulatorsImpl {
         this.cache = new CacheNoop();
         this.logger = {
             onLog(...args: any[]) {
+                // tslint:disable-next-line:no-console
                 console.log(...args);
             },
             onWarn(...args: any[]) {
+                // tslint:disable-next-line:no-console
                 console.warn(...args);
             },
             onErr(...args: any[]) {
+                // tslint:disable-next-line:no-console
                 console.error(...args);
             },
+            // tslint:disable-next-line:no-empty
             onStdout(message: string) {
             }
         };

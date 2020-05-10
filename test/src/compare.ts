@@ -29,7 +29,7 @@ const compare = (imageUrl: string, ci: CommandInterface, threshold: number) => {
             canvas.width = imageData.width;
             canvas.height = imageData.height;
 
-            var ctx = canvas.getContext("2d");
+            const ctx = canvas.getContext("2d");
             ctx.putImageData(imageData, 0, 0);
 
             return canvas.toDataURL("image/png");
@@ -52,7 +52,7 @@ const compare = (imageUrl: string, ci: CommandInterface, threshold: number) => {
                     const renderComparsion = () => {
                         document.body.appendChild(document.createElement("hr"));
                         document.body.appendChild(img); // for comparisons
-                        var div = document.createElement('div');
+                        const div = document.createElement('div');
                         div.innerHTML = '^=expected, v=actual';
                         document.body.appendChild(div);
                         document.body.appendChild(actualImage); // to grab it for creating the test reference

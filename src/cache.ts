@@ -7,6 +7,7 @@ export interface Cache {
 
 export class CacheNoop implements Cache {
 
+    // tslint:disable-next-line:no-empty
     public close() {
     }
 

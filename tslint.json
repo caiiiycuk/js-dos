@@ -6,10 +6,11 @@
     "jsRules": {},
     "rules": {
         "interface-name": false,
-        "no-unused-expression": false, // should be no-new rule
+        "no-unused-expression": false,
         "no-shadowed-variable": false,
         "object-literal-sort-keys": false,
-        "member-ordering": false
+        "member-ordering": false,
+        "max-classes-per-file": false
     },
     "rulesDirectory": []
 }

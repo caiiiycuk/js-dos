@@ -32,7 +32,7 @@ export function testConf() {
                     "Category 'output' is missed");
         await check((c) => c.output.name = "output",
                     "Incorrect category name 'output' should be 'sdl'");
-        await check((c) => (c.cpu.options as any)["core22"] = "not-a-core",
+        await check((c) => (c.cpu.options as any).core22 = "not-a-core",
                     "Unknown option 'core22' in 'cpu'");
         await check((c) => delete c.cpu.options.core.value,
                     "Incorrect value 'undefined' for 'cpu.core' allowed is [\"auto\",\"normal\",\"simple\"]");
@@ -272,6 +272,6 @@ echo on
 # ▀▀▀ ▀ ▀ █▄█ ▀█▄▄█▀▀▀█▀▀
 # █▀▀▀▀▀█ ▄▄▄ ▄ ▄ █ ▀ █▄▄▄▄
 # █ ███ █ ▀█▀▀▄▀▀▄████▀▀█▄█
-# █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█ 
+# █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█
 # ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
 `;

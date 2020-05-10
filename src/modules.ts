@@ -134,6 +134,7 @@ export class WasmModulesImpl implements IWasmModules {
 
     private loadModule(url: string,
                              moduleName: string) {
+        // tslint:disable-next-line:no-empty
         return loadWasmModule(url, moduleName, this.cache, () => {});
     }
 }

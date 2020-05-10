@@ -65,7 +65,7 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
     }
 
     onFrameSize(width: number, height: number) {
-        if (this.width == width && this.height == height) {
+        if (this.width === width && this.height === height) {
             return;
         }
 
