@@ -6,7 +6,8 @@ import LibZip from "../../libzip/libzip";
 
 import { HTTPRequest } from "../../http";
 import { Cache } from "../../cache";
-import { WasmModule } from "../../modules";
+
+import { WasmModule } from "../../impl/modules";
 
 // ### DosArchiveSource
 export interface DosArchiveSource {

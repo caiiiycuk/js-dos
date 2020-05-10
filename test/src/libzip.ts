@@ -1,6 +1,6 @@
 import { assert } from "chai";
 
-import { WasmModulesImpl } from "../../src/modules";
+import { WasmModulesImpl } from "../../src/impl/modules";
 import { CacheNoop } from "../../src/cache";
 import LibZip from "../../src/libzip/libzip";
 

@@ -1,77 +1,11 @@
-import { Build } from "./build";
-import { IWasmModules, WasmModulesImpl } from "./modules";
-import { Cache, CacheDb, CacheNoop } from "./cache";
-
 import DosBundle from "./dos/bundle/dos-bundle";
-import DosDirect from "./dos/direct/ts/direct";
-import DosWorker from "./dos/worker/ts/worker";
+import emulatorsImpl from "./impl/emulators-impl";
 
 export interface Emulators {
+    pathPrefix: string;
     dosBundle: () => Promise<DosBundle>;
     dosDirect: (bundle: Uint8Array) => Promise<CommandInterface>;
     dosWorker: (bundle: Uint8Array) => Promise<CommandInterface>;
-}
-
-class EmulatorsImpl implements Emulators {
-    pathPrefix = "";
-
-    private wasmModulesPromise?: Promise<IWasmModules>;
-    private cache: Cache;
-    private logger: Logger;
-
-    constructor() {
-        this.cache = new CacheNoop();
-        this.logger = {
-            onLog(...args: any[]) {
-                // tslint:disable-next-line:no-console
-                console.log(...args);
-            },
-            onWarn(...args: any[]) {
-                // tslint:disable-next-line:no-console
-                console.warn(...args);
-            },
-            onErr(...args: any[]) {
-                // tslint:disable-next-line:no-console
-                console.error(...args);
-            },
-            // tslint:disable-next-line:no-empty
-            onStdout(message: string) {
-            }
-        };
-    }
-
-    async dosBundle(): Promise<DosBundle> {
-        const modules = await this.wasmModules();
-        const libzipWasm = await modules.libzip();
-        return new DosBundle(libzipWasm, this.cache);
-    }
-
-    async dosDirect(bundle: Uint8Array): Promise<CommandInterface> {
-        const modules = await this.wasmModules();
-        const dosDirectWasm = await modules.dosDirect();
-        return DosDirect(dosDirectWasm, bundle, this.logger);
-    }
-
-    async dosWorker(bundle: Uint8Array): Promise<CommandInterface> {
-        const modules = await this.wasmModules();
-        const dosWorkerWasm = await modules.dosWorker();
-        return DosWorker(this.pathPrefix + "wworker.js", dosWorkerWasm, bundle, this.logger);
-    }
-
-    wasmModules(): Promise<IWasmModules> {
-        if (this.wasmModulesPromise !== undefined) {
-            return this.wasmModulesPromise;
-        }
-
-        const make = async () => {
-            this.cache = await CacheDb(Build.version);
-            return new WasmModulesImpl(this.pathPrefix, this.cache);
-        }
-
-        this.wasmModulesPromise = make();
-        return this.wasmModulesPromise;
-    }
-
 }
 
 export interface CommandInterface {
@@ -89,6 +23,15 @@ export interface CommandInterface {
 
     // dump FS as Uint8Array <zip archive>
     persist(): Promise<Uint8Array>;
+
+    // events
+    events(): CommandInterfaceEvents;
+}
+
+export interface CommandInterfaceEvents {
+    onStdout: (consumer: (message: string) => void | null) => void;
+    onFrameSize: (consumer: (width: number, height: number) => void | null) => void;
+    onFrame: (consumer: (frame: Uint8ClampedArray) => void | null) => void;
 }
 
 
@@ -96,12 +39,11 @@ export interface Logger {
     onLog: (...args: any[]) => void;
     onWarn: (...args: any[]) => void;
     onErr: (...args: any[]) => void;
-    onStdout: (message: string) => void;
 }
-
-const emulators = new EmulatorsImpl();
-export default emulators;
 
 if (typeof window !== undefined) {
-    (window as any).Emulators = emulators;
+    (window as any).Emulators = emulatorsImpl;
 }
+
+const emulators: Emulators = emulatorsImpl;
+export default emulators;

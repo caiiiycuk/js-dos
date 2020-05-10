@@ -1,6 +1,8 @@
 import { CommandInterface, Logger } from "../../../emulators";
-import { WasmModule } from "../../../modules";
 import { WorkerClient, WorkerHost, FrameLine } from "./worker-client";
+
+import { WasmModule } from "../../../impl/modules";
+import { CommandInterfaceEventsImpl } from "../../../impl/ci-impl";
 
 export default function DosWorker(workerUrl: string,
                                   wasm: WasmModule,
@@ -49,6 +51,8 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
     private logger: Logger;
 
+    private eventsImpl = new CommandInterfaceEventsImpl();
+
     constructor(workerUrl: string,
                 wasmModule: WasmModule,
                 bundle: Uint8Array,
@@ -72,12 +76,14 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
         this.width = width;
         this.height = height;
         this.rgba = new Uint8ClampedArray(width * height * 4);
+        this.eventsImpl.fireFrameSize(width, height);
     }
 
     onFrameLines(lines: FrameLine[]) {
         for (const line of lines) {
             this.rgba.set(line.heapu8, line.start * this.width * 4);
         }
+        this.eventsImpl.fireFrame(this.rgba);
     }
 
     onPersist(bundle: Uint8Array) {
@@ -101,7 +107,7 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
     }
 
     onStdout(message: string) {
-        this.logger.onStdout(message);
+        this.eventsImpl.fireStdout(message);
     }
 
     onExit() {
@@ -151,5 +157,9 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
         this.exitPromise = new Promise<void>((resolve) => this.exitResolve = resolve);
         this.client.exit();
         return this.exitPromise;
+    }
+
+    public events() {
+        return this.eventsImpl;
     }
 }

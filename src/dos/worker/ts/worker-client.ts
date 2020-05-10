@@ -1,5 +1,6 @@
 import  { Logger } from "../../../emulators";
-import { WasmModule } from "../../../modules";
+
+import { WasmModule } from "../../../impl/modules";
 
 type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" |
     "wc-add-key" | "wc-exit";
@@ -16,6 +17,7 @@ export interface WorkerHost extends Logger {
     onFrameSize: (width: number, height: number) => void;
     onFrameLines: (lines: FrameLine[]) => void;
     onPersist: (bundle: Uint8Array) => void;
+    onStdout: (message: string) => void;
 
     onExit: () => void;
 }

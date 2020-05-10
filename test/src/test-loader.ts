@@ -1,6 +1,6 @@
 import { assert } from "chai";
 
-import { loadWasmModule, host } from "../../src/modules";
+import { loadWasmModule, host } from "../../src/impl/modules";
 import { Cache, CacheNoop } from "../../src/cache";
 
 export function testLoader() {

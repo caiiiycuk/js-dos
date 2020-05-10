@@ -1,9 +1,13 @@
 import { CommandInterface, Logger } from "../../../emulators";
-import { WasmModule } from "../../../modules";
+
+import { WasmModule } from "../../../impl/modules";
+import { CommandInterfaceEventsImpl } from "../../../impl/ci-impl";
 
 export default async function DosDirect(wasm: WasmModule,
                                         bundle: Uint8Array,
                                         logger: Logger): Promise<CommandInterface> {
+    const eventsImpl = new CommandInterfaceEventsImpl();
+
     const errFn = (...args: any) => {
         logger.onErr(...args);
     }
@@ -18,12 +22,12 @@ export default async function DosDirect(wasm: WasmModule,
         log: logger.onLog,
         warn: logger.onWarn,
         err: errFn,
-        stdout: logger.onStdout,
+        stdout: eventsImpl.onStdout,
     });
 
     const ci = await new Promise<CommandInterface>((resolve, reject) => {
         try {
-            new DirectCommandInterface(module, bundle, resolve);
+            new DirectCommandInterface(module, bundle, eventsImpl, resolve);
         } catch (e) {
             reject(e);
         }
@@ -43,12 +47,15 @@ class DirectCommandInterface implements CommandInterface {
     private module: any;
     private persistPromise?: Promise<Uint8Array>;
     private exitPromise?: Promise<void>;
+    private eventsImpl: CommandInterfaceEventsImpl;
 
     constructor(module: any,
                 bundle: Uint8Array,
+                eventsImpl: CommandInterfaceEventsImpl,
                 ready: (ci: CommandInterface) => void) {
         this.module = module;
         this.module.bundle = new Uint8Array(bundle);
+        this.eventsImpl = eventsImpl;
         this.module.callMain([]);
         setTimeout(() => ready(this), 16);
         this.module._runRuntime();
@@ -112,5 +119,9 @@ class DirectCommandInterface implements CommandInterface {
         });
 
         return this.exitPromise;
+    }
+
+    public events() {
+        return this.eventsImpl;
     }
 }

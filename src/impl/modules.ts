@@ -1,5 +1,5 @@
-import { Cache } from "./cache";
-import { HTTPRequest } from "./http";
+import { Cache } from "../cache";
+import { HTTPRequest } from "../http";
 
 export interface WasmModule {
     instantiate: (module?: any) => Promise<any>;
