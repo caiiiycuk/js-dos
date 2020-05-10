@@ -6,7 +6,13 @@ import DosBundle from "./dos/bundle/dos-bundle";
 import DosDirect from "./dos/direct/ts/direct";
 import DosWorker from "./dos/worker/ts/worker";
 
-class EmulatorsImpl {
+export interface Emulators {
+    dosBundle: () => Promise<DosBundle>;
+    dosDirect: (bundle: Uint8Array) => Promise<CommandInterface>;
+    dosWorker: (bundle: Uint8Array) => Promise<CommandInterface>;
+}
+
+class EmulatorsImpl implements Emulators {
     pathPrefix = "";
 
     private wasmModulesPromise?: Promise<IWasmModules>;
@@ -93,10 +99,9 @@ export interface Logger {
     onStdout: (message: string) => void;
 }
 
-
-const Emulators = new EmulatorsImpl();
-export default Emulators;
+const emulators = new EmulatorsImpl();
+export default emulators;
 
 if (typeof window !== undefined) {
-    (window as any).Emulators = Emulators;
+    (window as any).Emulators = emulators;
 }
