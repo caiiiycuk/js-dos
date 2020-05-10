@@ -68,10 +68,6 @@ class EmulatorsImpl {
 
 }
 
-const Emulators = new EmulatorsImpl();
-export default  Emulators;
-
-
 export interface CommandInterface {
     // * `screenshot()` - get screnshot of canvas as ImageData
     screenshot: () => Promise<ImageData>;
@@ -98,4 +94,9 @@ export interface Logger {
 }
 
 
+const Emulators = new EmulatorsImpl();
+export default Emulators;
 
+if (typeof window !== undefined) {
+    (window as any).Emulators = Emulators;
+}
