@@ -4,8 +4,8 @@
 // gulpfile.ts/wasm.ts --> generateBuildInfo
 
 export const Build = {
-    version: "0.0.1 (0fcaff3c7d72a20194ee1cef4769eda5)",
-    buildSeed: 1589080413997,
+    version: "0.0.1 (a60fc1227547d90393ae01a390373a84)",
+    buildSeed: 1589081443841,
     "wdirect.wasm": {
         "size": 1307105,
         "gzSize": 460296

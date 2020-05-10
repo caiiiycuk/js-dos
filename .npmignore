@@ -19,6 +19,9 @@ udnefined.zip
 dryrun.zip
 dev.js
 /test
-/dist/test/ra.html
-/dist/test/ra.zip
+/dist/test
 cmake-build-*
+native
+src
+gulpfile.ts
+.clang-format
