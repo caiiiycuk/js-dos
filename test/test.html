@@ -2,12 +2,11 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Mocha Tests</title>
+    <title>Emulators Tests</title>
     <link href="https://unpkg.com/mocha@7.1.1/mocha.css" rel="stylesheet" />
 </head>
 
 <body>
-    <canvas id="jsdos"></canvas>
     <div id="mocha"></div>
     <script src="https://unpkg.com/mocha@7.1.1/mocha.js"></script>
     <script src="https://www.chaijs.com/chai.js"></script>
@@ -22,7 +21,6 @@
     </script>
     <script src="test.js"></script>
     <script>
-        (function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//mrdoob.github.io/stats.js/build/stats.min.js';document.head.appendChild(script);})();
         mocha.run();
     </script>
 </body>

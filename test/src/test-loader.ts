@@ -86,8 +86,10 @@ export function testLoader() {
                                  () => assert.fail("downloading..."));
             assert.fail();
         } catch (e) {
-            assert.ok("wasm validation error: at offset 0: failed to match magic number" == e.message ||
-                "WebAssembly.compile(): BufferSource argument is empty" == e.message);
+            const isValidMessage = "wasm validation error: at offset 0: failed to match magic number" === e.message ||
+                "WebAssembly.compile(): BufferSource argument is empty" === e.message ||
+                "WebAssembly.Module doesn't parse at byte 0: expected a module of at least 8 bytes" === e.message;
+            assert.ok(isValidMessage, "Error message is not valid: '" + e.message + "'");
         }
     });
 }

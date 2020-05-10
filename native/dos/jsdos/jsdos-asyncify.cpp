@@ -16,7 +16,7 @@ EM_JS(void, syncSleep, (), {
   });
 
 #if defined(PROMISE_SLEEP)
-EM_JS(bool, initSyncSleep, (), {
+EM_JS(bool, initSyncSleep, (bool worker), {
     Module.alive = true;
     Module.sync_sleep = function(wakeUp) {
       Promise.resolve(1).then(function() {
@@ -28,7 +28,7 @@ EM_JS(bool, initSyncSleep, (), {
     return true;
   });
 #elif defined(TIMEOUT_SLEEP)
-EM_JS(bool, initSyncSleep, (), {
+EM_JS(bool, initSyncSleep, (bool worker), {
     Module.alive = true;
     Module.sync_sleep = function(wakeUp) {
       setTimeout(function() {
@@ -40,7 +40,7 @@ EM_JS(bool, initSyncSleep, (), {
     return true;
   });
 #else
-EM_JS(bool, initSyncSleep, (), {
+EM_JS(bool, initSyncSleep, (bool worker), {
     Module.alive = true;
     Module.sync_id = Date.now();
     Module.sync_sleep = function(wakeUp) {
@@ -50,7 +50,7 @@ EM_JS(bool, initSyncSleep, (), {
       }
 
       Module.sync_wakeUp = wakeUp;
-      if (typeof self !== "undefined") {
+      if (worker) {
         postMessage({type : "sync_sleep_message", id : Module.sync_id});
       } else {
         window.postMessage({type : "sync_sleep_message", id : Module.sync_id},
@@ -72,7 +72,7 @@ EM_JS(bool, initSyncSleep, (), {
       }
     };
 
-    if (typeof self !== "undefined") {
+    if (worker) {
       self.addEventListener("message", Module.receive, true);
     } else {
       window.addEventListener("message", Module.receive, true);
@@ -83,7 +83,7 @@ EM_JS(bool, initSyncSleep, (), {
 #endif
 
 EM_JS(void, destroySyncSleep, (), {
-    if (typeof self !== "undefined") {
+    if (worker) {
       self.removeEventListener("message", Module.receive);
     } else {
       window.removeEventListener("message", Module.receive);
@@ -92,7 +92,11 @@ EM_JS(void, destroySyncSleep, (), {
     delete Module.sync_sleep;
   });
 
-bool init = initSyncSleep();
+EM_JS(bool, isWorker, (), {
+    return typeof importScripts === 'function';
+  });
+
+bool init = initSyncSleep(isWorker());
 
 // clang-format on
 #endif
