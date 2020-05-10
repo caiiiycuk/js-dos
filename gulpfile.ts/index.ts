@@ -3,9 +3,11 @@ import { wasm } from "./wasm";
 import { emulators } from "./emulators";
 import { test } from "./test";
 
+import { emitTypes } from "./types";
+
 exports.default = series(
     wasm,
-    parallel(emulators, test)
+    parallel(emulators, test, emitTypes),
 );
 
 

@@ -2,7 +2,7 @@ import { assert } from "chai";
 
 import { WasmModulesImpl } from "../../src/modules";
 import { CacheNoop } from "../../src/cache";
-import LibZip from "../../native/libzip/ts/src/jsdos-libzip";
+import LibZip from "../../src/libzip/libzip";
 
 export async function makeLibZip() {
     const wasm = await new WasmModulesImpl("/", new CacheNoop()).libzip();

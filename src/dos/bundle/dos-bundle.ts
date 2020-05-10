@@ -2,7 +2,7 @@
 // Is a complete bundle that contains everything needed to start dosbox server
 
 import { DosConfig, createDosConfig, toDosboxConf } from "./dos-conf";
-import LibZip from "../../../native/libzip/ts/src/jsdos-libzip";
+import LibZip from "../../libzip/libzip";
 
 import { HTTPRequest } from "../../http";
 import { Cache } from "../../cache";

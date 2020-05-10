@@ -1,11 +1,10 @@
 import { assert } from "chai";
 
-import { createDosConfig, toDosboxConf, DosConfig } from "../../src/dos/bundle/dos-conf";
+import { createDosConfig, toDosboxConf } from "../../src/dos/bundle/dos-conf";
 import DosBundle from "../../src/dos/bundle/dos-bundle";
 
 import { makeLibZip, destroy } from "./libzip";
-import LibZip from "../../native/libzip/ts/src/jsdos-libzip";
-import { CacheNoop } from "../../src/cache";
+import LibZip from "../../src/libzip/libzip";
 
 import Emulators from "../../src/emulators";
 

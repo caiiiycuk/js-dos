@@ -1,9 +1,8 @@
 {
   "name": "emulators",
   "version": "0.0.1",
-  "description": "emulators",
-  "main": "dist/js-dos.js",
-  "types": "dist/typescript/js-dos.ts",
+  "description": "Emulators (dos) with standartized API",
+  "types": "dist/types/emulators.d.ts",
   "browserslist": "> 0.25%, not dead",
   "repository": {
     "type": "git",
@@ -14,10 +13,12 @@
     "dos",
     "api",
     "browser",
-    "dosbox"
+    "dosbox",
+    "emulators",
+    "webassembly"
   ],
   "author": "Alexander Guryanov (aka caiiiycuk)",
-  "license": "ISC",
+  "license": "GPL-2.0",
   "bugs": {
     "url": "https://github.com/caiiiycuk/js-dos/issues"
   },
