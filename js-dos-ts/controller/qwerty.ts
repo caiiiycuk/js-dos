@@ -39,8 +39,8 @@ function convert(input: string): string
     while (i < input.length) {
         if (input[i] === '<') {
             let index: number = controlChars.findIndex((key: any) => {
-                return input.substr(i+1, key.name.length).toLowerCase()
-                    === key.name.toLowerCase();
+                return input.substr(i+1, key.name.length+1).toLowerCase()
+                    === key.name.toLowerCase() + '>';
             });
             if (index !== -1) {
                 output += String.fromCharCode(controlChars[index].code);
