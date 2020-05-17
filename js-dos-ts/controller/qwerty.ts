@@ -10,6 +10,54 @@ const defaultOptions: QwertyOptions = {
     uppercase: true,
 };
 
+function convert(input: string): string
+{
+    let controlChars: any[] = [
+        { name: 'Backspace', code: 8 },
+        { name: 'Tab',       code: 9 },
+        { name: 'Enter',     code: 13 },
+        { name: 'Shift',     code: 16 },
+        { name: 'Ctrl',      code: 17 },
+        { name: 'Alt',       code: 18 },
+        { name: 'Pause',     code: 19 },
+        { name: 'Caps',      code: 20 },
+        { name: 'Esc',       code: 27 },
+        { name: 'PgUp',      code: 33 },
+        { name: 'PgDn',      code: 34 },
+        { name: 'End',       code: 35 },
+        { name: 'Home',      code: 36 },
+        { name: 'Left',      code: 37 },
+        { name: 'Up',        code: 38 },
+        { name: 'Right',     code: 39 },
+        { name: 'Down',      code: 40 },
+        { name: 'Insert',    code: 45 },
+        { name: 'Delete',    code: 46 },
+    ];
+
+    let i: number = 0;
+    let output: string = '';
+    while (i < input.length) {
+        if (input[i] === '<') {
+            let index: number = controlChars.findIndex((key: any) => {
+                return input.substr(i+1, key.name.length).toLowerCase()
+                    === key.name.toLowerCase();
+            });
+            if (index !== -1) {
+                output += String.fromCharCode(controlChars[index].code);
+                i += controlChars[index].name.length + 2;
+            } else {
+                output += input[i];
+                i++;
+            }
+        } else {
+            output += input[i];
+            i++;
+        }
+    }
+
+    return output;
+}
+
 export default function Qwerty(zone: HTMLDivElement, consumer: DosKeyEventConsumer,
                                options: QwertyOptions = defaultOptions) {
     DosDom.applyCss("lqwerty-css", css + "\n\n" + (options.cssText || ""));
@@ -25,16 +73,18 @@ export default function Qwerty(zone: HTMLDivElement, consumer: DosKeyEventConsum
         }
 
         let i = 0;
+        let convertedValue: string = convert(value);
+
         const id = setInterval(() => {
-            if (i >= value.length * 2) {
+            if (i >= convertedValue.length * 2) {
                 clearInterval(id);
                 return;
             }
 
             if (i % 2 === 0) {
-                consumer.onPress(value.charCodeAt(i / 2));
+                consumer.onPress(convertedValue.charCodeAt(i / 2));
             } else {
-                consumer.onRelease(value.charCodeAt((i - 1) / 2));
+                consumer.onRelease(convertedValue.charCodeAt((i - 1) / 2));
             }
             i++;
         }, 100);
