@@ -117,7 +117,7 @@ See example of React component in FAQ section
 All examples are interactive, read more in [**Examples**](https://js-dos.com/6.22/examples/) sections.
 
 ### Demo app
-<a href="https://dosify.me">Demo app</a> that allows try js-dos box with your game archive.
+<a href="https://caiiiycuk.github.io/dosify/">Demo app</a> that allows try js-dos box with your game archive.
 
 ### Clients
 You can found real use of js-dos on certain websites about dos games.
