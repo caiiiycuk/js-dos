@@ -42,8 +42,6 @@ export interface Logger {
 }
 
 if (typeof window !== undefined) {
-    (window as any).Emulators = emulatorsImpl;
+    (window as any).emulators = emulatorsImpl;
 }
-
-(window as any).emulators = emulatorsImpl;
-
+export default emulators;

@@ -4,15 +4,15 @@
 // gulpfile.ts/wasm.ts --> generateBuildInfo
 
 export const Build = {
-    version: "0.0.4 (3a454c4f13ccb89de3cc9ea8ff4ea638)",
-    buildSeed: 1589097343039,
+    version: "0.0.6 (ab07cb320c8b97261dd5c08ef0d5e089)",
+    buildSeed: 1592672219466,
     "wdirect.wasm": {
         "size": 1307105,
         "gzSize": 460296
     },
     "wdirect.js": {
         "size": 125240,
-        "gzSize": 32461
+        "gzSize": 32464
     },
     "wlibzip.wasm": {
         "size": 106294,
@@ -28,7 +28,7 @@ export const Build = {
     },
     "wworker.js": {
         "size": 261896,
-        "gzSize": 63905
+        "gzSize": 63911
     }
 ,
 };
