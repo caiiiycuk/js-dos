@@ -45,5 +45,5 @@ if (typeof window !== undefined) {
     (window as any).Emulators = emulatorsImpl;
 }
 
-const emulators: Emulators = emulatorsImpl;
-export default emulators;
+(window as any).emulators = emulatorsImpl;
+
