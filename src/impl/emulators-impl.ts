@@ -57,7 +57,7 @@ class EmulatorsImpl implements Emulators {
         }
 
         const make = async () => {
-            this.cache = await CacheDb(Build.version);
+            this.cache = await CacheDb(Build.version, this.logger);
             return new WasmModulesImpl(this.pathPrefix, this.cache);
         }
 

@@ -27,9 +27,12 @@ export class CacheNoop implements Cache {
     }
 }
 
-export function CacheDb(version: string): Promise<Cache> {
-    return new Promise((resolve, reject) => {
-        new CacheDbImpl(version, resolve, (msg: string) => reject(new Error(msg)));
+export function CacheDb(version: string, logger: { onErr(...args: any[]): any }): Promise<Cache> {
+    return new Promise((resolve) => {
+        new CacheDbImpl(version, resolve, (msg: string) => {
+            logger.onErr(msg);
+            resolve(new CacheNoop());
+        });
     });
 }
 
@@ -52,7 +55,7 @@ class CacheDbImpl implements Cache {
 
         const openRequest = this.indexedDB.open("js-dos-cache (" + version + ")", 1);
         openRequest.onerror = (event) => {
-            onerror("Can't open cache database");
+            onerror("Can't open cache database: " + openRequest.error?.message);
         };
         openRequest.onsuccess = (event) => {
             this.db = openRequest.result;
