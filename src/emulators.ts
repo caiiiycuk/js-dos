@@ -12,6 +12,12 @@ export interface Emulators {
 }
 
 export interface CommandInterface {
+    // * current render buffer width
+    height: () => number;
+
+    // * current render buffer height
+    width: () => number;
+
     // * `screenshot()` - get screnshot of canvas as ImageData
     screenshot: () => Promise<ImageData>;
 

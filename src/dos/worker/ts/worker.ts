@@ -38,8 +38,8 @@ export default function DosWorker(workerUrl: string,
 
 class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
-    private width: number = 0;
-    private height: number = 0;
+    private frameWidth: number = 0;
+    private frameHeight: number = 0;
     private rgba: Uint8ClampedArray = new Uint8ClampedArray();
     private client: WorkerClient;
 
@@ -69,19 +69,19 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
     }
 
     onFrameSize(width: number, height: number) {
-        if (this.width === width && this.height === height) {
+        if (this.frameWidth === width && this.frameHeight === height) {
             return;
         }
 
-        this.width = width;
-        this.height = height;
+        this.frameWidth = width;
+        this.frameHeight = height;
         this.rgba = new Uint8ClampedArray(width * height * 4);
         this.eventsImpl.fireFrameSize(width, height);
     }
 
     onFrameLines(lines: FrameLine[]) {
         for (const line of lines) {
-            this.rgba.set(line.heapu8, line.start * this.width * 4);
+            this.rgba.set(line.heapu8, line.start * this.frameWidth * 4);
         }
         this.eventsImpl.fireFrame(this.rgba);
     }
@@ -118,12 +118,20 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
         }
     }
 
+    width() {
+        return this.frameWidth;
+    }
+
+    height() {
+        return this.frameHeight;
+    }
+
     screenshot(): Promise<ImageData> {
         for (let next = 3; next < this.rgba.byteLength; next = next + 4) {
             this.rgba[next] = 255;
         }
 
-        return Promise.resolve(new ImageData(this.rgba, this.width, this.height));
+        return Promise.resolve(new ImageData(this.rgba, this.frameWidth, this.frameHeight));
     }
 
 

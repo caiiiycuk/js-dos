@@ -25,6 +25,9 @@ export default async function DosDirect(wasm: WasmModule,
         stdout: eventsImpl.onStdout,
     });
 
+    module.print = logger.onLog;
+    module.printErr = logger.onErr;
+
     const ci = await new Promise<CommandInterface>((resolve, reject) => {
         try {
             new DirectCommandInterface(module, bundle, eventsImpl, resolve);
@@ -61,9 +64,17 @@ class DirectCommandInterface implements CommandInterface {
         this.module._runRuntime();
     }
 
+    width() {
+        return this.module._getFrameWidth();
+    }
+
+    height() {
+        return this.module._getFrameHeight();
+    }
+
     screenshot(): Promise<ImageData> {
-        const width = this.module._getFrameWidth();
-        const height = this.module._getFrameHeight();
+        const width = this.width();
+        const height = this.height();
         const rgbaPtr = this.module._getFrameRgba();
 
         const rgba = new Uint8ClampedArray(this.module.HEAPU8.buffer, rgbaPtr, width * height * 4);

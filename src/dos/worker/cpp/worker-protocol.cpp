@@ -24,6 +24,8 @@ EM_JS(void, ws_init_runtime, (), {
     Module.err = function() {
       sendMessage("ws-err", { args: Array.prototype.slice.call(arguments) });
     };
+    Module.print = Module.log;
+    Module.printErr = Module.err;
 
     onmessage = function(e) {
       var data = e.data;
