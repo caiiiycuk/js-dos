@@ -1,8 +1,11 @@
 import DosBundle from "./dos/bundle/dos-bundle";
 import emulatorsImpl from "./impl/emulators-impl";
 
+import { Cache } from "./cache";
+
 export interface Emulators {
     pathPrefix: string;
+    cache: () => Promise<Cache>;
     dosBundle: () => Promise<DosBundle>;
     dosDirect: (bundle: Uint8Array) => Promise<CommandInterface>;
     dosWorker: (bundle: Uint8Array) => Promise<CommandInterface>;

@@ -11,12 +11,11 @@ import DosWorker from "../dos/worker/ts/worker";
 class EmulatorsImpl implements Emulators {
     pathPrefix = "";
 
+    private cachePromise?: Promise<Cache>;
     private wasmModulesPromise?: Promise<IWasmModules>;
-    private cache: Cache;
     private logger: Logger;
 
     constructor() {
-        this.cache = new CacheNoop();
         this.logger = {
             onLog(...args: any[]) {
                 // tslint:disable-next-line:no-console
@@ -33,10 +32,18 @@ class EmulatorsImpl implements Emulators {
         };
     }
 
+    cache(): Promise<Cache> {
+        if (this.cachePromise === undefined) {
+            this.cachePromise = CacheDb(Build.version, this.logger);
+        }
+        return this.cachePromise;
+    }
+
     async dosBundle(): Promise<DosBundle> {
         const modules = await this.wasmModules();
         const libzipWasm = await modules.libzip();
-        return new DosBundle(libzipWasm, this.cache);
+        const cache = await this.cache();
+        return new DosBundle(libzipWasm, cache);
     }
 
     async dosDirect(bundle: Uint8Array): Promise<CommandInterface> {
@@ -57,8 +64,8 @@ class EmulatorsImpl implements Emulators {
         }
 
         const make = async () => {
-            this.cache = await CacheDb(Build.version, this.logger);
-            return new WasmModulesImpl(this.pathPrefix, this.cache);
+            const cache = await this.cache();
+            return new WasmModulesImpl(this.pathPrefix, cache);
         }
 
         this.wasmModulesPromise = make();
