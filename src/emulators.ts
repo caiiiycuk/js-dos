@@ -2,6 +2,7 @@ import DosBundle from "./dos/bundle/dos-bundle";
 import emulatorsImpl from "./impl/emulators-impl";
 
 import { Cache } from "./cache";
+import { Keys } from "./keys";
 
 export interface Emulators {
     pathPrefix: string;
@@ -53,4 +54,5 @@ export interface Logger {
 if (typeof window !== undefined) {
     (window as any).emulators = emulatorsImpl;
 }
+
 export default emulators;

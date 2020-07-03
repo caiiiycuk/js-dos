@@ -25,7 +25,5 @@ onmessage = (e) => {
 
         return;
     }
-
-    console.log("Unknown message: " + JSON.stringify(e));
 };
 
