@@ -57,6 +57,13 @@ class DirectCommandInterface implements CommandInterface {
                 eventsImpl: CommandInterfaceEventsImpl,
                 ready: (ci: CommandInterface) => void) {
         this.module = module;
+        this.module.onFrameSize = (width: number, height: number) => {
+            eventsImpl.fireFrameSize(width, height);
+        };
+        this.module.onFrame = (rgbaPtr: number) => {
+            const rgba = new Uint8ClampedArray(this.module.HEAPU8.buffer, rgbaPtr, this.width() * this.height() * 4);
+            eventsImpl.fireFrame(rgba);
+        };
         this.module.bundle = new Uint8Array(bundle);
         this.eventsImpl = eventsImpl;
         this.module.callMain([]);

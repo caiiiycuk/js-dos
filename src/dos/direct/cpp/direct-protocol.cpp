@@ -16,6 +16,14 @@ EM_JS(void, emsc_client_stdout, (const char* data, uint32_t amount), {
     Module.stdout(UTF8ToString(data, amount));
   });
 
+EM_JS(void, emsc_client_frame_size, (int width, int height), {
+    Module.onFrameSize(width, height);
+  });
+
+EM_JS(void, emsc_client_frame, (void* rgba), {
+    Module.onFrame(rgba);
+  })
+
 EM_JS(void, emsc_extract_bundle_to_fs, (), {
     Module.FS.chdir("/home/web_user");
 
@@ -82,6 +90,10 @@ void client_frame_set_size(int width, int height) {
   frameWidth = width;
   frameHeight = height;
   frameRgba = new char[width * height * 4];
+
+#ifdef EMSCRIPTEN
+  emsc_client_frame_size(width, height);
+#endif
 }
 
 void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
@@ -100,6 +112,10 @@ void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
            (char *)rgba + offset,
            count * frameWidth * 4);
   }
+
+#ifdef EMSCRIPTEN
+  emsc_client_frame(rgba);
+#endif
 }
 
 void client_stdout(const char* data, uint32_t amount) {
