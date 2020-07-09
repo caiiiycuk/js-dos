@@ -19,6 +19,9 @@ export interface CommandInterface {
     // * current render buffer height
     width: () => number;
 
+    // * sound frequency
+    soundFrequency: () => number;
+
     // * `screenshot()` - get screnshot of canvas as ImageData
     screenshot: () => Promise<ImageData>;
 
@@ -39,9 +42,10 @@ export interface CommandInterface {
 }
 
 export interface CommandInterfaceEvents {
-    onStdout: (consumer: (message: string) => void | null) => void;
-    onFrameSize: (consumer: (width: number, height: number) => void | null) => void;
-    onFrame: (consumer: (frame: Uint8ClampedArray) => void | null) => void;
+    onStdout: (consumer: ((message: string) => void) | null) => void;
+    onFrameSize: (consumer: ((width: number, height: number) => void) | null) => void;
+    onFrame: (consumer: ((frame: Uint8ClampedArray) => void) | null) => void;
+    onSoundPush: (consumer: ((samples: Float32Array) => void) | null) => void;
 }
 
 

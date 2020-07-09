@@ -66,6 +66,16 @@ EM_JS(void, emsc_pack_fs_to_bundle, (), {
     Module.persist(archive);
   });
 
+EM_JS(void, emsc_client_sound_init, (int freq), {
+    Module.onSoundInit(freq);
+  });
+
+EM_JS(void, emsc_client_sound_push, (const float *samples, int num_samples), {
+    if (num_samples > 0) {
+      Module.onSoundPush(samples, num_samples);
+    }
+  });
+
 EM_JS(void, emsc_exit_runtime, (), {
     if (!Module.exit) {
       var message = "ERR! exitRuntime called without request" +
@@ -125,8 +135,16 @@ void client_stdout(const char* data, uint32_t amount) {
 
 }
 
+void client_sound_init(int freq) {
+#ifdef EMSCRIPTEN
+  emsc_client_sound_init(freq);
+#endif
+}
+
 void client_sound_push(const float *samples, int num_samples) {
-  // TODO
+#ifdef EMSCRIPTEN
+  emsc_client_sound_push(samples, num_samples);
+#endif
 }
 
 extern "C" void EMSCRIPTEN_KEEPALIVE packFsToBundle() {

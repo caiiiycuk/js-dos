@@ -663,6 +663,8 @@ void MIXER_Init(Section *sec) {
     mixer.nosound = section->Get_bool("nosound");
     mixer.blocksize = section->Get_int("blocksize");
 
+    client_sound_init(mixer.freq);
+
     /* Initialize the internal stuff */
     mixer.channels = 0;
     mixer.pos = 0;

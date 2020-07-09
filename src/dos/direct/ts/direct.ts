@@ -51,6 +51,7 @@ class DirectCommandInterface implements CommandInterface {
     private persistPromise?: Promise<Uint8Array>;
     private exitPromise?: Promise<void>;
     private eventsImpl: CommandInterfaceEventsImpl;
+    private freq: number = 0;
 
     constructor(module: any,
                 bundle: Uint8Array,
@@ -63,6 +64,13 @@ class DirectCommandInterface implements CommandInterface {
         this.module.onFrame = (rgbaPtr: number) => {
             const rgba = new Uint8ClampedArray(this.module.HEAPU8.buffer, rgbaPtr, this.width() * this.height() * 4);
             eventsImpl.fireFrame(rgba);
+        };
+        this.module.onSoundInit = (freq: number) => {
+            this.freq = freq;
+        };
+        this.module.onSoundPush = (samples: number, numSamples: number) => {
+            const soundData = new Float32Array(this.module.HEAPF32.buffer, samples, numSamples);
+            eventsImpl.fireSoundPush(soundData);
         };
         this.module.bundle = new Uint8Array(bundle);
         this.eventsImpl = eventsImpl;
@@ -77,6 +85,10 @@ class DirectCommandInterface implements CommandInterface {
 
     height() {
         return this.module._getFrameHeight();
+    }
+
+    soundFrequency() {
+        return this.freq;
     }
 
     screenshot(): Promise<ImageData> {

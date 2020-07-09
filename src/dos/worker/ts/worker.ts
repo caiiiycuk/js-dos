@@ -53,6 +53,8 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
     private eventsImpl = new CommandInterfaceEventsImpl();
 
+    private freq = 0;
+
     constructor(workerUrl: string,
                 wasmModule: WasmModule,
                 bundle: Uint8Array,
@@ -84,6 +86,14 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
             this.rgba.set(line.heapu8, line.start * this.frameWidth * 4);
         }
         this.eventsImpl.fireFrame(this.rgba);
+    }
+
+    onSoundInit(freq: number) {
+        this.freq = freq;
+    }
+
+    onSoundPush(samples: Float32Array) {
+        this.eventsImpl.fireSoundPush(samples);
     }
 
     onPersist(bundle: Uint8Array) {
@@ -124,6 +134,10 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
     height() {
         return this.frameHeight;
+    }
+
+    soundFrequency() {
+        return this.freq;
     }
 
     screenshot(): Promise<ImageData> {

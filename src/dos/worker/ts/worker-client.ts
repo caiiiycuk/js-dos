@@ -6,7 +6,7 @@ type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" |
     "wc-add-key" | "wc-exit";
 type ServerMessage = "ws-ready" | "ws-server-ready" | "ws-frame-set-size" |
     "ws-update-lines" | "ws-log" | "ws-warn" | "ws-err" | "ws-stdout" |
-    "ws-exit" | "ws-persist";
+    "ws-exit" | "ws-persist" | "ws-sound-init" | "ws-sound-push";
 
 export interface FrameLine {
     start: number;
@@ -18,6 +18,8 @@ export interface WorkerHost extends Logger {
     onFrameLines: (lines: FrameLine[]) => void;
     onPersist: (bundle: Uint8Array) => void;
     onStdout: (message: string) => void;
+    onSoundInit: (freq: number) => void;
+    onSoundPush: (samples: Float32Array) => void;
 
     onExit: () => void;
 }
@@ -102,6 +104,12 @@ export class WorkerClient {
             } break;
             case "ws-persist": {
                 this.host.onPersist(props.bundle);
+            } break;
+            case "ws-sound-init": {
+                this.host.onSoundInit(props.freq);
+            } break;
+            case "ws-sound-push": {
+                this.host.onSoundPush(props.samples);
             } break;
             default: {
                 // tslint:disable-next-line:no-console

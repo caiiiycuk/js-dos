@@ -92,6 +92,16 @@ EM_JS(void, emsc_end_frame_update, (), {
     delete Module.frame_update_lines;
   });
 
+EM_JS(void, emsc_ws_client_sound_init, (int freq), {
+    Module.sendMessage("ws-sound-init", { freq : freq });
+  });
+
+EM_JS(void, emsc_ws_client_sound_push, (const float *samples, int num_samples), {
+    if (num_samples > 0) {
+      Module.sendMessage("ws-sound-push", { samples: Module.HEAPF32.slice(samples / 4, samples / 4 + num_samples) });
+    }
+  });
+
 EM_JS(void, emsc_ws_exit_runtime, (), {
     Module.exit = function() { Module.sendMessage("ws-exit"); };
   });
@@ -176,8 +186,12 @@ void client_stdout(const char* data, uint32_t amount) {
   ws_client_stdout(data, amount);
 }
 
+void client_sound_init(int freq) {
+  emsc_ws_client_sound_init(freq);
+}
+
 void client_sound_push(const float *samples, int num_samples) {
-  // TODO
+  emsc_ws_client_sound_push(samples, num_samples);
 }
 
 extern "C" void EMSCRIPTEN_KEEPALIVE extractBundleToFs() {

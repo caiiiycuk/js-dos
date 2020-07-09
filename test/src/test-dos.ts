@@ -88,7 +88,25 @@ function testServer(factory: CIFactory, name: string) {
         await compareAndExit("digger.png", ci);
     });
 
-    test("can simulate key events", async () => {
+    test(name + " can play sound", async () => {
+        const ci = await CI((await Emulators.dosBundle())
+                                .extract("digger.zip")
+                                .autoexec("DIGGER.COM"));
+        assert.ok(ci);
+        assert.ok(ci.soundFrequency() > 0, "sound frequency is zero");
+
+        const samples = await new Promise<Float32Array>((resolve) => {
+            ci.events().onSoundPush((samples: Float32Array) => {
+                resolve(samples);
+            });
+        });
+
+        console.log(ci.soundFrequency(), samples);
+        assert.ok(samples.byteLength > 0, "samples is empty");
+        await ci.exit();
+    })
+
+    test(name + " can simulate key events", async () => {
         const ci = await CI((await Emulators.dosBundle())
             .extract("digger.zip")
             .autoexec("DIGGER.COM"));
