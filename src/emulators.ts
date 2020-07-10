@@ -44,7 +44,7 @@ export interface CommandInterface {
 export interface CommandInterfaceEvents {
     onStdout: (consumer: (message: string) => void) => void;
     onFrameSize: (consumer: (width: number, height: number) => void) => void;
-    onFrame: (consumer: (frame: Uint8ClampedArray) => void) => void;
+    onFrame: (consumer: (frame: Uint8Array) => void) => void;
     onSoundPush: (consumer: (samples: Float32Array) => void) => void;
     onExit: (consumer: () => void) => void;
 }

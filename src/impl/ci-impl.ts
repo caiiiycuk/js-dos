@@ -4,7 +4,7 @@ export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
 
     private onStdoutConsumers: ((message: string) => void)[] = [];
     private onFrameSizeConsumers: ((width: number, height: number) => void)[] = [];
-    private onFrameConsumers: ((frame: Uint8ClampedArray) => void)[] = [];
+    private onFrameConsumers: ((frame: Uint8Array) => void)[] = [];
     private onSoundPushConsumers: ((samples: Float32Array) => void)[] = [];
     private onExitConsumers: (() => void)[] = [];
 
@@ -16,7 +16,7 @@ export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
         this.onFrameSizeConsumers.push(consumer);
     }
 
-    onFrame = (consumer: (frame: Uint8ClampedArray) => void) => {
+    onFrame = (consumer: (frame: Uint8Array) => void) => {
         this.onFrameConsumers.push(consumer);
     }
 
@@ -40,7 +40,7 @@ export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
         }
     }
 
-    fireFrame = (frame: Uint8ClampedArray) => {
+    fireFrame = (frame: Uint8Array) => {
         for (const next of this.onFrameConsumers) {
            next(frame);
         }

@@ -40,7 +40,7 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
     private frameWidth: number = 0;
     private frameHeight: number = 0;
-    private rgba: Uint8ClampedArray = new Uint8ClampedArray();
+    private rgba: Uint8Array = new Uint8Array();
     private client: WorkerClient;
 
     private persistPromise?: Promise<Uint8Array>;
@@ -77,7 +77,7 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
         this.frameWidth = width;
         this.frameHeight = height;
-        this.rgba = new Uint8ClampedArray(width * height * 4);
+        this.rgba = new Uint8Array(width * height * 4);
         this.eventsImpl.fireFrameSize(width, height);
     }
 
@@ -141,11 +141,13 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
     }
 
     screenshot(): Promise<ImageData> {
-        for (let next = 3; next < this.rgba.byteLength; next = next + 4) {
+        const rgba = new Uint8ClampedArray(this.rgba.buffer);
+
+        for (let next = 3; next < rgba.byteLength; next = next + 4) {
             this.rgba[next] = 255;
         }
 
-        return Promise.resolve(new ImageData(this.rgba, this.frameWidth, this.frameHeight));
+        return Promise.resolve(new ImageData(rgba, this.frameWidth, this.frameHeight));
     }
 
 
