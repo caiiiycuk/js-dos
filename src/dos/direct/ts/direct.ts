@@ -22,7 +22,7 @@ export default async function DosDirect(wasm: WasmModule,
         log: logger.onLog,
         warn: logger.onWarn,
         err: errFn,
-        stdout: eventsImpl.onStdout,
+        stdout: eventsImpl.fireStdout,
     });
 
     module.print = logger.onLog;
@@ -146,6 +146,8 @@ class DirectCommandInterface implements CommandInterface {
         this.exitPromise = new Promise((resolve) => {
             this.module.exit = resolve;
             this.module._requestExit();
+        }).then(() => {
+            this.events().fireExit();
         });
 
         return this.exitPromise;

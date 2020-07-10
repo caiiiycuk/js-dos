@@ -2,48 +2,65 @@ import { CommandInterfaceEvents } from "../emulators";
 
 export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
 
-    private onStdoutConsumer: ((message: string) => void) | null = null;
-    private onFrameSizeConsumer: ((width: number, height: number) => void) | null = null;
-    private onFrameConsumer: ((frame: Uint8ClampedArray) => void) | null = null;
-    private onSoundPushConsumer: ((samples: Float32Array) => void) | null = null;
+    private onStdoutConsumers: ((message: string) => void)[] = [];
+    private onFrameSizeConsumers: ((width: number, height: number) => void)[] = [];
+    private onFrameConsumers: ((frame: Uint8ClampedArray) => void)[] = [];
+    private onSoundPushConsumers: ((samples: Float32Array) => void)[] = [];
+    private onExitConsumers: (() => void)[] = [];
 
-    onStdout(consumer: ((message: string) => void) | null) {
-        this.onStdoutConsumer = consumer;
+    onStdout = (consumer: (message: string) => void) => {
+        this.onStdoutConsumers.push(consumer);
     }
 
-    onFrameSize(consumer: ((width: number, height: number) => void) | null) {
-        this.onFrameSizeConsumer = consumer;
+    onFrameSize = (consumer: (width: number, height: number) => void) => {
+        this.onFrameSizeConsumers.push(consumer);
     }
 
-    onFrame(consumer: ((frame: Uint8ClampedArray) => void) | null) {
-        this.onFrameConsumer = consumer;
+    onFrame = (consumer: (frame: Uint8ClampedArray) => void) => {
+        this.onFrameConsumers.push(consumer);
     }
 
-    onSoundPush(consumer: ((samples: Float32Array) => void) | null) {
-        this.onSoundPushConsumer = consumer;
+    onSoundPush = (consumer: (samples: Float32Array) => void) => {
+        this.onSoundPushConsumers.push(consumer);
     }
 
-    fireStdout(message: string) {
-        if (this.onStdoutConsumer !== null) {
-            this.onStdoutConsumer(message);
+    onExit = (consumer: () => void) => {
+        this.onExitConsumers.push(consumer);
+    }
+
+    fireStdout = (message: string) => {
+        for (const next of this.onStdoutConsumers) {
+            next(message);
         }
     }
 
-    fireFrameSize(width: number, height: number) {
-        if (this.onFrameSizeConsumer !== null) {
-            this.onFrameSizeConsumer(width, height);
+    fireFrameSize = (width: number, height: number) => {
+        for (const next of this.onFrameSizeConsumers) {
+            next(width, height);
         }
     }
 
-    fireFrame(frame: Uint8ClampedArray) {
-        if (this.onFrameConsumer !== null) {
-            this.onFrameConsumer(frame);
+    fireFrame = (frame: Uint8ClampedArray) => {
+        for (const next of this.onFrameConsumers) {
+           next(frame);
         }
     }
 
-    fireSoundPush(samples: Float32Array) {
-        if (this.onSoundPushConsumer !== null) {
-            this.onSoundPushConsumer(samples);
+    fireSoundPush = (samples: Float32Array) => {
+        for (const next of this.onSoundPushConsumers) {
+            next(samples);
         }
+    }
+
+    fireExit = () => {
+        for (const next of this.onExitConsumers) {
+            next();
+        }
+
+        this.onStdoutConsumers = [];
+        this.onFrameSizeConsumers = [];
+        this.onFrameConsumers = [];
+        this.onSoundPushConsumers = [];
+        this.onExitConsumers = [];
     }
 }

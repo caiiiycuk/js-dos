@@ -105,6 +105,21 @@ function testServer(factory: CIFactory, name: string) {
         await ci.exit();
     })
 
+    test(name + " exit event", async () => {
+        const ci = await CI((await Emulators.dosBundle())
+                                .extract("digger.zip")
+                                .autoexec("DIGGER.COM"));
+        assert.ok(ci);
+        const exitPromise = new Promise<void>((resolve) => {
+            ci.events().onExit(() => {
+                resolve();
+            });
+        });
+        await ci.exit();
+        await exitPromise;
+        assert.ok(true);
+    })
+
     test(name + " can simulate key events", async () => {
         const ci = await CI((await Emulators.dosBundle())
             .extract("digger.zip")

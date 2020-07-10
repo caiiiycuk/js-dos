@@ -177,6 +177,9 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
         }
 
         this.exitPromise = new Promise<void>((resolve) => this.exitResolve = resolve);
+        this.exitPromise.then(() => {
+            this.events().fireExit();
+        });
         this.client.exit();
         return this.exitPromise;
     }
