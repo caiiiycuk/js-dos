@@ -83,7 +83,7 @@ export class MixerCategory implements DosConfigCategory {
         rate: {
             name: "rate",
             description: "Frequency rate of sound",
-            value: 22050,
+            value: 44100,
             allowedValues: [],
         },
         nosound: {

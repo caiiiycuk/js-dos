@@ -62,14 +62,14 @@ class DirectCommandInterface implements CommandInterface {
             eventsImpl.fireFrameSize(width, height);
         };
         this.module.onFrame = (rgbaPtr: number) => {
-            const rgba = this.module.HEAPU8.subarray(rgbaPtr, rgbaPtr + this.width() * this.height() * 4);
+            const rgba = this.module.HEAPU8.slice(rgbaPtr, rgbaPtr + this.width() * this.height() * 4);
             eventsImpl.fireFrame(rgba);
         };
         this.module.onSoundInit = (freq: number) => {
             this.freq = freq;
         };
         this.module.onSoundPush = (samples: number, numSamples: number) => {
-            const soundData = this.module.HEAPF32.subarray(samples / 4, samples /4 + numSamples);
+            const soundData = this.module.HEAPF32.slice(samples / 4, samples /4 + numSamples);
             eventsImpl.fireSoundPush(soundData);
         };
         this.module.bundle = new Uint8Array(bundle);
