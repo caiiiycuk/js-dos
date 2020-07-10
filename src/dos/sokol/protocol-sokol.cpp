@@ -107,6 +107,15 @@ void client_stdout(const char* data, uint32_t amount) {
   //
 }
 
+void client_sound_init(int freq) {
+  saudio_desc audioDescription = {};
+  audioDescription.sample_rate = static_cast<int>(freq);
+  audioDescription.num_channels = 1;
+
+  saudio_setup(&audioDescription);
+  assert(saudio_isvalid());
+}
+
 void client_sound_push(const float *samples, int num_samples) {
   saudio_push(samples, num_samples);
 }
@@ -120,13 +129,6 @@ void sokolInit() {
   gfxDescription.context_pool_size = 1;
 
   sg_setup(&gfxDescription);
-
-  saudio_desc audioDescription = {};
-  audioDescription.sample_rate = static_cast<int>(44100);
-  audioDescription.num_channels = 1;
-
-  saudio_setup(&audioDescription);
-  assert(saudio_isvalid());
 }
 
 void sokolFrame() {

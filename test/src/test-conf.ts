@@ -95,8 +95,8 @@ cycleup=10
 cycledown=20
 [mixer]
 nosound=false
+rate=22050
 
-rate=44100
 blocksize=1024
 prebuffer=20
 

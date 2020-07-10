@@ -93,7 +93,7 @@ function testServer(factory: CIFactory, name: string) {
                                 .extract("digger.zip")
                                 .autoexec("DIGGER.COM"));
         assert.ok(ci);
-        assert.ok(ci.soundFrequency() > 0, "sound frequency is zero");
+        assert.equal(ci.soundFrequency(), 22050, "sound frequency should be 22050");
 
         const samples = await new Promise<Float32Array>((resolve) => {
             ci.events().onSoundPush((samples: Float32Array) => {
@@ -101,7 +101,6 @@ function testServer(factory: CIFactory, name: string) {
             });
         });
 
-        console.log(ci.soundFrequency(), samples);
         assert.ok(samples.byteLength > 0, "samples is empty");
         await ci.exit();
     })

@@ -80,6 +80,12 @@ export class MixerCategory implements DosConfigCategory {
     name = "mixer";
     description = "Here you can define the quality of emulated audio.";
     options = {
+        rate: {
+            name: "rate",
+            description: "Frequency rate of sound",
+            value: 22050,
+            allowedValues: [],
+        },
         nosound: {
             name: "nosound",
             description: "Enable silent mode, sound is still emulated though.",
@@ -303,7 +309,6 @@ cycledown=20
 
 function writeMixerDefaults() {
     return `
-rate=44100
 blocksize=1024
 prebuffer=20
 `;
