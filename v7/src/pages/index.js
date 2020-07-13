@@ -8,32 +8,32 @@ import styles from './styles.module.css';
 
 const features = [
   {
-    title: <>Easy to Use</>,
+    title: <>js-dos</>,
     imageUrl: 'img/undraw_docusaurus_mountain.svg',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        js-dos was designed from the ground up to be easily installed and
+        used to get your DOS program up and running in browser quickly.
       </>
     ),
   },
   {
-    title: <>Focus on What Matters</>,
+    title: <>emulators-ui</>,
     imageUrl: 'img/undraw_docusaurus_tree.svg',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+            emulators-ui is a default set of components that used to build js-dos player ui.
+            You can resuse them to build your custom DOS player.
       </>
     ),
   },
   {
-    title: <>Powered by React</>,
+    title: <>emulators</>,
     imageUrl: 'img/undraw_docusaurus_react.svg',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+            emulators is a core of js-dos, it have standartized api and can run emulation in different
+        environments.
       </>
     ),
   },
@@ -59,7 +59,7 @@ function Home() {
   const {siteConfig = {}} = context;
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
+      title={`${siteConfig.title}`}
       description="Description will go into a meta tag in <head />">
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">

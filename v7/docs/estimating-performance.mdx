@@ -1,0 +1,46 @@
+---
+id: estimating-performance
+title: Esitmating emulators performance
+---
+
+## Creating js-dos bundle
+
+Please open in new tab our bundle generator [studio](https://dos.zone/en/studio). 
+Click on `Browse` button, and choose program archive. In this guide we use [Dhrystone 2 Test](../bundles/dhry2.zip), 
+read more below.
+
+![Browser button](../img/bundle_guide_1.jpg)
+
+Next, you need to select executable that will be runned when DOS emulator starts. Please select `dhry_2.exe`.
+
+![Select executable](../img/bundle_guide_2.jpg)
+
+On next step you can change various of dosbox options, but usually defaults is pretty good. You can scroll down and press
+`create archive`.
+
+![Create archive](../img/bundle_guide_3.jpg)
+
+Finally, you can download `js-dos bundle`.
+
+![Download archive](../img/bundle_guide_4.jpg)
+
+## Performance testing
+
+To measure performance we used variant of Dhrystone 2 Test originally taken from this [page](http://www.roylongbottom.org.uk/dhrystone%20results.htm). Original version used `clock()` to calculate delta time. Which is good for real pc, but does not very accurate for dosbox emulator. When `clock()` call happened modified version send `~>dtime` marker which intercepted by test page and used to calculate delta time with `performance.now()` from browser. Source code of modified test is [here](https://github.com/caiiiycuk/js-dos/tree/6.22/programms/dhry2).
+
+Basically this test produce a lot of int operations and measure amount of operations (Dhrystones) produced per second. Output is a `VAX MIPS RATING` which is Drhystones per second divided by 1757 (is as DEC VAX 11/780 result).
+
+To run this test we need import `emulators.js` and use our `js-dos bundle` to start test.
+
+You can write JSX and use React components within your Markdown thanks to [MDX](https://mdxjs.com/).
+
+export const Highlight = ({children, color}) => ( <span style={{
+      backgroundColor: color,
+      borderRadius: '2px',
+      color: '#fff',
+      padding: '0.2rem',
+    }}>{children}</span> );
+
+<Highlight color="#25c2a0">Docusaurus green</Highlight> and <Highlight color="#1877F2">Facebook blue</Highlight> are my favorite colors.
+
+I can write **Markdown** alongside my _JSX_!

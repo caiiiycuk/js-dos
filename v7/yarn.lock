@@ -3581,6 +3581,16 @@ emoticon@^3.2.0:
   resolved "https://registry.yarnpkg.com/emoticon/-/emoticon-3.2.0.tgz#c008ca7d7620fac742fe1bf4af8ff8fed154ae7f"
   integrity sha512-SNujglcLTTg+lDAcApPNgEdudaqQFiAbJCqzjNxJkvN9vAwCGi0uu8IUVvx+f16h+V44KCY6Y2yboroc9pilHg==
 
+emulators-ui@^0.0.17:
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.0.17.tgz#6a286faf322dba4defbe143cb0f88a3ec6e2f1f7"
+  integrity sha512-WJlVNaeNlcKC7RWUYhz6KP8JpTUXarlg3Gzbf2EjlWmkpeOjkm6CnJB7Q3J3E7YPgSDvVJguQ44eCBWlACl42g==
+
+emulators@^0.0.23:
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.0.23.tgz#cc6627d905680f617112b105e5c69c5f9b0b0de3"
+  integrity sha512-RBQ9a8ShANBy4Sjm8iYdkFxLrZnUZABysF5KFKC/b08NuYJ1BcOv4OoG//J6zFyxksJbvi1ELxZEqgesFtOW1Q==
+
 encodeurl@~1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-1.0.2.tgz#ad3ff4c86ec2d029322f5a02c3a9a606c95b3f59"

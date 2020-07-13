@@ -12,6 +12,8 @@
     "@docusaurus/core": "^2.0.0-alpha.58",
     "@docusaurus/preset-classic": "^2.0.0-alpha.58",
     "clsx": "^1.1.1",
+    "emulators": "^0.0.23",
+    "emulators-ui": "^0.0.17",
     "react": "^16.8.4",
     "react-dom": "^16.8.4"
   },
