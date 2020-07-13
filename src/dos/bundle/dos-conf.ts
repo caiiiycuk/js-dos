@@ -1,18 +1,18 @@
 // # jsdos config
 // is a builder that create dosbox.conf for your
 
-type DosConfigValue = string | number | boolean;
+export type DosConfigValue = string | number | boolean;
 
-interface DosConfigOption {
+export interface DosConfigOption {
     name: string,
     description: string,
     value: DosConfigValue,
     allowedValues: DosConfigValue[],
 };
 
-type DosCategoryOptions = { [name: string]: DosConfigOption };
+export type DosCategoryOptions = { [name: string]: DosConfigOption };
 
-interface DosConfigCategory {
+export interface DosConfigCategory {
     name: string,
     description: string,
     options: DosCategoryOptions,
