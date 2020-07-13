@@ -14,10 +14,10 @@ EM_JS(void, jsdos_log, (const char* tag, const char* message), {
     Module.log("[native:   log]", UTF8ToString(tag), UTF8ToString(message));
   });
 EM_JS(void, jsdos_warn, (const char* tag, const char* message), {
-    Module.log("[native: warn]", UTF8ToString(tag), UTF8ToString(message));
+    Module.log("[native:  warn]", UTF8ToString(tag), UTF8ToString(message));
   });
 EM_JS(void, jsdos_error, (const char* tag, const char* message), {
-    Module.log("[native:error]", UTF8ToString(tag), UTF8ToString(message));
+    Module.log("[native: error]", UTF8ToString(tag), UTF8ToString(message));
   });
 // clang-format on
 #else
