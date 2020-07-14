@@ -122,9 +122,10 @@ All examples are interactive, read more in [**Examples**](https://js-dos.com/6.2
 ### Clients
 You can found real use of js-dos on certain websites about dos games.
 
-|[![JS-DOS Games](/games-logo.png)](https://js-dos.com/games/)|[![Dos Games Archive](/dga-logo.png)](https://www.dosgamesarchive.com/play-online/)|[![Emupedia](/emupedia-logo.png)](https://emupedia.net/beta/emuos/)|
-|:---:|:---:|:---:|
-|[JS-DOS Games](https://js-dos.com/games/)|[Dos Games Archive](https://www.dosgamesarchive.com/play-online/)|[Emupedia](https://emupedia.net/beta/emuos/)|
+* [JS-DOS Games](https://js-dos.com/games/)
+* [Dos Games Archive](https://www.dosgamesarchive.com/play-online/)
+* [Emupedia](https://emupedia.net/beta/emuos/)
+* [Abandonware France](https://www.abandonware-france.org/online)
 
 Please open issue on github if you want to add link for another site that uses js-dos.
 
