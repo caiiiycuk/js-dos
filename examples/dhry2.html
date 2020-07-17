@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <title>Dhrystone Test 2</title>
+        <script src="js-dos/js-dos.js"></script>
+        <link rel="stylesheet" href="js-dos/js-dos.css">
+    </head>
+
+    <body>
+        <div id="root" style="width: 100%; height: 100%;"></div>
+        <script>
+         emulators.pathPrefix = "js-dos/";
+
+         Dos(document.getElementById("root"),
+             "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos");
+
+         /* let ciPromise = null;
+          * const layers = emulatorsUi.dom.layers(document.getElementById("root"));
+
+          * async function start() {
+          *     stop();
+
+          *     layers.showLoadingLayer();
+
+          *     const implName = document.getElementById("impl-select").value;
+          *     const bundle = await emulatorsUi.network.resolveBundle("bundles/digger.jsdos");
+
+          *     if (implName === "dos-worker") {
+          *         ciPromise = emulators.dosWorker(bundle);
+          *     } else {
+          *         ciPromise = emulators.dosDirect(bundle);
+          *     }
+
+          *     ciPromise.then((ci) => {
+          *         emulatorsUi.graphics.webGl(layers, ci);
+          *         emulatorsUi.sound.audioNode(ci);
+          *         emulatorsUi.controls.keyboard(layers, ci);
+          *         layers.hideLoadingLayer();
+          *     });
+          * }
+
+          * function stop() {
+          *     if (ciPromise !== null) {
+          *         ciPromise.then((ci) => ci.exit());
+          *     }
+          * } */
+        </script>
+    </body>
+</html>

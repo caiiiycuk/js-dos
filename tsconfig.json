@@ -1,0 +1,18 @@
+{
+    "files": ["gulpfile.ts/index.ts",
+              "src/js-dos.ts"],
+    "compilerOptions": {
+        "target": "esnext",
+        "outDir": "build",
+        "allowJs": false,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": false
+      }
+}

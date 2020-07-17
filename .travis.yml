@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "11.8"
+
+script:
+  - nvm use 11.8
+  - npm install -g gulp
+  - npm install
+  - gulp
