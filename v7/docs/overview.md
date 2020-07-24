@@ -64,7 +64,7 @@ function runInIframe() {
   
   return (
     <div>
-      <iframe id="demo-iframe" class="demo"></iframe>
+      <iframe id="demo-iframe" className="demo"></iframe>
       <br/>
       <button onClick={onStart}>Start</button>
     </div>

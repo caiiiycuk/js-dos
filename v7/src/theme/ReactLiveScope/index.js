@@ -10,8 +10,7 @@ import React from 'react';
 let emulators = {};
 if (typeof window !== 'undefined') {
     emulators = window.emulators;
-    emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
-
+    emulators.pathPrefix = "/v7/build/releases/latest/emulators/";
 }
 
 // Add react-live imports you need here
