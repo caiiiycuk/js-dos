@@ -1,6 +1,6 @@
 {
     "name": "js-dos",
-    "version": "7.0.0-beta.4",
+    "version": "7.0.0-beta.5",
     "description": "Easiest API to run dos programs in browser",
     "main": "dist/js-dos.js",
     "types": "dist/types/js-dos.d.ts",
@@ -48,7 +48,7 @@
         "docco": "^0.8.0",
         "element-resize-detector": "^1.2.1",
         "emulators": "0.0.23",
-        "emulators-ui": "0.0.18",
+        "emulators-ui": "0.0.19",
         "fs-extra": "^9.0.0",
         "git-repo-info": "^2.1.1",
         "gulp": "^4.0.2",

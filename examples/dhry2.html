@@ -10,7 +10,7 @@
     <body>
         <div id="root" style="width: 100%; height: 100%;"></div>
 
-        <div style="position: absolute; top: 20px; right: 20px">
+        <div style="position: absolute; top: 20px; left: 20px">
             <button onclick="javascript:start()">Start</button>
             <button onclick="javascript:stop()">Stop</button>
         </div>
@@ -19,7 +19,6 @@
          emulators.pathPrefix = "js-dos/";
          const dos = Dos(document.getElementById("root"));
          function start() {
-
              dos.run("https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos");
          }
 
