@@ -3,6 +3,7 @@ export declare class Layers {
     root: HTMLDivElement;
     loading: HTMLDivElement;
     canvas: HTMLCanvasElement;
+    mouseOverlay: HTMLDivElement;
     controls: HTMLDivElement;
     width: number;
     height: number;

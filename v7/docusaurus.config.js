@@ -63,6 +63,10 @@ module.exports = {
               label: 'GitHub',
               href: 'https://github.com/caiiiycuk/js-dos',
             },
+            {
+              label: 'Discord',
+              href: 'https://discord.com/invite/hMVYEbG',
+            }
           ],
         },
       ],
@@ -84,5 +88,10 @@ module.exports = {
         },
       },
     ],
+  ],
+  themes: ['@docusaurus/theme-live-codeblock'],
+  scripts: [
+    'https://js-dos.com/v7/build/releases/latest/emulators/emulators.js',
+    'https://js-dos.com/v7/build/releases/latest/js-dos/js-dos.js',
   ],
 };
