@@ -64,7 +64,7 @@ function runInIframe() {
   
   return (
     <div>
-      <iframe id="demo-iframe" style={{ width: "64vw", height: "40vw", maxWidth: "640px", maxHeight: "320px" }}></iframe>
+      <iframe id="demo-iframe" class="demo"></iframe>
       <br/>
       <button onClick={onStart}>Start</button>
     </div>
@@ -77,30 +77,40 @@ function runInIframe() {
 js-dos v7 is even simple then 6.22, to run `bundle` you just need a one line of code:
 
 ```js live
-declare const emulators: any;
-
 function runWithJsDos() {
+  // we need to set prefix where emulator wasm is located
   emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
 
+  const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos";
+
+  let dos = null;
   function onStart() {
-    const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos";
-    
-    Dos(document.getElementById("demo-jsdos")).run(bundleUrl);
+    if (!dos) {
+      dos = Dos(document.getElementById("demo-jsdos"));
+    }
+    dos.run(bundleUrl);
+  };
+  
+  function onStop() {
+    if (dos) {
+      dos.stop();
+    }
   };
   
   return (
     <div>
-      <div id="demo-jsdos" style={{ width: "64vw", height: "40vw", maxWidth: "640px", maxHeight: "320px" }}></div>
+      <div id="demo-jsdos" className="demo"></div>
       <br/>
       <button onClick={onStart}>Start</button>
+      <button onClick={onStop}>Stop</button>
     </div>
   );
 }
 ```
 
-## emulators
+### 3. Using emulators
 
-emulators package conains core that can run DOS program in wasm environment. Now it supports two execution modes:
+Most flexible way. Emulators package conains core that can run DOS program in wasm environment. Now it supports two execution modes:
 * direct - run DOS emulation inside main browser thread.
 * worker - run DOS emulation inside worker thread.
 

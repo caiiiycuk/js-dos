@@ -40,8 +40,6 @@ You can download [precreated bundle](../bundles/dhry2.jsdos) for test.
 To run this test we need import `emulators.js` and use our `js-dos bundle` to start test.
 
 ```js live
-declare const emulators: any;
-
 function EstimateTest() {
   // we need to set prefix where emulator wasm is located
   emulators.pathPrefix = "/v7/build/releases/latest/emulators/";
