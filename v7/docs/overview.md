@@ -72,6 +72,19 @@ function runInIframe() {
 }
 ```
 
+:::info
+
+1. Drag with mouse to play without keyboard!
+2. Open top menu to type records name on mobile.
+
+:::
+
+:::warning
+
+Iframe integration didn't support for fullscreen button yet, if you need it look forward.
+
+:::
+
 ### 2. Use js-dos api
 
 js-dos v7 is even simple then 6.22, to run `bundle` you just need a one line of code:
