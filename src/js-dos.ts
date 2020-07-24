@@ -26,6 +26,7 @@ export class DosInstance {
         emulatorsUi.graphics.webGl(this.layers, ci);
         emulatorsUi.sound.audioNode(ci);
         emulatorsUi.controls.keyboard(this.layers, ci);
+        emulatorsUi.controls.nippleArrows(this.layers, ci);
 
         this.layers.hideLoadingLayer();
         return ci;
