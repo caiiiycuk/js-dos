@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[4],{213:function(e,a,s){"use strict";s(52);var n=s(0),o=s.n(n),t={};"undefined"!=typeof window&&((t=window.emulators).pathPrefix="/v7/build/releases/latest/js-dos/");var i=Object.assign({React:o.a},o.a,{emulators:t});a.a=i}}]);

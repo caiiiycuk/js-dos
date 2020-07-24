@@ -992,3 +992,12 @@ aside.notice::before {
 .dosbox-container {
   padding-bottom: 50px;
 }
+
+.next {
+    background: #D13913;
+    border-radius: 5px;
+    color: white !important;
+    padding: 0px 5px !important;
+    margin: 0 5px !important;
+    font-weight: bolder;
+}

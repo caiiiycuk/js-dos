@@ -40,7 +40,7 @@ DIGGER.COM         - game file
 You can generate `js-dos bundle` programmatically. But, we recommend to use our [bundle generator](https://dos.zone/en/studio)
 Moreover you can search on [our database](https://talks.dos.zone/search?expanded=true&q=%23en%20tags%3Ajsdos) if someone already uploaded `js-dos bundle` for program.
 
-Read [guide](estimating-performance) about creating `js-dos bundle`.
+Read [guide](https://dos.zone/en/guide/studio) about creating `js-dos bundle`.
 
 ## Run jsdos file
 
@@ -76,11 +76,15 @@ function runInIframe() {
 
 js-dos v7 is even simple then 6.22, to run `bundle` you just need a one line of code:
 
+```js
+  Dos(document.getElementById("root")).run("some.jsdos");
+```
+
+But, you should not forget to change `emulators.pathPrefix` and add style `js-dos.css`
+
+
 ```js live
 function runWithJsDos() {
-  // we need to set prefix where emulator wasm is located
-  emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
-
   const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos";
 
   let dos = null;
@@ -114,4 +118,4 @@ Most flexible way. Emulators package conains core that can run DOS program in wa
 * direct - run DOS emulation inside main browser thread.
 * worker - run DOS emulation inside worker thread.
 
-Read [guide](estimating-performance) how to create `js-dos bundle` and use it to estimate emulator performance.
+Read [guide](estimating-performance) how we use emulators to estimate js-dos performance.
