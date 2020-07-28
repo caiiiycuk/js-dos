@@ -3,6 +3,7 @@ import { resolveBundle } from "./network/xhr";
 import { webGl } from "./graphics/webgl";
 import { keyboard } from "./controls/keyboard";
 import { nippleArrows } from "./controls/nipple-arrows";
+import { domToKeyCode } from "./dom/keys";
 import { audioNode } from "./sound/audio-node";
 export declare class EmulatorsUi {
     dom: {
@@ -18,6 +19,7 @@ export declare class EmulatorsUi {
         audioNode: typeof audioNode;
     };
     controls: {
+        domToKeyCode: typeof domToKeyCode;
         keyboard: typeof keyboard;
         nippleArrows: typeof nippleArrows;
     };

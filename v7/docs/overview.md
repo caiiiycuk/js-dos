@@ -48,28 +48,30 @@ Once you have `jsdos bundle` you can easily run it in browser. There are several
 
 ### 1. Use player hosted on dos.zone
 
-Easiest way, no need to write code. You just need url of js-dos (you can get it from game database).
+Fastest way to embed jsdos on your page. You just need url of `jsdos bundle` (you can get it from game database).
 
-```js live
-function runInIframe() {
-  function onStart() {
-    // playerUrl can be found on page of game
-    // e.g. https://talks.dos.zone/t/digger-may-06-1999/1922
+```html
+<iframe
+  id="jsdos"
+  src="https://dos.zone/en/player/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2F9%2F9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos"
+/>
+```
 
-    const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos";
-    const playerUrl = "https://dos.zone/en/player/" + encodeURIComponent(bundleUrl);
-    
-    document.getElementById("demo-iframe").src = playerUrl;
-  };
-  
-  return (
-    <div>
-      <iframe id="demo-iframe" className="demo"></iframe>
-      <br/>
-      <button onClick={onStart}>Start</button>
-    </div>
-  );
-}
+The `src` can be composed like this:
+
+```js
+const src = "https://dos.zone/en/player/" + encodeURIComponent(bundleUrl);
+```
+
+To recieve input you should focus the iframe:
+```js
+document.getElementById("jsdos").focus();
+```
+
+Complete example:
+
+```html title="examples/iframe.html"
+{}
 ```
 
 :::info
@@ -90,42 +92,31 @@ Iframe integration didn't support for fullscreen button yet, if you need it look
 js-dos v7 is even simple then 6.22, to run `bundle` you just need a one line of code:
 
 ```js
-  Dos(document.getElementById("root")).run("some.jsdos");
+Dos(document.getElementById("jsdos")).run("some.jsdos");
 ```
 
-But, you should not forget to change `emulators.pathPrefix` and add style `js-dos.css`
+`Dos` recieve HTMLDivElement and use it to create player ui. To run `jsdos bundle`
+just use method `run` with url pointed to `jsdos bundle`.
 
+To use js-dos you need to add `js-dos.js` script, and `js-dos.css` style.
+Also you need to specify path prefix os js-dos installation:
 
-```js live
-function runWithJsDos() {
-  const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos";
-
-  let dos = null;
-  function onStart() {
-    if (!dos) {
-      dos = Dos(document.getElementById("demo-jsdos"));
-    }
-    dos.run(bundleUrl);
-  };
-  
-  function onStop() {
-    if (dos) {
-      dos.stop();
-    }
-  };
-  
-  return (
-    <div>
-      <div id="demo-jsdos" className="demo"></div>
-      <br/>
-      <button onClick={onStart}>Start</button>
-      <button onClick={onStop}>Stop</button>
-    </div>
-  );
-}
+```html
+<script src="/v7/build/releases/latest/js-dos/js-dos.js"></script>
+<link href="/v7/build/releases/latest/js-dos/js-dos.css" rel="stylesheet">
+// ...
+<script>
+  emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
+  Dos(/*element*/).run(/*bundleUrl*/);
 ```
 
-### 3. Using emulators
+Complete example:
+
+```html title="examples/dos.html"
+{}
+```
+
+###  3. Using emulators
 
 Most flexible way. Emulators package conains core that can run DOS program in wasm environment. Now it supports two execution modes:
 * direct - run DOS emulation inside main browser thread.

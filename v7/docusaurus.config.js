@@ -89,12 +89,4 @@ module.exports = {
       },
     ],
   ],
-  themes: ['@docusaurus/theme-live-codeblock'],
-  scripts: [
-    'https://js-dos.com/v7/build/releases/latest/emulators/emulators.js',
-    'https://js-dos.com/v7/build/releases/latest/js-dos/js-dos.js',
-  ],
-  stylesheets: [
-    'https://js-dos.com/v7/build/releases/latest/js-dos/js-dos.css',
-  ]
 };

@@ -11,13 +11,13 @@
   "dependencies": {
     "@docusaurus/core": "^2.0.0-alpha.58",
     "@docusaurus/preset-classic": "^2.0.0-alpha.58",
-    "@docusaurus/theme-live-codeblock": "^2.0.0-alpha.58",
     "clsx": "^1.1.1",
     "emulators": "^0.0.23",
-    "emulators-ui": "^0.0.19",
+    "emulators-ui": "^0.0.20",
     "js-dos": "^7.0.0-beta.7",
     "react": "^16.8.4",
-    "react-dom": "^16.8.4"
+    "react-dom": "^16.8.4",
+    "three": "^0.118.3"
   },
   "browserslist": {
     "production": [
