@@ -30,4 +30,3 @@ export interface Logger {
     onWarn: (...args: any[]) => void;
     onErr: (...args: any[]) => void;
 }
-export default emulators;
