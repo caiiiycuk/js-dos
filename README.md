@@ -126,6 +126,7 @@ You can found real use of js-dos on certain websites about dos games.
 * [Dos Games Archive](https://www.dosgamesarchive.com/play-online/)
 * [Emupedia](https://emupedia.net/beta/emuos/)
 * [Abandonware France](https://www.abandonware-france.org/online)
+* [DOSGames.com](DOSGames.com)
 
 Please open issue on github if you want to add link for another site that uses js-dos.
 
