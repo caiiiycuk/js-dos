@@ -7,9 +7,9 @@ import { testConf } from "./test-conf";
 import { testDosBundle } from "./test-bundle";
 import { testDos } from "./test-dos";
 
-import Emulators from "../../src/emulators";
+import emulatorsImpl from "../../src/impl/emulators-impl";
 
-Emulators.pathPrefix = "/";
+emulatorsImpl.pathPrefix = "/";
 
 testLoader();
 testLibZip();

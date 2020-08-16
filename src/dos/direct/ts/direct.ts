@@ -18,12 +18,14 @@ export default async function DosDirect(wasm: WasmModule,
         startupErrorLog = (startupErrorLog || "") + args.join(" ") + "\n";
     }
 
-    const module = await wasm.instantiate({
+    const module: any = {
         log: logger.onLog,
         warn: logger.onWarn,
         err: errFn,
         stdout: eventsImpl.fireStdout,
-    });
+    };
+
+    await wasm.instantiate(module);
 
     module.print = logger.onLog;
     module.printErr = logger.onErr;

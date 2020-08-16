@@ -6,7 +6,7 @@ import DosBundle from "../../src/dos/bundle/dos-bundle";
 import { makeLibZip, destroy } from "./libzip";
 import LibZip from "../../src/libzip/libzip";
 
-import Emulators from "../../src/emulators";
+import emulators from "../../src/impl/emulators-impl";
 
 async function toFs(bundle: DosBundle,
                     cb: (libzip: LibZip) => Promise<void>) {
@@ -41,7 +41,7 @@ export function testDosBundle() {
     suite("bundle");
 
     test("bundle should contain default dosbox.conf", async () => {
-        await toFs(await Emulators.dosBundle(), async (fs) => {
+        await toFs(await emulators.dosBundle(), async (fs) => {
             const conf = await fs.readFile(".jsdos/dosbox.conf");
             assert.ok(conf);
             const expected = await toDosboxConf(createDosConfig());
@@ -50,7 +50,7 @@ export function testDosBundle() {
     });
 
     test("bundle should download and extract archive to root", async () => {
-        const dosBundle = (await Emulators.dosBundle())
+        const dosBundle = (await emulators.dosBundle())
             .extract("digger.zip", "/");
 
         await toFs(dosBundle, async (fs) => {
@@ -62,7 +62,7 @@ export function testDosBundle() {
     });
 
     test("bundle should download and extract archive to path", async () => {
-        const dosBundle = (await Emulators.dosBundle())
+        const dosBundle = (await emulators.dosBundle())
             .extract("digger.zip", "test");
 
         await toFs(dosBundle, async (fs) => {
@@ -74,7 +74,7 @@ export function testDosBundle() {
     });
 
     test("bundle should extract multiple archive to paths", async () => {
-        const dosBundle = (await Emulators.dosBundle())
+        const dosBundle = (await emulators.dosBundle())
             .extract("digger.zip", "/test")
             .extract("arkanoid.zip", "/arkanoid");
 

@@ -209,15 +209,13 @@ class CompiledModule implements WasmModule {
         this.instantiateWasm = instantiateWasm;
     }
 
-    instantiate(module?: any): Promise<any> {
-        module = module || {};
-        module.instantiateWasm = this.instantiateWasm;
-        new this.module(module);
-        return new Promise<any>((resolve) => {
-            module.then(() => {
-                delete module.then;
-                resolve(module);
-            });
+    instantiate(initialModule: any): Promise<void> {
+        return new Promise<void>((resolve) => {
+            initialModule.instantiateWasm = this.instantiateWasm;
+            initialModule.onRuntimeInitialized = () => {
+                resolve();
+            };
+            new this.module(initialModule);
         });
     }
 }

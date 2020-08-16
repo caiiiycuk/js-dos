@@ -17,12 +17,11 @@ onmessage = (e) => {
             instantiateWasm,
         };
 
-        new WWORKER(module);
-        module.then(() => {
-            delete module.then;
+        module.onRuntimeInitialized = () => {
             module.callMain([]);
-        });
+        };
 
+        new WWORKER(module);
         return;
     }
 };

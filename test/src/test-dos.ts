@@ -2,7 +2,8 @@ import { assert } from "chai";
 import { compareAndExit } from "./compare"
 
 import DosBundle from "../../src/dos/bundle/dos-bundle";
-import Emulators, { CommandInterface } from "../../src/emulators";
+import { CommandInterface } from "../../src/emulators";
+import emulatorsImpl from "../../src/impl/emulators-impl";
 
 import { HTTPRequest } from "../../src/http";
 import { CacheNoop } from "../../src/cache";
@@ -12,8 +13,8 @@ import { Keys } from "../../src/keys";
 type CIFactory = (bundle: Uint8Array) => Promise<CommandInterface>;
 
 export function testDos() {
-    testServer((bundle) => Emulators.dosDirect(bundle), "dosDirect");
-    testServer((bundle) => Emulators.dosWorker(bundle), "dosWorker");
+    testServer((bundle) => emulatorsImpl.dosDirect(bundle), "dosDirect");
+    testServer((bundle) => emulatorsImpl.dosWorker(bundle), "dosWorker");
 }
 
 function testServer(factory: CIFactory, name: string) {
@@ -25,19 +26,19 @@ function testServer(factory: CIFactory, name: string) {
     }
 
     test(name + " can take screenshot of dosbox", async () => {
-        const ci = await CI(Emulators.dosBundle());
+        const ci = await CI(emulatorsImpl.dosBundle());
         assert.ok(ci);
         await compareAndExit("init.png", ci);
     });
 
     test(name + " should provide dosbox.conf for dosbox", async () => {
-        const ci = await CI(Emulators.dosBundle());
+        const ci = await CI(emulatorsImpl.dosBundle());
         assert.ok(ci);
         await compareAndExit("jsdos-conf.png", ci, 0);
     });
 
     test(name + " should modify dosbox.conf through api", async () => {
-        const ci = await CI((await Emulators.dosBundle())
+        const ci = await CI((await emulatorsImpl.dosBundle())
             .autoexec("type jsdos~1/dosbox~1.con"));
         assert.ok(ci);
         await compareAndExit("dosboxconf.png", ci, 0);
@@ -81,7 +82,7 @@ function testServer(factory: CIFactory, name: string) {
     suite(name + ".digger");
 
     test(name + " can run digger.jsdos", async () => {
-        const ci = await CI((await Emulators.dosBundle())
+        const ci = await CI((await emulatorsImpl.dosBundle())
             .extract("digger.zip")
             .autoexec("DIGGER.COM"));
         assert.ok(ci);
@@ -89,7 +90,7 @@ function testServer(factory: CIFactory, name: string) {
     });
 
     test(name + " can play sound", async () => {
-        const ci = await CI((await Emulators.dosBundle())
+        const ci = await CI((await emulatorsImpl.dosBundle())
                                 .extract("digger.zip")
                                 .autoexec("DIGGER.COM"));
         assert.ok(ci);
@@ -106,7 +107,7 @@ function testServer(factory: CIFactory, name: string) {
     })
 
     test(name + " exit event", async () => {
-        const ci = await CI((await Emulators.dosBundle())
+        const ci = await CI((await emulatorsImpl.dosBundle())
                                 .extract("digger.zip")
                                 .autoexec("DIGGER.COM"));
         assert.ok(ci);
@@ -121,7 +122,7 @@ function testServer(factory: CIFactory, name: string) {
     })
 
     test(name + " can simulate key events", async () => {
-        const ci = await CI((await Emulators.dosBundle())
+        const ci = await CI((await emulatorsImpl.dosBundle())
             .extract("digger.zip")
             .autoexec("DIGGER.COM"));
         assert.ok(ci);

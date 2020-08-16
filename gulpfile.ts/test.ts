@@ -14,7 +14,8 @@ function clean() {
 };
 
 function copyAssetsTest() {
-    return src(["test/*.html", "test/*.png", "test/*.zip", "test/*.jsdos"])
+    return src(["test/*.html", "test/*.png", "test/*.zip", "test/*.jsdos",
+                "test/mocha.css", "test/mocha.js", "test/chai.js"])
         .pipe(dest("dist/test"));
 };
 
