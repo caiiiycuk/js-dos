@@ -250,6 +250,15 @@ firefox http://127.0.0.1:8080/test/test.html
 
 all tests should pass.
 
+## Running native js-dos v7
+
+As said above you need compile `sokol` target with you favorite C++ toolkit. It will generate `sokol`
+executable. Next, you need to download some [js-dos bundle](overview.md#js-dos-bundle) for example
+[digger](https://talks.dos.zone/t/digger-may-06-1999/1922).
+
+`js-dos bundle` is a plain zip archive, you need to extract it in some folder. After that you
+should run `sokol` executable from that folder (cwd must be root of extracted bundle). 
+
 
 ## Contributing on github
 
