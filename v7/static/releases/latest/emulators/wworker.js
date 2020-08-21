@@ -1283,11 +1283,11 @@ function updateGlobalBufferAndViews(buf) {
 }
 
 var STATIC_BASE = 1024,
-    STACK_BASE = 27694192,
+    STACK_BASE = 27694416,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 26645616,
-    DYNAMIC_BASE = 27694192,
-    DYNAMICTOP_PTR = 26645456;
+    STACK_MAX = 26645840,
+    DYNAMIC_BASE = 27694416,
+    DYNAMICTOP_PTR = 26645680;
 
 
 
@@ -1750,7 +1750,7 @@ function _emscripten_asm_const_iii(code, sigPtr, argbuf) {
 function emsc_add_frame_line(start,ptr,len){ Module.frame_update_lines.push( {start : start, heapu8 : Module.HEAPU8.slice(ptr, ptr + len)}); }
 function emsc_end_frame_update(){ if (Module.frame_update_lines.length > 0) { Module.sendMessage("ws-update-lines", { lines: Module.frame_update_lines }); } delete Module.frame_update_lines; }
 function emsc_exit_runtime(){ if (!Module.exit) { var message = "ERR! exitRuntime called without request" + ", asyncify state: " + Asyncify.state; Module.err(message); return; } Module.exit(); }
-function emsc_extract_bundle_to_fs(){ Module.FS.chdir("/home/web_user"); const bytes = Module.bundle; delete Module.bundle; const buffer = Module._malloc(bytes.length); Module.HEAPU8.set(bytes, buffer); const retcode = Module._zip_to_fs(buffer, bytes.length); Module._free(buffer); if (retcode !== 0) { Module.err("Unable to extract bundle archive\n"); return; } try { Module.FS.readFile("/home/web_user/.jsdos/dosbox.conf"); } catch (e) { Module.err("Broken bundle, .jsdos/dosbox.conf not found"); return; } }
+function emsc_extract_bundle_to_fs(){ Module.FS.chdir("/home/web_user"); const bytes = Module.bundle; delete Module.bundle; const buffer = Module._malloc(bytes.length); Module.HEAPU8.set(bytes, buffer); const retcode = Module._zip_to_fs(buffer, bytes.length); Module._free(buffer); if (retcode !== 0) { Module.err("Unable to extract bundle archive\n"); return; } try { Module.FS.readFile("/home/web_user/.jsdos/dosbox.conf"); } catch (e) { Module.err("Broken bundle, .jsdos/dosbox.conf not found"); return; } const configContentPtr = Module._getConfigContent(); const configContent = Module.UTF8ToString(configContentPtr); Module._free(configContentPtr); Module.sendMessage("ws-config", { content: configContent }); }
 function emsc_pack_fs_to_bundle(){ Module.FS.chdir("/home/web_user"); const ptr = Module._zip_from_fs(); if (ptr === 0) { Module.err("Can't create zip, see more info in logs"); Module._abort(); return; } const length = Module.HEAPU32[ptr / 4]; const memory = Module.HEAPU8; const archive = memory.slice(ptr + 4, ptr + 4 + length); Module._free(ptr); Module.persist(archive); }
 function emsc_start_frame_update(){ Module.frame_update_lines = []; }
 function emsc_ws_client_frame_set_size(width,height){ Module.sendMessage("ws-frame-set-size", {width : width, height : height}); }
@@ -1769,7 +1769,7 @@ function ws_init_runtime(){ function sendMessage(name, props) { postMessage({ na
 
 
 
-// STATICTOP = STATIC_BASE + 26644592;
+// STATICTOP = STATIC_BASE + 26644816;
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
 
@@ -5345,7 +5345,7 @@ function ws_init_runtime(){ function sendMessage(name, props) { postMessage({ na
     }
 
   function _emscripten_get_sbrk_ptr() {
-      return 26645456;
+      return 26645680;
     }
 
   function _emscripten_memcpy_big(dest, src, num) {
@@ -5559,10 +5559,10 @@ function ws_init_runtime(){ function sendMessage(name, props) { postMessage({ na
     }
 
   
-  var ___tm_current=26645472;
+  var ___tm_current=26645696;
   
   
-  var ___tm_timezone=(stringToUTF8("GMT", 26645520, 4), 26645520);
+  var ___tm_timezone=(stringToUTF8("GMT", 26645744, 4), 26645744);
   
   function _tzset() {
       // TODO: Use (malleable) environment variables instead of system settings.
@@ -6356,6 +6356,11 @@ var _runRuntime = Module["_runRuntime"] = function() {
 /** @type {function(...*):?} */
 var _requestExit = Module["_requestExit"] = function() {
   return (_requestExit = Module["_requestExit"] = Module["asm"]["requestExit"]).apply(null, arguments);
+};
+
+/** @type {function(...*):?} */
+var _getConfigContent = Module["_getConfigContent"] = function() {
+  return (_getConfigContent = Module["_getConfigContent"] = Module["asm"]["getConfigContent"]).apply(null, arguments);
 };
 
 /** @type {function(...*):?} */

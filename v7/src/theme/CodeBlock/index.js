@@ -109,7 +109,7 @@ export default ({children, className: languageClassName, metastring}) => {
         setMounted(true);
     }, []);
 
-    const button = useRef(null);
+
     let highlightLines = [];
     let codeBlockTitle = '';
 
@@ -237,7 +237,6 @@ export default ({children, className: languageClassName, metastring}) => {
                     Run
                   </a>
                   <button
-                    ref={button}
                     type="button"
                     aria-label="Copy code to clipboard"
                     className={clsx(styles.copyButton, {

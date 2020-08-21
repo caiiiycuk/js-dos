@@ -1,5 +1,6 @@
 import DosBundle from "./dos/bundle/dos-bundle";
 import { Cache } from "./cache";
+import { DosConfig } from "./dos/bundle/dos-conf";
 export interface Emulators {
     pathPrefix: string;
     cache: () => Promise<Cache>;
@@ -8,6 +9,7 @@ export interface Emulators {
     dosWorker: (bundle: Uint8Array) => Promise<CommandInterface>;
 }
 export interface CommandInterface {
+    config: () => Promise<DosConfig>;
     height: () => number;
     width: () => number;
     soundFrequency: () => number;

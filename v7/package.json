@@ -9,10 +9,10 @@
     "deploy": "docusaurus deploy"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-alpha.58",
-    "@docusaurus/preset-classic": "^2.0.0-alpha.58",
+    "@docusaurus/core": "^2.0.0-alpha.61",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.61",
     "clsx": "^1.1.1",
-    "emulators": "^0.0.24",
+    "emulators": "^0.0.25",
     "emulators-ui": "^0.0.20",
     "js-dos": "^7.0.0-beta.7",
     "react": "^16.8.4",

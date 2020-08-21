@@ -1,0 +1,19 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+.controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: #5C7080;
+    height: 30px;
+    padding: 0px 10px;
+}
+
+.controls Button {
+    margin-right: 10px;
+}

@@ -13,7 +13,7 @@ module.exports = {
         alt: 'js-dos logo',
         src: 'img/logo.png',
       },
-      links: [
+      items: [
         {
           to: 'docs/',
           activeBasePath: 'docs',

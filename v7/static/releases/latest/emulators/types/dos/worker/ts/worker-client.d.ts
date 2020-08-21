@@ -1,12 +1,14 @@
 import { Logger } from "../../../emulators";
 import { WasmModule } from "../../../impl/modules";
+import { DosConfig } from "../../bundle/dos-conf";
 declare type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" | "wc-add-key" | "wc-exit";
-declare type ServerMessage = "ws-ready" | "ws-server-ready" | "ws-frame-set-size" | "ws-update-lines" | "ws-log" | "ws-warn" | "ws-err" | "ws-stdout" | "ws-exit" | "ws-persist" | "ws-sound-init" | "ws-sound-push";
+declare type ServerMessage = "ws-ready" | "ws-server-ready" | "ws-frame-set-size" | "ws-update-lines" | "ws-log" | "ws-warn" | "ws-err" | "ws-stdout" | "ws-exit" | "ws-persist" | "ws-sound-init" | "ws-sound-push" | "ws-config";
 export interface FrameLine {
     start: number;
     heapu8: Uint8Array;
 }
 export interface WorkerHost extends Logger {
+    onConfig: (config: DosConfig) => void;
     onFrameSize: (width: number, height: number) => void;
     onFrameLines: (lines: FrameLine[]) => void;
     onPersist: (bundle: Uint8Array) => void;
