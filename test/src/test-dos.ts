@@ -9,6 +9,7 @@ import { HTTPRequest } from "../../src/http";
 import { CacheNoop } from "../../src/cache";
 
 import { Keys } from "../../src/keys";
+import { createDosConfig } from "../../src/dos/bundle/dos-conf";
 
 type CIFactory = (bundle: Uint8Array) => Promise<CommandInterface>;
 
@@ -55,6 +56,15 @@ function testServer(factory: CIFactory, name: string) {
         } catch (e) {
             assert.equal("Broken bundle, .jsdos/dosbox.conf not found\n", e.message);
         }
+    });
+
+    test(name + " should provide config back to js", async () => {
+        const bundle = await emulatorsImpl.dosBundle();
+        const ci = await CI(bundle);
+        assert.ok(ci);
+        const config = await ci.config();
+        assert.equal(JSON.stringify(config), JSON.stringify(bundle.config));
+        await ci.exit();
     });
 
     suite(name + ".persistency");

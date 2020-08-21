@@ -1,12 +1,14 @@
 import  { Logger } from "../../../emulators";
 
 import { WasmModule } from "../../../impl/modules";
+import { DosConfig } from "../../bundle/dos-conf";
 
 type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" |
     "wc-add-key" | "wc-exit";
 type ServerMessage = "ws-ready" | "ws-server-ready" | "ws-frame-set-size" |
     "ws-update-lines" | "ws-log" | "ws-warn" | "ws-err" | "ws-stdout" |
-    "ws-exit" | "ws-persist" | "ws-sound-init" | "ws-sound-push";
+    "ws-exit" | "ws-persist" | "ws-sound-init" | "ws-sound-push" |
+    "ws-config";
 
 export interface FrameLine {
     start: number;
@@ -14,6 +16,7 @@ export interface FrameLine {
 }
 
 export interface WorkerHost extends Logger {
+    onConfig: (config: DosConfig) => void;
     onFrameSize: (width: number, height: number) => void;
     onFrameLines: (lines: FrameLine[]) => void;
     onPersist: (bundle: Uint8Array) => void;
@@ -110,6 +113,9 @@ export class WorkerClient {
             } break;
             case "ws-sound-push": {
                 this.host.onSoundPush(props.samples);
+            } break;
+            case "ws-config": {
+                this.host.onConfig(JSON.parse(props.content));
             } break;
             default: {
                 // tslint:disable-next-line:no-console

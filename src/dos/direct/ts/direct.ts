@@ -81,6 +81,13 @@ class DirectCommandInterface implements CommandInterface {
         this.module._runRuntime();
     }
 
+    config() {
+        const configContentPtr = this.module._getConfigContent();
+        const configContent = this.module.UTF8ToString(configContentPtr);
+        this.module._free(configContentPtr);
+        return Promise.resolve(JSON.parse(configContent));
+    }
+
     width() {
         return this.module._getFrameWidth();
     }

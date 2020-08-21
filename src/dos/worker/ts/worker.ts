@@ -3,6 +3,7 @@ import { WorkerClient, WorkerHost, FrameLine } from "./worker-client";
 
 import { WasmModule } from "../../../impl/modules";
 import { CommandInterfaceEventsImpl } from "../../../impl/ci-impl";
+import { DosConfig } from "../../bundle/dos-conf";
 
 export default function DosWorker(workerUrl: string,
                                   wasm: WasmModule,
@@ -55,12 +56,16 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
     private freq = 0;
 
+    private configPromise: Promise<DosConfig>;
+    private configResolve: (config: DosConfig) => void = () => {};
+
     constructor(workerUrl: string,
                 wasmModule: WasmModule,
                 bundle: Uint8Array,
                 logger: Logger,
                 ready: (ci: CommandInterface) => void) {
         this.logger = logger;
+        this.configPromise = new Promise<DosConfig>((resolve) => this.configResolve = resolve);
         this.client = new WorkerClient(workerUrl,
                                        wasmModule,
                                        bundle,
@@ -68,6 +73,10 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
                                        () => {
                                            ready(this);
                                        });
+    }
+
+    onConfig(config: DosConfig) {
+        this.configResolve(config);
     }
 
     onFrameSize(width: number, height: number) {
@@ -126,6 +135,10 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
             delete this.exitPromise;
             delete this.exitResolve;
         }
+    }
+
+    config() {
+        return this.configPromise;
     }
 
     width() {

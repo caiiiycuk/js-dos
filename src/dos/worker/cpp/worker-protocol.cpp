@@ -1,6 +1,9 @@
 #include <emscripten.h>
 #include <protocol.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 int frameHeight = 0;
 int frameWidth = 0;
 
@@ -142,6 +145,12 @@ EM_JS(void, emsc_extract_bundle_to_fs, (), {
       Module.err("Broken bundle, .jsdos/dosbox.conf not found");
       return;
     }
+
+
+    const configContentPtr = Module._getConfigContent();
+    const configContent = Module.UTF8ToString(configContentPtr);
+    Module._free(configContentPtr);
+    Module.sendMessage("ws-config", { content: configContent });
   });
 
 EM_JS(void, emsc_pack_fs_to_bundle, (), {
@@ -193,7 +202,6 @@ void client_sound_init(int freq) {
 void client_sound_push(const float *samples, int num_samples) {
   emsc_ws_client_sound_push(samples, num_samples);
 }
-
 extern "C" void EMSCRIPTEN_KEEPALIVE extractBundleToFs() {
 
   emsc_extract_bundle_to_fs();
@@ -219,6 +227,28 @@ extern "C" void EMSCRIPTEN_KEEPALIVE runRuntime() {
 }
 
 extern "C" void EMSCRIPTEN_KEEPALIVE requestExit() { server_exit(); }
+
+extern "C" char* EMSCRIPTEN_KEEPALIVE getConfigContent() {
+  FILE *f = fopen(".jsdos/jsdos.json", "rb");
+  if (!f) {
+    char *content = (char *) malloc(3);
+    content[0] = '{';
+    content[1] = '}';
+    content[2] = 0;
+    return content;
+  }
+
+  fseek(f, 0, SEEK_END);
+  long fsize = ftell(f);
+  fseek(f, 0, SEEK_SET);
+
+  char *content = (char *) malloc(fsize + 1);
+  fread(content, 1, fsize, f);
+  fclose(f);
+
+  content[fsize] = 0;
+  return content;
+}
 
 int main(int argc, char **argv) {
   ws_init_runtime();

@@ -5,6 +5,9 @@
 #include <protocol.h>
 #include <cstring>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 int frameId = 0;
 int frameHeight = 0;
 int frameWidth = 0;
@@ -175,6 +178,29 @@ extern "C" void EMSCRIPTEN_KEEPALIVE runRuntime() {
 extern "C" void EMSCRIPTEN_KEEPALIVE requestExit() {
   server_exit();
 }
+
+extern "C" char* EMSCRIPTEN_KEEPALIVE getConfigContent() {
+  FILE *f = fopen(".jsdos/jsdos.json", "rb");
+  if (!f) {
+    char *content = (char *) malloc(3);
+    content[0] = '{';
+    content[1] = '}';
+    content[2] = 0;
+    return content;
+  }
+
+  fseek(f, 0, SEEK_END);
+  long fsize = ftell(f);
+  fseek(f, 0, SEEK_SET);
+
+  char *content = (char *) malloc(fsize + 1);
+  fread(content, 1, fsize, f);
+  fclose(f);
+
+  content[fsize] = 0;
+  return content;
+}
+
 
 extern "C" int EMSCRIPTEN_KEEPALIVE getFrameId() {
   return frameId;

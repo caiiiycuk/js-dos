@@ -3,6 +3,7 @@ import emulatorsImpl from "./impl/emulators-impl";
 
 import { Cache } from "./cache";
 import { Keys } from "./keys";
+import { DosConfig } from "./dos/bundle/dos-conf";
 
 export interface Emulators {
     pathPrefix: string;
@@ -13,6 +14,9 @@ export interface Emulators {
 }
 
 export interface CommandInterface {
+    // * get bundle config
+    config: () => Promise<DosConfig>;
+
     // * current render buffer width
     height: () => number;
 

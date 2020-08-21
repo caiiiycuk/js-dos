@@ -27,6 +27,12 @@ export function testConf() {
         assert.equal(contents, defaultConfig);
     });
 
+    test("can create & serialize to .json", async () => {
+        const config = createDosConfig();
+        assert.ok(config);
+        assert.ok(JSON.stringify(config, null, 2));
+    });
+
     test("should validate values", async () => {
         await check((c) => delete c.output,
                     "Category 'output' is missed");

@@ -89,6 +89,7 @@ export default class DosBundle {
 
         await libzip.writeFile(".jsdos/dosbox.conf", conf);
         await libzip.writeFile(".jsdos/readme.txt", readmeTxt);
+        await libzip.writeFile(".jsdos/jsdos.json", JSON.stringify(this.config, null, 2));
 
         const resources = await Promise.all(promises);
         for (const resource of resources) {
