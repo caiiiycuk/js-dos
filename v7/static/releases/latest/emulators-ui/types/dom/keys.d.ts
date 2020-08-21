@@ -101,4 +101,10 @@ export declare const KBD_up = 265;
 export declare const KBD_down = 264;
 export declare const KBD_right = 262;
 export declare const KBD_extra_lt_gt = 348;
+export declare const domToKeyCodes: {
+    [index: number]: number;
+};
+export declare const keyCodesToDom: {
+    [index: number]: number;
+};
 export declare function domToKeyCode(domCode: number): number;

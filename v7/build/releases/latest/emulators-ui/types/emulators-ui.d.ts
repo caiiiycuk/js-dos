@@ -19,7 +19,13 @@ export declare class EmulatorsUi {
         audioNode: typeof audioNode;
     };
     controls: {
+        domToKeyCodes: {
+            [index: number]: number;
+        };
         domToKeyCode: typeof domToKeyCode;
+        keyCodesToDom: {
+            [index: number]: number;
+        };
         keyboard: typeof keyboard;
         nippleArrows: typeof nippleArrows;
     };

@@ -7,30 +7,8 @@ title: UI Components
 
 Package provides following components:
 
-```js
-export class EmulatorsUi {
-    dom = {
-        layers, // DOM components that used by js-dos player
-    };
-
-    network = {
-        resolveBundle, // GET request to download bundles
-    };
-
-    graphics = {
-        webGl, // default webgl renderer
-    };
-
-    sound = {
-        audioNode, // default audio processor
-    };
-
-    controls = {
-        domToKeyCode, // function to convert DOM keycodes into dosbox keycodes
-        keyboard, // default keyboard processor
-        nippleArrows, // touch joystick translated to arrow keys
-    };
-};
+```js title="https://raw.githubusercontent.com/caiiiycuk/js-dos/emulators-ui/src/emulators-ui.ts"
+{}
 ```
 
 ## emulatorsUi.network.resolveBundle

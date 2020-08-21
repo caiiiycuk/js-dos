@@ -3874,10 +3874,10 @@ emoticon@^3.2.0:
   resolved "https://registry.yarnpkg.com/emoticon/-/emoticon-3.2.0.tgz#c008ca7d7620fac742fe1bf4af8ff8fed154ae7f"
   integrity sha512-SNujglcLTTg+lDAcApPNgEdudaqQFiAbJCqzjNxJkvN9vAwCGi0uu8IUVvx+f16h+V44KCY6Y2yboroc9pilHg==
 
-emulators-ui@^0.0.20:
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.0.20.tgz#17d02b5133aa5c7be3aa486d49984add41d59c60"
-  integrity sha512-gaVNKDsMYlk5O1LaclQkv3VYeGBWrCDRJ41kX+GaADpg5cRATwjNr/ZFe1/87gxgOhuEwZpqhVD7j0prIblwXQ==
+emulators-ui@^0.0.21:
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.0.21.tgz#708ead8ad947162eae0b38878c25d30f214cab69"
+  integrity sha512-FJYMseiBg6RIp3jWRXP61xPb3Hx+QZByARlVgzmHqJQnvMCXfboi/HhUwmYvo324d3iluyOsmD8nsplNGVhFVg==
 
 emulators@^0.0.25:
   version "0.0.25"

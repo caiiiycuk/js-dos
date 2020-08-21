@@ -42,10 +42,19 @@
              }
 
              ciPromise.then((ci) => {
+                 const mapping = [
+                     { joystickId: 0, event: "dir:up", mapTo: 265 /*KBD_up*/ },
+                     { joystickId: 0, event: "dir:down", mapTo: 264 /*KBD_down*/ },
+                     { joystickId: 0, event: "dir:left", mapTo: 263 /*KBD_left*/ },
+                     { joystickId: 0, event: "dir:right", mapTo: 262 /*KBD_right*/ },
+                     { joystickId: 0, event: "tap", mapTo: 290 /*KBD_f1*/ },
+                     { joystickId: 1, event: "tap", mapTo: 290 /*KBD_f1*/ },
+                 ];
+
                  emulatorsUi.graphics.webGl(layers, ci);
                  emulatorsUi.sound.audioNode(ci);
                  emulatorsUi.controls.keyboard(layers, ci);
-                 emulatorsUi.controls.nippleArrows(layers, ci);
+                 emulatorsUi.controls.nippleArrows(layers, ci, mapping);
                  layers.hideLoadingLayer();
              });
          }
