@@ -22,11 +22,12 @@ export class DosInstance {
         this.ciPromise = emulators.dosWorker(bundle);
 
         const ci = await this.ciPromise;
+        const config = await ci.config();
 
         emulatorsUi.graphics.webGl(this.layers, ci);
         emulatorsUi.sound.audioNode(ci);
         emulatorsUi.controls.keyboard(this.layers, ci);
-        emulatorsUi.controls.nippleArrows(this.layers, ci);
+        emulatorsUi.controls.nippleArrows(this.layers, ci, (config as any).gestures);
 
         this.layers.hideLoadingLayer();
         return ci;
