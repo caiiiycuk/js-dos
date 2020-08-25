@@ -104,6 +104,9 @@ export declare const KBD_extra_lt_gt = 348;
 export declare const domToKeyCodes: {
     [index: number]: number;
 };
+export declare const namedKeyCodes: {
+    [name: string]: number;
+};
 export declare const keyCodesToDom: {
     [index: number]: number;
 };

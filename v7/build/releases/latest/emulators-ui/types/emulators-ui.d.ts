@@ -19,6 +19,9 @@ export declare class EmulatorsUi {
         audioNode: typeof audioNode;
     };
     controls: {
+        namedKeyCodes: {
+            [name: string]: number;
+        };
         domToKeyCodes: {
             [index: number]: number;
         };

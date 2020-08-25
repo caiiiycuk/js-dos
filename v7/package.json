@@ -13,8 +13,8 @@
     "@docusaurus/preset-classic": "^2.0.0-alpha.61",
     "clsx": "^1.1.1",
     "emulators": "^0.0.25",
-    "emulators-ui": "^0.0.21",
-    "js-dos": "^7.0.0-beta.7",
+    "emulators-ui": "^0.0.23",
+    "js-dos": "^7.0.0-beta.r10",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "three": "^0.118.3"
