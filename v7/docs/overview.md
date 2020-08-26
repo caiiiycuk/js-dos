@@ -33,14 +33,21 @@ Starting from js-dos 7, the API expects a `js-dos bundle` that already contains 
 `js-dos bundle` is just a **ZIP** archive that contains the game itself and a js-dos config file (same as dosbox.conf file). 
 For example, [digger.jsdos](https://talks.dos.zone/t/digger-may-06-1999/1922) contains: 
 ```
-.jsdos\dosbox.conf - dosbox configuration file
+.jsdos/dosbox.conf - dosbox configuration file (required)
+.jsdos/jsods.json  - additional configuration (optional)
 DIGGER.COM         - game file
 ```
+
+:::note
+
+File `.jsdos/dosbox.conf` is required. js-dos would not start if this file does not exists.
+
+:::
 
 You can generate a `js-dos bundle` programmatically. But, we recommend you use our [bundle generator](https://dos.zone/en/studio)
 Moreover you can search [our database](https://talks.dos.zone/search?expanded=true&q=%23en%20tags%3Ajsdos) to see if someone already uploaded a `js-dos bundle` for a program.
 
-Read the [guide](https://dos.zone/en/guide/studio) about creating `js-dos bundle`.
+Read the [guide](game-studio) about creating `js-dos bundle`.
 
 ## Run jsdos file
 

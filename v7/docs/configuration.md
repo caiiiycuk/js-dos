@@ -1,0 +1,48 @@
+---
+id: configuration
+title: Configuration
+---
+
+As said in [Overview](overview.md) `js-dos bundle` is a **ZIP** archive with game files
+and configuration files.
+
+### .jsdos/dosbox.conf
+
+:::note
+
+File `.jsdos/dosbox.conf` is required. js-dos would not start if this file does not exists.
+
+:::
+
+This file is a regular [dosbox configuration](https://www.dosbox.com/wiki/Dosbox.conf). Not
+all features are supported, but we will work on it.
+
+
+### .jsdos/jsdos.json
+
+This file contains additional configuration that not exists in dosbox configuration file.
+For example, it's used to configure [gestures mapping](gestures). If you used [game studio](game-studio)
+to create bundles then it will also contains all information form `dosbox.conf`. And it looks like:
+
+```json
+{
+// ...
+  "gestures": [
+    {
+      "joystickId": 0,
+      "event": "dir:up",
+      "mapTo": 265
+    },
+// ...
+```
+
+This file can contains any configuration that you want. You can access it with [Command Interface](command-interface).
+For example:
+```js
+const ci = await Dos(/*element*/).run(/*bundle url*/);
+const config = await ci.config();
+console.log(config.gestures);
+```
+
+This snippet will print inforamation about gestures that config has. It's a very powerful feature, it can be used
+to add new optional features to js-dos. Read how to add client-side features in emulators-ui [Contributing](contributing-emulators-ui) guide.

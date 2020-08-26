@@ -15,6 +15,9 @@ CI interface:
 
 ```typescript
 export interface CommandInterface {
+    // * get bundle config
+    config: () => Promise<DosConfig>;
+
     // * current render buffer width
     height: () => number;
 
