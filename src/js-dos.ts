@@ -27,7 +27,11 @@ export class DosInstance {
         emulatorsUi.graphics.webGl(this.layers, ci);
         emulatorsUi.sound.audioNode(ci);
         emulatorsUi.controls.keyboard(this.layers, ci);
-        emulatorsUi.controls.nippleArrows(this.layers, ci, (config as any).gestures);
+
+        const gestures = (config as any).gestures;
+        if (gestures && gestures.length) {
+            emulatorsUi.controls.nippleArrows(this.layers, ci, gestures);
+        }
 
         this.layers.hideLoadingLayer();
         return ci;
