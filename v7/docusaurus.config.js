@@ -1,6 +1,6 @@
 module.exports = {
   title: 'js-dos v7',
-  tagline: 'The easiest API to run DOS games in browser',
+  tagline: 'The simpliest API to run DOS games in browser',
   url: 'https://js-dos.com',
   baseUrl: '/v7/build/',
   favicon: 'img/favicon.ico',

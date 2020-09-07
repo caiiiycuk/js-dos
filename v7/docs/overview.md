@@ -123,10 +123,29 @@ Complete example:
 {}
 ```
 
-###  3. Using emulators
+###  3. Using emulators-ui
 
-Most flexible way. The emulators package contains core that can run DOS programs in wasm environment. It now supports two execution modes:
-* direct - run DOS emulation inside main browser thread.
-* worker - run DOS emulation inside worker thread.
+From v7 js-dos npm package is **only a wrapper script** that combines *emulators* and *emulators-ui* packages. It didn't contains
+code it self. It's useful if you don't want to make customizations in UI or do custom integration. **js-dos package is single
+file solution to run DOS programs.**
 
-Read the [guide](estimating-performance) to how we use emulators to estimate js-dos performance.
+If you want to make custumizations or something special then you need to use *emulators* and  *emulators-ui* package in combination.
+They provide absolutely same functions as *js-dos* package and lot more (see [threejs](threejs.md) integration).
+
+To change code above to use `emulators-ui` just change scripts imports to:
+```html
+<script src="/v7/build/releases/latest/emulators/emulators.js"></script>
+<script src="/v7/build/releases/latest/emulators-ui/emulators-ui.js"></script>
+<link rel="stylesheet" href="/v7/build/releases/latest/emulators-ui/emulators-ui.css">
+```
+
+
+Complete example:
+
+```html title="examples/ui-dos.html"
+{}
+```
+
+###  4. Using emulators
+
+In case when you don't want to use browser API of js-dos project, you can use just `emulators` package.  Read the [guide](estimating-performance.md) to how we use *emulators* to estimate js-dos performance.

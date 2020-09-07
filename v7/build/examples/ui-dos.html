@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <style>
+         html, body, #jsdos {
+             width: 100%;
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+        </style>
+        <script src="/v7/build/releases/latest/emulators/emulators.js"></script>
+        <script src="/v7/build/releases/latest/emulators-ui/emulators-ui.js"></script>
+        <link rel="stylesheet" href="/v7/build/releases/latest/emulators-ui/emulators-ui.css">
+    </head>
+    <body>
+        <div id="jsdos" />
+        <script>
+         emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
+         Dos(document.getElementById("jsdos"))
+             .run("https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos");
+        </script>
+    </body>
+</html>

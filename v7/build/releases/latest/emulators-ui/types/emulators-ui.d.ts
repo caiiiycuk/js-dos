@@ -5,6 +5,8 @@ import { keyboard } from "./controls/keyboard";
 import { nippleArrows } from "./controls/nipple-arrows";
 import { domToKeyCode } from "./dom/keys";
 import { audioNode } from "./sound/audio-node";
+import { save, load } from "./persist/save-load";
+import { DosFactoryType } from "./js-dos";
 export declare class EmulatorsUi {
     dom: {
         layers: typeof layers;
@@ -17,6 +19,10 @@ export declare class EmulatorsUi {
     };
     sound: {
         audioNode: typeof audioNode;
+    };
+    persist: {
+        save: typeof save;
+        load: typeof load;
     };
     controls: {
         namedKeyCodes: {
@@ -32,4 +38,5 @@ export declare class EmulatorsUi {
         keyboard: typeof keyboard;
         nippleArrows: typeof nippleArrows;
     };
+    dos: DosFactoryType;
 }

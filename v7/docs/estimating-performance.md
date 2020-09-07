@@ -2,6 +2,7 @@
 id: estimating-performance
 title: Esitmating emulators performance
 ---
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 ## Performance testing
 
@@ -15,6 +16,10 @@ Basically this test produce a lot of int operations and measure amount of operat
 
 
 You can estimate performance of your device [here](https://dos.zone/en/eplayer/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2Fb%2Fb4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos).
+
+Example output:
+
+<img alt="Result" src={useBaseUrl('img/emulators-logo.jpg')} />
 
 ## Implementing the test
 

@@ -9,31 +9,37 @@ import styles from './styles.module.css';
 const features = [
   {
     title: <>js-dos</>,
-    imageUrl: 'img/undraw_docusaurus_mountain.svg',
+    imageUrl: 'img/jsdos-logo.png',
     description: (
       <>
         js-dos was designed from the ground up to be easily installed and
-        used to get your DOS program up and running in browser quickly.
+        used to get your DOS program up and running in browser quickly.<br/>
+        <code>
+          Dos(element).run("game.jsdos")
+        </code><br/>
+        <a href="docs">Read more</a>
       </>
     ),
   },
   {
     title: <>emulators-ui</>,
-    imageUrl: 'img/undraw_docusaurus_tree.svg',
+    imageUrl: 'img/emulators-ui-logo.jpg',
     description: (
       <>
-            emulators-ui is a default set of components that used to build js-dos player ui.
-            You can resuse them to build your custom DOS player.
+        emulators-ui is a default set of components that used to build js-dos player ui.
+        You can resuse them to build your custom DOS player.<br/>
+        <a href="docs/threejs">Creating three.js player</a>
       </>
     ),
   },
   {
     title: <>emulators</>,
-    imageUrl: 'img/undraw_docusaurus_react.svg',
+    imageUrl: 'img/emulators-logo.png',
     description: (
       <>
-            emulators is a core of js-dos, it have standartized api and can run emulation in different
-        environments.
+        emulators is a core of js-dos, it have standartized api and can run emulation in different
+        environments. Perfect solution for custom embedding. <br/>
+        <a href="docs/estimating-performance">Estimating performance</a>
       </>
     ),
   },
@@ -60,7 +66,7 @@ function Home() {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      description="js-dos v7 simplies API to run DOS games in browser<head />">
       <header className={clsx('hero hero--primary', styles.heroBanner)}>
         <div className="container">
           <h1 className="hero__title">{siteConfig.title}</h1>
