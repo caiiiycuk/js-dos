@@ -8,7 +8,7 @@ Default js-dos interface includes `control bar` component. It can be opened by p
 on `▼` button. This bar implement some useful actions that needed very often:
 
 * Text input field for sending textual data on mobile devices
-* [Save](save-load) feature
+* [Save](save-load.md) feature
 * Fullscreen button that toggles fullscreen on supported browsers
 
 
