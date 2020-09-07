@@ -13,3 +13,27 @@ on `▼` button. This bar implement some useful actions that needed very often:
 
 
 <img alt="Result" src={useBaseUrl('img/control-bar.jpg')} />
+
+## Detaching
+
+If you don't like the style of control bar or you need to place it somewhere else then you can detach it. To do this you need to provide optional `controlSelector` parametr to `Dos` function.
+
+Control selector interface:
+```typescript
+export interface ControlSelector {
+    input: () => HTMLInputElement;
+    send: () => HTMLElement;
+    save: () => HTMLElement;
+    fullscreen: () => HTMLElement;
+}
+```
+
+* **input** must return `<input>` element to read text from
+* **send** is a clickable element that triggers reading from *input*
+* **save** is a clickable element that triggers save feature
+* **fullscreen** is a clickable element that toggles fullscreen 
+
+Complete example:
+```html title="examples/control-bar-detach.html"
+{}
+```
