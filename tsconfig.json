@@ -1,6 +1,5 @@
 {
-    "files": ["gulpfile.ts/index.ts",
-              "src/js-dos.ts"],
+    "files": ["gulpfile.ts/index.ts"],
     "compilerOptions": {
         "target": "esnext",
         "outDir": "build",

@@ -1,18 +1,7 @@
-import * as fs from "fs";
-
-import { src, dest, series, parallel } from "gulp";
+import { src, dest, series } from "gulp";
 import del from "del";
-
-import sourcemaps from "gulp-sourcemaps";
-import uglify from "gulp-uglify";
-import size from "gulp-size";
 import rename from "gulp-rename";
-import browserify from "browserify";
-import buffer from "vinyl-buffer";
-import source from "vinyl-source-stream";
-
-// tslint:disable-next-line:no-var-requires
-const tsify = require("tsify");
+const concat = require("gulp-concat");
 
 function clean() {
     return del(["dist/*"], { force: true });
@@ -32,35 +21,13 @@ function copyWasm() {
     ]).pipe(dest("dist"));
 }
 
-function js() {
-    return browserify({
-        debug: true,
-        entries: [
-            "node_modules/emulators/dist/emulators.js",
-            "node_modules/emulators-ui/dist/emulators-ui.js",
-            "src/js-dos.ts",
-        ],
-        cache: {},
-        packageCache: {}
-    })
-        .plugin(tsify, {
-            "target": "esnext",
-        })
-        .transform("babelify", {
-            presets: [["@babel/preset-env", {
-                "useBuiltIns": "usage",
-                "corejs": 2,
-            }]],
-            extensions: [".ts"]
-        })
-        .bundle()
-        .pipe(source("js-dos.js"))
-        .pipe(buffer())
-        .pipe(sourcemaps.init({ loadMaps: true }))
-        .pipe(uglify())
-        .pipe(sourcemaps.write("./"))
-        .pipe(size({ showFiles: true, showTotal: false }))
+function concatJs() {
+    return src([
+        "node_modules/emulators-ui/dist/emulators-ui.js",
+        "node_modules/emulators/dist/emulators.js",
+    ])
+        .pipe(concat("js-dos.js"))
         .pipe(dest("dist"));
 }
 
-export const jsdos = series(clean, js, copyCss, copyWasm);
+export const jsdos = series(clean, concatJs, copyCss, copyWasm);
