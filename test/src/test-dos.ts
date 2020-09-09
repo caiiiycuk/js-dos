@@ -152,5 +152,41 @@ function testServer(factory: CIFactory, name: string) {
             setTimeout(screenshot, 3000);
         });
     });
+    
+    
+    test(name + " can simulate key combination", async () => {
+        const ci = await CI((await emulatorsImpl.dosBundle())
+            .extract("digger.zip")
+            .autoexec("DIGGER.COM"));
+        assert.ok(ci);
+
+        let sendKeyEventCalled = []
+        ci.sendKeyEvent = (keyCode, pressed) => {
+            sendKeyEventCalled.push([keyCode, pressed])
+        }
+
+        await new Promise((resolve, reject) => {
+            const keyPress = () => {
+                ci.simulateKeyPress(Keys.KBD_left, Keys.KBD_leftctrl, Keys.KBD_leftshift);
+            };
+            
+            const assertKeyPressSequence = () => {
+                assert.deepEqual(sendKeyEventCalled, [
+                    [Keys.KBD_left, true], 
+                    [Keys.KBD_leftctrl, true], 
+                    [Keys.KBD_leftshift, true],
+                    [Keys.KBD_left, false], 
+                    [Keys.KBD_leftctrl, false], 
+                    [Keys.KBD_leftshift, false],
+                ]);
+                resolve();
+            };
+            
+            setTimeout(keyPress, 2000);
+            setTimeout(assertKeyPressSequence, 2100);
+        });
+
+        await ci.exit();
+    });
 
 }

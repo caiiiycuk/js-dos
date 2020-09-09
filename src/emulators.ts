@@ -32,9 +32,9 @@ export interface CommandInterface {
     // * `exit()` - exit from runtime
     exit: () => Promise<void>;
 
-    // * `simulateKeyPress(keyCode)` - allows to simulate key press **AND** release event for key code
-    // see `sendKeyPress` to find meaning of keyCode
-    simulateKeyPress: (keyCode: number) => void;
+    // * `simulateKeyPress(...keyCodes)` - allows to simulate key press **AND** release event for key code
+    // see `sendKeyPress` to find meaning of keyCode. Key combination is suported when more than 1 keyCode is set.
+    simulateKeyPress: (...keyCodes: number[]) => void;
 
     sendKeyEvent: (keyCode: number, pressed: boolean) => void;
 

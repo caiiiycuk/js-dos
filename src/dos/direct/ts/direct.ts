@@ -114,11 +114,10 @@ class DirectCommandInterface implements CommandInterface {
         return Promise.resolve(new ImageData(rgba, width, height));
     }
 
-
-    public simulateKeyPress(keyCode: number) {
-        this.sendKeyEvent(keyCode, true);
+    public simulateKeyPress(...keyCodes: number[]) {
+        keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, true));
         setTimeout(() => {
-            this.sendKeyEvent(keyCode, false);
+            keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, false));
         }, 16);
     }
 
