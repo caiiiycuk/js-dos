@@ -163,11 +163,10 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
         return Promise.resolve(new ImageData(rgba, this.frameWidth, this.frameHeight));
     }
 
-
-    public simulateKeyPress(keyCode: number) {
-        this.sendKeyEvent(keyCode, true);
+    public simulateKeyPress(...keyCodes: number[]) {
+        keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, true));
         setTimeout(() => {
-            this.sendKeyEvent(keyCode, false);
+            keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, false));
         }, 16);
     }
 
