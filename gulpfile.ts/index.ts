@@ -10,4 +10,6 @@ exports.default = series(
     parallel(emulators, test, emitTypes),
 );
 
+exports.wasm = wasm;
+
 

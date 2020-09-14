@@ -46,6 +46,10 @@ async function gzip(file: string) {
 
 async function generateBuildInfo() {
     const info = getRepoInfo();
+    if (info.sha === null) {
+        error("Git repo not found, using '<not-a-git-repo>' as sha");
+        info.sha = "<not-a-git-repo>";
+    }
     const seed = Date.now();
     const md5Version = new MD5().update(pjson.version)
         .update(info.sha);
