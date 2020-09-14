@@ -259,6 +259,41 @@ executable. Next, you need to download some [js-dos bundle](overview.md#js-dos-b
 `js-dos bundle` is a plain zip archive, you need to extract it in some folder. After that you
 should run `sokol` executable from that folder (cwd must be root of extracted bundle). 
 
+## Using Docker
+
+You can use docker image to develop emulators core. Image have already configured
+eveyrthing to build emulators core and start emulators tests.
+
+### Build image
+
+```
+    docker build -t emulators . 
+```
+
+### Test image
+
+
+```
+    docker run -p 8080:8080 -ti emulators
+```
+
+Open `http://localhost:8080` in browser, all test should pass
+
+
+### Development
+
+Run inside the project dir:
+
+```
+    docker run -v `pwd`/src:/app/src -v `pwd`/test:/app/test -v `pwd`/dist:/app/dist -ti emulators bash
+    source /emsdk/emsdk_env.sh
+    gulp OR ./node_modules/.bin/tsc --watch
+```
+
+Use your code editor to edit the content of src and test. 
+In the docker VM you can run `gulp` to build everything into `dist` OR use
+`./node_modules/.bin/tsc --watch` if you need only compile time checks.
+
 
 ## Contributing on github
 

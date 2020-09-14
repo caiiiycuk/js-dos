@@ -15,7 +15,7 @@ export interface CommandInterface {
     soundFrequency: () => number;
     screenshot: () => Promise<ImageData>;
     exit: () => Promise<void>;
-    simulateKeyPress: (keyCode: number) => void;
+    simulateKeyPress: (...keyCodes: number[]) => void;
     sendKeyEvent: (keyCode: number, pressed: boolean) => void;
     persist(): Promise<Uint8Array>;
     events(): CommandInterfaceEvents;
