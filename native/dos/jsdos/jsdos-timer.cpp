@@ -8,6 +8,8 @@
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
+#else
+#include <thread>
 #endif
 
 double GetCurrentTimeMs() {
@@ -25,14 +27,14 @@ void DelayWithYield(int ms) {
 #ifdef EMSCRIPTEN
     emscripten_sleep_with_yield(ms);
 #else
-    usleep(ms * 1000);
+    if (ms == 0) {
+        ms = 10;
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 #endif
 }
 
 void Delay(int ms) {
-#ifdef EMSCRIPTEN
-    emscripten_sleep_with_yield(ms);
-#else
-    usleep(ms * 1000);
-#endif
+    DelayWithYield(ms);
 }

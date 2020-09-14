@@ -173,7 +173,7 @@ void increaseticks();
 
 static Bitu Normal_Loop(void) {
 	Bits ret;
-#if defined(JSDOS) && defined(EMTERPRETER_SYNC)
+#if defined(JSDOS)
     static mstime lastSleepTime = GetTicks();
     if (nosleep_lock == 0 && GetTicks() - lastSleepTime > LOOP_EXECUTION_TIME) {
         DelayWithYield(0);
@@ -206,7 +206,7 @@ static Bitu Normal_Loop(void) {
 }
 
 //For trying other delays
-#define wrap_delay(a) //Delay(a);
+#define wrap_delay(a) DelayWithYield(a);
 
 void increaseticks() { //Make it return ticksRemain and set it in the function above to remove the global variable.
 	if (GCC_UNLIKELY(ticksLocked)) { // For Fast Forward Mode

@@ -132,8 +132,19 @@ void client_sound_init(int freq) {
   assert(saudio_isvalid());
 }
 
+constexpr int sound_buffer_size = 2048;
+float sound_buffer[sound_buffer_size];
+int sound_buffer_used = 0;
+
 void client_sound_push(const float *samples, int num_samples) {
-  saudio_push(samples, num_samples);
+  if (sound_buffer_size - sound_buffer_used < num_samples) {
+    saudio_push(sound_buffer, sound_buffer_used);
+    sound_buffer_used = 0;
+  }
+
+  num_samples = std::min(num_samples, sound_buffer_size - sound_buffer_used);
+  memcpy(sound_buffer + sound_buffer_used, samples, num_samples * sizeof(float));
+  sound_buffer_used += num_samples;
 }
 
 void sokolInit() {
