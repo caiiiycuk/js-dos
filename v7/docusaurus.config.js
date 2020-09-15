@@ -7,6 +7,9 @@ module.exports = {
   organizationName: 'caiiiycuk',
   projectName: 'js-dos',
   themeConfig: {
+    googleAnalytics: {
+      trackingID: 'UA-178018235-1',
+    },
     navbar: {
       title: 'js-dos',
       logo: {
