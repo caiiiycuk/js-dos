@@ -15,7 +15,7 @@
 double GetCurrentTimeMs() {
     static struct timeval tp;
     gettimeofday(&tp, 0);
-    return tp.tv_sec * 1000 + tp.tv_usec / 1000;
+    return (double) tp.tv_sec * 1000 + (double) tp.tv_usec / 1000;
 }
 
 mstime GetMsPassedFromStart() {
