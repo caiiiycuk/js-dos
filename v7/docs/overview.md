@@ -123,6 +123,14 @@ Complete example:
 {}
 ```
 
+:::info
+By default js-dos will load wasm modules relatively from current path,
+you should specify variable `pathPrefix` if you want to load them from different place:
+```js
+emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
+```
+:::
+
 ###  3. Using emulators-ui
 
 From v7 js-dos npm package is **only a wrapper script** that combines *emulators* and *emulators-ui* packages. It didn't contains
