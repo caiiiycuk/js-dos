@@ -6,6 +6,8 @@ import { Keys } from "./keys";
 import { DosConfig } from "./dos/bundle/dos-conf";
 
 export interface Emulators {
+    // * pathPrefix - by default emulators will load wasm modules relatively from current path,
+    // you should specify path prefix if you want to load them from different place
     pathPrefix: string;
     cache: () => Promise<Cache>;
     dosBundle: () => Promise<DosBundle>;

@@ -17,6 +17,7 @@ include_directories(
 set(SOURCES_CORE_CXX11
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-timer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dosbox.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-support.cpp"
         )
 
 
@@ -25,7 +26,6 @@ set(SOURCES_CORE_CXX03
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-debug-mem.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-asyncify.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-core.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-support.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-log.cpp"
 
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/cpu/core_simple.cpp"
