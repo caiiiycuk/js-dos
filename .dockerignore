@@ -1,5 +1,6 @@
 .git
-cmake-build*
+cmake-build-debug
+cmake-build-release
 node_modules
 build
 dist

@@ -42,10 +42,8 @@ node_modules
 .buildconfig
 .vscode
 buildconfig
-cmake-build-debug
+cmake-build*
 travis-build
-build
-cmake-build-debug
 build
 build-emterp
 src/dos/sokol/sokol
