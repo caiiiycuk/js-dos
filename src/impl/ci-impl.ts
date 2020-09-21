@@ -1,4 +1,4 @@
-import { CommandInterfaceEvents } from "../emulators";
+import { CommandInterfaceEvents, MessageType } from "../emulators";
 
 export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
 
@@ -7,6 +7,8 @@ export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
     private onFrameConsumers: ((frame: Uint8Array) => void)[] = [];
     private onSoundPushConsumers: ((samples: Float32Array) => void)[] = [];
     private onExitConsumers: (() => void)[] = [];
+
+    private onMessageConsumers: ((msgType: MessageType, ...args: any[]) => void)[] = [];
 
     onStdout = (consumer: (message: string) => void) => {
         this.onStdoutConsumers.push(consumer);
@@ -26,6 +28,10 @@ export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
 
     onExit = (consumer: () => void) => {
         this.onExitConsumers.push(consumer);
+    }
+
+    onMessage = (consumer: (msgType: MessageType, ...args: any[]) => void) => {
+        this.onMessageConsumers.push(consumer);
     }
 
     fireStdout = (message: string) => {
@@ -62,5 +68,13 @@ export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
         this.onFrameConsumers = [];
         this.onSoundPushConsumers = [];
         this.onExitConsumers = [];
+        this.onMessageConsumers = [];
     }
+
+    fireMessage = (msgType: MessageType, ...args: any[]) => {
+        for (const next of this.onMessageConsumers) {
+            next(msgType, ...args);
+        }
+    }
+
 }

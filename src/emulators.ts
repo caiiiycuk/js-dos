@@ -9,9 +9,16 @@ export interface Emulators {
     // * pathPrefix - by default emulators will load wasm modules relatively from current path,
     // you should specify path prefix if you want to load them from different place
     pathPrefix: string;
+
+    // * cache - default cache that store wasm binaries, this cache is wiped on any js-dos version change
     cache: () => Promise<Cache>;
+
     dosBundle: () => Promise<DosBundle>;
+
+    // * dosDirect - create DOS Direct emulator backend
     dosDirect: (bundle: Uint8Array) => Promise<CommandInterface>;
+
+    // * dosWorker - create DOS Worker emulator backend
     dosWorker: (bundle: Uint8Array) => Promise<CommandInterface>;
 }
 
@@ -47,18 +54,16 @@ export interface CommandInterface {
     events(): CommandInterfaceEvents;
 }
 
+export type MessageType = "log" | "warn" | "error" | string;
+
 export interface CommandInterfaceEvents {
     onStdout: (consumer: (message: string) => void) => void;
     onFrameSize: (consumer: (width: number, height: number) => void) => void;
     onFrame: (consumer: (frame: Uint8Array) => void) => void;
     onSoundPush: (consumer: (samples: Float32Array) => void) => void;
     onExit: (consumer: () => void) => void;
-}
 
-export interface Logger {
-    onLog: (...args: any[]) => void;
-    onWarn: (...args: any[]) => void;
-    onErr: (...args: any[]) => void;
+    onMessage: (consumer: (msgType: MessageType, ...args: any[]) => void) => void;
 }
 
 if (typeof window !== undefined) {

@@ -1,4 +1,4 @@
-import { CommandInterface, Logger } from "../../../emulators";
+import { CommandInterface } from "../../../emulators";
 import { WorkerClient, WorkerHost, FrameLine } from "./worker-client";
 
 import { WasmModule } from "../../../impl/modules";
@@ -7,27 +7,18 @@ import { DosConfig } from "../../bundle/dos-conf";
 
 export default function DosWorker(workerUrl: string,
                                   wasm: WasmModule,
-                                  bundle: Uint8Array,
-                                  logger: Logger): Promise<CommandInterface> {
+                                  bundle: Uint8Array): Promise<CommandInterface> {
     return new Promise<CommandInterface>((resolve, reject) => {
         try {
-            let startupErrorLog: string | undefined;
-            const onErr = logger.onErr;
-            logger.onErr = (...args: any[]) => {
-                startupErrorLog = (startupErrorLog || "") + args.join(" ") + "\n";
-            }
-
             new WorkerCommandInterface(workerUrl,
                                        wasm,
                                        bundle,
-                                       logger,
-                                       (ci) => {
-                                           if (startupErrorLog !== undefined) {
+                                       (ci, error) => {
+                                           if (error !== undefined) {
                                                ci.exit()
-                                                   .then(() => reject(new Error(startupErrorLog)))
+                                                   .then(() => reject(error))
                                                    .catch(reject);
                                            } else {
-                                               logger.onErr = onErr;
                                                resolve(ci);
                                            }
                                        });
@@ -50,28 +41,30 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
     private exitPromise?: Promise<void>;
     private exitResolve?: () => void;
 
-    private logger: Logger;
-
     private eventsImpl = new CommandInterfaceEventsImpl();
 
     private freq = 0;
 
     private configPromise: Promise<DosConfig>;
     private configResolve: (config: DosConfig) => void = () => {};
+    private startupErrorLog: string | undefined = "";
 
     constructor(workerUrl: string,
                 wasmModule: WasmModule,
                 bundle: Uint8Array,
-                logger: Logger,
-                ready: (ci: CommandInterface) => void) {
-        this.logger = logger;
+                ready: (ci: CommandInterface, err?: Error) => void) {
         this.configPromise = new Promise<DosConfig>((resolve) => this.configResolve = resolve);
         this.client = new WorkerClient(workerUrl,
                                        wasmModule,
                                        bundle,
                                        this,
                                        () => {
-                                           ready(this);
+                                           if ((this.startupErrorLog || "").length > 0) {
+                                               ready(this, new Error(this.startupErrorLog));
+                                           } else {
+                                               delete this.startupErrorLog;
+                                               ready(this);
+                                           }
                                        });
     }
 
@@ -114,15 +107,18 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
     }
 
     onLog(...args: any[]) {
-        this.logger.onLog(...args);
+        this.eventsImpl.fireMessage("log", ...args);
     }
 
     onWarn(...args: any[]) {
-        this.logger.onWarn(...args);
+        this.eventsImpl.fireMessage("warn", ...args);
     }
 
     onErr(...args: any[]) {
-        this.logger.onErr(...args);
+        this.eventsImpl.fireMessage("error", ...args);
+        if (this.startupErrorLog !== undefined) {
+            this.startupErrorLog += JSON.stringify(args) + "\n";
+        }
     }
 
     onStdout(message: string) {

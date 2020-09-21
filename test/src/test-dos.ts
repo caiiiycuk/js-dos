@@ -54,7 +54,7 @@ function testServer(factory: CIFactory, name: string) {
             const ci = await factory(new Uint8Array(buffer as ArrayBuffer));
             assert.fail();
         } catch (e) {
-            assert.equal("Broken bundle, .jsdos/dosbox.conf not found\n", e.message);
+            assert.equal("[\"Broken bundle, .jsdos/dosbox.conf not found\"]\n", e.message);
         }
     });
 
@@ -152,8 +152,7 @@ function testServer(factory: CIFactory, name: string) {
             setTimeout(screenshot, 3000);
         });
     });
-    
-    
+
     test(name + " can simulate key combination", async () => {
         const ci = await CI((await emulatorsImpl.dosBundle())
             .extract("digger.zip")
@@ -169,7 +168,7 @@ function testServer(factory: CIFactory, name: string) {
             const keyPress = () => {
                 ci.simulateKeyPress(Keys.KBD_left, Keys.KBD_leftctrl, Keys.KBD_leftshift);
             };
-            
+
             const assertKeyPressSequence = () => {
                 assert.deepEqual(sendKeyEventCalled, [
                     [Keys.KBD_left, true], 
@@ -181,7 +180,7 @@ function testServer(factory: CIFactory, name: string) {
                 ]);
                 resolve();
             };
-            
+
             setTimeout(keyPress, 2000);
             setTimeout(assertKeyPressSequence, 2100);
         });

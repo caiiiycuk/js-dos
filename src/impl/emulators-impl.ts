@@ -1,6 +1,6 @@
 import { Build } from "../build";
-import { Emulators, Logger, CommandInterface } from "../emulators";
-import { Cache, CacheDb, CacheNoop } from "../cache";
+import { Emulators, CommandInterface } from "../emulators";
+import { Cache, CacheDb } from "../cache";
 
 import { IWasmModules, WasmModulesImpl } from "./modules";
 
@@ -13,28 +13,12 @@ class EmulatorsImpl implements Emulators {
 
     private cachePromise?: Promise<Cache>;
     private wasmModulesPromise?: Promise<IWasmModules>;
-    private logger: Logger;
-
-    constructor() {
-        this.logger = {
-            onLog(...args: any[]) {
-                // tslint:disable-next-line:no-console
-                console.log(...args);
-            },
-            onWarn(...args: any[]) {
-                // tslint:disable-next-line:no-console
-                console.warn(...args);
-            },
-            onErr(...args: any[]) {
-                // tslint:disable-next-line:no-console
-                console.error(...args);
-            },
-        };
-    }
 
     cache(): Promise<Cache> {
         if (this.cachePromise === undefined) {
-            this.cachePromise = CacheDb(Build.version, this.logger);
+            this.cachePromise = CacheDb(Build.version, {
+                onErr: console.error,
+            });
         }
         return this.cachePromise;
     }
@@ -49,13 +33,13 @@ class EmulatorsImpl implements Emulators {
     async dosDirect(bundle: Uint8Array): Promise<CommandInterface> {
         const modules = await this.wasmModules();
         const dosDirectWasm = await modules.dosDirect();
-        return DosDirect(dosDirectWasm, bundle, this.logger);
+        return DosDirect(dosDirectWasm, bundle);
     }
 
     async dosWorker(bundle: Uint8Array): Promise<CommandInterface> {
         const modules = await this.wasmModules();
         const dosWorkerWasm = await modules.dosWorker();
-        return DosWorker(this.pathPrefix + "wworker.js", dosWorkerWasm, bundle, this.logger);
+        return DosWorker(this.pathPrefix + "wworker.js", dosWorkerWasm, bundle);
     }
 
     wasmModules(): Promise<IWasmModules> {

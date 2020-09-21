@@ -10,7 +10,7 @@ RUN apt-get -yqq update && \
     apt-get clean -y
 
 RUN git clone https://github.com/emscripten-core/emsdk.git
-RUN cd emsdk && ./emsdk install 2.0.2 && ./emsdk activate 2.0.2
+RUN cd emsdk && ./emsdk install 2.0.4 && ./emsdk activate 2.0.4
 RUN source /emsdk/emsdk_env.sh && npm install -g gulp
 
 WORKDIR /app

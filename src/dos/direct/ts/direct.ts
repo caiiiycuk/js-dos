@@ -1,34 +1,41 @@
-import { CommandInterface, Logger } from "../../../emulators";
+import { CommandInterface } from "../../../emulators";
 
 import { WasmModule } from "../../../impl/modules";
 import { CommandInterfaceEventsImpl } from "../../../impl/ci-impl";
 
 export default async function DosDirect(wasm: WasmModule,
-                                        bundle: Uint8Array,
-                                        logger: Logger): Promise<CommandInterface> {
+                                        bundle: Uint8Array): Promise<CommandInterface> {
     const eventsImpl = new CommandInterfaceEventsImpl();
 
-    const errFn = (...args: any) => {
-        logger.onErr(...args);
+    let startupErrorLog: string = "";
+
+    const logFn = (...args: any[]) => {
+        eventsImpl.fireMessage("log", ...args);
     }
 
-    let startupErrorLog: string | undefined;
-    const onErr = logger.onErr;
-    logger.onErr = (...args: any[]) => {
-        startupErrorLog = (startupErrorLog || "") + args.join(" ") + "\n";
+    const warnFn = (...args: any[]) => {
+        eventsImpl.fireMessage("warn", ...args);
     }
 
-    const module: any = {
-        log: logger.onLog,
-        warn: logger.onWarn,
-        err: errFn,
-        stdout: eventsImpl.fireStdout,
+    const errFn = (...args: any[]) => {
+        eventsImpl.fireMessage("error", ...args);
+    }
+
+    const startupErrFn = (...args: any[]) => {
+        eventsImpl.fireMessage("error", ...args);
+        startupErrorLog += JSON.stringify(args) + "\n";
+    }
+
+    let module: any = {
+        log: logFn,
+        print: logFn,
+        warn: warnFn,
+        err: startupErrFn,
+        printErr: startupErrFn,
+        clientStdout: eventsImpl.fireStdout,
     };
 
     await wasm.instantiate(module);
-
-    module.print = logger.onLog;
-    module.printErr = logger.onErr;
 
     const ci = await new Promise<CommandInterface>((resolve, reject) => {
         try {
@@ -38,12 +45,13 @@ export default async function DosDirect(wasm: WasmModule,
         }
     });
 
-    if (startupErrorLog !== undefined) {
+    if (startupErrorLog.length > 0) {
         await ci.exit();
         throw new Error(startupErrorLog);
     }
 
-    logger.onErr = onErr;
+    module.err = errFn;
+    module.printErr = errFn;
     return ci;
 }
 
@@ -77,7 +85,7 @@ class DirectCommandInterface implements CommandInterface {
         this.module.bundle = new Uint8Array(bundle);
         this.eventsImpl = eventsImpl;
         this.module.callMain([]);
-        setTimeout(() => ready(this), 16);
+        ready(this);
         this.module._runRuntime();
     }
 

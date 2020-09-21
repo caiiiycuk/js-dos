@@ -16,7 +16,7 @@ char *frameRgba = 0;
 #ifdef EMSCRIPTEN
 // clang-format off
 EM_JS(void, emsc_client_stdout, (const char* data, uint32_t amount), {
-    Module.stdout(UTF8ToString(data, amount));
+    Module.clientStdout(UTF8ToString(data, amount));
   });
 
 EM_JS(void, emsc_client_frame_size, (int width, int height), {
@@ -221,7 +221,8 @@ extern "C" void* EMSCRIPTEN_KEEPALIVE getFrameRgba() {
 int main(int argc, char **argv) {
 #ifdef EMSCRIPTEN
   emscripten_exit_with_live_runtime();
-#endif
+#else
   runRuntime();
+#endif
   return 0;
 }
