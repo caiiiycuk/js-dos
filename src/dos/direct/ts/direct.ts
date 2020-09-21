@@ -26,7 +26,7 @@ export default async function DosDirect(wasm: WasmModule,
         startupErrorLog += JSON.stringify(args) + "\n";
     }
 
-    let module: any = {
+    const module: any = {
         log: logFn,
         print: logFn,
         warn: warnFn,

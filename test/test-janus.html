@@ -1,0 +1,48 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>Emulators Tests (Janus)</title>
+        <link href="mocha.css" rel="stylesheet" />
+        <style>
+         .info {
+	           margin: 0;
+	           background: darkseagreen;
+         }
+        </style>
+        <script src="mocha.js"></script>
+        <script src="chai.js"></script>
+        <script src="adapter-latest.js"></script>
+        <script src="janus.js"></script>
+    </head>
+
+    <body>
+        <div id="mocha"></div>
+	      <button id="button" onclick="javacript:start()">Start Test</button>
+        <video id="video" width="320px" height="240px" autoplay="autoplay" playsinline></video>
+        <div class="info">To complete this test Janus server should be started on http://127.0.0.1:8088</div>
+        <script>
+         mocha.setup({
+             ui: 'qunit',
+             allowUncaught: true,
+             bail: true,
+             fullTrace: true,
+             timeout: 60000
+         });
+        </script>
+        <script src="test-janus.js"></script>
+        <script>
+		     function start() {
+             document.getElementById("button").style.display = "none";
+			       document.getElementById("video").play();
+             Janus.init({
+                 debug: "all",
+                 callback: function () {
+                     mocha.run();
+                 },
+             });
+		     }
+        </script>
+    </body>
+
+</html>

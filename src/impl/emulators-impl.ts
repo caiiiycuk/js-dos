@@ -7,6 +7,7 @@ import { IWasmModules, WasmModulesImpl } from "./modules";
 import DosBundle from "../dos/bundle/dos-bundle";
 import DosDirect from "../dos/direct/ts/direct";
 import DosWorker from "../dos/worker/ts/worker";
+import Janus from "../janus/janus-impl";
 
 class EmulatorsImpl implements Emulators {
     pathPrefix = "";
@@ -17,6 +18,7 @@ class EmulatorsImpl implements Emulators {
     cache(): Promise<Cache> {
         if (this.cachePromise === undefined) {
             this.cachePromise = CacheDb(Build.version, {
+                // tslint:disable-next-line
                 onErr: console.error,
             });
         }
@@ -40,6 +42,10 @@ class EmulatorsImpl implements Emulators {
         const modules = await this.wasmModules();
         const dosWorkerWasm = await modules.dosWorker();
         return DosWorker(this.pathPrefix + "wworker.js", dosWorkerWasm, bundle);
+    }
+
+    async janus(restUrl: string): Promise<CommandInterface> {
+        return Janus(restUrl);
     }
 
     wasmModules(): Promise<IWasmModules> {

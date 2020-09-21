@@ -20,6 +20,8 @@ export interface Emulators {
 
     // * dosWorker - create DOS Worker emulator backend
     dosWorker: (bundle: Uint8Array) => Promise<CommandInterface>;
+
+    janus: (restUrl: string) => Promise<CommandInterface>;
 }
 
 export interface CommandInterface {

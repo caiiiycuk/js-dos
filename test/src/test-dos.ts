@@ -159,7 +159,7 @@ function testServer(factory: CIFactory, name: string) {
             .autoexec("DIGGER.COM"));
         assert.ok(ci);
 
-        let sendKeyEventCalled = []
+        const sendKeyEventCalled = []
         ci.sendKeyEvent = (keyCode, pressed) => {
             sendKeyEventCalled.push([keyCode, pressed])
         }
@@ -171,11 +171,11 @@ function testServer(factory: CIFactory, name: string) {
 
             const assertKeyPressSequence = () => {
                 assert.deepEqual(sendKeyEventCalled, [
-                    [Keys.KBD_left, true], 
-                    [Keys.KBD_leftctrl, true], 
+                    [Keys.KBD_left, true],
+                    [Keys.KBD_leftctrl, true],
                     [Keys.KBD_leftshift, true],
-                    [Keys.KBD_left, false], 
-                    [Keys.KBD_leftctrl, false], 
+                    [Keys.KBD_left, false],
+                    [Keys.KBD_leftctrl, false],
                     [Keys.KBD_leftshift, false],
                 ]);
                 resolve();

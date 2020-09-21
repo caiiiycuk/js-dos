@@ -46,7 +46,7 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
     private freq = 0;
 
     private configPromise: Promise<DosConfig>;
-    private configResolve: (config: DosConfig) => void = () => {};
+    private configResolve: (config: DosConfig) => void = () => {/**/};
     private startupErrorLog: string | undefined = "";
 
     constructor(workerUrl: string,
