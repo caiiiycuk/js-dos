@@ -6,8 +6,6 @@ declare class EmulatorsImpl implements Emulators {
     pathPrefix: string;
     private cachePromise?;
     private wasmModulesPromise?;
-    private logger;
-    constructor();
     cache(): Promise<Cache>;
     dosBundle(): Promise<DosBundle>;
     dosDirect(bundle: Uint8Array): Promise<CommandInterface>;

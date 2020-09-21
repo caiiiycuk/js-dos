@@ -13,14 +13,14 @@ projects.
 :::
 
 The new version of js-dos is more modular, you can use parts of it. It consists of:
-* js-dos bundle - universal package that js-dos understands
-* emulators - [npm package](https://www.npmjs.com/package/emulators), that provides just the DOS emulator that can run in different environments
+* js-dos bundle - universal package format that js-dos understands
+* emulators - [npm package](https://www.npmjs.com/package/emulators), that provide emulator backends which can run in different environments
 * emulators-ui - [npm package](https://www.npmjs.com/package/emulators-ui), a set of ui and sound components to render emulator output in browser
 * js-dos - [npm package](https://www.npmjs.com/package/js-dos/v/beta) that combines everything to run a DOS program in browser
 
 ## js-dos bundle
 
-js-dos 6.22 has a very easy API to run a DOS program in browser. Before starting it you need to perform some setup:
+js-dos 6.22 has a very simple API to run a DOS program in browser. Before starting it you need to perform some setup:
 * download game archive (usually zip)
 * extract it
 * configure dos file system
@@ -29,8 +29,8 @@ js-dos 6.22 has a very easy API to run a DOS program in browser. Before starting
 
 Often gameplay quality depends on good configuration.
 
-Starting from js-dos 7, the API expects a `js-dos bundle` that already contains all configuration needed to start the DOS program.
-`js-dos bundle` is just a **ZIP** archive that contains the game itself and a js-dos config file (same as dosbox.conf file). 
+Starting from js-dos v7, the API expects a `js-dos bundle` that already contains all configuration needed to start the DOS program.
+`js-dos bundle` is just a **ZIP** archive that contains the game it self and a js-dos config file (same as dosbox.conf file). 
 For example, [digger.jsdos](https://talks.dos.zone/t/digger-may-06-1999/1922) contains: 
 ```
 .jsdos/dosbox.conf - dosbox configuration file (required)
@@ -55,7 +55,7 @@ Once you have `jsdos bundle` you can easily run it in browser. There are several
 
 ### 1. Use player hosted on dos.zone
 
-Fastest way to embed jsdos on your page. You just need the url of a `jsdos bundle` (you can get it from our game database).
+Fastest way to embed program on your page. You just need the url of a `jsdos bundle` (you can get it from our game database).
 
 ```html
 <iframe
@@ -103,7 +103,7 @@ Dos(document.getElementById("jsdos")).run("some.jsdos");
 ```
 
 `Dos` receives HTMLDivElement and uses it to create the player UI. To run `jsdos bundle`
-just use its method `run` specifying the url of `jsdos bundle`.
+just use it's method `run` specifying the url of `jsdos bundle`.
 
 To use js-dos you need to add `js-dos.js` script, and `js-dos.css` style.
 Also you need to specify path prefix os js-dos installation:
@@ -134,7 +134,7 @@ emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
 ###  3. Using emulators-ui
 
 From v7 js-dos npm package is **only a wrapper script** that combines *emulators* and *emulators-ui* packages. It didn't contains
-code it self. It's useful if you don't want to make customizations in UI or do custom integration. **js-dos package is single
+code it self. It's useful if you don't want to make customizations in UI or custom integration. **js-dos package is single
 file solution to run DOS programs.**
 
 If you want to make custumizations or something special then you need to use *emulators* and  *emulators-ui* package in combination.

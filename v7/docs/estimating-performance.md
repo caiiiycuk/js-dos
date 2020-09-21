@@ -32,7 +32,7 @@ To run this test we should use `emulators.js` (from emulators) and use our `js-d
   emulators.pathPrefix = "/v7/build/releases/latest/emulators/";
 ```
 
-You can start test in worker or direct mode:
+You can start test in [worker](dos-worker.md) or [direct](dos-direct.md) mode:
 ```js
 // promise is resolved when emulator is started
 const ci = await (options.worker ?

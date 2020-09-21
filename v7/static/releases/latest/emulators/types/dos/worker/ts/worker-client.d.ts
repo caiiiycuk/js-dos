@@ -1,4 +1,3 @@
-import { Logger } from "../../../emulators";
 import { WasmModule } from "../../../impl/modules";
 import { DosConfig } from "../../bundle/dos-conf";
 declare type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" | "wc-add-key" | "wc-exit";
@@ -7,7 +6,7 @@ export interface FrameLine {
     start: number;
     heapu8: Uint8Array;
 }
-export interface WorkerHost extends Logger {
+export interface WorkerHost {
     onConfig: (config: DosConfig) => void;
     onFrameSize: (width: number, height: number) => void;
     onFrameLines: (lines: FrameLine[]) => void;
@@ -16,6 +15,9 @@ export interface WorkerHost extends Logger {
     onSoundInit: (freq: number) => void;
     onSoundPush: (samples: Float32Array) => void;
     onExit: () => void;
+    onLog: (...args: any[]) => void;
+    onWarn: (...args: any[]) => void;
+    onErr: (...args: any[]) => void;
 }
 export declare class WorkerClient {
     private worker;
