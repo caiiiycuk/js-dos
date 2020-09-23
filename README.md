@@ -1,3 +1,10 @@
+js-dos 7.xx
+===========
+
+[Next](https://js-dos.com/v7/build/) version of js-dos. API is unstable and incomplete.
+
+**DO NOT USE IN PRODUCTION** use 6.22 instead.
+
 [js-dos 6.22](https://js-dos.com)
 ===========
 
