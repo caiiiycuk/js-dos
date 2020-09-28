@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <style>
+         html, body {
+             width: 100%;
+             height: 100%;
+             margin: 0;
+             padding: 0;
+         }
+        </style>
+        <script src="../emulators.js"></script>
+    </head>
+    <body>
+        <div>
+            <button onClick="javascript:downloadBundleAndRun({worker: true})">Start Worker</button>
+            <button onClick="javascript:downloadBundleAndRun({worker: false})">Start Direct</button>
+            <pre id="stdout"></pre>
+        </div>
+
+        <script>
+         emulators.pathPrefix = "../";
+
+         let runId = 0;
+         async function runBundle(bundle, options) {
+             const id = runId++;
+             const stdout = document.getElementById("stdout");
+
+             // promise is resolved when emulator is started
+             const ci = await (options.worker ?
+                               emulators.dosWorker(bundle) :
+                               emulators.dosDirect(bundle));
+
+             const time = [0, 0];
+             let timeIndex = 0;
+             let runs = 10000;
+             // listen program outpus for `~>dtime` marker
+             ci.events().onStdout((message) => {
+                 if (message.indexOf("~>dtime") === -1) {
+                     return;
+                 }
+
+                 time[timeIndex++] = performance.now();
+                 if (timeIndex === 2) {
+                     const delta = time[1] - time[0];
+                     stdout.innerHTML += (id) + ": " + runs + " runs, browser time " + delta + " ms, " +
+                                         "VAX rating " + (runs * 1000 / delta / 1757) + "\n";
+                     runs *= 2;
+                     timeIndex = 0;
+
+                     if (delta > 3000) {
+                         //properly exit
+                         ci.exit();
+                     }
+                 }
+             });
+         }
+
+         function downloadBundleAndRun(options) {
+             const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos";
+
+             // we need to download bundle, emulators accept only Uint8Array
+             const xhr = new XMLHttpRequest();
+             xhr.open("GET", bundleUrl, true);
+             xhr.overrideMimeType("text/plain; charset=x-user-defined");
+             xhr.responseType = "arraybuffer";
+             xhr.onreadystatechange = () => {
+                 if (xhr.readyState === 4 && xhr.status === 200) {
+                     // do not forget to create Uint8Array, 
+                     // arraybuffer will not work!
+                     runBundle(new Uint8Array(xhr.response), options);
+                 }
+             };
+             xhr.send();
+         };
+        </script>
+    </body>
+</html>
