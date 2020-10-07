@@ -9,37 +9,20 @@ export type JanusMessageType = "error" | "attached" | "started" |
 
 function dataAssembler(onMessage: (data: string) => void,
                        onError: (message: any) => void) {
-    interface PendingMessage {
-        parts: number,
-        message: string,
-    };
-
-    const messages: {[index: string]: PendingMessage} = {};
+    let acc: string = "";
 
     return (data: string) => {
-        if (data.startsWith("@open")) {
-            const [_, idx, parts] = data.split(" ");
-            if (messages[idx] !== null) {
-                onError(new Error("Recived data with duplicate index " + idx));
-            }
-            messages[idx] = {
-                parts: Number.parseInt(parts, 10),
-                message: "",
-            }
+        const splitIndex = data.indexOf("\n");
+        if (splitIndex == -1) {
+            acc += data;
         } else {
-            const spaceIndex = data.indexOf(" ");
-            const idx = Number.parseInt(data.substr(0, spaceIndex), 10);
-            const pendingMessage = messages[idx];
-            if (pendingMessage === undefined) {
-                onError("Recived data with not existent index " + idx);
-            } else {
-                pendingMessage.parts--;
-                pendingMessage.message += data.substr(spaceIndex + 1);
+            const payload = acc + data.substr(0, splitIndex);
+            acc = data.substr(splitIndex + 1);
 
-                if (pendingMessage.parts === 0) {
-                    delete messages[idx];
-                    onMessage(pendingMessage.message);
-                }
+            try {
+                onMessage(atob(payload));
+            } catch (e) {
+                onError(e);
             }
         }
     };
@@ -153,7 +136,10 @@ class JanusBackendImpl implements CommandInterface {
             this.configResolveFn = resolve;
         });
         const handle = await this.handlePromise;
-        handle.data({ text: "pipe config" });
+        // workaround for sending immediately after init
+        setTimeout(() => {
+            handle.data({ text: "pipe config" });
+        }, 1000);
         return this.configPromise;
     }
 

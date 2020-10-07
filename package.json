@@ -1,6 +1,6 @@
 {
     "name": "emulators",
-    "version": "0.0.30",
+    "version": "0.0.31",
     "description": "Emulators (dos) with standartized API",
     "main": "dist/emulators.js",
     "types": "dist/types/emulators.d.ts",
