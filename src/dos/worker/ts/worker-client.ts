@@ -36,6 +36,8 @@ export class WorkerClient {
     private host: WorkerHost;
     private ready: () => void;
 
+    private keyMatrix: {[keyCode: number]: boolean} = {};
+
     constructor(workerUrl: string,
                 wasmModule: WasmModule,
                 bundle: Uint8Array,
@@ -126,8 +128,13 @@ export class WorkerClient {
         };
     }
 
-    addKey(key: number, pressed: boolean) {
-        this.sendMessage("wc-add-key", { key, pressed });
+    addKey(keyCode: number, pressed: boolean) {
+        const keyPressed = this.keyMatrix[keyCode] === true;
+        if (keyPressed === pressed) {
+            return;
+        }
+        this.keyMatrix[keyCode] = pressed;
+        this.sendMessage("wc-add-key", { key: keyCode, pressed });
     }
 
     persist() {

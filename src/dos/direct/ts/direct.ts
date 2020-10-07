@@ -62,6 +62,7 @@ class DirectCommandInterface implements CommandInterface {
     private exitPromise?: Promise<void>;
     private eventsImpl: CommandInterfaceEventsImpl;
     private freq: number = 0;
+    private keyMatrix: {[keyCode: number]: boolean} = {};
 
     constructor(module: any,
                 bundle: Uint8Array,
@@ -130,6 +131,11 @@ class DirectCommandInterface implements CommandInterface {
     }
 
     public sendKeyEvent(keyCode: number, pressed: boolean) {
+        const keyPressed = this.keyMatrix[keyCode] === true;
+        if (keyPressed === pressed) {
+            return;
+        }
+        this.keyMatrix[keyCode] = pressed;
         this.module._addKey(keyCode, pressed);
     }
 

@@ -2,11 +2,48 @@ import { CommandInterface } from "../emulators";
 import { CommandInterfaceEventsImpl } from "../impl/ci-impl";
 
 import { JanusJS } from "./janus";
-
-const Janus = (window as any).Janus;
+import { DosConfig } from "../dos/bundle/dos-conf";
 
 export type JanusMessageType = "error" | "attached" | "started" |
     "onremotestream" | "destroyed";
+
+function dataAssembler(onMessage: (data: string) => void,
+                       onError: (message: any) => void) {
+    interface PendingMessage {
+        parts: number,
+        message: string,
+    };
+
+    const messages: {[index: string]: PendingMessage} = {};
+
+    return (data: string) => {
+        if (data.startsWith("@open")) {
+            const [_, idx, parts] = data.split(" ");
+            if (messages[idx] !== null) {
+                onError(new Error("Recived data with duplicate index " + idx));
+            }
+            messages[idx] = {
+                parts: Number.parseInt(parts, 10),
+                message: "",
+            }
+        } else {
+            const spaceIndex = data.indexOf(" ");
+            const idx = Number.parseInt(data.substr(0, spaceIndex), 10);
+            const pendingMessage = messages[idx];
+            if (pendingMessage === undefined) {
+                onError("Recived data with not existent index " + idx);
+            } else {
+                pendingMessage.parts--;
+                pendingMessage.message += data.substr(spaceIndex + 1);
+
+                if (pendingMessage.parts === 0) {
+                    delete messages[idx];
+                    onMessage(pendingMessage.message);
+                }
+            }
+        }
+    };
+}
 
 class JanusBackendImpl implements CommandInterface {
     private janus: JanusJS.Janus;
@@ -15,17 +52,25 @@ class JanusBackendImpl implements CommandInterface {
     private exitPromise: Promise<void>;
     private exitResolveFn: () => void = () => {/**/};
 
-    private opaqueId: string;
-    private handle?: JanusJS.PluginHandle;
+    private configPromise?: Promise<DosConfig>;
+    private configResolveFn: (dosConfig: DosConfig) => void = () => {/**/};
 
-    constructor(janus: JanusJS.Janus) {
+    private opaqueId: string;
+    private handlePromise: Promise<JanusJS.PluginHandle>;
+    private handleResolveFn: (handle: JanusJS.PluginHandle) => void = () => {/**/};
+
+    private keyMatrix: {[keyCode: number]: boolean} = {};
+
+    constructor(janus: JanusJS.Janus, opaqueId: string) {
         this.eventsImpl = new CommandInterfaceEventsImpl();
         this.janus = janus;
-        this.opaqueId = "js-dos-" + Janus.randomString(12);
+        this.opaqueId = opaqueId;
         this.exitPromise = new Promise<void>((resolve) => {
             this.exitResolveFn = resolve;
         });
-
+        this.handlePromise = new Promise<JanusJS.PluginHandle>((resolve) => {
+            this.handleResolveFn = resolve;
+        });
         this.attach();
     }
 
@@ -34,37 +79,41 @@ class JanusBackendImpl implements CommandInterface {
     }
 
     private attach() {
+        let handleRef: JanusJS.PluginHandle;
         this.janus.attach({
             plugin: "janus.plugin.streaming",
             opaqueId: this.opaqueId,
             error: this.onError,
             success: (handle) => {
-                this.handle = handle;
+                handleRef = handle;
                 this.fireMessage("attached");
-                this.handle.send({
+                handle.send({
                     message: {
                         request: "watch",
                         id: 1,
                     },
                 });
             },
-            onmessage: this.onJanusMessage,
+            onmessage: (message: JanusJS.Message, jsep?: JanusJS.JSEP) => {
+                this.onJanusMessage(handleRef, message, jsep);
+            },
 		        onremotestream: (stream: MediaStream) => {
                 this.fireMessage("onremotestream", stream);
             },
-            ondata: (data: any) => {
-                this.eventsImpl.fireStdout(data);
-            },
+            ondataopen: () => this.handleResolveFn(handleRef),
+            ondata: dataAssembler(this.onDataMessage, this.onError),
         });
     }
 
-		private onJanusMessage = (message: JanusJS.Message, jsep?: JanusJS.JSEP) => {
-        if (this.handle === undefined) {
-            this.fireMessage("error", new Error("Handle is undefined"));
-            return;
+    private onDataMessage = (data: string) => {
+        if (data.startsWith("config=")) {
+            this.configResolveFn(JSON.parse(data.substr("config=".length)));
+        } else {
+            this.eventsImpl.fireStdout(data);
         }
+    }
 
-        const handle = this.handle;
+		private onJanusMessage = (handle: JanusJS.PluginHandle, message: JanusJS.Message, jsep?: JanusJS.JSEP) => {
         if (jsep !== undefined && jsep !== null) {
             handle.createAnswer({
                 jsep,
@@ -87,7 +136,7 @@ class JanusBackendImpl implements CommandInterface {
         }
     }
 
-    onError(error: any) {
+    onError = (error: any) => {
         this.fireMessage("error", error);
     }
 
@@ -96,8 +145,16 @@ class JanusBackendImpl implements CommandInterface {
         this.exitResolveFn();
     }
 
-    config() {
-        return Promise.reject("Not supported");
+    async config(): Promise<DosConfig> {
+        if (this.configPromise !== undefined) {
+            return this.configPromise;
+        }
+        this.configPromise = new Promise<DosConfig>((resolve) => {
+            this.configResolveFn = resolve;
+        });
+        const handle = await this.handlePromise;
+        handle.data({ text: "pipe config" });
+        return this.configPromise;
     }
 
     width(): number {
@@ -109,7 +166,7 @@ class JanusBackendImpl implements CommandInterface {
     }
 
     soundFrequency(): number {
-        throw new Error("Not supported");
+        throw new Error("Not supported in this backend");
     }
 
     screenshot() {
@@ -123,17 +180,18 @@ class JanusBackendImpl implements CommandInterface {
         }, 16);
     }
 
-    sendKeyEvent(keyCode: number, pressed: boolean) {
-        if (this.handle === undefined) {
-            this.fireMessage("error", new Error("Handle is undefined"));
+    async sendKeyEvent(keyCode: number, pressed: boolean) {
+        const handle = await this.handlePromise;
+        const keyPressed = this.keyMatrix[keyCode] === true;
+        if (keyPressed === pressed) {
             return;
         }
-
-        this.handle.data({ text: "pipe k" + (pressed ? "down" : "up") + " " + keyCode })
+        this.keyMatrix[keyCode] = pressed;
+        handle.data({ text: "pipe k" + (pressed ? "down" : "up") + " " + keyCode })
     }
 
     persist(): Promise<Uint8Array> {
-        return Promise.reject("Not supported");
+        return Promise.reject(new Error("Not supported"));
     }
 
     exit() {
@@ -146,8 +204,9 @@ class JanusBackendImpl implements CommandInterface {
     }
 }
 
-export default function JanusBackend(restUrl: string): Promise<CommandInterface> {
-    if (typeof Janus === undefined) {
+export default function JanusBackend(restUrl: string, janus?: any): Promise<CommandInterface> {
+    const Janus = janus || (window as any).Janus;
+    if (Janus === undefined) {
         return Promise.reject(new Error("Janus is not defined, you should load janus.js before this"));
     }
 
@@ -175,7 +234,7 @@ export default function JanusBackend(restUrl: string): Promise<CommandInterface>
         const options: JanusJS.ConstructorOptions = {
             server: restUrl,
             success: () => {
-                backend = new JanusBackendImpl(janus);
+                backend = new JanusBackendImpl(janusImpl, "js-dos-" + Janus.randomString(12));
                 resolve(backend);
             },
             error: handlers.error,
@@ -183,7 +242,7 @@ export default function JanusBackend(restUrl: string): Promise<CommandInterface>
             destroyOnUnload: true,
         };
 
-        const janus = new Janus(options) as JanusJS.Janus;
+        const janusImpl = new Janus(options) as JanusJS.Janus;
     });
 
 }
