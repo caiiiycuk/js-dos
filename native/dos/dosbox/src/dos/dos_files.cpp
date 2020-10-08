@@ -411,6 +411,8 @@ void client_stdout_wrapper(const char* data, uint32_t amount) {
       client_stdout(message.c_str(), message.length());
       runs *= 2;
     }
+  } else {
+    client_stdout(data, amount);
   }
 }
 

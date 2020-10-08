@@ -2,6 +2,7 @@ import { CommandInterfaceEvents, MessageType } from "../emulators";
 
 export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
 
+    private delayedStdout: string[] = [];
     private onStdoutConsumers: ((message: string) => void)[] = [];
     private onFrameSizeConsumers: ((width: number, height: number) => void)[] = [];
     private onFrameConsumers: ((frame: Uint8Array) => void)[] = [];
@@ -12,6 +13,13 @@ export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
 
     onStdout = (consumer: (message: string) => void) => {
         this.onStdoutConsumers.push(consumer);
+
+        if (this.onStdoutConsumers.length === 1) {
+            for (const next of this.delayedStdout) {
+                this.fireStdout(next);
+            }
+            this.delayedStdout = [];
+        }
     }
 
     onFrameSize = (consumer: (width: number, height: number) => void) => {
@@ -35,6 +43,11 @@ export class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
     }
 
     fireStdout = (message: string) => {
+        if (this.onStdoutConsumers.length === 0) {
+            this.delayedStdout.push(message);
+            return;
+        }
+
         for (const next of this.onStdoutConsumers) {
             next(message);
         }
