@@ -16,12 +16,14 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include <config.h>
 #include <ctype.h>
 #include <protocol.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <config.h>
+#include <timer.h>
+#include <string>
 
 #include "bios.h"
 #include "cross.h"
@@ -388,6 +390,30 @@ bool DOS_ReadFile(Bit16u entry,Bit8u * data,Bit16u * amount,bool fcb) {
 	return ret;
 }
 
+void client_stdout_wrapper(const char* data, uint32_t amount) {
+  static double time[2] = { 0.0, 0.0 };
+  static int timeIndex = 0;
+  static int runs = 10000;
+  if (amount >= 7 &&
+      data[0] == '~' && data[1] == '>' &&
+      data[2] == 'd' && data[3] == 't' &&
+      data[4] == 'i' && data[5] == 'm' &&
+      data[6] == 'e') {
+    time[timeIndex] = GetCurrentTimeMs();
+    timeIndex++;
+    if (timeIndex == 2) {
+      timeIndex = 0;
+      auto dtime = time[1] - time[0];
+      std::string message = "dhry2: " + std::to_string(runs) +
+                            " " + std::to_string(time[1] - time[0]) +
+                            " " + std::to_string(runs * 1000 / dtime / 1757);
+
+      client_stdout(message.c_str(), message.length());
+      runs *= 2;
+    }
+  }
+}
+
 bool DOS_WriteFile(Bit16u entry,Bit8u * data,Bit16u * amount,bool fcb) {
 	Bit32u handle = fcb?entry:RealHandle(entry);
 	if (handle>=DOS_FILES) {
@@ -407,7 +433,7 @@ bool DOS_WriteFile(Bit16u entry,Bit8u * data,Bit16u * amount,bool fcb) {
 	Bit16u towrite=*amount;
 
 	if (entry == STDOUT && towrite > 0) {
-    client_stdout(reinterpret_cast<const char *>(data), towrite);
+            client_stdout_wrapper(reinterpret_cast<const char *>(data), towrite);
 	}
 
 	bool ret=Files[handle]->Write(data,&towrite);

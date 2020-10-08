@@ -18,6 +18,7 @@ set(SOURCES_CORE_CXX11
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-timer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dosbox.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-support.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/dos_files.cpp"
         )
 
 
@@ -79,7 +80,6 @@ set(SOURCES_CORE_CXX03
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/dos_misc.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/drive_fat.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/drive_iso.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/dos_files.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/shell/shell.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/shell/shell_cmds.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/shell/shell_batch.cpp"

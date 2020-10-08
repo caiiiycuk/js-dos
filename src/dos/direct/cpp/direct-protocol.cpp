@@ -135,7 +135,6 @@ void client_stdout(const char* data, uint32_t amount) {
 #ifdef EMSCRIPTEN
   emsc_client_stdout(data, amount);
 #endif
-
 }
 
 void client_sound_init(int freq) {

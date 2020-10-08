@@ -105,21 +105,8 @@ void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
 }
 
 void client_stdout(const char* data, uint32_t amount) {
-  static double time[2] = { 0.0, 0.0 };
-  static int timeIndex = 0;
-  static int runs = 10000;
-  std::string message(data, amount);
-  if (message.find("~>dtime") != std::string::npos) {
-    time[timeIndex] = GetCurrentTimeMs();
-    timeIndex++;
-    if (timeIndex == 2) {
-      timeIndex = 0;
-      printf("%d runs %.2f ms, VAX rating %.2f\n",
-             runs,
-             time[1] - time[0],
-             runs * 1000 / (time[1] - time[0]) / 1757);
-      runs *= 2;
-    }
+  if (strstr(data, "dhry2:")) {
+      printf("%s\n", data);
   }
 }
 
