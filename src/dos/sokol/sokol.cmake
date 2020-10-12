@@ -19,4 +19,8 @@ target_link_libraries(sokol
   X11 z ncurses dl GL pthread asound
   )
 
-set_target_properties(sokol PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+if (X86_64)
+  add_definitions(-DX86_64)
+else()
+  set_target_properties(sokol PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+endif()

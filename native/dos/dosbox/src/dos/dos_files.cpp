@@ -24,6 +24,7 @@
 #include <time.h>
 #include <timer.h>
 #include <string>
+#include <sstream>
 
 #include "bios.h"
 #include "cross.h"
@@ -393,24 +394,32 @@ bool DOS_ReadFile(Bit16u entry,Bit8u * data,Bit16u * amount,bool fcb) {
 void client_stdout_wrapper(const char* data, uint32_t amount) {
   static double time[2] = { 0.0, 0.0 };
   static int timeIndex = 0;
-  static int runs = 10000;
+  static bool reportRuns = false;
+
+  if (reportRuns) {
+    reportRuns = false;
+    auto dtime = time[1] - time[0];
+    double runs = 0;
+
+    std::istringstream stream(std::string(data, amount));
+    stream >> runs;
+
+    std::string message = "dhry2: " + std::to_string((long) runs) +
+                          " " + std::to_string(dtime) +
+                          " " + std::to_string(runs * 1000 / dtime / 1757);
+
+    client_stdout(message.c_str(), message.length());
+    return;
+  }
+
   if (amount >= 7 &&
       data[0] == '~' && data[1] == '>' &&
       data[2] == 'd' && data[3] == 't' &&
       data[4] == 'i' && data[5] == 'm' &&
       data[6] == 'e') {
     time[timeIndex] = GetCurrentTimeMs();
-    timeIndex++;
-    if (timeIndex == 2) {
-      timeIndex = 0;
-      auto dtime = time[1] - time[0];
-      std::string message = "dhry2: " + std::to_string(runs) +
-                            " " + std::to_string(time[1] - time[0]) +
-                            " " + std::to_string(runs * 1000 / dtime / 1757);
-
-      client_stdout(message.c_str(), message.length());
-      runs *= 2;
-    }
+    timeIndex = (timeIndex + 1) % 2;
+    reportRuns = timeIndex == 0;
   } else {
     client_stdout(data, amount);
   }

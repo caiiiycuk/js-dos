@@ -4,4 +4,8 @@ target_link_libraries(dosbox
         SDL SDL_mixer
         )
 
-set_target_properties(dosbox PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+if (X86_64)
+    add_definitions(-DX86_64)
+else()
+    set_target_properties(dosbox PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+endif()

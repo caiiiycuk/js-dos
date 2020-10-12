@@ -51,7 +51,11 @@
 
 /* Define to 1 to use recompiling cpu core. Can not be used together with the
    dynamic-x86 core */
+#ifdef X86_64
+#define C_DYNREC 1
+#else
 /* #undef C_DYNREC */
+#endif
 
 /* Define to 1 to enable floating point emulation */
 #define C_FPU 1
@@ -94,10 +98,18 @@
 /* #undef C_SSHOT */
 
 /* The type of cpu this target has */
+#ifdef X86_64
+#define C_TARGETCPU X86_64
+#else
 #define C_TARGETCPU UNKNOWN
+#endif
 
 /* Define to 1 to use a unaligned memory access */
+#ifdef X86_64
+#define C_UNALIGNED_MEMORY 1
+#else
 /* #undef C_UNALIGNED_MEMORY */
+#endif
 
 /* define to 1 if you have XKBlib.h and X11 lib */
 /* #undef C_X11_XKB */
@@ -199,7 +211,11 @@
 #define PACKAGE_VERSION "SVN"
 
 /* The size of `int *', as computed by sizeof. */
+#ifdef X86_64
+#define SIZEOF_INT_P 8
+#else
 #define SIZEOF_INT_P 4
+#endif
 
 /* The size of `unsigned char', as computed by sizeof. */
 #define SIZEOF_UNSIGNED_CHAR 1
@@ -208,7 +224,11 @@
 #define SIZEOF_UNSIGNED_INT 4
 
 /* The size of `unsigned long', as computed by sizeof. */
+#ifdef X86_64
+#define SIZEOF_UNSIGNED_LONG 8
+#else
 #define SIZEOF_UNSIGNED_LONG 4
+#endif
 
 /* The size of `unsigned long long', as computed by sizeof. */
 #define SIZEOF_UNSIGNED_LONG_LONG 8
