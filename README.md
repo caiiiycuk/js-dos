@@ -127,6 +127,7 @@ All examples are interactive, read more in [**Examples**](https://js-dos.com/6.2
 ### Clients
 You can found real use of js-dos on certain websites about dos games.
 
+* **!NEW!** [Dos.Zone](https://dos.zone) based on v7.xx
 * [JS-DOS Games](https://js-dos.com/games/)
 * [Dos Games Archive](https://www.dosgamesarchive.com/play-online/)
 * [Emupedia](https://emupedia.net/beta/emuos/)
