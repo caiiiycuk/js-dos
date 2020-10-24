@@ -1228,10 +1228,10 @@ function updateGlobalBufferAndViews(buf) {
   Module['HEAPF64'] = HEAPF64 = new Float64Array(buf);
 }
 
-var STACK_BASE = 27694288,
+var STACK_BASE = 27670064,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 26645712,
-    DYNAMIC_BASE = 27694288;
+    STACK_MAX = 26621488,
+    DYNAMIC_BASE = 27670064;
 
 
 
@@ -1636,7 +1636,7 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  84483: function() {Module['screenIsReadOnly'] = true;}
+  84547: function() {Module['screenIsReadOnly'] = true;}
 };
 function destroySyncSleep(){ if (worker) { self.removeEventListener("message", Module.receive); } else { window.removeEventListener("message", Module.receive); } Module.alive = false; delete Module.sync_sleep; }
 function emsc_add_frame_line(start,ptr,len){ Module.frame_update_lines.push( {start : start, heapu8 : Module.HEAPU8.slice(ptr, ptr + len)}); }
@@ -1655,6 +1655,7 @@ function isWorker(){ return typeof importScripts === 'function'; }
 function jsdos_error(tag,message){ Module.log("[dosbox-error]", UTF8ToString(tag), UTF8ToString(message)); }
 function jsdos_log(tag,message){ Module.log("[dosbox-log  ]", UTF8ToString(tag), UTF8ToString(message)); }
 function jsdos_warn(tag,message){ Module.log("[dosbox-warn ]", UTF8ToString(tag), UTF8ToString(message)); }
+function now(){ return performance.now(); }
 function syncSleep(){ if (!Module.sync_sleep) { throw new Error("Async environment does not exists"); return; } return Asyncify.handleSleep(function(wakeUp) { Module.sync_sleep(wakeUp); }); }
 function ws_client_stdout(data,amount){ Module.sendMessage("ws-stdout", { message: UTF8ToString(data, amount) }); }
 function ws_init_runtime(){ function sendMessage(name, props) { postMessage({ name, props }); }; Module.sendMessage = sendMessage; Module.ping = function(msg) { }; Module.log = function() { sendMessage("ws-log", { args: Array.prototype.slice.call(arguments) }); }; Module.warn = function() { sendMessage("ws-warn", { args: Array.prototype.slice.call(arguments) }); }; Module.err = function() { sendMessage("ws-err", { args: Array.prototype.slice.call(arguments) }); }; Module.print = Module.log; Module.printErr = Module.err; onmessage = function(e) { var data = e.data; if (data.type === "sync_sleep_message") { return; } switch (data.name) { case "wc-run": { Module.bundle = data.props.bundle; Module._extractBundleToFs(); Module._runRuntime(); sendMessage("ws-server-ready"); } break; case "wc-exit": { try { Module._requestExit(); } catch (e) { if (e.name !== "ExitStatus") { throw e; } } } break; case "wc-pack-fs-to-bundle": { try { Module.persist = function(archive) { sendMessage("ws-persist", { bundle: archive }); }; Module._packFsToBundle(); delete Module.persist; } catch (e) { Module.err(e.message); } } break; case "wc-add-key": { Module._addKey(data.props.key, data.props.pressed); } break; default: { console.log("ws " + JSON.stringify(data)); } break; } }; sendMessage("ws-ready"); }
@@ -5544,13 +5545,6 @@ function ws_init_runtime(){ function sendMessage(name, props) { postMessage({ na
 
   function _getpwnam() { throw 'getpwnam: TODO' }
 
-  function _gettimeofday(ptr) {
-      var now = Date.now();
-      HEAP32[((ptr)>>2)]=(now/1000)|0; // seconds
-      HEAP32[(((ptr)+(4))>>2)]=((now % 1000)*1000)|0; // microseconds
-      return 0;
-    }
-
   function _mktime(tmPtr) {
       _tzset();
       var date = new Date(HEAP32[(((tmPtr)+(20))>>2)] + 1900,
@@ -6219,7 +6213,7 @@ function intArrayToString(array) {
 
 /* global initializers */  __ATINIT__.push({ func: function() { ___wasm_call_ctors() } });
 
-var asmLibraryArg = { "__assert_fail": ___assert_fail, "__cxa_atexit": ___cxa_atexit, "__indirect_function_table": wasmTable, "__localtime_r": ___localtime_r, "__map_file": ___map_file, "__sys_access": ___sys_access, "__sys_chmod": ___sys_chmod, "__sys_fcntl64": ___sys_fcntl64, "__sys_fstat64": ___sys_fstat64, "__sys_ftruncate64": ___sys_ftruncate64, "__sys_getcwd": ___sys_getcwd, "__sys_getdents64": ___sys_getdents64, "__sys_getpid": ___sys_getpid, "__sys_ioctl": ___sys_ioctl, "__sys_mkdir": ___sys_mkdir, "__sys_munmap": ___sys_munmap, "__sys_open": ___sys_open, "__sys_rename": ___sys_rename, "__sys_rmdir": ___sys_rmdir, "__sys_stat64": ___sys_stat64, "__sys_umask": ___sys_umask, "__sys_unlink": ___sys_unlink, "abort": _abort, "clock_gettime": _clock_gettime, "destroySyncSleep": destroySyncSleep, "emsc_add_frame_line": emsc_add_frame_line, "emsc_end_frame_update": emsc_end_frame_update, "emsc_exit_runtime": emsc_exit_runtime, "emsc_extract_bundle_to_fs": emsc_extract_bundle_to_fs, "emsc_pack_fs_to_bundle": emsc_pack_fs_to_bundle, "emsc_start_frame_update": emsc_start_frame_update, "emsc_ws_client_frame_set_size": emsc_ws_client_frame_set_size, "emsc_ws_client_sound_init": emsc_ws_client_sound_init, "emsc_ws_client_sound_push": emsc_ws_client_sound_push, "emsc_ws_exit_runtime": emsc_ws_exit_runtime, "emscripten_asm_const_int": _emscripten_asm_const_int, "emscripten_exit_with_live_runtime": _emscripten_exit_with_live_runtime, "emscripten_fetch": _emscripten_fetch, "emscripten_fetch_attr_init": _emscripten_fetch_attr_init, "emscripten_fetch_close": _emscripten_fetch_close, "emscripten_force_exit": _emscripten_force_exit, "emscripten_memcpy_big": _emscripten_memcpy_big, "emscripten_resize_heap": _emscripten_resize_heap, "environ_get": _environ_get, "environ_sizes_get": _environ_sizes_get, "exit": _exit, "fd_close": _fd_close, "fd_fdstat_get": _fd_fdstat_get, "fd_read": _fd_read, "fd_seek": _fd_seek, "fd_write": _fd_write, "getpwnam": _getpwnam, "gettimeofday": _gettimeofday, "initSyncSleep": initSyncSleep, "isNormalState": isNormalState, "isWorker": isWorker, "jsdos_error": jsdos_error, "jsdos_log": jsdos_log, "jsdos_warn": jsdos_warn, "memory": wasmMemory, "mktime": _mktime, "setTempRet0": _setTempRet0, "strftime_l": _strftime_l, "syncSleep": syncSleep, "time": _time, "ws_client_stdout": ws_client_stdout, "ws_init_runtime": ws_init_runtime };
+var asmLibraryArg = { "__assert_fail": ___assert_fail, "__cxa_atexit": ___cxa_atexit, "__indirect_function_table": wasmTable, "__localtime_r": ___localtime_r, "__map_file": ___map_file, "__sys_access": ___sys_access, "__sys_chmod": ___sys_chmod, "__sys_fcntl64": ___sys_fcntl64, "__sys_fstat64": ___sys_fstat64, "__sys_ftruncate64": ___sys_ftruncate64, "__sys_getcwd": ___sys_getcwd, "__sys_getdents64": ___sys_getdents64, "__sys_getpid": ___sys_getpid, "__sys_ioctl": ___sys_ioctl, "__sys_mkdir": ___sys_mkdir, "__sys_munmap": ___sys_munmap, "__sys_open": ___sys_open, "__sys_rename": ___sys_rename, "__sys_rmdir": ___sys_rmdir, "__sys_stat64": ___sys_stat64, "__sys_umask": ___sys_umask, "__sys_unlink": ___sys_unlink, "abort": _abort, "clock_gettime": _clock_gettime, "destroySyncSleep": destroySyncSleep, "emsc_add_frame_line": emsc_add_frame_line, "emsc_end_frame_update": emsc_end_frame_update, "emsc_exit_runtime": emsc_exit_runtime, "emsc_extract_bundle_to_fs": emsc_extract_bundle_to_fs, "emsc_pack_fs_to_bundle": emsc_pack_fs_to_bundle, "emsc_start_frame_update": emsc_start_frame_update, "emsc_ws_client_frame_set_size": emsc_ws_client_frame_set_size, "emsc_ws_client_sound_init": emsc_ws_client_sound_init, "emsc_ws_client_sound_push": emsc_ws_client_sound_push, "emsc_ws_exit_runtime": emsc_ws_exit_runtime, "emscripten_asm_const_int": _emscripten_asm_const_int, "emscripten_exit_with_live_runtime": _emscripten_exit_with_live_runtime, "emscripten_fetch": _emscripten_fetch, "emscripten_fetch_attr_init": _emscripten_fetch_attr_init, "emscripten_fetch_close": _emscripten_fetch_close, "emscripten_force_exit": _emscripten_force_exit, "emscripten_memcpy_big": _emscripten_memcpy_big, "emscripten_resize_heap": _emscripten_resize_heap, "environ_get": _environ_get, "environ_sizes_get": _environ_sizes_get, "exit": _exit, "fd_close": _fd_close, "fd_fdstat_get": _fd_fdstat_get, "fd_read": _fd_read, "fd_seek": _fd_seek, "fd_write": _fd_write, "getpwnam": _getpwnam, "initSyncSleep": initSyncSleep, "isNormalState": isNormalState, "isWorker": isWorker, "jsdos_error": jsdos_error, "jsdos_log": jsdos_log, "jsdos_warn": jsdos_warn, "memory": wasmMemory, "mktime": _mktime, "now": now, "setTempRet0": _setTempRet0, "strftime_l": _strftime_l, "syncSleep": syncSleep, "time": _time, "ws_client_stdout": ws_client_stdout, "ws_init_runtime": ws_init_runtime };
 var asm = createWasm();
 /** @type {function(...*):?} */
 var ___wasm_call_ctors = Module["___wasm_call_ctors"] = function() {
@@ -6357,23 +6351,13 @@ var dynCall_ii = Module["dynCall_ii"] = function() {
 };
 
 /** @type {function(...*):?} */
-var dynCall_iii = Module["dynCall_iii"] = function() {
-  return (dynCall_iii = Module["dynCall_iii"] = Module["asm"]["dynCall_iii"]).apply(null, arguments);
-};
-
-/** @type {function(...*):?} */
-var dynCall_viii = Module["dynCall_viii"] = function() {
-  return (dynCall_viii = Module["dynCall_viii"] = Module["asm"]["dynCall_viii"]).apply(null, arguments);
+var dynCall_vii = Module["dynCall_vii"] = function() {
+  return (dynCall_vii = Module["dynCall_vii"] = Module["asm"]["dynCall_vii"]).apply(null, arguments);
 };
 
 /** @type {function(...*):?} */
 var dynCall_iiii = Module["dynCall_iiii"] = function() {
   return (dynCall_iiii = Module["dynCall_iiii"] = Module["asm"]["dynCall_iiii"]).apply(null, arguments);
-};
-
-/** @type {function(...*):?} */
-var dynCall_vii = Module["dynCall_vii"] = function() {
-  return (dynCall_vii = Module["dynCall_vii"] = Module["asm"]["dynCall_vii"]).apply(null, arguments);
 };
 
 /** @type {function(...*):?} */
@@ -6387,8 +6371,18 @@ var dynCall_viiii = Module["dynCall_viiii"] = function() {
 };
 
 /** @type {function(...*):?} */
+var dynCall_iii = Module["dynCall_iii"] = function() {
+  return (dynCall_iii = Module["dynCall_iii"] = Module["asm"]["dynCall_iii"]).apply(null, arguments);
+};
+
+/** @type {function(...*):?} */
 var dynCall_iiiii = Module["dynCall_iiiii"] = function() {
   return (dynCall_iiiii = Module["dynCall_iiiii"] = Module["asm"]["dynCall_iiiii"]).apply(null, arguments);
+};
+
+/** @type {function(...*):?} */
+var dynCall_iiiiiii = Module["dynCall_iiiiiii"] = function() {
+  return (dynCall_iiiiiii = Module["dynCall_iiiiiii"] = Module["asm"]["dynCall_iiiiiii"]).apply(null, arguments);
 };
 
 /** @type {function(...*):?} */
@@ -6397,8 +6391,8 @@ var dynCall_iiiiii = Module["dynCall_iiiiii"] = function() {
 };
 
 /** @type {function(...*):?} */
-var dynCall_iiiiiii = Module["dynCall_iiiiiii"] = function() {
-  return (dynCall_iiiiiii = Module["dynCall_iiiiiii"] = Module["asm"]["dynCall_iiiiiii"]).apply(null, arguments);
+var dynCall_viii = Module["dynCall_viii"] = function() {
+  return (dynCall_viii = Module["dynCall_viii"] = Module["asm"]["dynCall_viii"]).apply(null, arguments);
 };
 
 /** @type {function(...*):?} */

@@ -15,7 +15,7 @@ Basically this test produce a lot of int operations and measure amount of operat
 ## Running the test
 
 
-You can estimate performance of your device [here](https://dos.zone/en/player/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2Fb%2Fb4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos).
+You can estimate performance of your device [here](https://dos.zone/en/my).
 
 Example output:
 
