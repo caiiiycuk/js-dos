@@ -19,6 +19,7 @@ set(SOURCES_CORE_CXX11
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dosbox.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-support.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/dos_files.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/cdrom_image.cpp"
         )
 
 
@@ -64,7 +65,6 @@ set(SOURCES_CORE_CXX03
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/cdrom_ioctl_linux.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/cdrom_ioctl_win32.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/cdrom_aspi_win32.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/cdrom_image.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/cdrom_ioctl_os2.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/dos_tables.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/dos_devices.cpp"

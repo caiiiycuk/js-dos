@@ -21,6 +21,10 @@
 #include "support.h"
 #include "timer.h"
 
+constexpr int BLOCK_SIZE = 2048;
+constexpr int PUSH_SIZE = 512;
+float blockBuffer[BLOCK_SIZE];
+
 #define MIXER_VOLSHIFT 13
 
 #define FREQ_SHIFT 14
@@ -408,27 +412,6 @@ static void MIXER_MixData(Bitu needed) {
     if (Mixer_irq_important())
         mixer.tick_add = ((mixer.freq) << TICK_SHIFT) / 1000;
     mixer.done = needed;
-
-    static const int bufferSize = 8192;
-    static float stream[bufferSize];
-    static double lastPushTimeMs = GetCurrentTimeMs();
-    static double framesRest = 0;
-
-    double nowMs = GetCurrentTimeMs();
-    double exactFrames = ((nowMs - lastPushTimeMs) / 1000.f) * mixer.freq + framesRest;
-    lastPushTimeMs = nowMs;
-
-    int frames = (int) exactFrames;
-    framesRest = exactFrames - frames;
-
-    if (frames > bufferSize) {
-        frames = bufferSize;
-    }
-
-    if (frames > 0) {
-        MIXER_CallBack(stream, frames);
-        client_sound_push(stream, frames);
-    }
 }
 
 static void MIXER_Mix(void) {
@@ -436,6 +419,24 @@ static void MIXER_Mix(void) {
     mixer.tick_counter += mixer.tick_add;
     mixer.needed += (mixer.tick_counter >> TICK_SHIFT);
     mixer.tick_counter &= TICK_MASK;
+
+
+    static auto pushedAt = GetMsPassedFromStart();
+    static double restSamplesCount = 0;
+    auto now = GetMsPassedFromStart();
+    auto dt = now - pushedAt;
+
+    auto exactSamplesCount = dt * mixer.freq / 1000 + restSamplesCount;
+    int samplesCount = exactSamplesCount;
+    if (samplesCount >= PUSH_SIZE) {
+      restSamplesCount = exactSamplesCount - samplesCount;
+      if (samplesCount > BLOCK_SIZE) {
+        samplesCount = BLOCK_SIZE;
+      }
+      MIXER_CallBack(blockBuffer, samplesCount);
+      client_sound_push(blockBuffer, samplesCount);
+      pushedAt = now;
+    }
 }
 
 static void MIXER_Mix_NoSound(void) {
@@ -661,7 +662,7 @@ void MIXER_Init(Section *sec) {
     /* Read out config section */
     mixer.freq = section->Get_int("rate");
     mixer.nosound = section->Get_bool("nosound");
-    mixer.blocksize = section->Get_int("blocksize");
+    mixer.blocksize = ::BLOCK_SIZE; // section->Get_int("blocksize");
 
     client_sound_init(mixer.freq);
 

@@ -24,8 +24,8 @@
 
 #ifdef JSDOS
 typedef unsigned int mstime;
-mstime GetMsPassedFromStart();
-#define GetTicks()  GetMsPassedFromStart()
+double GetMsPassedFromStart();
+mstime GetTicks();
 #else
 /* underlying clock rate in HZ */
 #include <SDL/SDL.h>
@@ -33,7 +33,6 @@ mstime GetMsPassedFromStart();
 #endif
 
 
-double GetCurrentTimeMs();
 void DelayWithYield(int ms);
 void Delay(int ms);
 

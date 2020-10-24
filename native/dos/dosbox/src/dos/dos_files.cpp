@@ -417,7 +417,7 @@ void client_stdout_wrapper(const char* data, uint32_t amount) {
       data[2] == 'd' && data[3] == 't' &&
       data[4] == 'i' && data[5] == 'm' &&
       data[6] == 'e') {
-    time[timeIndex] = GetCurrentTimeMs();
+    time[timeIndex] = GetMsPassedFromStart();
     timeIndex = (timeIndex + 1) % 2;
     reportRuns = timeIndex == 0;
   } else {

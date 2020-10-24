@@ -12,15 +12,26 @@
 #include <thread>
 #endif
 
-double GetCurrentTimeMs() {
-    static struct timeval tp;
-    gettimeofday(&tp, 0);
-    return (double) tp.tv_sec * 1000 + (double) tp.tv_usec / 1000;
+#ifdef EMSCRIPTEN
+EM_JS(double, now, (void), {
+    return performance.now();
+});
+#else
+double now() {
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    return ts.tv_sec * 1000. + ts.tv_nsec / 1000000.;
+}
+#endif
+
+
+double GetMsPassedFromStart() {
+    static double startedAt = now();
+    return now() - startedAt;
 }
 
-mstime GetMsPassedFromStart() {
-    static double startedAt = GetCurrentTimeMs();
-    return GetCurrentTimeMs() - startedAt;
+mstime GetTicks() {
+    return GetMsPassedFromStart();
 }
 
 void DelayWithYield(int ms) {
