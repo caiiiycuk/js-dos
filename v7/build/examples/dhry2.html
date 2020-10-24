@@ -37,22 +37,18 @@
              let runs = 10000;
              // listen program outpus for `~>dtime` marker
              ci.events().onStdout((message) => {
-                 if (message.indexOf("~>dtime") === -1) {
+                 if (!message.startsWith("dhry2:")) {
                      return;
                  }
 
-                 time[timeIndex++] = performance.now();
-                 if (timeIndex === 2) {
-                     const delta = time[1] - time[0];
-                     stdout.innerHTML += (id) + ": " + runs + " runs, browser time " + delta + " ms, " +
-                                         "VAX rating " + (runs * 1000 / delta / 1757) + "\n";
-                     runs *= 2;
-                     timeIndex = 0;
-
-                     if (delta > 3000) {
-                         //properly exit
-                         ci.exit();
-                     }
+                 const [_, runs, deltaStr, vaxRatingStr] = message.split(" ");
+                 const delta = Number.parseFloat(deltaStr);
+                 const vaxRating = Number.parseFloat(vaxRatingStr);
+                 stdout.innerHTML += (id) + ": " + runs + " runs, browser time " + delta + " ms, " +
+                                     "VAX rating " + (runs * 1000 / delta / 1757) + "\n";
+                 if (delta >= 5000) {
+                     //properly exit
+                     ci.exit();
                  }
              });
          }
