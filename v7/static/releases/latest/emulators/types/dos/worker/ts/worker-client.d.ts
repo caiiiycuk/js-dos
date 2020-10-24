@@ -24,6 +24,7 @@ export declare class WorkerClient {
     private bundle?;
     private host;
     private ready;
+    private keyMatrix;
     constructor(workerUrl: string, wasmModule: WasmModule, bundle: Uint8Array, host: WorkerHost, ready: () => void);
     sendMessage(name: ClientMessage, props?: {
         [key: string]: any;
@@ -31,7 +32,7 @@ export declare class WorkerClient {
     onMessage(name: ServerMessage, props: {
         [key: string]: any;
     }): void;
-    addKey(key: number, pressed: boolean): void;
+    addKey(keyCode: number, pressed: boolean): void;
     persist(): void;
     exit(): void;
 }

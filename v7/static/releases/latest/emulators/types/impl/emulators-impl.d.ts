@@ -10,6 +10,7 @@ declare class EmulatorsImpl implements Emulators {
     dosBundle(): Promise<DosBundle>;
     dosDirect(bundle: Uint8Array): Promise<CommandInterface>;
     dosWorker(bundle: Uint8Array): Promise<CommandInterface>;
+    janus(restUrl: string): Promise<CommandInterface>;
     wasmModules(): Promise<IWasmModules>;
 }
 declare const emulators: EmulatorsImpl;

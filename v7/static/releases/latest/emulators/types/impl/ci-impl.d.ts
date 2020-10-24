@@ -1,5 +1,6 @@
 import { CommandInterfaceEvents } from "../emulators";
 export declare class CommandInterfaceEventsImpl implements CommandInterfaceEvents {
+    private delayedStdout;
     private onStdoutConsumers;
     private onFrameSizeConsumers;
     private onFrameConsumers;
