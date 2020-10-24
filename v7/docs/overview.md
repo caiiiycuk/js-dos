@@ -60,7 +60,7 @@ Fastest way to embed program on your page. You just need the url of a `jsdos bun
 ```html
 <iframe
   id="jsdos"
-  src="https://dos.zone/en/player/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2F9%2F9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos"
+  src="https://dos.zone/en/player/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2F5%2F5c63f84bae9688046b9a7c0a9f1f1c8904616052.jsdos"
 />
 ```
 

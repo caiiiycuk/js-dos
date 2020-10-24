@@ -5778,10 +5778,10 @@ jest-worker@^26.5.0:
     merge-stream "^2.0.0"
     supports-color "^7.0.0"
 
-js-dos@^7.0.0-beta.r16:
-  version "7.0.0-beta.r16"
-  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.0.0-beta.r16.tgz#afc419d600dc1a9df6be9e10c3a95453a8dd4b00"
-  integrity sha512-Dsl67AjbNRBmebv7b31/oSrYItLNQ1upFfVt8wi0tARMEfHjqqXO+4k/2EL9IZxuqVeSMDOq4+YXDO8a8cYwAw==
+js-dos@^7.0.0-beta.r17:
+  version "7.0.0-beta.r17"
+  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.0.0-beta.r17.tgz#62cb14601141b407ae79d3af3bf86af285e9bf5c"
+  integrity sha512-lU6ruIs9HOm4EiLim/qhmCMHJXC3AvX5MhQWOnKKi4QmPC5/WhiqZivhZwDD0zEuTaskDUTMrQLuJZOiAKGM4A==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
