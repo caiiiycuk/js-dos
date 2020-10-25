@@ -161,9 +161,7 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
     public simulateKeyPress(...keyCodes: number[]) {
         keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, true));
-        setTimeout(() => {
-            keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, false));
-        }, 16);
+        keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, false));
     }
 
     public sendKeyEvent(keyCode: number, pressed: boolean) {

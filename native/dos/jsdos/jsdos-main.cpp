@@ -10,8 +10,11 @@
 #include <programs.h>
 #include <protocol.h>
 #include <video.h>
-
 #include <cstdarg>
+#include <unordered_map>
+#include <unordered_set>
+
+#include "timer.h"
 
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
@@ -22,6 +25,13 @@
 
 std::mutex eventsMutex;
 #endif
+
+struct KBDHash {
+  template <typename T>
+  std::size_t operator()(T t) const {
+    return static_cast<std::size_t>(t);
+  }
+};
 
 // TODO:
 bool canUsePointerLock = false;
@@ -327,28 +337,61 @@ int jsdos_main(Config *config) {
 struct KeyEvent {
     KBD_KEYS key;
     bool pressed;
+    double sendAt;
 };
 
-std::vector<KeyEvent> keyEvents;
+struct KeyState {
+    bool pressed;
+    double changedAt;
+};
+
+constexpr int keyEventsChangeMinDelay = 15;
+std::list<KeyEvent> keyEvents;
+std::unordered_map<KBD_KEYS, KeyState, KBDHash> keyMatrix;
 
 void GFX_Events() {
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(eventsMutex);
 #endif
-
-    for (auto next : keyEvents) {
-        KEYBOARD_AddKey(next.key, next.pressed);
+    if (keyEvents.empty()) {
+      return;
     }
-    keyEvents.clear();
+
+    auto frameTime = GetMsPassedFromStart();
+    auto it = keyEvents.begin();
+    while (it != keyEvents.end()) {
+      auto key = it->key;
+      auto pressed = it->pressed;
+      auto sendAt = it->sendAt;
+
+      if (sendAt <= frameTime) {
+        KEYBOARD_AddKey(key, pressed);
+        it = keyEvents.erase(it);
+      } else {
+        ++it;
+      }
+    }
 }
 
 
-void server_add_key(KBD_KEYS key, bool pressed) {
+void server_add_key(KBD_KEYS key, bool newPressed) {
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(eventsMutex);
 #endif
 
-    keyEvents.push_back({ key, pressed });
+    auto it = keyMatrix.find(key);
+    auto hasState = it != keyMatrix.end();
+    auto pressed = hasState ? it->second.pressed : false;
+    auto changedAt = hasState ? it->second.changedAt : 0;
+
+    if (pressed == newPressed) {
+      return;
+    }
+
+    auto newChangedAt = std::max(GetMsPassedFromStart(), changedAt + keyEventsChangeMinDelay);
+    keyMatrix[key].pressed = newPressed;
+    keyMatrix[key].changedAt = newChangedAt;
+    keyEvents.push_back({ key, newPressed, newChangedAt });
 }
 
 
