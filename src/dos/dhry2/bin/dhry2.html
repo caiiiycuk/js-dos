@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="dhry2.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    </head>
+    <body>
+        <button onclick="javascript:start()">Start</button>
+        <br/>
+        <div id="stdout"></div>
+        <script>
+         var stdout = document.getElementById("stdout");
+
+         function start() {
+             WDHRY2({
+                 log: function(message) {
+                 },
+                 print: function(message) {
+                     if (message.startsWith("dhry2")) {
+                         console.log(message);
+                         stdout.innerHTML = stdout.innerHTML + "<br/>" + message;
+                     }
+                 },
+             }).then(function(m) {
+                 m.callMain([]);
+             });
+         };
+        </script>
+    </body>
+</html>
