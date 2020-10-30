@@ -30,7 +30,7 @@ Previous version (6.22) has a very simple API to run a DOS program in the browse
 Often gameplay quality depends on good configuration.
 
 **Starting from js-dos v7**, the API expects a `js-dos bundle` that already contains all configuration needed to start the DOS program.
-`js-dos bundle` is just a **ZIP** archive that contains the game it self and a js-dos config file (same as dosbox.conf file). 
+`js-dos bundle` is just a **ZIP** archive that contains the game itself and a js-dos configuration file (same as dosbox.conf file). 
 For example, [digger.jsdos](https://talks.dos.zone/t/digger-may-06-1999/1922) contains: 
 ```
 .jsdos/dosbox.conf - dosbox configuration file (required)
@@ -40,7 +40,7 @@ DIGGER.COM         - game file
 
 :::note
 
-File `.jsdos/dosbox.conf` is required. js-dos would not start if this file does not exists.
+File `.jsdos/dosbox.conf` is required. js-dos would not start if this file does not exist.
 
 :::
 
@@ -51,11 +51,11 @@ Read the [guide](game-studio) about creating `js-dos bundle`.
 
 ## Run jsdos file
 
-Once you have `jsdos bundle` you can easily run it in browser. There are several options:
+Once you have a `jsdos bundle` you can easily run it in the browser. There are several options:
 
 ### 1. Using player hosted on dos.zone
 
-Fastest way to embed program on your page. You just need the url of a `jsdos bundle` (you can get it from our game database).
+Fastest way to embed a program on your page. You just need the url of a `jsdos bundle` (you can get it from our game database).
 
 ```html
 <iframe
@@ -83,30 +83,30 @@ Complete example:
 
 :::info
 
-1. Drag with mouse to play without keyboard!
+1. Drag with the mouse to play without a keyboard!
 2. Open top menu to type records name on mobile.
 
 :::
 
 :::warning
 
-Iframe integration didn't support for fullscreen button yet, if you need it look forward.
+Iframe integration didn't support a fullscreen button yet, if you need it look forward.
 
 :::
 
 ### 2. Using js-dos api
 
-js-dos v7 is even simple then 6.22, to run `bundle` you just need a one line of code:
+To run `bundle` you just need a one line of code:
 
 ```js
 Dos(document.getElementById("jsdos")).run("some.jsdos");
 ```
 
 `Dos` receives HTMLDivElement and uses it to create the player UI. To run `jsdos bundle`
-just use it's method `run` specifying the url of `jsdos bundle`.
+just use its method `run` specifying the url of `jsdos bundle`.
 
 To use js-dos you need to add `js-dos.js` script, and `js-dos.css` style.
-Also you need to specify path prefix os js-dos installation:
+Also you need to specify path prefix of js-dos installation:
 
 ```html
 <script src="/v7/build/releases/latest/js-dos/js-dos.js"></script>
@@ -124,7 +124,7 @@ Complete example:
 ```
 
 :::info
-By default js-dos will load wasm modules relatively from current path,
+By default, js-dos will load wasm modules relatively from current path,
 you should specify variable `pathPrefix` if you want to load them from different place:
 ```js
 emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
@@ -134,7 +134,7 @@ emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
 ###  3. Using emulators-ui
 
 From v7 js-dos npm package is **only a wrapper script** that combines *emulators* and *emulators-ui* packages. It didn't contains
-code it self. It's useful if you don't want to make customizations in UI or custom integration. **js-dos package is single
+code itself. It's useful if you don't want to make customizations in UI or custom integration. **js-dos package is single
 file solution to run DOS programs.**
 
 If you want to make customizations or something special then you need to use *emulators* and  *emulators-ui* package in combination.
@@ -156,4 +156,4 @@ Complete example:
 
 ###  4. Using emulators
 
-In case when you don't want to use browser API of js-dos project, you can use just `emulators` package.  Read the [guide](estimating-performance.md) to how we use *emulators* to estimate js-dos performance.
+In case you don't want to use the browser API of js-dos project, you can use just the `emulators` package. Read the [guide](estimating-performance.md) to how we use *emulators* to estimate js-dos performance.

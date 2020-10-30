@@ -179,7 +179,7 @@
     cursor: pointer;
 }
 
-.emulator-mouse-overlay {
+.emulator-mouse-overlay, .emulator-button-overlay {
     position: absolute;
     left: 0;
     top: 0;
@@ -223,6 +223,16 @@
     right: 0;
     background: black;
     z-index: 999;
+}
+
+.emulator-button {
+    background: none;
+    color: rgba(255, 255, 255, 0.5);
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5), 1px -1px 0 rgba(0, 0, 0, 0.5), -1px 1px 0 rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(0, 0, 0, 0.5);
+    text-align: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.5);
 }
 
 

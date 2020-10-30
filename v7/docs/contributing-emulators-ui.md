@@ -5,7 +5,7 @@ title: Contributing in client-side features
 
 To contribute to the `emulators-ui` package do the following:
 
-1. Checkout `js-dos` repositiory
+1. Checkout `js-dos` repository
   
   `git clone https://github.com/caiiiycuk/js-dos`
 
@@ -19,16 +19,16 @@ To contribute to the `emulators-ui` package do the following:
 
 ### Adding new client-side features
 
-js-dos have [optional config](configuration) file that you can put in `js-dos bundle`. This
-file should be in json format. It can contains any information you want and it accessible from [Command Interface](command-interface):
+js-dos has an [optional config](configuration) file that you can put in `js-dos bundle`. This
+file should be in json format. It can contain any information you want and it accessible from [Command Interface](command-interface):
 
 ```js
 const ci = await Dos(/*element*/).run(/*bundle url*/);
 const config = await ci.config();
 ```
 
-Let's understand how gestures implemented in js-dos. 
-First of all, gestures have special config that sotred in `jsdos.jsdos` file, it's looks
+Let's understand how gestures are implemented in js-dos. 
+First of all, gestures have special configuration that stored in `jsdos.jsdos` file, it's looks
 like: 
 
 ```json
@@ -43,8 +43,8 @@ like:
 //...
 ```
 
-When js-dos starting it waits until config file is readed and configure gestures
-layer according to it's config.
+When js-dos starting it waits until config file is read and configure gestures
+layer according to its configuration.
 ```typescript
 async run(bundleUrl: string): Promise<CommandInterface> {
         const bundle = await emulatorsUi.network.resolveBundle(bundleUrl);
@@ -63,4 +63,4 @@ You can do in same way:
 * You can add some information to config file
 * You can access it in your client code
 
-Doing this not require to change native part of `js-dos`.
+Doing this does not require changing the native part of `js-dos`.

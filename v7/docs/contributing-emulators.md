@@ -5,7 +5,7 @@ title: Contributing
 
 To contribute to the `emulators` package do the following:
 
-1. Checkout `js-dos` repositiory
+1. Checkout `js-dos` repository
   
   `git clone https://github.com/caiiiycuk/js-dos`
 
@@ -20,19 +20,19 @@ To contribute to the `emulators` package do the following:
 4. Now you can build everything with `gulp` command
 
 Native part of emulators is plain cmake project, you can open it
-in your favorite editor. CMake project have following targets:
+in your favorite editor. Project have following targets:
 
 1. **`sokol`** - js-dos v7 native version: dosbox + UI based on [sokol](https://github.com/floooh/sokol).
-This version is exactly same as web version. **You should use this target
+This version is exactly the same as the web version. **You should use this target
 to contribute in js-dos v7.**
-2. **`direct`** - target that used to build web-direct version of js-dos v7.
+2. **`direct`** - target is used to build the web-direct version of js-dos v7.
 You can compile it only with **emscripten**.
-3. **`worker`** - target that used to build web-worker version of js-dos v7.
+3. **`worker`** - target is used to build the web-worker version of js-dos v7.
 You can compile it only with **emscripten**.
 4. `dosbox` - original version of dosbox (UI based on SDL). You can use
 it to compare behaviour between original dosbox and js-dos v7.
-5. `libzip` - shared code that contain implementation of zip.
-6. `jsdos` - shared code that contain implementation of dosbox.
+5. `libzip` - shared codes that contain implementation of zip.
+6. `jsdos` - shared codes that contain implementation of dosbox.
 
 ## Protocol
 
@@ -46,38 +46,38 @@ same way to communicate between client (native UI, browser UI) and dosbox.
 
 ## Server
 
-For simplicity you can think that server is a dosbox.
-But in theory server can be implemented with different emulators. Now we support
+For simplicity you can think that the server is a dosbox.
+In future server can be implemented with different emulators. Now we support
 only **dosbox implementation** (look at `jsdos.cmake`).
 
 ### server_run()
 
 Client should run this function when it's ready to start dosbox. This 
-function will start emulator. Client should prepare filesystem for dosbox **it 
+function will start the emulator. Client should prepare file system for dosbox **it 
 expect that `cwd` contains `.jsdos/dosbox.conf` file**. 
 
 So you need to extract [js-dos bundle](overview.md#js-dos-bundle) in some directory and start sokol binary
-in this directory, and it will act exactly in same way as direct/worker dosbox.
+in this directory, and it will act exactly in the same way as direct/worker dosbox.
 
 
-### server_add_key(keycode, pressed)
+### server_add_key(keycode, pressed, timeMs)
 
-This function add keycode to queue. They will be processed when dosbox poll keyboard
+This function adds keycode to the queue. They will be processed when dosbox poll keyboard
 events.
 
 ### server_exit()
 
-Terminates execution of dosbox and free resouces.
+Terminates execution of dosbox and free resources.
 
 ## Client
 
-Direct, worker, and sokol implementations share same code for server part. But they are completely different,
+Direct, worker, and sokol implementations share the same code for server part. But they are completely different,
 because they implement UI and sound system for different platforms. In original dosbox this was made
-by SDL, it was hard-coupled with dosbox. js-dos clearly detach emulator from it's ui. You can easily add new
+by SDL, it was hard-coupled with dosbox. js-dos clearly detaches the emulator from its ui. You can easily add new
 UI/sound system to dosbox. 
 
-For example let's look on sokol UI implementaion. You can use it to debug and develop new features for js-dos.
-Worker is a primary web implemenation for js-dos v7. sokol implementaion tries to work in simmilar way: we start
+For example, let's look on sokol UI implementation. You can use it to debug and develop new features for js-dos.
+Worker is a primary web implementation for js-dos v7. sokol implementation tries to work in similar way: we start
 dosbox emulator in main thread and client in new thread.
 
 ```cpp
@@ -112,7 +112,7 @@ void client_frame_set_size(int width, int height) {
 
 ### client_frame_update_lines(lines, count, rgba)
 
-This method will be called each time if content of dosbox window are changed. dosbox implemenation
+This method will be called each time if contents of dosbox window are changed. dosbox implementation 
 will send only changed lines. You need to update your frame buffer correctly.
 
 Dirty region format (lines argument):
@@ -173,7 +173,7 @@ void sokolFrame() {
 
 ### client_sound_init(freq);
 
-Called when dosbox need to initialize sound system. 
+Called when the dosbox needs to initialize the sound system. 
 
 ```cpp
 void client_sound_init(int freq) {
@@ -199,7 +199,7 @@ void client_sound_push(const float *samples, int num_samples) {
 
 ### client_stdout(data, amount)
 
-This method will be called each time when dosbox prints something to it's console.
+This method will be called each time when dosbox prints something to its console.
 
 ### Communicate to server
 
@@ -220,8 +220,10 @@ Each time when key is pressed we should send event to dosbox:
 
 
 void keyEvent(const sapp_event *event) {
-  server_add_key((KBD_KEYS)event->key_code,
-         event->type == SAPP_EVENTTYPE_KEY_DOWN);
+  server_add_key(
+      (KBD_KEYS)event->key_code,
+      event->type == SAPP_EVENTTYPE_KEY_DOWN,
+      GetMsPassedFromStart());
 }
 ```
 
@@ -235,8 +237,8 @@ That is. Check complete [source](https://github.com/caiiiycuk/js-dos/tree/emulat
 
 ## Testing
 
-If `gulp` command finished successfully then you can run emulators tests.
-To do this run static web server to host `dist` directory. For example, with `http-server`:
+If the `gulp` command is finished successfully then you can run emulators tests.
+To do this, run a static web server to host the `dist` directory. For example, with `http-server`:
 
 ```
 hs dist
@@ -252,17 +254,17 @@ all tests should pass.
 
 ## Running native js-dos v7
 
-As said above you need compile `sokol` target with you favorite C++ toolkit. It will generate `sokol`
+As said above, you need to compile a `sokol` target with your favorite C++ toolkit. It will generate `sokol`
 executable. Next, you need to download some [js-dos bundle](overview.md#js-dos-bundle) for example
 [digger](https://talks.dos.zone/t/digger-may-06-1999/1922).
 
 `js-dos bundle` is a plain zip archive, you need to extract it in some folder. After that you
-should run `sokol` executable from that folder (cwd must be root of extracted bundle). 
+should run `sokol` executable from that folder (cwd must be the root of the extracted bundle). 
 
 ## Using Docker
 
-You can use docker image to develop emulators core. Image have already configured
-eveyrthing to build emulators core and start emulators tests.
+You can use docker image to develop emulators core. The image has already configured
+everything to build emulators core and start emulators tests.
 
 ### Build image
 
@@ -277,7 +279,7 @@ eveyrthing to build emulators core and start emulators tests.
     docker run -p 8080:8080 -ti emulators
 ```
 
-Open `http://localhost:8080` in browser, all test should pass
+Open `http://localhost:8080` in browser, all tests should pass
 
 
 ### Development
