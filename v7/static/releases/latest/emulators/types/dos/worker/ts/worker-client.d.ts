@@ -32,7 +32,7 @@ export declare class WorkerClient {
     onMessage(name: ServerMessage, props: {
         [key: string]: any;
     }): void;
-    addKey(keyCode: number, pressed: boolean): void;
+    addKey(keyCode: number, pressed: boolean, timeMs: number): void;
     persist(): void;
     exit(): void;
 }

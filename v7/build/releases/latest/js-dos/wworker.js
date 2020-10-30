@@ -1228,10 +1228,10 @@ function updateGlobalBufferAndViews(buf) {
   Module['HEAPF64'] = HEAPF64 = new Float64Array(buf);
 }
 
-var STACK_BASE = 27670064,
+var STACK_BASE = 27670080,
     STACKTOP = STACK_BASE,
-    STACK_MAX = 26621488,
-    DYNAMIC_BASE = 27670064;
+    STACK_MAX = 26621504,
+    DYNAMIC_BASE = 27670080;
 
 
 
@@ -1658,7 +1658,7 @@ function jsdos_warn(tag,message){ Module.log("[dosbox-warn ]", UTF8ToString(tag)
 function now(){ return performance.now(); }
 function syncSleep(){ if (!Module.sync_sleep) { throw new Error("Async environment does not exists"); return; } return Asyncify.handleSleep(function(wakeUp) { Module.sync_sleep(wakeUp); }); }
 function ws_client_stdout(data,amount){ Module.sendMessage("ws-stdout", { message: UTF8ToString(data, amount) }); }
-function ws_init_runtime(){ function sendMessage(name, props) { postMessage({ name, props }); }; Module.sendMessage = sendMessage; Module.ping = function(msg) { }; Module.log = function() { sendMessage("ws-log", { args: Array.prototype.slice.call(arguments) }); }; Module.warn = function() { sendMessage("ws-warn", { args: Array.prototype.slice.call(arguments) }); }; Module.err = function() { sendMessage("ws-err", { args: Array.prototype.slice.call(arguments) }); }; Module.print = Module.log; Module.printErr = Module.err; onmessage = function(e) { var data = e.data; if (data.type === "sync_sleep_message") { return; } switch (data.name) { case "wc-run": { Module.bundle = data.props.bundle; Module._extractBundleToFs(); Module._runRuntime(); sendMessage("ws-server-ready"); } break; case "wc-exit": { try { Module._requestExit(); } catch (e) { if (e.name !== "ExitStatus") { throw e; } } } break; case "wc-pack-fs-to-bundle": { try { Module.persist = function(archive) { sendMessage("ws-persist", { bundle: archive }); }; Module._packFsToBundle(); delete Module.persist; } catch (e) { Module.err(e.message); } } break; case "wc-add-key": { Module._addKey(data.props.key, data.props.pressed); } break; default: { console.log("ws " + JSON.stringify(data)); } break; } }; sendMessage("ws-ready"); }
+function ws_init_runtime(){ function sendMessage(name, props) { postMessage({ name, props }); }; Module.sendMessage = sendMessage; Module.ping = function(msg) { }; Module.log = function() { sendMessage("ws-log", { args: Array.prototype.slice.call(arguments) }); }; Module.warn = function() { sendMessage("ws-warn", { args: Array.prototype.slice.call(arguments) }); }; Module.err = function() { sendMessage("ws-err", { args: Array.prototype.slice.call(arguments) }); }; Module.print = Module.log; Module.printErr = Module.err; onmessage = function(e) { var data = e.data; if (data.type === "sync_sleep_message") { return; } switch (data.name) { case "wc-run": { Module.bundle = data.props.bundle; Module._extractBundleToFs(); Module._runRuntime(); sendMessage("ws-server-ready"); } break; case "wc-exit": { try { Module._requestExit(); } catch (e) { if (e.name !== "ExitStatus") { throw e; } } } break; case "wc-pack-fs-to-bundle": { try { Module.persist = function(archive) { sendMessage("ws-persist", { bundle: archive }); }; Module._packFsToBundle(); delete Module.persist; } catch (e) { Module.err(e.message); } } break; case "wc-add-key": { Module._addKey(data.props.key, data.props.pressed, data.props.timeMs); } break; default: { console.log("ws " + JSON.stringify(data)); } break; } }; sendMessage("ws-ready"); }
 
 
 

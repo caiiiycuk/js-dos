@@ -27,7 +27,7 @@ const features = [
     description: (
       <>
         emulators-ui is a default set of components that used to build js-dos player ui.
-        You can resuse them to build your custom DOS player.<br/>
+        You can reuse them to build your custom DOS player.<br/>
         <a href="docs/threejs">Creating three.js player</a>
       </>
     ),
@@ -37,7 +37,7 @@ const features = [
     imageUrl: 'img/emulators-logo.png',
     description: (
       <>
-        emulators is a core of js-dos, it have standartized api and can run emulation in different
+        emulators is a core of js-dos, it has standardized api and can run emulation in different
         environments. Perfect solution for custom embedding. <br/>
         <a href="docs/estimating-performance">Estimating performance</a>
       </>

@@ -20,7 +20,7 @@ The new version of js-dos is more modular, you can use parts of it. It consists 
 
 ## js-dos bundle
 
-js-dos 6.22 has a very simple API to run a DOS program in browser. Before starting it you need to perform some setup:
+Previous version (6.22) has a very simple API to run a DOS program in the browser. BUT, before starting it you need to perform some setup:
 * download game archive (usually zip)
 * extract it
 * configure dos file system
@@ -29,7 +29,7 @@ js-dos 6.22 has a very simple API to run a DOS program in browser. Before starti
 
 Often gameplay quality depends on good configuration.
 
-Starting from js-dos v7, the API expects a `js-dos bundle` that already contains all configuration needed to start the DOS program.
+**Starting from js-dos v7**, the API expects a `js-dos bundle` that already contains all configuration needed to start the DOS program.
 `js-dos bundle` is just a **ZIP** archive that contains the game it self and a js-dos config file (same as dosbox.conf file). 
 For example, [digger.jsdos](https://talks.dos.zone/t/digger-may-06-1999/1922) contains: 
 ```
@@ -53,7 +53,7 @@ Read the [guide](game-studio) about creating `js-dos bundle`.
 
 Once you have `jsdos bundle` you can easily run it in browser. There are several options:
 
-### 1. Use player hosted on dos.zone
+### 1. Using player hosted on dos.zone
 
 Fastest way to embed program on your page. You just need the url of a `jsdos bundle` (you can get it from our game database).
 
@@ -94,7 +94,7 @@ Iframe integration didn't support for fullscreen button yet, if you need it look
 
 :::
 
-### 2. Use js-dos api
+### 2. Using js-dos api
 
 js-dos v7 is even simple then 6.22, to run `bundle` you just need a one line of code:
 
@@ -114,7 +114,7 @@ Also you need to specify path prefix os js-dos installation:
 // ...
 <script>
   emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
-  Dos(/*element*/).run(/*bundleUrl*/);
+  Dos(<element>).run(<bundleUrl>);
 ```
 
 Complete example:
@@ -137,7 +137,7 @@ From v7 js-dos npm package is **only a wrapper script** that combines *emulators
 code it self. It's useful if you don't want to make customizations in UI or custom integration. **js-dos package is single
 file solution to run DOS programs.**
 
-If you want to make custumizations or something special then you need to use *emulators* and  *emulators-ui* package in combination.
+If you want to make customizations or something special then you need to use *emulators* and  *emulators-ui* package in combination.
 They provide absolutely same functions as *js-dos* package and lot more (see [threejs](threejs.md) integration).
 
 To change code above to use `emulators-ui` just change scripts imports to:
