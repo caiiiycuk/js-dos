@@ -57,6 +57,7 @@ export default async function DosDirect(wasm: WasmModule,
 
 class DirectCommandInterface implements CommandInterface {
 
+    private startedAt = Date.now();
     private module: any;
     private persistPromise?: Promise<Uint8Array>;
     private exitPromise?: Promise<void>;
@@ -124,17 +125,23 @@ class DirectCommandInterface implements CommandInterface {
     }
 
     public simulateKeyPress(...keyCodes: number[]) {
-        keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, true));
-        keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, false));
+        const timeMs = Date.now() - this.startedAt;
+        keyCodes.forEach(keyCode => this.addKey(keyCode, true, timeMs));
+        keyCodes.forEach(keyCode => this.addKey(keyCode, false, timeMs + 16));
     }
 
     public sendKeyEvent(keyCode: number, pressed: boolean) {
+        this.addKey(keyCode, pressed, Date.now() - this.startedAt);
+    }
+
+    // public for test
+    public addKey(keyCode: number, pressed: boolean, timeMs: number) {
         const keyPressed = this.keyMatrix[keyCode] === true;
         if (keyPressed === pressed) {
             return;
         }
         this.keyMatrix[keyCode] = pressed;
-        this.module._addKey(keyCode, pressed);
+        this.module._addKey(keyCode, pressed, timeMs);
     }
 
     public persist(): Promise<Uint8Array> {

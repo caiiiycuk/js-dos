@@ -47,6 +47,7 @@ export interface CommandInterface {
     // see `sendKeyPress` to find meaning of keyCode. Key combination is suported when more than 1 keyCode is set.
     simulateKeyPress: (...keyCodes: number[]) => void;
 
+    // * `sendKeyEvent(keyCode, pressed)` - sends single key (press or release) event to backend
     sendKeyEvent: (keyCode: number, pressed: boolean) => void;
 
     // dump FS as Uint8Array <zip archive>

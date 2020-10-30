@@ -128,13 +128,13 @@ export class WorkerClient {
         };
     }
 
-    addKey(keyCode: number, pressed: boolean) {
+    addKey(keyCode: number, pressed: boolean, timeMs: number) {
         const keyPressed = this.keyMatrix[keyCode] === true;
         if (keyPressed === pressed) {
             return;
         }
         this.keyMatrix[keyCode] = pressed;
-        this.sendMessage("wc-add-key", { key: keyCode, pressed });
+        this.sendMessage("wc-add-key", { key: keyCode, pressed, timeMs });
     }
 
     persist() {

@@ -15,7 +15,7 @@ void client_sound_push(const float* samples, int num_samples);
 void client_stdout(const char* data, uint32_t amount);
 
 extern int server_run();
-extern void server_add_key(KBD_KEYS key, bool pressed);
+extern void server_add_key(KBD_KEYS key, bool pressed, uint64_t pressedMs);
 extern void server_exit();
 
 #endif  // JS_DOS_JS_DOS_PROTOCOL_H

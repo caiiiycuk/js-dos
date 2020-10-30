@@ -30,6 +30,7 @@ export default function DosWorker(workerUrl: string,
 
 class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
+    private startedAt = Date.now();
     private frameWidth: number = 0;
     private frameHeight: number = 0;
     private rgba: Uint8Array = new Uint8Array();
@@ -160,12 +161,18 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
     }
 
     public simulateKeyPress(...keyCodes: number[]) {
-        keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, true));
-        keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, false));
+        const timeMs = Date.now() - this.startedAt;
+        keyCodes.forEach(keyCode => this.addKey(keyCode, true, timeMs));
+        keyCodes.forEach(keyCode => this.addKey(keyCode, false, timeMs + 16));
     }
 
     public sendKeyEvent(keyCode: number, pressed: boolean) {
-        this.client.addKey(keyCode, pressed);
+        this.addKey(keyCode, pressed, Date.now() - this.startedAt);
+    }
+
+    // public for test
+    public addKey(keyCode: number, pressed: boolean, timeMs: number) {
+        this.client.addKey(keyCode, pressed, timeMs);
     }
 
     public persist(): Promise<Uint8Array> {

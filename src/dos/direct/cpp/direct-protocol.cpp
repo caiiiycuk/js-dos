@@ -155,8 +155,8 @@ extern "C" void EMSCRIPTEN_KEEPALIVE packFsToBundle() {
 #endif
 }
 
-extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed) {
-  server_add_key(key, pressed);
+extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed, uint64_t timeMs) {
+  server_add_key(key, pressed, timeMs);
 }
 
 extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime() {

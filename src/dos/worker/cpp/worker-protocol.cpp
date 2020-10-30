@@ -64,7 +64,7 @@ EM_JS(void, ws_init_runtime, (), {
           }
         } break;
         case "wc-add-key": {
-          Module._addKey(data.props.key, data.props.pressed);
+          Module._addKey(data.props.key, data.props.pressed, data.props.timeMs);
         } break;
         default: {
           console.log("ws " + JSON.stringify(data));
@@ -211,8 +211,8 @@ extern "C" void EMSCRIPTEN_KEEPALIVE packFsToBundle() {
   emsc_pack_fs_to_bundle();
 }
 
-extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed) {
-  server_add_key(key, pressed);
+extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed, uint64_t timeMs) {
+  server_add_key(key, pressed, timeMs);
 }
 
 extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime() {

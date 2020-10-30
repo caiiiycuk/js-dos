@@ -166,8 +166,10 @@ void sokolFrame() {
 }
 
 void keyEvent(const sapp_event *event) {
-  server_add_key((KBD_KEYS)event->key_code,
-         event->type == SAPP_EVENTTYPE_KEY_DOWN);
+  server_add_key(
+      (KBD_KEYS)event->key_code,
+      event->type == SAPP_EVENTTYPE_KEY_DOWN,
+      GetMsPassedFromStart());
 }
 
 void client_run() {

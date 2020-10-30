@@ -159,9 +159,13 @@ function testServer(factory: CIFactory, name: string) {
             .autoexec("DIGGER.COM"));
         assert.ok(ci);
 
-        const sendKeyEventCalled = []
-        ci.sendKeyEvent = (keyCode, pressed) => {
-            sendKeyEventCalled.push([keyCode, pressed])
+        const addKeyEventCalled = [];
+        let initialTime = 0;
+        (ci as any).addKey = (keyCode, pressed, timeMs) => {
+            if (initialTime === 0) {
+                initialTime = timeMs;
+            }
+            addKeyEventCalled.push([keyCode, pressed, timeMs]);
         }
 
         await new Promise((resolve, reject) => {
@@ -170,13 +174,13 @@ function testServer(factory: CIFactory, name: string) {
             };
 
             const assertKeyPressSequence = () => {
-                assert.deepEqual(sendKeyEventCalled, [
-                    [Keys.KBD_left, true],
-                    [Keys.KBD_leftctrl, true],
-                    [Keys.KBD_leftshift, true],
-                    [Keys.KBD_left, false],
-                    [Keys.KBD_leftctrl, false],
-                    [Keys.KBD_leftshift, false],
+                assert.deepEqual(addKeyEventCalled, [
+                    [Keys.KBD_left, true, initialTime],
+                    [Keys.KBD_leftctrl, true, initialTime],
+                    [Keys.KBD_leftshift, true, initialTime],
+                    [Keys.KBD_left, false, initialTime + 16],
+                    [Keys.KBD_leftctrl, false, initialTime + 16],
+                    [Keys.KBD_leftshift, false, initialTime + 16],
                 ]);
                 resolve();
             };

@@ -11,8 +11,6 @@
 #include <protocol.h>
 #include <video.h>
 #include <cstdarg>
-#include <unordered_map>
-#include <unordered_set>
 
 #include "timer.h"
 
@@ -337,61 +335,44 @@ int jsdos_main(Config *config) {
 struct KeyEvent {
     KBD_KEYS key;
     bool pressed;
-    double sendAt;
+    uint64_t clientTime;
 };
 
-struct KeyState {
-    bool pressed;
-    double changedAt;
-};
-
-constexpr int keyEventsChangeMinDelay = 15;
 std::list<KeyEvent> keyEvents;
-std::unordered_map<KBD_KEYS, KeyState, KBDHash> keyMatrix;
+mstime executeNextKeyEventAt = 0;
 
 void GFX_Events() {
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(eventsMutex);
 #endif
-    if (keyEvents.empty()) {
+  if (keyEvents.empty()) {
       return;
     }
 
     auto frameTime = GetMsPassedFromStart();
     auto it = keyEvents.begin();
-    while (it != keyEvents.end()) {
+    while (executeNextKeyEventAt <= frameTime && it != keyEvents.end()) {
       auto key = it->key;
       auto pressed = it->pressed;
-      auto sendAt = it->sendAt;
+      auto clientTime = it->clientTime;
 
-      if (sendAt <= frameTime) {
-        KEYBOARD_AddKey(key, pressed);
-        it = keyEvents.erase(it);
-      } else {
-        ++it;
+      KEYBOARD_AddKey(key, pressed);
+      it = keyEvents.erase(it);
+      if (it != keyEvents.end()) {
+        executeNextKeyEventAt = frameTime + (it->clientTime - clientTime);
       }
     }
 }
 
 
-void server_add_key(KBD_KEYS key, bool newPressed) {
+void server_add_key(KBD_KEYS key, bool pressed, uint64_t pressedMs) {
 #ifndef EMSCRIPTEN
     std::lock_guard<std::mutex> g(eventsMutex);
 #endif
-
-    auto it = keyMatrix.find(key);
-    auto hasState = it != keyMatrix.end();
-    auto pressed = hasState ? it->second.pressed : false;
-    auto changedAt = hasState ? it->second.changedAt : 0;
-
-    if (pressed == newPressed) {
-      return;
+    keyEvents.push_back({ key, pressed, pressedMs });
+    if (keyEvents.size() == 1) {
+      executeNextKeyEventAt = GetMsPassedFromStart();
     }
-
-    auto newChangedAt = std::max(GetMsPassedFromStart(), changedAt + keyEventsChangeMinDelay);
-    keyMatrix[key].pressed = newPressed;
-    keyMatrix[key].changedAt = newChangedAt;
-    keyEvents.push_back({ key, newPressed, newChangedAt });
 }
 
 
