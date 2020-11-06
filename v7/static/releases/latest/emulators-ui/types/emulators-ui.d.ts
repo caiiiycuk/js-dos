@@ -3,7 +3,8 @@ import { resolveBundle } from "./network/xhr";
 import { webGl } from "./graphics/webgl";
 import { video } from "./graphics/video";
 import { keyboard } from "./controls/keyboard";
-import { nippleArrows } from "./controls/nipple-arrows";
+import { nipple } from "./controls/nipple";
+import { button } from "./controls/button";
 import { domToKeyCode } from "./dom/keys";
 import { audioNode } from "./sound/audio-node";
 import { notyf } from "./notification/notyf";
@@ -39,7 +40,8 @@ export declare class EmulatorsUi {
             [index: number]: number;
         };
         keyboard: typeof keyboard;
-        nippleArrows: typeof nippleArrows;
+        nipple: typeof nipple;
+        button: typeof button;
     };
     notifications: {
         notyf: typeof notyf;

@@ -179,7 +179,7 @@
     cursor: pointer;
 }
 
-.emulator-mouse-overlay, .emulator-button-overlay {
+.emulator-mouse-overlay {
     position: absolute;
     left: 0;
     top: 0;
@@ -226,6 +226,8 @@
 }
 
 .emulator-button {
+    position: absolute;
+    cursor: pointer;
     background: none;
     color: rgba(255, 255, 255, 0.5);
     text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.5), 1px -1px 0 rgba(0, 0, 0, 0.5), -1px 1px 0 rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(0, 0, 0, 0.5);
