@@ -134,7 +134,7 @@ You can found real use of js-dos on certain websites about dos games.
 
 Please open issue on github if you want to add link for another site that uses js-dos.
 
-## Preformance
+## Performance
 
 To measure performance used variant of **Dhrystone 2 Test** originally taken from [this page](http://www.roylongbottom.org.uk/dhrystone%20results.htm). Original version used `clock()` to calculate delta time. Which is good for real pc, but does not very accurate for dosbox emulator. When `clock()` call happend modifed version send `~>dtime` marker which intercepted by test page
 and used to calculate delta time with `performance.now()` from browser. Source code of modified test is [here](https://github.com/caiiiycuk/js-dos/tree/6.22/programms/dhry2). 
