@@ -3966,10 +3966,10 @@ emoticon@^3.2.0:
   resolved "https://registry.yarnpkg.com/emoticon/-/emoticon-3.2.0.tgz#c008ca7d7620fac742fe1bf4af8ff8fed154ae7f"
   integrity sha512-SNujglcLTTg+lDAcApPNgEdudaqQFiAbJCqzjNxJkvN9vAwCGi0uu8IUVvx+f16h+V44KCY6Y2yboroc9pilHg==
 
-emulators-ui@^0.0.34:
-  version "0.0.34"
-  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.0.34.tgz#70d67e5aaa3303c61da5e023b04e1795015e14f8"
-  integrity sha512-CBRw9XLc/JDxjHkigJAddeGRW23CjxbyKWZIyzhC7uctbfodwqdLUlyEyCIiWQtM6D06wPhei5SA5TZXb4m1OA==
+emulators-ui@^0.0.36:
+  version "0.0.36"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.0.36.tgz#61f42f8fb0fd95a70c7e50ad352371357db9ba46"
+  integrity sha512-phLzP4rDOBGQQa/9IR+wV65RaLG2qdA2L7WVfb2i1xYtBEfMjmOF/AEUDqRmKpIouQ0tdH531h/2DiLPnzGMcA==
 
 emulators@^0.0.36:
   version "0.0.36"
@@ -5778,10 +5778,10 @@ jest-worker@^26.5.0:
     merge-stream "^2.0.0"
     supports-color "^7.0.0"
 
-js-dos@^7.0.0-beta.r20:
-  version "7.0.0-beta.r20"
-  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.0.0-beta.r20.tgz#3c8ca3010f7076e38bb70f22978179e7688a7d8a"
-  integrity sha512-BN3O2RDC13rSk5md4f3fo5qqltt0DU9ZTe/ZQKXJWqzL38OYQel+G+BzjomchSXN8sqdtGPwt5iBciPLjP/euA==
+js-dos@^7.0.0-beta.r21:
+  version "7.0.0-beta.r21"
+  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.0.0-beta.r21.tgz#0a6fd46a6aee0d0a5710611befe68daafd59de8d"
+  integrity sha512-KptbpNJudFsP3qAAYIz2MZKGrKlUEE+v9YBKfAk2BvnXJngU85Fi76N70OXG5yhoti0FYNM78F/iOPGTUlMgjw==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
