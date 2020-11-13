@@ -18,6 +18,8 @@
     <body>
         <div class="layout">
             <div class="controls">
+                <!-- control layer selector should be wrapped by div -->
+                <div><Select class="select"></Select></div>
                 Text:&nbsp;&nbsp;<input class="input" />&nbsp;
                 <Button class="send">Send</Button>&nbsp;&nbsp;
                 <Button class="save">Save</Button>
@@ -28,6 +30,7 @@
         <script>
          emulators.pathPrefix = "/v7/build/releases/latest/js-dos/";
          const controlSelector = {
+             select: () => document.querySelector(".select"),
              send: () => document.querySelector(".send"),
              input: () => document.querySelector(".input"),
              save: () => document.querySelector(".save"),

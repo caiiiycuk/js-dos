@@ -8,4 +8,4 @@ export interface Button {
     symbol?: string;
     style?: ElementCSSInlineStyle;
 }
-export declare function button(layers: Layers, ci: CommandInterface, buttons: Button[]): void;
+export declare function button(layers: Layers, ci: CommandInterface, buttons: Button[]): () => void;

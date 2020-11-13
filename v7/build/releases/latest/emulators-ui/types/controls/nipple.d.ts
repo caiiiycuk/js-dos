@@ -6,4 +6,4 @@ export interface EventMapping {
     event: Event;
     mapTo: number;
 }
-export declare function nipple(layers: Layers, ci: CommandInterface, mapping: EventMapping[]): void;
+export declare function nipple(layers: Layers, ci: CommandInterface, mapping: EventMapping[]): () => any;

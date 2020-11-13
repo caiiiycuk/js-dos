@@ -1,5 +1,6 @@
 import { Notyf } from "notyf";
 export interface ControlSelector {
+    select: () => HTMLSelectElement;
     input: () => HTMLInputElement;
     send: () => HTMLElement;
     save: () => HTMLElement;
@@ -25,6 +26,8 @@ export declare class Layers {
     private onKeyPress;
     private onSave;
     private controlsOpened;
+    private selectParentElement;
+    private selectParentDisplay;
     constructor(root: HTMLDivElement, controlSelector?: ControlSelector);
     setOnResize(handler: (width: number, height: number) => void): void;
     setOnKeyDown(handler: (keyCode: number) => void): void;
@@ -39,4 +42,5 @@ export declare class Layers {
     setLoadingMessage(message: string): void;
     switchToVideo(): void;
     showClickToStart(): void;
+    setControlLayers(layers: string[], onChange: (layer: string) => void): void;
 }
