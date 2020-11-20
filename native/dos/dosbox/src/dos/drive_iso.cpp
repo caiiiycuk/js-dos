@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -133,13 +133,22 @@ Bit16u isoFile::GetInformation(void) {
 	return 0x40;		// read-only drive
 }
 
-int  MSCDEX_RemoveDrive(char driveLetter);
-int  MSCDEX_AddDrive(char driveLetter, const char* physicalPath, Bit8u& subUnit);
-void MSCDEX_ReplaceDrive(CDROM_Interface* cdrom, Bit8u subUnit);
-bool MSCDEX_HasDrive(char driveLetter);
-bool MSCDEX_GetVolumeName(Bit8u subUnit, char* name);
+int   MSCDEX_RemoveDrive(char driveLetter);
+int   MSCDEX_AddDrive(char driveLetter, const char* physicalPath, Bit8u& subUnit);
+void  MSCDEX_ReplaceDrive(CDROM_Interface* cdrom, Bit8u subUnit);
+bool  MSCDEX_HasDrive(char driveLetter);
+bool  MSCDEX_GetVolumeName(Bit8u subUnit, char* name);
+Bit8u MSCDEX_GetSubUnit(char driveLetter);
 
-isoDrive::isoDrive(char driveLetter, const char *fileName, Bit8u mediaid, int &error) {
+isoDrive::isoDrive(char driveLetter, const char *fileName, Bit8u mediaid, int &error)
+         :iso(false),
+          dataCD(false),
+          mediaid(0),
+          subUnit(0),
+          driveLetter('\0')
+ {
+	this->fileName[0]  = '\0';
+	this->discLabel[0] = '\0';
 	nextFreeDirIterator = 0;
 	memset(dirIterators, 0, sizeof(dirIterators));
 	memset(sectorHashEntries, 0, sizeof(sectorHashEntries));
@@ -174,6 +183,7 @@ isoDrive::~isoDrive() { }
 
 int isoDrive::UpdateMscdex(char driveLetter, const char* path, Bit8u& subUnit) {
 	if (MSCDEX_HasDrive(driveLetter)) {
+		subUnit = MSCDEX_GetSubUnit(driveLetter);
 		CDROM_Interface_Image* oldCdrom = CDROM_Interface_Image::images[subUnit];
 		CDROM_Interface* cdrom = new CDROM_Interface_Image(subUnit);
 		char pathCopy[CROSS_LEN];
@@ -551,4 +561,3 @@ bool isoDrive :: lookup(isoDirEntry *de, const char *path) {
 	}
 	return true;
 }
-

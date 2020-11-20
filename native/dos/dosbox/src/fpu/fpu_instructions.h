@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,11 +11,14 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#ifndef DOSBOX_FPU_H
+#include "fpu.h"
+#endif
 
 
 static void FPU_FINIT(void) {
@@ -43,7 +46,23 @@ static void FPU_FNOP(void){
 
 static void FPU_PREP_PUSH(void){
 	TOP = (TOP - 1) &7;
-	if (GCC_UNLIKELY(fpu.tags[TOP] != TAG_Empty)) E_Exit("FPU stack overflow");
+#if DB_FPU_STACK_CHECK_PUSH > DB_FPU_STACK_CHECK_NONE
+	if (GCC_UNLIKELY(fpu.tags[TOP] != TAG_Empty)) {
+#if DB_FPU_STACK_CHECK_PUSH == DB_FPU_STACK_CHECK_EXIT
+		E_Exit("FPU stack overflow");
+#else
+		if (fpu.cw&1) { // Masked ?
+			fpu.sw |= 0x1; //Invalid Operation
+			fpu.sw |= 0x40; //Stack Fault
+			FPU_SET_C1(1); //Register is used.
+			//No need to set 0x80 as the exception is masked.
+			LOG(LOG_FPU,LOG_ERROR)("Masked stack overflow encountered!");
+		} else {
+			E_Exit("FPU stack overflow"); //Exit as this is bad
+		}
+#endif
+	}
+#endif
 	fpu.tags[TOP] = TAG_Valid;
 }
 
@@ -56,9 +75,23 @@ static void FPU_PUSH(double in){
 
 
 static void FPU_FPOP(void){
-	// A test in OLE2DISP.DLL 2.3.3027.1 detects loss of precision due to
-	// using doubles and intentionally triggers an underflow.
-	//if (GCC_UNLIKELY(fpu.tags[TOP] == TAG_Empty)) E_Exit("FPU stack underflow");
+#if DB_FPU_STACK_CHECK_POP > DB_FPU_STACK_CHECK_NONE
+	if (GCC_UNLIKELY(fpu.tags[TOP] == TAG_Empty)) {
+#if DB_FPU_STACK_CHECK_POP == DB_FPU_STACK_CHECK_EXIT
+		E_Exit("FPU stack underflow");
+#else
+		if (fpu.cw&1) { // Masked ?
+			fpu.sw |= 0x1; //Invalid Operation
+			fpu.sw |= 0x40; //Stack Fault
+			FPU_SET_C1(0); //Register is free.
+			//No need to set 0x80 as the exception is masked.
+			LOG(LOG_FPU,LOG_ERROR)("Masked stack underflow encountered!");
+		} else {
+			LOG_MSG("Unmasked Stack underflow!"); //Also log in release mode
+		}
+#endif
+	}
+#endif
 	fpu.tags[TOP]=TAG_Empty;
 	//maybe set zero in it as well
 	TOP = ((TOP+1)&7);
@@ -249,30 +282,30 @@ static void FPU_FST_I64(PhysPt addr) {
 
 static void FPU_FBST(PhysPt addr) {
 	FPU_Reg val = fpu.regs[TOP];
-	bool sign = false;
-	if(fpu.regs[TOP].ll & LONGTYPE(0x8000000000000000)) { //sign
-		sign=true;
-		val.d=-val.d;
-	}
-	//numbers from back to front
-	Real64 temp=val.d;
-	Bitu p;
-	for(Bitu i=0;i<9;i++){
-		val.d=temp;
-		temp = static_cast<Real64>(static_cast<Bit64s>(floor(val.d/10.0)));
-		p = static_cast<Bitu>(val.d - 10.0*temp);  
-		val.d=temp;
-		temp = static_cast<Real64>(static_cast<Bit64s>(floor(val.d/10.0)));
-		p |= (static_cast<Bitu>(val.d - 10.0*temp)<<4);
+	if(val.ll & LONGTYPE(0x8000000000000000)) { // MSB = sign
+		mem_writeb(addr+9,0x80);
+		val.d = -val.d;
+	} else mem_writeb(addr+9,0);
 
-		mem_writeb(addr+i,p);
+	Bit64u rndint = static_cast<Bit64u>(FROUND(val.d));
+	// BCD (18 decimal digits) overflow? (0x0DE0B6B3A763FFFF max)
+	if (rndint > LONGTYPE(999999999999999999)) {
+		// write BCD integer indefinite value
+		mem_writed(addr+0,0);
+		mem_writed(addr+4,0xC0000000);
+		mem_writew(addr+8,0xFFFF);
+		return;
 	}
-	val.d=temp;
-	temp = static_cast<Real64>(static_cast<Bit64s>(floor(val.d/10.0)));
-	p = static_cast<Bitu>(val.d - 10.0*temp);
-	if(sign)
-		p|=0x80;
-	mem_writeb(addr+9,p);
+
+	//numbers from back to front
+	for(Bitu i=0;i<9;i++){
+		Bit64u temp = rndint / 10;
+		Bit8u p = static_cast<Bit8u>(rndint % 10);
+		rndint = temp / 10;
+		p |= (static_cast<Bit8u>(temp % 10)) << 4;
+		mem_writeb(addr++,p);
+	}
+	// flags? C1 should indicate if value was rounded up
 }
 
 static void FPU_FADD(Bitu op1, Bitu op2){
@@ -388,8 +421,13 @@ static void FPU_FUCOM(Bitu st, Bitu other){
 }
 
 static void FPU_FRNDINT(void){
-	Bit64s temp= static_cast<Bit64s>(FROUND(fpu.regs[TOP].d));
-	fpu.regs[TOP].d=static_cast<double>(temp);
+	Bit64s temp  = static_cast<Bit64s>(FROUND(fpu.regs[TOP].d));
+	double tempd = static_cast<double>(temp);
+	if (fpu.cw&0x20) { //As we don't generate exceptions; only do it when masked
+		if (tempd != fpu.regs[TOP].d)
+			fpu.sw |= 0x20; //Set Precision Exception
+	}
+	fpu.regs[TOP].d = tempd;
 }
 
 static void FPU_FPREM(void){
@@ -466,6 +504,7 @@ static void FPU_FYL2XP1(void){
 
 static void FPU_FSCALE(void){
 	fpu.regs[TOP].d *= pow(2.0,static_cast<Real64>(static_cast<Bit64s>(fpu.regs[STV(1)].d)));
+	//FPU_SET_C1(0);
 	return; //2^x where x is chopped.
 }
 

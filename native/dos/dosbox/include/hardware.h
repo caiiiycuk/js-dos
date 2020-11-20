@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -45,10 +45,11 @@ bool TS_Get_Address(Bitu& tsaddr, Bitu& tsirq, Bitu& tsdma);
 extern Bit8u adlib_commandreg;
 FILE * OpenCaptureFile(const char * type,const char * ext);
 
-void CAPTURE_AddWave(Bit32u freq, Bit32u len, Bit16s * data);
+void CAPTURE_AddWave(Bit32u freq, Bitu len, Bit16s * data);
 #define CAPTURE_FLAG_DBLW	0x1
 #define CAPTURE_FLAG_DBLH	0x2
-void CAPTURE_AddImage(Bitu width, Bitu height, Bitu bpp, Bitu pitch, Bitu flags, float fps, Bit8u * data, Bit8u * pal);
+#define CAPTURE_FLAG_DUPLICATE	0x4
+void CAPTURE_AddImage(Bitu width, Bitu height, Bitu bpp, Bitu pitch, Bitu flags, float fps, const Bit8u * data, const Bit8u * pal);
 void CAPTURE_AddMidi(bool sysex, Bitu len, Bit8u * data);
 
 #endif

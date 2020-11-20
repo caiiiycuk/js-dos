@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -592,10 +592,10 @@ graphics_chars:
 			break;
 		case 0x07:
 			switch (reg_bl) {
-			case 0x80:						/* Set Display Start during retrace ?? */
+			case 0x80:						/* Set Display Start during retrace */
 			case 0x00:						/* Set display Start */
 				reg_al=0x4f;
-				reg_ah=VESA_SetDisplayStart(reg_cx,reg_dx);
+				reg_ah=VESA_SetDisplayStart(reg_cx,reg_dx,reg_bl==0x80);
 				break;
 			case 0x01:
 				reg_al=0x4f;
@@ -611,9 +611,8 @@ graphics_chars:
 		case 0x09:
 			switch (reg_bl) {
 			case 0x80:						/* Set Palette during retrace */
-				//TODO
 			case 0x00:						/* Set Palette */
-				reg_ah=VESA_SetPalette(SegPhys(es)+reg_di,reg_dx,reg_cx);
+				reg_ah=VESA_SetPalette(SegPhys(es)+reg_di,reg_dx,reg_cx,reg_bl==0x80);
 				reg_al=0x4f;
 				break;
 			case 0x01:						/* Get Palette */
@@ -633,27 +632,27 @@ graphics_chars:
 			}
 			switch (reg_bl) {
 			case 0x00:
-				reg_edi=RealOff(int10.rom.pmode_interface);
 				SegSet16(es,RealSeg(int10.rom.pmode_interface));
+				reg_di=RealOff(int10.rom.pmode_interface);
 				reg_cx=int10.rom.pmode_interface_size;
 				reg_ax=0x004f;
 				break;
 			case 0x01:						/* Get code for "set window" */
-				reg_edi=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_window;
 				SegSet16(es,RealSeg(int10.rom.pmode_interface));
-				reg_cx=0x10;		//0x10 should be enough for the callbacks
+				reg_di=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_window;
+				reg_cx=int10.rom.pmode_interface_start-int10.rom.pmode_interface_window;
 				reg_ax=0x004f;
 				break;
 			case 0x02:						/* Get code for "set display start" */
-				reg_edi=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_start;
 				SegSet16(es,RealSeg(int10.rom.pmode_interface));
-				reg_cx=0x10;		//0x10 should be enough for the callbacks
+				reg_di=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_start;
+				reg_cx=int10.rom.pmode_interface_palette-int10.rom.pmode_interface_start;
 				reg_ax=0x004f;
 				break;
 			case 0x03:						/* Get code for "set palette" */
-				reg_edi=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_palette;
 				SegSet16(es,RealSeg(int10.rom.pmode_interface));
-				reg_cx=0x10;		//0x10 should be enough for the callbacks
+				reg_di=RealOff(int10.rom.pmode_interface)+int10.rom.pmode_interface_palette;
+				reg_cx=int10.rom.pmode_interface_size-int10.rom.pmode_interface_palette;
 				reg_ax=0x004f;
 				break;
 			default:

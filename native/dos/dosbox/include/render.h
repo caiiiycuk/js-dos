@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #ifndef DOSBOX_RENDER_H
@@ -64,8 +64,8 @@ typedef struct {
 		float fps;
 	} src;
 	struct {
-		Bitu count;
-		Bitu max;
+		int count;
+		int max;
 		Bitu index;
 		Bit8u hadSkip[RENDER_SKIP_CACHE];
 	} frameskip;
@@ -90,11 +90,15 @@ typedef struct {
 		Bit8u *cacheRead;
 		Bitu inHeight, inLine, outLine;
 	} scale;
+#if C_OPENGL
+	char* shader_src;
+#endif
 	RenderPal_t pal;
 	bool updating;
 	bool active;
 	bool aspect;
 	bool fullFrame;
+	bool forceUpdate;
 } Render_t;
 
 extern Render_t render;
@@ -103,6 +107,8 @@ void RENDER_SetSize(Bitu width,Bitu height,Bitu bpp,float fps,double ratio,bool 
 bool RENDER_StartUpdate(void);
 void RENDER_EndUpdate(bool abort);
 void RENDER_SetPal(Bit8u entry,Bit8u red,Bit8u green,Bit8u blue);
+bool RENDER_GetForceUpdate(void);
+void RENDER_SetForceUpdate(bool);
 
 
 #endif

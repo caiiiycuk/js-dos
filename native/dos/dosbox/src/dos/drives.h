@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -21,6 +21,7 @@
 #define _DRIVES_H__
 
 #include <vector>
+#include <string>
 #include <sys/types.h>
 #include "dos_system.h"
 #include "shell.h" /* for DOS_Shell */
@@ -35,6 +36,7 @@ public:
 	static int UnmountDrive(int drive);
 //	static void CycleDrive(bool pressed);
 //	static void CycleDisk(bool pressed);
+	static void CycleDisks(int drive, bool notify);
 	static void CycleAllDisks(void);
 	static void Init(Section* sec);
 	
@@ -69,13 +71,17 @@ public:
 	virtual bool isRemote(void);
 	virtual bool isRemovable(void);
 	virtual Bits UnMount(void);
-private:
+	const char* getBasedir() {return basedir;};
+protected:
 	char basedir[CROSS_LEN];
-	friend void DOS_Shell::CMD_SUBST(char* args); 	
+private:
+	friend void DOS_Shell::CMD_SUBST(char* args);
+protected:
 	struct {
 		char srch_dir[CROSS_LEN];
 	} srchInfo[MAX_OPENDIRS];
 
+private:
 	struct {
 		Bit16u bytes_sector;
 		Bit8u sectors_cluster;
@@ -163,13 +169,17 @@ public:
 	virtual bool isRemote(void);
 	virtual bool isRemovable(void);
 	virtual Bits UnMount(void);
+	virtual void EmptyCache(void){}
 public:
+	Bit8u readSector(Bit32u sectnum, void * data);
+	Bit8u writeSector(Bit32u sectnum, void * data);
 	Bit32u getAbsoluteSectFromBytePos(Bit32u startClustNum, Bit32u bytePos);
 	Bit32u getSectorSize(void);
+	Bit32u getClusterSize(void);
 	Bit32u getAbsoluteSectFromChain(Bit32u startClustNum, Bit32u logicalSector);
 	bool allocateCluster(Bit32u useCluster, Bit32u prevCluster);
 	Bit32u appendCluster(Bit32u startCluster);
-	void deleteClustChain(Bit32u startCluster);
+	void deleteClustChain(Bit32u startCluster, Bit32u bytePos);
 	Bit32u getFirstFreeClust(void);
 	bool directoryBrowse(Bit32u dirClustNumber, direntry *useEntry, Bit32s entNum, Bit32s start=0);
 	bool directoryChange(Bit32u dirClustNumber, direntry *useEntry, Bit32s entNum);
@@ -199,6 +209,7 @@ private:
 	} allocation;
 	
 	bootstrap bootbuffer;
+	bool absolute;
 	Bit8u fattype;
 	Bit32u CountOfClusters;
 	Bit32u partSectOff;
@@ -396,10 +407,63 @@ public:
 	bool isRemote(void);
 	virtual bool isRemovable(void);
 	virtual Bits UnMount(void);
+	virtual char const* GetLabel(void);
 private:
 	VFILE_Block * search_file;
 };
 
+class Overlay_Drive: public localDrive {
+public:
+	Overlay_Drive(const char * startdir,const char* overlay, Bit16u _bytes_sector,Bit8u _sectors_cluster,Bit16u _total_clusters,Bit16u _free_clusters,Bit8u _mediaid,Bit8u &error);
 
+	virtual bool FileOpen(DOS_File * * file,char * name,Bit32u flags);
+	virtual bool FileCreate(DOS_File * * file,char * name,Bit16u /*attributes*/);
+	virtual bool FindFirst(char * _dir,DOS_DTA & dta,bool fcb_findfirst);
+	virtual bool FindNext(DOS_DTA & dta);
+	virtual bool FileUnlink(char * name);
+	virtual bool GetFileAttr(char * name,Bit16u * attr);
+	virtual bool FileExists(const char* name);
+	virtual bool Rename(char * oldname,char * newname);
+	virtual bool FileStat(const char* name, FileStat_Block * const stat_block);
+	virtual void EmptyCache(void);
+
+	FILE* create_file_in_overlay(char* dos_filename, char const* mode);
+	virtual Bits UnMount(void);
+	virtual bool TestDir(char * dir);
+	virtual bool RemoveDir(char * dir);
+	virtual bool MakeDir(char * dir);
+private:
+	char overlaydir[CROSS_LEN];
+	bool optimize_cache_v1;
+	bool Sync_leading_dirs(const char* dos_filename);
+	void add_DOSname_to_cache(const char* name);
+	void remove_DOSname_from_cache(const char* name);
+	void add_DOSdir_to_cache(const char* name);
+	void remove_DOSdir_from_cache(const char* name);
+	void update_cache(bool read_directory_contents = false);
+	
+	std::vector<std::string> deleted_files_in_base; //Set is probably better, or some other solution (involving the disk).
+	std::vector<std::string> deleted_paths_in_base; //Currently only used to hide the overlay folder.
+	std::string overlap_folder;
+	void add_deleted_file(const char* name, bool create_on_disk);
+	void remove_deleted_file(const char* name, bool create_on_disk);
+	bool is_deleted_file(const char* name);
+	void add_deleted_path(const char* name, bool create_on_disk);
+	void remove_deleted_path(const char* name, bool create_on_disk);
+	bool is_deleted_path(const char* name);
+	bool check_if_leading_is_deleted(const char* name);
+
+	bool is_dir_only_in_overlay(const char* name); //cached
+
+
+	void remove_special_file_from_disk(const char* dosname, const char* operation);
+	void add_special_file_to_disk(const char* dosname, const char* operation);
+	std::string create_filename_of_special_operation(const char* dosname, const char* operation);
+	void convert_overlay_to_DOSname_in_base(char* dirname );
+	//For caching the update_cache routine.
+	std::vector<std::string> DOSnames_cache; //Also set is probably better.
+	std::vector<std::string> DOSdirs_cache; //Can not blindly change its type. it is important that subdirs come after the parent directory.
+	const std::string special_prefix;
+};
 
 #endif

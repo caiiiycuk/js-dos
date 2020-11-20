@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,15 +11,11 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-
-//#include "SDL/SDL_version.h"
-// On all platforms, if SDL 2.0 is used then we don't support physical CD-ROMs.
-#if 1 // !SDL_VERSION_ATLEAST(2,0,0)
 
 #if defined (WIN32)
 
@@ -31,8 +27,8 @@
 #include <io.h>
 
 #if (defined (_MSC_VER)) || (defined __MINGW64_VERSION_MAJOR)
-#include <ntddcdrm.h>			// Ioctl stuff
 #include <winioctl.h>			// Ioctl stuff
+#include <ntddcdrm.h>			// Ioctl stuff
 #else 
 #include "ddk/ntddcdrm.h"		// Ioctl stuff
 #endif
@@ -625,4 +621,3 @@ void CDROM_Interface_Ioctl::Close(void) {
 }
 
 #endif
-#endif	// SDL_VERSION_ATLEAST(2,0,0)

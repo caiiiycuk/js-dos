@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -115,12 +115,12 @@ void SVGA_S3_WriteCRTC(Bitu reg,Bitu val,Bitu iolen) {
 		break;
 	case 0x4A:  /* HGC foreground stack */
 		if (vga.s3.hgc.fstackpos > 2) vga.s3.hgc.fstackpos = 0;
-		vga.s3.hgc.forestack.u8[vga.s3.hgc.fstackpos] = val;
+		vga.s3.hgc.forestack[vga.s3.hgc.fstackpos] = val;
 		vga.s3.hgc.fstackpos++;
 		break;
 	case 0x4B:  /* HGC background stack */
 		if (vga.s3.hgc.bstackpos > 2) vga.s3.hgc.bstackpos = 0;
-		vga.s3.hgc.backstack.u8[vga.s3.hgc.bstackpos] = val;
+		vga.s3.hgc.backstack[vga.s3.hgc.bstackpos] = val;
 		vga.s3.hgc.bstackpos++;
 		break;
 	case 0x4c:  /* HGC start address high byte*/
@@ -400,9 +400,9 @@ Bitu SVGA_S3_ReadCRTC( Bitu reg, Bitu iolen) {
 	case 0x49:  /*  HGC orgY */
 		return vga.s3.hgc.originy&0xff;
 	case 0x4A:  /* HGC foreground stack */
-		return vga.s3.hgc.forestack.u8[vga.s3.hgc.fstackpos];
+		return vga.s3.hgc.forestack[vga.s3.hgc.fstackpos];
 	case 0x4B:  /* HGC background stack */
-		return vga.s3.hgc.backstack.u8[vga.s3.hgc.bstackpos];
+		return vga.s3.hgc.backstack[vga.s3.hgc.bstackpos];
 	case 0x50:	// CR50 Extended System Control 1
 		return vga.s3.reg_50;
 	case 0x51:	/* Extended System Control 2 */

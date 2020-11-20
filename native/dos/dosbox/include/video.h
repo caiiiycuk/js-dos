@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -59,6 +59,7 @@ void GFX_SetPalette(Bitu start,Bitu count,GFX_PalEntry * entries);
 Bitu GFX_GetBestMode(Bitu flags);
 Bitu GFX_GetRGB(Bit8u red,Bit8u green,Bit8u blue);
 Bitu GFX_SetSize(Bitu width,Bitu height,Bitu flags,double scalex,double scaley,GFX_CallBack_t cb);
+void GFX_SetShader(const char* src);
 
 void GFX_ResetScreen(void);
 void GFX_Start(void);
@@ -80,13 +81,5 @@ void MAPPER_UpdateJoysticks(void);
 /* Mouse related */
 void GFX_CaptureMouse(void);
 extern bool mouselocked; //true if mouse is confined to window
-
-#if defined (C_CURSOUT)
-void TXTOUT_SetSize(Bitu width, Bitu height);
-void TXTOUT_Draw_Line(const Bit8u* vidmem, Bitu len);
-void TXTOUT_SetCursor(Bitu col);
-void TXTOUT_StartUpdate(void);
-void TXTOUT_EndUpdate(void);
-#endif
 
 #endif

@@ -1,6 +1,6 @@
 {
     "name": "emulators",
-    "version": "0.0.36",
+    "version": "0.0.37",
     "description": "Emulators (dos) with standartized API",
     "main": "dist/emulators.js",
     "types": "dist/types/emulators.d.ts",
@@ -48,6 +48,7 @@
         "core-js": "^2.6.11",
         "del": "^5.1.0",
         "docco": "^0.8.0",
+        "fast-glob": "^3.2.4",
         "fs-extra": "^9.0.0",
         "git-repo-info": "^2.1.1",
         "gulp": "^4.0.2",

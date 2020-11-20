@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -280,9 +280,9 @@ static void update_cga16_color(void) {
 	}
 	Bitu CGApal[4] = {
 		overscan,
-		2 + (color_sel||bw ? 1 : 0) + (background_i ? 8 : 0),
-		4 + (color_sel&&!bw? 1 : 0) + (background_i ? 8 : 0),
-		6 + (color_sel||bw ? 1 : 0) + (background_i ? 8 : 0)
+		static_cast<Bitu>(2 + (color_sel||bw ? 1 : 0) + (background_i ? 8 : 0)),
+		static_cast<Bitu>(4 + (color_sel&&!bw? 1 : 0) + (background_i ? 8 : 0)),
+		static_cast<Bitu>(6 + (color_sel||bw ? 1 : 0) + (background_i ? 8 : 0))
 	};
 	for (Bit8u x=0; x<4; x++) {	 // Position of pixel in question
 		bool even = (x & 1) == 0;
@@ -380,6 +380,8 @@ static void write_cga_color_select(Bitu val) {
 	case M_TEXT:
 		vga.tandy.border_color = val & 0xf;
 		vga.attr.overscan_color = 0;
+		break;
+	default: //Else unhandled values warning
 		break;
 	}
 }

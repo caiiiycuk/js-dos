@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -38,9 +38,8 @@
 #include <assert.h>
 
 extern Bit8u int10_font_14[256 * 14];
-extern Program * first_shell;
 extern bool MSG_Write(const char *);
-extern void GFX_SetTitle(Bit32s cycles, Bits frameskip, bool paused);
+extern void GFX_SetTitle(Bit32s cycles, int frameskip, bool paused);
 
 static int cursor, saved_bpp;
 static int old_unicode;
@@ -454,10 +453,9 @@ public:
 		if (arg == "OK") section->data = *(std::string*)content->getText();
 		if (arg == "OK" || arg == "Cancel") close();
 		else if (arg == "Append Shell Commands") {
-			DOS_Shell *s = static_cast<DOS_Shell *>(first_shell);
-			std::list<std::string>::reverse_iterator i = s->l_history.rbegin();
+			std::list<std::string>::reverse_iterator i = first_shell->l_history.rbegin();
 			std::string lines = *(std::string*)content->getText();
-			while (i != s->l_history.rend()) {
+			while (i != first_shell->l_history.rend()) {
 				lines += "\n";
 				lines += *i;
 				++i;
@@ -569,7 +567,7 @@ public:
 			Section_prop *section = static_cast<Section_prop *>(sec);
 			new SectionEditor(getScreen(), 50, 30, section);
 		} else if (arg == "About") {
-			new GUI::MessageBox(getScreen(), 200, 150, 280, "About DOSBox", "\nDOSBox 0.74\nAn emulator for old DOS Games\n\nCopyright 2002-2015\nThe DOSBox Team");
+			new GUI::MessageBox(getScreen(), 200, 150, 280, "About DOSBox", "\nDOSBox 0.74\nAn emulator for old DOS Games\n\nCopyright 2002-2020\nThe DOSBox Team");
 		} else if (arg == "Introduction") {
 			new GUI::MessageBox(getScreen(), 20, 50, 600, "Introduction", MSG_Get("PROGRAM_INTRO"));
 		} else if (arg == "Getting Started") {

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include "adlib.h"
@@ -156,7 +156,7 @@ public:
 };
 
 struct Channel {
-	Operator op[2];
+	Operator op[2]; //Leave on top of struct for simpler pointer math.
 	inline Operator* Op( Bitu index ) {
 		return &( ( this + (index >> 1) )->op[ index & 1 ]);
 	}
@@ -176,10 +176,10 @@ struct Channel {
 	void SetChanData( const Chip* chip, Bit32u data );
 	//Change in the chandata, check for new values and if we have to forward to operators
 	void UpdateFrequency( const Chip* chip, Bit8u fourOp );
+	void UpdateSynth(const Chip* chip);
 	void WriteA0( const Chip* chip, Bit8u val );
 	void WriteB0( const Chip* chip, Bit8u val );
 	void WriteC0( const Chip* chip, Bit8u val );
-	void ResetC0( const Chip* chip );
 
 	//call this for the first channel
 	template< bool opl3Mode >
@@ -192,6 +192,9 @@ struct Channel {
 };
 
 struct Chip {
+	//18 channels with 2 operators each. Leave on top of struct for simpler pointer math.
+	Channel chan[18];
+
 	//This is used as the base counter for vibrato and tremolo
 	Bit32u lfoCounter;
 	Bit32u lfoAdd;
@@ -207,9 +210,6 @@ struct Chip {
 	Bit32u linearRates[76];
 	//Best match attack rates for the rate of this chip
 	Bit32u attackRates[76];
-
-	//18 channels with 2 operators each
-	Channel chan[18];
 
 	Bit8u reg104;
 	Bit8u reg08;
@@ -239,6 +239,8 @@ struct Chip {
 	void GenerateBlock2( Bitu samples, Bit32s* output );
 	void GenerateBlock3( Bitu samples, Bit32s* output );
 
+	//Update the synth handlers in all channels
+	void UpdateSynths();
 	void Generate( Bit32u samples );
 	void Setup( Bit32u r );
 

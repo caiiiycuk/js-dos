@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -25,6 +25,7 @@
 #include "../dos/drives.h"
 #include "support.h"
 #include "control.h"
+#include <algorithm>
 #include <cstring>
 #include <cctype>
 #include <cstdlib>
@@ -83,21 +84,21 @@ static void StripSpaces(char*&args,char also) {
 		args++;
 }
 
-static char* ExpandDot(char*args, char* buffer) {
+static char* ExpandDot(char*args, char* buffer , size_t bufsize) {
 	if(*args == '.') {
 		if(*(args+1) == 0){
-			strcpy(buffer,"*.*");
+			safe_strncpy(buffer, "*.*", bufsize);
 			return buffer;
 		}
 		if( (*(args+1) != '.') && (*(args+1) != '\\') ) {
 			buffer[0] = '*';
 			buffer[1] = 0;
-			strcat(buffer,args);
+			if (bufsize > 2) strncat(buffer,args,bufsize - 1 /*used buffer portion*/ - 1 /*trailing zero*/  );
 			return buffer;
 		} else
-			strcpy (buffer, args);
+			safe_strncpy (buffer, args, bufsize);
 	}
-	else strcpy(buffer,args);
+	else safe_strncpy(buffer,args, bufsize);
 	return buffer;
 }
 
@@ -190,7 +191,7 @@ void DOS_Shell::CMD_DELETE(char * args) {
 
 	char full[DOS_PATHLENGTH];
 	char buffer[CROSS_LEN];
-	args = ExpandDot(args,buffer);
+	args = ExpandDot(args,buffer, CROSS_LEN);
 	StripSpaces(args);
 	if (!DOS_Canonicalize(args,full)) { WriteOut(MSG_Get("SHELL_ILLEGAL_PATH"));return; }
 //TODO Maybe support confirmation for *.* like dos does.	
@@ -407,7 +408,31 @@ static void FormatNumber(Bit32u num,char * buf) {
 		return;
 	};
 	sprintf(buf,"%d",numb);
-}	
+}
+
+struct DtaResult {
+	char name[DOS_NAMELENGTH_ASCII];
+	Bit32u size;
+	Bit16u date;
+	Bit16u time;
+	Bit8u attr;
+
+	static bool compareName(const DtaResult &lhs, const DtaResult &rhs) { return strcmp(lhs.name, rhs.name) < 0; }
+	static bool compareExt(const DtaResult &lhs, const DtaResult &rhs) { return strcmp(lhs.getExtension(), rhs.getExtension()) < 0; }
+	static bool compareSize(const DtaResult &lhs, const DtaResult &rhs) { return lhs.size < rhs.size; }
+	static bool compareDate(const DtaResult &lhs, const DtaResult &rhs) { return lhs.date < rhs.date || (lhs.date == rhs.date && lhs.time < rhs.time); }
+
+	const char * getExtension() const {
+		const char * ext = empty_string;
+		if (name[0] != '.') {
+			ext = strrchr(name, '.');
+			if (!ext) ext = empty_string;
+		}
+		return ext;
+	}
+
+};
+
 
 void DOS_Shell::CMD_DIR(char * args) {
 	HELP("DIR");
@@ -421,7 +446,7 @@ void DOS_Shell::CMD_DIR(char * args) {
 		line = std::string(args) + " " + value;
 		args=const_cast<char*>(line.c_str());
 	}
-   
+
 	bool optW=ScanCMDBool(args,"W");
 	ScanCMDBool(args,"S");
 	bool optP=ScanCMDBool(args,"P");
@@ -430,6 +455,29 @@ void DOS_Shell::CMD_DIR(char * args) {
 	}
 	bool optB=ScanCMDBool(args,"B");
 	bool optAD=ScanCMDBool(args,"AD");
+	bool optAminusD=ScanCMDBool(args,"A-D");
+	// Sorting flags
+	bool reverseSort = false;
+	bool optON=ScanCMDBool(args,"ON");
+	if (ScanCMDBool(args,"O-N")) {
+		optON = true;
+		reverseSort = true;
+	}
+	bool optOD=ScanCMDBool(args,"OD");
+	if (ScanCMDBool(args,"O-D")) {
+		optOD = true;
+		reverseSort = true;
+	}
+	bool optOE=ScanCMDBool(args,"OE");
+	if (ScanCMDBool(args,"O-E")) {
+		optOE = true;
+		reverseSort = true;
+	}
+	bool optOS=ScanCMDBool(args,"OS");
+	if (ScanCMDBool(args,"O-S")) {
+		optOS = true;
+		reverseSort = true;
+	}
 	char * rem=ScanCMDRemain(args);
 	if (rem) {
 		WriteOut(MSG_Get("SHELL_ILLEGAL_SWITCH"),rem);
@@ -457,7 +505,7 @@ void DOS_Shell::CMD_DIR(char * args) {
 			break;
 		}
 	}
-	args = ExpandDot(args,buffer);
+	args = ExpandDot(args,buffer,CROSS_LEN);
 
 	if (!strrchr(args,'*') && !strrchr(args,'?')) {
 		Bit16u attribute=0;
@@ -488,13 +536,45 @@ void DOS_Shell::CMD_DIR(char * args) {
 		return;
 	}
  
-	do {    /* File name and extension */
-		char name[DOS_NAMELENGTH_ASCII];Bit32u size;Bit16u date;Bit16u time;Bit8u attr;
-		dta.GetResult(name,size,date,time,attr);
+	std::vector<DtaResult> results;
 
-		/* Skip non-directories if option AD is present */
-		if(optAD && !(attr&DOS_ATTR_DIRECTORY) ) continue;
-		
+	do {    /* File name and extension */
+		DtaResult result;
+		dta.GetResult(result.name,result.size,result.date,result.time,result.attr);
+
+		/* Skip non-directories if option AD is present, or skip dirs in case of A-D */
+		if(optAD && !(result.attr&DOS_ATTR_DIRECTORY) ) continue;
+		else if(optAminusD && (result.attr&DOS_ATTR_DIRECTORY) ) continue;
+
+		results.push_back(result);
+
+	} while ( (ret=DOS_FindNext()) );
+
+	if (optON) {
+		// Sort by name
+		std::sort(results.begin(), results.end(), DtaResult::compareName);
+	} else if (optOE) {
+		// Sort by extension
+		std::sort(results.begin(), results.end(), DtaResult::compareExt);
+	} else if (optOD) {
+		// Sort by date
+		std::sort(results.begin(), results.end(), DtaResult::compareDate);
+	} else if (optOS) {
+		// Sort by size
+		std::sort(results.begin(), results.end(), DtaResult::compareSize);
+	}
+	if (reverseSort) {
+		std::reverse(results.begin(), results.end());
+	}
+
+	for (std::vector<DtaResult>::iterator iter = results.begin(); iter != results.end(); iter++) {
+
+		char * name = iter->name;
+		Bit32u size = iter->size;
+		Bit16u date = iter->date;
+		Bit16u time = iter->time;
+		Bit8u attr = iter->attr;
+
 		/* output the file */
 		if (optB) {
 			// this overrides pretty much everything
@@ -542,7 +622,9 @@ void DOS_Shell::CMD_DIR(char * args) {
 		if (optP && !(++p_count%(22*w_size))) {
 			CMD_PAUSE(empty_string);
 		}
-	} while ( (ret=DOS_FindNext()) );
+	}
+
+
 	if (optW) {
 		if (w_count%5)	WriteOut("\n");
 	}
@@ -796,7 +878,8 @@ void DOS_Shell::CMD_SET(char * args) {
 				*p_parsed++ = '%'; p += 2; //%% => % 
 			} else {
 				char * second = strchr(++p,'%');
-				if(!second) continue; *second++ = 0;
+				if (!second) continue;
+				*second++ = 0;
 				std::string temp;
 				if (GetEnvStr(p,temp)) {
 					std::string::size_type equals = temp.find('=');
@@ -1151,7 +1234,7 @@ void DOS_Shell::CMD_SUBST (char * args) {
 //		return;
 //	}
    
-//	return;
+	return;
 }
 
 void DOS_Shell::CMD_LOADHIGH(char *args){

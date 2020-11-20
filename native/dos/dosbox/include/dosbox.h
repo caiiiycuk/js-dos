@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -22,7 +22,7 @@
 
 #include "config.h"
 
-void E_Exit(const char * message,...) GCC_ATTRIBUTE( __format__(__printf__, 1, 2));
+GCC_ATTRIBUTE(noreturn) void E_Exit(const char * message,...) GCC_ATTRIBUTE( __format__(__printf__, 1, 2));
 
 void MSG_Add(const char*,const char*); //add messages to the internal languagefile
 const char* MSG_Get(char const *);     //get messages from the internal languagefile
@@ -32,22 +32,6 @@ class Section;
 typedef Bitu (LoopHandler)(void);
 
 void DOSBOX_RunMachine();
-#if defined(JSDOS) && defined(EMTERPRETER_SYNC)
-/* This is for cases where RunMachine is called from code not using
- * emterpreter. There, emscripten_sleep() is prohibited and emulation
- * will be aborted with a timeout error if this takes too long.
- */
-extern int nosleep_lock;
-static void inline DOSBOX_RunMachineNoSleep() {
-	nosleep_lock++;
-	DOSBOX_RunMachine();
-	nosleep_lock--;
-}
-#else
-static void inline DOSBOX_RunMachineNoSleep() {
-	DOSBOX_RunMachine();
-}
-#endif
 void DOSBOX_SetLoop(LoopHandler * handler);
 void DOSBOX_SetNormalLoop();
 

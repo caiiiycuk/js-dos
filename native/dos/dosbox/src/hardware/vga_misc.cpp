@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -30,7 +30,7 @@ void vga_write_p3d5(Bitu port,Bitu val,Bitu iolen);
 Bitu vga_read_p3d5(Bitu port,Bitu iolen);
 
 Bitu vga_read_p3da(Bitu port,Bitu iolen) {
-	Bit8u retval=0;
+	Bit8u retval=4;	// bit 2 set, needed by Blues Brothers
 	double timeInFrame = PIC_FullIndex()-vga.draw.delay.framestart;
 
 	vga.internal.attrindex=false;

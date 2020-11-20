@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,19 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
-
-
-/* Emscripten could theoretically support CD images, but this
- * implementation uses a SDL Mutex, which isn't supported
- *
- * jbanes 2015-06-15: Mutexes only matter in a truly multithreaded
- * environment. Since Javascript is effectively single-threaded,
- * it should be safe to disable the mutexes. Note that I've also 
- * enabled various downstream files that were otherwise disabled.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -80,6 +70,7 @@ CDROM_Interface_Image::BinaryFile::BinaryFile(const char *filename, bool &error)
 CDROM_Interface_Image::BinaryFile::~BinaryFile()
 {
 	delete file;
+	file = NULL;
 }
 
 bool CDROM_Interface_Image::BinaryFile::read(Bit8u *buffer, int seek, int count)
@@ -162,6 +153,7 @@ CDROM_Interface_Image::imagePlayer CDROM_Interface_Image::player = {
 
 	
 CDROM_Interface_Image::CDROM_Interface_Image(Bit8u subUnit)
+                      :subUnit(subUnit)
 {
 	images[subUnit] = this;
 	if (refCount == 0) {
@@ -200,7 +192,7 @@ bool CDROM_Interface_Image::SetDevice(char* path, int forceCD)
 	
 	// print error message on dosbox console
 	char buf[MAX_LINE_LENGTH];
-	snprintf(buf, MAX_LINE_LENGTH, "Could not load image file: %s\n", path);
+	snprintf(buf, MAX_LINE_LENGTH, "Could not load image file: %s\r\n", path);
 	Bit16u size = (Bit16u)strlen(buf);
 	DOS_WriteFile(STDOUT, (Bit8u*)buf, &size);
 	return false;
@@ -237,7 +229,7 @@ bool CDROM_Interface_Image::GetAudioSub(unsigned char& attr, unsigned char& trac
 	attr = tracks[track - 1].attr;
 	index = 1;
 	FRAMES_TO_MSF(player.currFrame + 150, &absPos.min, &absPos.sec, &absPos.fr);
-	FRAMES_TO_MSF(player.currFrame - tracks[track - 1].start + 150, &relPos.min, &relPos.sec, &relPos.fr);
+	FRAMES_TO_MSF(player.currFrame - tracks[track - 1].start, &relPos.min, &relPos.sec, &relPos.fr);
 	return true;
 }
 
@@ -377,9 +369,6 @@ void CDROM_Interface_Image::CDAudioCallBack(Bitu len)
 			player.isPlaying = false;
 		}
 	}
-#if !defined(EMSCRIPTEN) && !defined(JSDOS)
-	SDL_mutexV(player.mutex);
-#endif
 	if (player.ctrlUsed) {
 		Bit16s sample0,sample1;
 		Bit16s * samples=(Bit16s *)&player.buffer;
@@ -403,6 +392,9 @@ void CDROM_Interface_Image::CDAudioCallBack(Bitu len)
 #endif
 	memmove(player.buffer, &player.buffer[len], player.bufLen - len);
 	player.bufLen -= len;
+#if !defined(EMSCRIPTEN) && !defined(JSDOS)
+	SDL_mutexV(player.mutex);
+#endif
 }
 
 bool CDROM_Interface_Image::LoadIsoFile(char* filename)
@@ -415,6 +407,7 @@ bool CDROM_Interface_Image::LoadIsoFile(char* filename)
 	track.file = new BinaryFile(filename, error);
 	if (error) {
 		delete track.file;
+		track.file = NULL;
 		return false;
 	}
 	track.number = 1;
@@ -584,6 +577,7 @@ bool CDROM_Interface_Image::LoadCueSheet(char *cuefile)
 #endif
 			if (error) {
 				delete track.file;
+				track.file = NULL;
 				success = false;
 			}
 		}
@@ -792,4 +786,3 @@ void CDROM_Image_Init(Section* section) {
 	section->AddDestroyFunction(CDROM_Image_Destroy, false);
 #endif
 }
-

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -107,13 +107,13 @@ public:
 		flags=PFLAG_READABLE|PFLAG_HASROM;
 	}
 	void writeb(PhysPt addr,Bitu val){
-		LOG(LOG_CPU,LOG_ERROR)("Write %x to rom at %x",val,addr);
+		LOG(LOG_CPU,LOG_ERROR)("Write %" sBitfs(x) " to rom at %x",val,addr);
 	}
 	void writew(PhysPt addr,Bitu val){
-		LOG(LOG_CPU,LOG_ERROR)("Write %x to rom at %x",val,addr);
+		LOG(LOG_CPU,LOG_ERROR)("Write %" sBitfs(x) " to rom at %x",val,addr);
 	}
 	void writed(PhysPt addr,Bitu val){
-		LOG(LOG_CPU,LOG_ERROR)("Write %x to rom at %x",val,addr);
+		LOG(LOG_CPU,LOG_ERROR)("Write %" sBitfs(x) " to rom at %x",val,addr);
 	}
 };
 
@@ -535,9 +535,7 @@ void PreparePCJRCartRom(void) {
 	}
 }
 
-HostPt GetMemBase(void) {
-    return MemBase;
-}
+HostPt GetMemBase(void) { return MemBase; }
 
 class MEMORY:public Module_base{
 private:
@@ -561,8 +559,8 @@ public:
 			LOG_MSG("Memory sizes above %d MB are NOT recommended.",SAFE_MEMORY - 1);
 			LOG_MSG("Stick with the default values unless you are absolutely certain.");
 		}
-		MemBase = new Bit8u[memsize*1024*1024];
-		if (!MemBase) E_Exit("Can't allocate main memory of %d MB",memsize);
+		MemBase = new(std::nothrow) Bit8u[memsize*1024*1024];
+		if (!MemBase) E_Exit("Can't allocate main memory of %" sBitfs(d) " MB",memsize);
 		/* Clear the memory, as new doesn't always give zeroed memory
 		 * (Visual C debug mode). We want zeroed memory though. */
 		memset((void*)MemBase,0,memsize*1024*1024);

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -133,8 +133,10 @@ static void DISNEY_analyze(Bitu channel){
 			Bitu ch_speed[2];
 
 			for(Bitu i = 0; i < 2; i++) {
-				ch_speed[i] = (Bitu)(1.0/((disney.da[i].speedcheck_sum/1000.0) /
-				(float)(((float)disney.da[i].used)-1.0))); // -1.75
+				if(disney.da[i].used > 1) { // avoid dividing by zero
+					ch_speed[i] = (Bitu)(1.0/((disney.da[i].speedcheck_sum/1000.0) /
+					(float)(((float)disney.da[i].used)-1.0))); // -1.75
+				} else ch_speed[i] = 0;
 			}
 			
 			// choose the larger value

@@ -1,3 +1,89 @@
+0.74-3
+  - Implement basic file access control for files available from within
+    the emulation, so that programs running inside DOSBox can't access
+    /proc (e.g. /proc/self/mem). (CVE-2019-12594)
+  - Unify unmounting code and add some protections against out of bound access
+    when DOS_DRIVES is not 26.
+  - Use correct type for return value of strlen.
+  - Change scan3x to a bit brighter.
+  - Fix unitialized access to some isoDrive fields and improve stability 
+    when switching CD images.
+  - Small fix to hq3x.
+  - Fix 256 colour mode encoding in zmbv.dll.
+  - Some small aliassing fix.
+  - Change SET to check the size of the MCB when adding variables. Fixes
+    hangs with Norton Commander.
+  - Check buffer length before doing tab completion.
+  - Correct buffer overflow with very long lines in bat files. (CVE-2019-7165)
+  - Correct the boundary check for the internal programs array.
+  - Increase stability in max cycles mode by increasing the lower bound.
+  - Fix command prompt in windows 3.11 with dynrec core.
+  - Fix Win64 dynrec core.  
+  - Always clear buffers before drawing in OpenGL mode. Fixes artifacts with 
+    drivers that have more than 2 buffers and overlays. 
+  - Fix red border that appeared when scaling the image in OpenGL 
+    mode with Nvidia on Linux and Mac.
+  - Change default output to opengl on Mac, as surface is very slow there in 64 bit.
+  - Add workaround for the mouse unlocking problem with X.org 1.20.1.
+  - Fix table access when USE_FULL_TLB is undefined (non-default configuration).
+  - Several fixes to prevent compilation errors.
+  - Update Visual studio file to fix missing files from 0.74-2.
+
+0.74-2
+  - Rewrite auto/max cycles algorithm to work better with windows 7, other 
+    OSes might benefit as well.
+  - Update 64bit recompiler to work on OSX and Linux.
+  - Several improvements to make the recompilers work with newer compilers and
+    add some workarounds about clang confusing itself.
+  - Fix several variables being the wrong size in the recompiler.
+  - Support absolute 64 bit addressing. (DRC:64 bit error messages)
+  - Zero extend data in dynrec core for LLVM compilation/
+  - Reduce overhead of the Mac version with a lot. Results in a speed increase.
+  - Replace NV_PixelDataRange with the more common ARB_PixelBufferObject 
+    extension. Should help with output=opengl.
+  - Reuse graphics window if possible instead of always creating a new one!
+  - Add patches to work better when called by WINE:
+    - support WINE style namemangling.
+    - allow Z:\ to be moved to a different drive. 
+  - Try to fix stuttering audio with opengl output on Linux. (or at least 
+    improve it. Linux users might need to increase the prebuffer option a bit)
+  - Fix automake and autoconf problems.
+  - Fix problems related to packed struct layouts.
+  - Fix compilation on gcc 4.4 and gcc 4.6.1.
+  - Fix compilation with -DPIC.
+  - Hopefully fix crash on shutdown, when unknown condition is encountered.
+  - Fix -lto with gcc.
+  - Fix clang compliation with asm fpu core.
+  - Fix mapper crash on startup and when changing the mapper key.
+  - Fix compilation in VS2015.
+  - Fix compilation on mingw64.
+  - Fix compilation on Frisbee and newer clang.
+  - Fix compilation machines that have X11 libraries installed, but use a SDL 
+    without X11.
+  - Fix a few problems relating to video capturing:
+    - Writing out the index too often. (slowdown with longer captures)
+    - Not being aware of when only the refresh rate changed.
+  - Fix call order when bitshifting the return order (VS C /O2 builds).
+  - Fix sign-extension error in S3 draw funcion, i.e. win3.1 analog clock.
+  - Fix expanddot not caring about the size of the inputbuffer.
+  - Some fixes for the debugger related to starting a program through debug.com.
+  - Bring OS/2 port code up to date.
+  - Reduce the amount of warning when compiling with quite a bit.
+  - Allow 15/26/32 bits input to the opengl output.
+  - Add cmd-q as exit key for macs.
+  - Fix icon and titlebar on very old setups.
+  - Fix off by one display size calculation errors with very large displays.
+  - Fix out of bounds access the unused byte in the 32 bit colour value of the 
+    hardware mouse cursor pixel was affected.
+  - Fix depreciated warnings on Mac, allow soundfont loading for coreaudio.
+  - Keep repeating a pressed key if another key was unpressed.
+  - Fix crash on OS X related to putting junk in the titlebar.
+  - Extend fullresolution=0x0 to work on Linux and Mac.
+  - Change gameblaster and tandy sound core to latest mame version.
+  - Improve numlock and capslock support on Linux and Macs. Still not perfect
+    on Windows.
+  - Added even more code to workaround Windows behaving weirdly with alt-tab.
+
 0.74
   - Several small game specific fixes/hacks/support. (Offensive,
     Roadhog, GTA installer, Kingdom O' Magic soundcard detection, 

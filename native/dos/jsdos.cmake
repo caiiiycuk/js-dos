@@ -6,7 +6,7 @@ else ()
     include_directories("${CMAKE_CURRENT_LIST_DIR}/jsdos/linux")
 endif ()
 
-add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS -DJSDOS -DEMTERPRETER_SYNC)
+add_definitions(-DHAVE_CONFIG_H -DGET_X86_FUNCTIONS -DJSDOS)
 
 include_directories(
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/include"
@@ -24,10 +24,7 @@ set(SOURCES_CORE_CXX11
 
 
 set(SOURCES_CORE_CXX03
-        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-debug.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-debug-mem.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-asyncify.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-core.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-log.cpp"
 
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/cpu/core_simple.cpp"
@@ -66,6 +63,7 @@ set(SOURCES_CORE_CXX03
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/cdrom_ioctl_win32.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/cdrom_aspi_win32.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/cdrom_ioctl_os2.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/drive_overlay.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/dos_tables.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/dos_devices.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/dos/dos_mscdex.cpp"
@@ -84,7 +82,6 @@ set(SOURCES_CORE_CXX03
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/shell/shell_cmds.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/shell/shell_batch.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/shell/shell_misc.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/curstxt.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/midi.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/sdl_gui.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/render_scalers.cpp"
@@ -135,6 +132,11 @@ set(SOURCES_CORE_CXX03
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/serialport/libserial.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/serialport/softmodem.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/serialport/misc_util.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/mame/fmopl.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/mame/saa1099.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/mame/sn76496.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/mame/ymdeltat.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/mame/ymf262.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/misc/programs.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/misc/setup.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/misc/cross.cpp"

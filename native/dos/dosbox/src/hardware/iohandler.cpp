@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -208,14 +208,14 @@ inline void IO_USEC_write_delay_old() {
 
 inline void IO_USEC_read_delay() {
 	Bits delaycyc = CPU_CycleMax/IODELAY_READ_MICROSk;
-	if(GCC_UNLIKELY(CPU_Cycles < 3*delaycyc)) delaycyc = 0; //Else port acces will set cycles to 0. which might trigger problem with games which read 16 bit values
+	if(GCC_UNLIKELY(delaycyc > CPU_Cycles)) delaycyc = CPU_Cycles;
 	CPU_Cycles -= delaycyc;
 	CPU_IODelayRemoved += delaycyc;
 }
 
 inline void IO_USEC_write_delay() {
 	Bits delaycyc = CPU_CycleMax/IODELAY_WRITE_MICROSk;
-	if(GCC_UNLIKELY(CPU_Cycles < 3*delaycyc)) delaycyc=0;
+	if(GCC_UNLIKELY(delaycyc > CPU_Cycles)) delaycyc = CPU_Cycles;
 	CPU_Cycles -= delaycyc;
 	CPU_IODelayRemoved += delaycyc;
 }
@@ -308,7 +308,7 @@ void IO_WriteB(Bitu port,Bitu val) {
 		reg_eip = RealOff(icb)+0x08;
 		CPU_Exception(cpu.exception.which,cpu.exception.error);
 
-		DOSBOX_RunMachineNoSleep();
+		DOSBOX_RunMachine();
 		iof_queue.used--;
 
 		reg_al = old_al;
@@ -344,7 +344,7 @@ void IO_WriteW(Bitu port,Bitu val) {
 		reg_eip = RealOff(icb)+0x0a;
 		CPU_Exception(cpu.exception.which,cpu.exception.error);
 
-		DOSBOX_RunMachineNoSleep();
+		DOSBOX_RunMachine();
 		iof_queue.used--;
 
 		reg_ax = old_ax;
@@ -380,7 +380,7 @@ void IO_WriteD(Bitu port,Bitu val) {
 		reg_eip = RealOff(icb)+0x0c;
 		CPU_Exception(cpu.exception.which,cpu.exception.error);
 
-		DOSBOX_RunMachineNoSleep();
+		DOSBOX_RunMachine();
 		iof_queue.used--;
 
 		reg_eax = old_eax;
@@ -404,6 +404,7 @@ Bitu IO_ReadB(Bitu port) {
 		entry->eip=reg_eip;
 		CPU_Push16(SegValue(cs));
 		CPU_Push16(reg_ip);
+		Bit8u old_al = reg_al;
 		Bit16u old_dx = reg_dx;
 		reg_dx = port;
 		RealPt icb = CALLBACK_RealPointer(call_priv_io);
@@ -411,10 +412,11 @@ Bitu IO_ReadB(Bitu port) {
 		reg_eip = RealOff(icb)+0x00;
 		CPU_Exception(cpu.exception.which,cpu.exception.error);
 
-		DOSBOX_RunMachineNoSleep();
+		DOSBOX_RunMachine();
 		iof_queue.used--;
 
 		retval = reg_al;
+		reg_al = old_al;
 		reg_dx = old_dx;
 		memcpy(&lflags,&old_lflags,sizeof(LazyFlags));
 		cpudecoder=old_cpudecoder;
@@ -441,6 +443,7 @@ Bitu IO_ReadW(Bitu port) {
 		entry->eip=reg_eip;
 		CPU_Push16(SegValue(cs));
 		CPU_Push16(reg_ip);
+		Bit16u old_ax = reg_ax;
 		Bit16u old_dx = reg_dx;
 		reg_dx = port;
 		RealPt icb = CALLBACK_RealPointer(call_priv_io);
@@ -448,10 +451,11 @@ Bitu IO_ReadW(Bitu port) {
 		reg_eip = RealOff(icb)+0x02;
 		CPU_Exception(cpu.exception.which,cpu.exception.error);
 
-		DOSBOX_RunMachineNoSleep();
+		DOSBOX_RunMachine();
 		iof_queue.used--;
 
 		retval = reg_ax;
+		reg_ax = old_ax;
 		reg_dx = old_dx;
 		memcpy(&lflags,&old_lflags,sizeof(LazyFlags));
 		cpudecoder=old_cpudecoder;
@@ -477,6 +481,7 @@ Bitu IO_ReadD(Bitu port) {
 		entry->eip=reg_eip;
 		CPU_Push16(SegValue(cs));
 		CPU_Push16(reg_ip);
+		Bit32u old_eax = reg_eax;
 		Bit16u old_dx = reg_dx;
 		reg_dx = port;
 		RealPt icb = CALLBACK_RealPointer(call_priv_io);
@@ -484,10 +489,11 @@ Bitu IO_ReadD(Bitu port) {
 		reg_eip = RealOff(icb)+0x04;
 		CPU_Exception(cpu.exception.which,cpu.exception.error);
 
-		DOSBOX_RunMachineNoSleep();
+		DOSBOX_RunMachine();
 		iof_queue.used--;
 
 		retval = reg_eax;
+		reg_eax = old_eax;
 		reg_dx = old_dx;
 		memcpy(&lflags,&old_lflags,sizeof(LazyFlags));
 		cpudecoder=old_cpudecoder;

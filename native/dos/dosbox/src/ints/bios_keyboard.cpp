@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -190,9 +190,11 @@ static bool check_key(Bit16u &code) {
 	Bit16u head,tail;
 	head =mem_readw(BIOS_KEYBOARD_BUFFER_HEAD);
 	tail =mem_readw(BIOS_KEYBOARD_BUFFER_TAIL);
-	if (head==tail) return false;
 	code = real_readw(0x40,head);
-	return true;
+	// cpu flags from instruction comparing head and tail pointers
+	CALLBACK_SZF(head==tail);
+	CALLBACK_SCF(head<tail);
+	return (head!=tail);
 }
 
 	/*	Flag Byte 1 
@@ -523,37 +525,32 @@ static Bitu INT16_Handler(void) {
 		// enable interrupt-flag after IRET of this int16
 		CALLBACK_SIF(true);
 		for (;;) {
-			if (check_key(temp)) {
+			if (check_key(temp)) { //  check_key changes ZF and CF as required
 				if (!IsEnhancedKey(temp)) {
 					/* normal key, return translated key in ax */
-					CALLBACK_SZF(false);
-					reg_ax=temp;
 					break;
 				} else {
 					/* remove enhanced key from buffer and ignore it */
 					get_key(temp);
 				}
 			} else {
-				/* no key available */
-				CALLBACK_SZF(true);
+				/* no key available, return key at buffer head anyway */
 				break;
 			}
 //			CALLBACK_Idle();
 		}
+		reg_ax=temp;
 		break;
 	case 0x11: /* CHECK FOR KEYSTROKE (enhanced keyboards only) */
 		// enable interrupt-flag after IRET of this int16
 		CALLBACK_SIF(true);
-		if (!check_key(temp)) {
-			CALLBACK_SZF(true);
-		} else {
-			CALLBACK_SZF(false);
+		if (check_key(temp)) { // check_key changes ZF and CF as required
 			if (((temp&0xff)==0xf0) && (temp>>8)) {
 				/* special enhanced key, clear low part before returning key */
 				temp&=0xff00;
 			}
-			reg_ax=temp;
 		}
+		reg_ax=temp;
 		break;
 	case 0x02:	/* GET SHIFT FLAGS */
 		reg_al=mem_readb(BIOS_KEYBOARD_FLAGS1);

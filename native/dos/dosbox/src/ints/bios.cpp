@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,11 +11,13 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include <cstdlib>
+#include <ctime>
 
 #include "dosbox.h"
 #include "mem.h"
@@ -31,8 +33,6 @@
 #include "mouse.h"
 #include "setup.h"
 #include "serialport.h"
-#include <time.h>
-#include <stdlib.h>
 
 #if defined(DB_HAVE_CLOCK_GETTIME) && ! defined(WIN32)
 //time.h is already included
@@ -829,13 +829,24 @@ static Bitu INT15_Handler(void) {
 				break;
 			}
 			Bit32u count=(reg_cx<<16)|reg_dx;
+			double timeout=PIC_FullIndex()+((double)count/1000.0)+1.0;
 			mem_writed(BIOS_WAIT_FLAG_POINTER,RealMake(0,BIOS_WAIT_FLAG_TEMP));
 			mem_writed(BIOS_WAIT_FLAG_COUNT,count);
 			mem_writeb(BIOS_WAIT_FLAG_ACTIVE,1);
+			/* Unmask IRQ 8 if masked */
+			Bit8u mask=IO_Read(0xa1);
+			if (mask&1) IO_Write(0xa1,mask&~1);
 			/* Reprogram RTC to start */
 			IO_Write(0x70,0xb);
 			IO_Write(0x71,IO_Read(0x71)|0x40);
 			while (mem_readd(BIOS_WAIT_FLAG_COUNT)) {
+				if (PIC_FullIndex()>timeout) {
+					/* RTC timer not working for some reason */
+					mem_writeb(BIOS_WAIT_FLAG_ACTIVE,0);
+					IO_Write(0x70,0xb);
+					IO_Write(0x71,IO_Read(0x71)&~0x40);
+					break;
+				}
 				CALLBACK_Idle();
 			}
 			CALLBACK_SCF(false);
@@ -910,6 +921,12 @@ static Bitu INT15_Handler(void) {
 			reg_bx=0x00aa;	// mouse
 			// fall through
 		case 0x05:		// initialize
+			if ((reg_al==0x05) && (reg_bh!=0x03)) {
+				// non-standard data packet sizes not supported
+				CALLBACK_SCF(true);
+				reg_ah=2;
+				break;
+			}
 			Mouse_SetPS2State(false);
 			CALLBACK_SCF(false);
 			reg_ah=0;
@@ -1288,6 +1305,7 @@ public:
 		// Gameport
 		config |= 0x1000;
 		mem_writew(BIOS_CONFIGURATION,config);
+		if (IS_EGAVGA_ARCH) config &= ~0x30; //EGA/VGA startup display mode differs in CMOS
 		CMOS_SetRegister(0x14,(Bit8u)(config&0xff)); //Should be updated on changes
 		/* Setup extended memory size */
 		IO_Write(0x70,0x30);
@@ -1342,6 +1360,7 @@ void BIOS_SetComPorts(Bit16u baseaddr[]) {
 	equipmentword &= (~0x0E00);
 	equipmentword |= (portcount << 9);
 	mem_writew(BIOS_CONFIGURATION,equipmentword);
+	if (IS_EGAVGA_ARCH) equipmentword &= ~0x30; //EGA/VGA startup display mode differs in CMOS
 	CMOS_SetRegister(0x14,(Bit8u)(equipmentword&0xff)); //Should be updated on changes
 }
 

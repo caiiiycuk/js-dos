@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -50,7 +50,7 @@ static void DMA_BlockRead(PhysPt spage,PhysPt offset,void * data,Bitu size,Bit8u
 	Bit32u dma_wrap = ((0xffff<<dma16)+dma16) | dma_wrapping;
 	for ( ; size ; size--, offset++) {
 		if (offset>(dma_wrapping<<dma16)) {
-			LOG_MSG("DMA segbound wrapping (read): %x:%x size %x [%x] wrap %x",spage,offset,size,dma16,dma_wrapping);
+			LOG_MSG("DMA segbound wrapping (read): %x:%x size %" sBitfs(x) " [%x] wrap %x",spage,offset,size,dma16,dma_wrapping);
 		}
 		offset &= dma_wrap;
 		Bitu page = highpart_addr_page+(offset >> 12);
@@ -71,7 +71,7 @@ static void DMA_BlockWrite(PhysPt spage,PhysPt offset,void * data,Bitu size,Bit8
 	Bit32u dma_wrap = ((0xffff<<dma16)+dma16) | dma_wrapping;
 	for ( ; size ; size--, offset++) {
 		if (offset>(dma_wrapping<<dma16)) {
-			LOG_MSG("DMA segbound wrapping (write): %x:%x size %x [%x] wrap %x",spage,offset,size,dma16,dma_wrapping);
+			LOG_MSG("DMA segbound wrapping (write): %x:%x size %" sBitfs(x) " [%x] wrap %x",spage,offset,size,dma16,dma_wrapping);
 		}
 		offset &= dma_wrap;
 		Bitu page = highpart_addr_page+(offset >> 12);
@@ -109,6 +109,7 @@ bool SecondDMAControllerAvailable(void) {
 }
 
 static void DMA_Write_Port(Bitu port,Bitu val,Bitu /*iolen*/) {
+	//LOG(LOG_DMACONTROL,LOG_ERROR)("Write %" sBitfs(X) " %" sBitfs(X),port,val);
 	if (port<0x10) {
 		/* write to the first DMA controller (channels 0-3) */
 		DmaControllers[0]->WriteControllerReg(port,val,1);
@@ -122,14 +123,17 @@ static void DMA_Write_Port(Bitu port,Bitu val,Bitu /*iolen*/) {
 			case 0x81:GetDMAChannel(2)->SetPage((Bit8u)val);break;
 			case 0x82:GetDMAChannel(3)->SetPage((Bit8u)val);break;
 			case 0x83:GetDMAChannel(1)->SetPage((Bit8u)val);break;
+			case 0x87:GetDMAChannel(0)->SetPage((Bit8u)val);break;
 			case 0x89:GetDMAChannel(6)->SetPage((Bit8u)val);break;
 			case 0x8a:GetDMAChannel(7)->SetPage((Bit8u)val);break;
 			case 0x8b:GetDMAChannel(5)->SetPage((Bit8u)val);break;
+			case 0x8f:GetDMAChannel(4)->SetPage((Bit8u)val);break;
 		}
 	}
 }
 
 static Bitu DMA_Read_Port(Bitu port,Bitu iolen) {
+	//LOG(LOG_DMACONTROL,LOG_ERROR)("Read %" sBitfs(X),port);
 	if (port<0x10) {
 		/* read from the first DMA controller (channels 0-3) */
 		return DmaControllers[0]->ReadControllerReg(port,iolen);
@@ -141,9 +145,11 @@ static Bitu DMA_Read_Port(Bitu port,Bitu iolen) {
 		case 0x81:return GetDMAChannel(2)->pagenum;
 		case 0x82:return GetDMAChannel(3)->pagenum;
 		case 0x83:return GetDMAChannel(1)->pagenum;
+		case 0x87:return GetDMAChannel(0)->pagenum;
 		case 0x89:return GetDMAChannel(6)->pagenum;
 		case 0x8a:return GetDMAChannel(7)->pagenum;
 		case 0x8b:return GetDMAChannel(5)->pagenum;
+		case 0x8f:return GetDMAChannel(4)->pagenum;
 	}
 	return 0;
 }
@@ -254,7 +260,7 @@ Bitu DmaController::ReadControllerReg(Bitu reg,Bitu /*len*/) {
 		}
 		return ret;
 	default:
-		LOG(LOG_DMACONTROL,LOG_NORMAL)("Trying to read undefined DMA port %x",reg);
+		LOG(LOG_DMACONTROL,LOG_NORMAL)("Trying to read undefined DMA port %" sBitfs(x),reg);
 		break;
 	}
 	return 0xffffffff;
@@ -304,7 +310,7 @@ again:
 			currcnt=0xffff;
 			masked=true;
 			UpdateEMSMapping();
-			DoCallBack(DMA_TRANSFEREND);
+			DoCallBack(DMA_MASKED);
 		}
 	}
 	return done;
@@ -336,7 +342,7 @@ again:
 			currcnt=0xffff;
 			masked=true;
 			UpdateEMSMapping();
-			DoCallBack(DMA_TRANSFEREND);
+			DoCallBack(DMA_MASKED);
 		}
 	}
 	return done;
@@ -362,14 +368,18 @@ public:
 				DmaControllers[1]->DMA_ReadHandler[i].Install(0xc0+i*2,DMA_Read_Port,mask);
 			}
 		}
-		/* install handlers for ports 0x81-0x83 (on the first DMA controller) */
+		/* install handlers for ports 0x81-0x83,0x87 (on the first DMA controller) */
 		DmaControllers[0]->DMA_WriteHandler[0x10].Install(0x81,DMA_Write_Port,IO_MB,3);
 		DmaControllers[0]->DMA_ReadHandler[0x10].Install(0x81,DMA_Read_Port,IO_MB,3);
+		DmaControllers[0]->DMA_WriteHandler[0x11].Install(0x87,DMA_Write_Port,IO_MB,1);
+		DmaControllers[0]->DMA_ReadHandler[0x11].Install(0x87,DMA_Read_Port,IO_MB,1);
 
 		if (IS_EGAVGA_ARCH) {
-			/* install handlers for ports 0x81-0x83 (on the second DMA controller) */
+			/* install handlers for ports 0x89-0x8b,0x8f (on the second DMA controller) */
 			DmaControllers[1]->DMA_WriteHandler[0x10].Install(0x89,DMA_Write_Port,IO_MB,3);
 			DmaControllers[1]->DMA_ReadHandler[0x10].Install(0x89,DMA_Read_Port,IO_MB,3);
+			DmaControllers[1]->DMA_WriteHandler[0x11].Install(0x8f,DMA_Write_Port,IO_MB,1);
+			DmaControllers[1]->DMA_ReadHandler[0x11].Install(0x8f,DMA_Read_Port,IO_MB,1);
 		}
 	}
 	~DMA(){

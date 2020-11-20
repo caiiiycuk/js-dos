@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 //
 // Zipped Motion Block Video
@@ -30,10 +30,10 @@
 #include <crtdbg.h>
 #include <string.h>
 
-TCHAR szDescription[] = TEXT("Zipped Motion Block Video v0.1");
+TCHAR szDescription[] = TEXT("Zipped Motion Block Video v0.1a");
 TCHAR szName[]        = TEXT(CODEC_4CC);
 
-#define VERSION         0x00000001      // 0.1
+#define VERSION         0x00000002      // newer version
 
 /********************************************************************
 ********************************************************************/
@@ -50,6 +50,7 @@ void Msg(const char fmt[], ...) {
   
   va_start(val, fmt);
   wvsprintf(buf, fmt, val);
+  va_end(val);
 
   const COORD _80x50 = {80,50};
   static BOOL startup = (AllocConsole(), SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), _80x50));
@@ -89,7 +90,7 @@ DWORD Close(CodecInst* pinst) {
 
 BOOL CodecInst::QueryAbout() { return TRUE; }
 
-static BOOL CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK AboutDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
   if (uMsg == WM_COMMAND) {
     switch (LOWORD(wParam)) {
     case IDOK:
@@ -110,7 +111,7 @@ DWORD CodecInst::About(HWND hwnd) {
   return ICERR_OK;
 }
 
-static BOOL CALLBACK ConfigureDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+static INT_PTR CALLBACK ConfigureDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
   if (uMsg == WM_INITDIALOG) {
 
@@ -174,6 +175,7 @@ DWORD CodecInst::GetInfo(ICINFO* icinfo, DWORD dwSize) {
 ****************************************************************/
 
 static int GetInputBitDepth(const BITMAPINFOHEADER *lpbiIn) {
+	//Msg( "Get input depth compression %d bitcount %d\n", lpbiIn->biCompression, lpbiIn->biBitCount );
 	if (lpbiIn->biCompression == BI_RGB) {
 		if (lpbiIn->biPlanes != 1)
 			return -1;
@@ -213,11 +215,14 @@ static bool CanCompress(LPBITMAPINFOHEADER lpbiIn, LPBITMAPINFOHEADER lpbiOut, b
 	if (lpbiIn) {
 		if (GetInputBitDepth(lpbiIn) < 0)
 			return false;
-	} else return false;
+	} else 
+		return false;
 	if (lpbiOut) {
+		//Needs to match our 4cc format
 		if (memcmp(&lpbiOut->biCompression,CODEC_4CC, 4))
 			return false;
-	} else return !requireOutput;
+	} else
+		return !requireOutput;
 	return true;
 }
 
@@ -225,7 +230,8 @@ static bool CanCompress(LPBITMAPINFOHEADER lpbiIn, LPBITMAPINFOHEADER lpbiOut, b
 ****************************************************************/
 
 DWORD CodecInst::CompressQuery(LPBITMAPINFOHEADER lpbiIn, LPBITMAPINFOHEADER lpbiOut) {
-	if (CanCompress(lpbiIn,lpbiOut,false)) return ICERR_OK;
+	if (CanCompress(lpbiIn,lpbiOut,false)) 
+		return ICERR_OK;
 	return ICERR_BADFORMAT;
 }
 
@@ -372,7 +378,8 @@ DWORD CodecInst::DecompressQuery(LPBITMAPINFOHEADER lpbiIn, LPBITMAPINFOHEADER l
 DWORD CodecInst::DecompressGetFormat(LPBITMAPINFOHEADER lpbiIn, LPBITMAPINFOHEADER lpbiOut) {
 	if (memcmp(&lpbiIn->biCompression,CODEC_4CC,4))
 		 return ICERR_BADFORMAT;
-	if (!lpbiOut) return sizeof(BITMAPINFOHEADER);
+	if (!lpbiOut)
+		return sizeof(BITMAPINFOHEADER);
 	*lpbiOut = *lpbiIn;
 	lpbiOut->biPlanes		= 1;
 	lpbiOut->biSize			= sizeof(BITMAPINFOHEADER);

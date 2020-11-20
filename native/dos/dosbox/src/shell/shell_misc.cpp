@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -40,13 +40,6 @@ static void outc(Bit8u c) {
 }
 
 void DOS_Shell::InputCommand(char * line) {
-#if defined(JSDOS) && !defined(EMTERPRETER_SYNC)
-	if (!strcmp(Files[input_handle]->name, "CON")) {
-		// This can be called during startup, before main loop being used.
-		LOG_MSG("Emulation ended because interactive shell is not supported.");
-		em_exit(1);
-	}
-#else
 	Bitu size=CMD_MAXLINE-2; //lastcharacter+0
 	Bit8u c;Bit16u n=1;
 	Bitu str_len=0;Bitu str_index=0;
@@ -230,6 +223,7 @@ void DOS_Shell::InputCommand(char * line) {
 			/* Don't care */
 			break;
 		case 0x0d:				/* Return */
+			outc('\r');
 			outc('\n');
 			size=0;			//Kill the while loop
 			break;
@@ -259,17 +253,21 @@ void DOS_Shell::InputCommand(char * line) {
 					if ((path = strrchr(line+completion_index,'/'))) completion_index = (Bit16u)(path-line+1);
 
 					// build the completion list
-					char mask[DOS_PATHLENGTH];
+					char mask[DOS_PATHLENGTH] = {0};
+					if (strlen(p_completion_start) + 3 >= DOS_PATHLENGTH) {
+						//Beep;
+						break;
+					}
 					if (p_completion_start) {
-						strcpy(mask, p_completion_start);
+						safe_strncpy(mask, p_completion_start,DOS_PATHLENGTH);
 						char* dot_pos=strrchr(mask,'.');
 						char* bs_pos=strrchr(mask,'\\');
 						char* fs_pos=strrchr(mask,'/');
 						char* cl_pos=strrchr(mask,':');
 						// not perfect when line already contains wildcards, but works
 						if ((dot_pos-bs_pos>0) && (dot_pos-fs_pos>0) && (dot_pos-cl_pos>0))
-							strcat(mask, "*");
-						else strcat(mask, "*.*");
+							strncat(mask, "*",DOS_PATHLENGTH - 1);
+						else strncat(mask, "*.*",DOS_PATHLENGTH - 1);
 					} else {
 						strcpy(mask, "*.*");
 					}
@@ -329,6 +327,7 @@ void DOS_Shell::InputCommand(char * line) {
 		case 0x1b:   /* ESC */
 			//write a backslash and return to the next line
 			outc('\\');
+			outc('\r');
 			outc('\n');
 			*line = 0;      // reset the line.
 			if (l_completion.size()) l_completion.clear(); //reset the completion list.
@@ -369,14 +368,13 @@ void DOS_Shell::InputCommand(char * line) {
 
 	// remove current command from history if it's there
 	if (current_hist) {
-		current_hist=false;
+		// current_hist=false;
 		l_history.pop_front();
 	}
 
 	// add command line to history
 	l_history.push_front(line); it_history = l_history.begin();
 	if (l_completion.size()) l_completion.clear();
-#endif // !EMSCRIPTEN
 }
 
 std::string full_arguments = "";

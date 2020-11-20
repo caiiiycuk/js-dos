@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -88,7 +88,7 @@ static void RestoreRegisters(void) {
 	reg_sp+=18;
 }
 
-extern void GFX_SetTitle(Bit32s cycles,Bits frameskip,bool paused);
+extern void GFX_SetTitle(Bit32s cycles,int frameskip,bool paused);
 void DOS_UpdatePSPName(void) {
 	DOS_MCB mcb(dos.psp()-1);
 	static char name[9];
@@ -315,6 +315,7 @@ bool DOS_Execute(char * name,PhysPt block_pt,Bit8u flags) {
 		envseg=block.exec.envseg;
 		if (!MakeEnv(name,&envseg)) {
 			DOS_CloseFile(fhandle);
+			delete [] loadbuf;
 			return false;
 		}
 		/* Get Memory */		
@@ -356,14 +357,6 @@ bool DOS_Execute(char * name,PhysPt block_pt,Bit8u flags) {
 			maxsize=0xffff;
 			/* resize to full extent of memory block */
 			DOS_ResizeMemory(pspseg,&maxsize);
-			/* now try to lock out memory above segment 0x2000 */
-			if ((real_readb(0x2000,0)==0x5a) && (real_readw(0x2000,1)==0) && (real_readw(0x2000,3)==0x7ffe)) {
-				/* MCB after PCJr graphics memory region is still free */
-				if (pspseg+maxsize==0x17ff) {
-					DOS_MCB cmcb((Bit16u)(pspseg-1));
-					cmcb.SetType(0x5a);		// last block
-				}
-			}
 		}
 		loadseg=pspseg+16;
 		if (!iscom) {

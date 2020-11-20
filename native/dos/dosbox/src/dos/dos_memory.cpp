@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,16 +11,15 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
 #include "dosbox.h"
 #include "mem.h"
 #include "dos_inc.h"
-#include "callback.h"
 
 #define UMB_START_SEG 0x9fff
 
@@ -51,14 +50,7 @@ void DOS_FreeProcessMemory(Bit16u pspseg) {
 		if (mcb.GetPSPSeg()==pspseg) {
 			mcb.SetPSPSeg(MCB_FREE);
 		}
-		if (mcb.GetType()==0x5a) {
-			/* check if currently last block reaches up to the PCJr graphics memory */
-			if ((machine==MCH_PCJR) && (mcb_segment+mcb.GetSize()==0x17fe) &&
-			   (real_readb(0x17ff,0)==0x4d) && (real_readw(0x17ff,1)==8)) {
-				/* re-enable the memory past segment 0x2000 */
-				mcb.SetType(0x4d);
-			} else break;
-		}
+		if (mcb.GetType()==0x5a) break;
 		if (GCC_UNLIKELY(mcb.GetType()!=0x4d)) E_Exit("Corrupt MCB chain");
 		mcb_segment+=mcb.GetSize()+1;
 		mcb.SetPt(mcb_segment);
@@ -308,10 +300,10 @@ bool DOS_FreeMemory(Bit16u segment) {
 
 
 void DOS_BuildUMBChain(bool umb_active,bool ems_active) {
-	if (umb_active  && (machine!=MCH_TANDY)) {
+	if (umb_active  && (!IS_TANDY_ARCH)) {
 		Bit16u first_umb_seg = 0xd000;
 		Bit16u first_umb_size = 0x2000;
-		if(ems_active || (machine == MCH_PCJR)) first_umb_size = 0x1000;
+		if(ems_active) first_umb_size = 0x1000;
 
 		dos_infoblock.SetStartOfUMBChain(UMB_START_SEG);
 		dos_infoblock.SetUMBChainState(0);		// UMBs not linked yet
@@ -387,28 +379,18 @@ bool DOS_LinkUMBsToMemChain(Bit16u linkstate) {
 }
 
 
-static Bitu DOS_default_handler(void) {
-	LOG(LOG_CPU,LOG_ERROR)("DOS rerouted Interrupt Called %X",lastint);
-	return CBRET_NONE;
-}
-
-static	CALLBACK_HandlerObject callbackhandler;
 void DOS_SetupMemory(void) {
 	/* Let dos claim a few bios interrupts. Makes DOSBox more compatible with 
 	 * buggy games, which compare against the interrupt table. (probably a 
 	 * broken linked list implementation) */
-	callbackhandler.Allocate(&DOS_default_handler,"DOS default int");
 	Bit16u ihseg = 0x70;
-	Bit16u ihofs = 0x08;
-	real_writeb(ihseg,ihofs+0x00,(Bit8u)0xFE);	//GRP 4
-	real_writeb(ihseg,ihofs+0x01,(Bit8u)0x38);	//Extra Callback instruction
-	real_writew(ihseg,ihofs+0x02,callbackhandler.Get_callback());  //The immediate word
-	real_writeb(ihseg,ihofs+0x04,(Bit8u)0xCF);	//An IRET Instruction
+	Bit16u ihofs = 0xF4;
+	real_writeb(ihseg,ihofs,(Bit8u)0xCF);		//An IRET Instruction
 	RealSetVec(0x01,RealMake(ihseg,ihofs));		//BioMenace (offset!=4)
 	RealSetVec(0x02,RealMake(ihseg,ihofs));		//BioMenace (segment<0x8000)
 	RealSetVec(0x03,RealMake(ihseg,ihofs));		//Alien Incident (offset!=0)
 	RealSetVec(0x04,RealMake(ihseg,ihofs));		//Shadow President (lower byte of segment!=0)
-//	RealSetVec(0x0f,RealMake(ihseg,ihofs));		//Always a tricky one (soundblaster irq)
+	RealSetVec(0x0f,RealMake(ihseg,ihofs));		//Always a tricky one (soundblaster irq)
 
 	// Create a dummy device MCB with PSPSeg=0x0008
 	DOS_MCB mcb_devicedummy((Bit16u)DOS_MEM_START);

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -230,12 +230,12 @@ VideoModeBlock ModeList_EGA[]={
 { 0x003  ,M_TEXT   ,640 ,350 ,80 ,25 ,8 ,14 ,8 ,0xB8000 ,0x1000 ,96  ,366 ,80 ,350 ,0	},
 { 0x004  ,M_CGA4   ,320 ,200 ,40 ,25 ,8 ,8  ,1 ,0xB8000 ,0x4000 ,60  ,262 ,40 ,200 ,_EGA_HALF_CLOCK	| _EGA_LINE_DOUBLE},
 { 0x005  ,M_CGA4   ,320 ,200 ,40 ,25 ,8 ,8  ,1 ,0xB8000 ,0x4000 ,60  ,262 ,40 ,200 ,_EGA_HALF_CLOCK	| _EGA_LINE_DOUBLE},
-{ 0x006  ,M_CGA2   ,640 ,200 ,80 ,25 ,8 ,8  ,1 ,0xB8000 ,0x4000 ,120 ,262 ,80 ,200 ,_EGA_LINE_DOUBLE},
-{ 0x007  ,M_TEXT   ,720 ,350 ,80 ,25 ,9 ,14 ,8 ,0xB0000 ,0x1000 ,120 ,440 ,80 ,350 ,0	},
+{ 0x006  ,M_CGA2   ,640 ,200 ,80 ,25 ,8 ,8  ,1 ,0xB8000 ,0x4000 ,117 ,262 ,80 ,200 ,_EGA_LINE_DOUBLE},
+{ 0x007  ,M_TEXT   ,720 ,350 ,80 ,25 ,9 ,14 ,8 ,0xB0000 ,0x1000 ,101 ,370 ,80 ,350 ,0	},
 
 { 0x00D  ,M_EGA    ,320 ,200 ,40 ,25 ,8 ,8  ,8 ,0xA0000 ,0x2000 ,60  ,262 ,40 ,200 ,_EGA_HALF_CLOCK	| _EGA_LINE_DOUBLE	},
-{ 0x00E  ,M_EGA    ,640 ,200 ,80 ,25 ,8 ,8  ,4 ,0xA0000 ,0x4000 ,120 ,262 ,80 ,200 ,_EGA_LINE_DOUBLE },
-{ 0x00F  ,M_EGA    ,640 ,350 ,80 ,25 ,8 ,14 ,2 ,0xA0000 ,0x8000 ,96  ,366 ,80 ,350 ,0	},/*was EGA_2*/
+{ 0x00E  ,M_EGA    ,640 ,200 ,80 ,25 ,8 ,8  ,4 ,0xA0000 ,0x4000 ,117 ,262 ,80 ,200 ,_EGA_LINE_DOUBLE },
+{ 0x00F  ,M_EGA    ,640 ,350 ,80 ,25 ,8 ,14 ,2 ,0xA0000 ,0x8000 ,101 ,370 ,80 ,350 ,0	},/*was EGA_2*/
 { 0x010  ,M_EGA    ,640 ,350 ,80 ,25 ,8 ,14 ,2 ,0xA0000 ,0x8000 ,96  ,366 ,80 ,350 ,0	},
 
 {0xFFFF  ,M_ERROR  ,0   ,0   ,0  ,0  ,0 ,0  ,0 ,0x00000 ,0x0000 ,0   ,0   ,0  ,0   ,0 	},
@@ -769,9 +769,12 @@ bool INT10_SetVideoMode(Bit16u mode) {
 	/* Setup MISC Output Register */
 	Bit8u misc_output=0x2 | (mono_mode ? 0x0 : 0x1);
 
-	if ((CurMode->type==M_TEXT) && (CurMode->cwidth==9)) {
-		// 28MHz (16MHz EGA) clock for 9-pixel wide chars
-		misc_output|=0x4;
+	if (machine==MCH_EGA) {
+		// 16MHz clock for 350-line EGA modes except mode F
+		if ((CurMode->vdispend==350) && (mode!=0xf)) misc_output|=0x4;
+	} else {
+		// 28MHz clock for 9-pixel wide chars
+		if ((CurMode->type==M_TEXT) && (CurMode->cwidth==9)) misc_output|=0x4;
 	}
 
 	switch (CurMode->vdispend) {
@@ -1194,7 +1197,7 @@ att_text16:
 				att_data[ct]=ct;
 				att_data[ct+8]=ct+0x38;
 			}
-			if (IS_VGA_ARCH) att_data[0x06]=0x14;		//Odd Color 6 yellow/brown.
+			att_data[0x06]=0x14;	//Odd Color 6 yellow/brown.
 		}
 		break;
 	case M_CGA2:
@@ -1330,23 +1333,16 @@ dac_text16:
 		real_writeb(RealSeg(dsapt),RealOff(dsapt)+0x10,0); // overscan
 	}
 	/* Setup some special stuff for different modes */
-	Bit8u feature=real_readb(BIOSMEM_SEG,BIOSMEM_INITIAL_MODE);
 	switch (CurMode->type) {
 	case M_CGA2:
-		feature=(feature&~0x30)|0x20;
 		real_writeb(BIOSMEM_SEG,BIOSMEM_CURRENT_MSR,0x1e);
 		break;
 	case M_CGA4:
-		feature=(feature&~0x30)|0x20;
 		if (CurMode->mode==4) real_writeb(BIOSMEM_SEG,BIOSMEM_CURRENT_MSR,0x2a);
 		else if (CurMode->mode==5) real_writeb(BIOSMEM_SEG,BIOSMEM_CURRENT_MSR,0x2e);
 		else real_writeb(BIOSMEM_SEG,BIOSMEM_CURRENT_MSR,0x2);
 		break;
-	case M_TANDY16:
-		feature=(feature&~0x30)|0x20;
-		break;
 	case M_TEXT:
-		feature=(feature&~0x30)|0x20;
 		switch (CurMode->mode) {
 		case 0:real_writeb(BIOSMEM_SEG,BIOSMEM_CURRENT_MSR,0x2c);break;
 		case 1:real_writeb(BIOSMEM_SEG,BIOSMEM_CURRENT_MSR,0x28);break;
@@ -1355,14 +1351,7 @@ dac_text16:
 		case 7:real_writeb(BIOSMEM_SEG,BIOSMEM_CURRENT_MSR,0x29);break;
 		}
 		break;
-	case M_LIN4:
-	case M_EGA:	
-	case M_VGA:
-		feature=(feature&~0x30);
-		break;
 	}
-	// disabled, has to be set in bios.cpp exclusively
-//	real_writeb(BIOSMEM_SEG,BIOSMEM_INITIAL_MODE,feature);
 
 	if (svgaCard == SVGA_S3Trio) {
 		/* Setup the CPU Window */
@@ -1455,6 +1444,7 @@ dac_text16:
 	/* Set vga attrib register into defined state */
 	IO_Read(mono_mode ? 0x3ba : 0x3da);
 	IO_Write(0x3c0,0x20);
+	IO_Read(mono_mode ? 0x3ba : 0x3da); // Kukoo2 demo 
 
 	/* Load text mode font */
 	if (CurMode->type==M_TEXT) {

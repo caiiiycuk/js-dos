@@ -3,27 +3,6 @@ AC_INIT(dosbox,SVN)
 AC_PREREQ(2.50)
 AC_CONFIG_SRCDIR(README)
 
-dnl Check for Emscripten is done early because it needs to change host triplet.
-AS_CASE([$CC],
-        [*emcc], [enable_emscripten="yes"],
-        [enable_emscripten="no"])
-
-AS_IF([test "x$enable_emscripten" = "xyes"],
-      AC_MSG_NOTICE([auto-detected use of Emscripten]))
-
-AC_ARG_ENABLE(
-  [emscripten],
-  [AC_HELP_STRING([--enable-emscripten=@<:@no/yes@:>@],
-                  [compile to JavaScript using Emscripten])])
-
-dnl AC_CANONICAL_HOST fails to detect Emscripten.
-dnl This contains kludges to make things work.
-AS_IF([test "x$enable_emscripten" = "xyes"],
-      [host_alias=none
-       : ${CXXFLAGS="-O3"}
-       : ${CFLAGS="-O3"}
-       ac_cv_exeext=.html])
-
 dnl Detect the canonical host and target build environment
 AC_CANONICAL_HOST
 AC_CANONICAL_BUILD
@@ -39,24 +18,6 @@ AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_RANLIB
-AM_PROG_AR
-
-dnl This probably needs to be after Automake init
-AM_CONDITIONAL([EMSCRIPTEN_BUILD], [test "x$enable_emscripten" = "xyes"])
-
-dnl Function array core
-AC_ARG_ENABLE(
-  [funarray],
-  [AC_HELP_STRING([--enable-funarray@<:@=no/yes@:>@],
-                  [Use array of function pointers in CPU core.
-                   Defaults to yes with Emscripten and no otherwise.])],
-  [],
-  [AS_IF([test "x$enable_emscripten" = "xyes"],
-         [enable_funarray=yes],
-         [enable_funarray=no])])
-AM_CONDITIONAL([FUNARRAY_CORE], [test "x$enable_funarray" = "xyes"])
-AS_IF([test "x$enable_funarray" = "xyes"],
-      [AC_DEFINE(FUNARRAY_CORE, 1, [use array of function pointers in core])])
 
 dnl Some needed libaries for OS2
 dnl perharps join this with the other target depended checks. move them upwards
@@ -66,37 +27,27 @@ if test x$host = xi386-pc-os2-emx ; then
 fi
 
 dnl Check for SDL
-dnl When cross-compiling, the SDL prefix needs to be set, so the right
-dnl sdl-config is found. SDL is included with Emscripten and its
-dnl sdl-config does nothing, so just assume SDL is present then.
-AC_ARG_WITH(sdl2, [AC_HELP_STRING([--with-sdl2=no/PATH],
-                  [SDL 2 is used by default. Use this option to select SDL 1
-                   instead or provide a path to a custom Emscripten SDL 2
-                   build.])],
-                  [], [with_sdl2=yes])
-AS_IF([test "x$enable_emscripten" != "xyes"],[
 SDL_VERSION=1.2.0
-AM_PATH_SDL(:,
+AM_PATH_SDL($SDL_VERSION,
             :,
-	    :
+	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
 LIBS="$LIBS $SDL_LIBS"
 CPPFLAGS="$CPPFLAGS $SDL_CFLAGS"
 
-dnl Check if SDL is 1.2.x, 2.0.y
-AC_MSG_CHECKING([SDL version only being 1.2.x or 2.0.x])
+dnl Check if SDL is 1.2.x (1.3 not supported)
+AC_MSG_CHECKING([SDL version only being 1.2.X])
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include "SDL.h"
 void blah(){
-#if !((SDL_MAJOR_VERSION == 1) && (SDL_MINOR_VERSION == 2)) && !((SDL_MAJOR_VERSION == 2) && (SDL_MINOR_VERSION == 0))
-#error "Only SDL 1.2 and 2.0 supported"
+#if SDL_MINOR_VERSION != 2
+#error "Only SDL 1.2 supported"
 #endif
 ;
 }
 ])],AC_MSG_RESULT([yes]),[
  AC_MSG_RESULT([no]) 
- AC_MSG_ERROR([Only libSDL 1.2.x or 2.0.x supported])])
- ])
+ AC_MSG_ERROR([Only libSDL 1.2.X supported])])
 
 dnl Checks for header files.
 
@@ -187,7 +138,7 @@ fi
 dnl Checks for libraries.
 
 #Check if the compiler support attributes
-AH_TEMPLATE([C_HAS_ATTRIBUTE],[Determines if the compilers supports attributes for structures.])
+AH_TEMPLATE([C_HAS_ATTRIBUTE],[Determines if the compiler supports attributes for structures.])
 AC_MSG_CHECKING(if compiler allows __attribute__)
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 typedef struct { } __attribute__((packed)) junk;]],
@@ -198,12 +149,12 @@ typedef struct { } __attribute__((packed)) junk;]],
 OLDCFLAGS="$CFLAGS"
 CFLAGS="-Werror"
 
-AH_TEMPLATE([C_ATTRIBUTE_ALWAYS_INLINE],[Determines if the compilers supports always_inline attribute.])
+AH_TEMPLATE([C_ATTRIBUTE_ALWAYS_INLINE],[Determines if the compiler supports always_inline attribute.])
 AC_MSG_CHECKING(if compiler allows __attribute__((always_inline)) )
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([ inline void __attribute__((always_inline)) test(){}
 ])],[ AC_MSG_RESULT(yes);AC_DEFINE(C_ATTRIBUTE_ALWAYS_INLINE)],AC_MSG_RESULT(no))
 
-AH_TEMPLATE([C_ATTRIBUTE_FASTCALL],[Determines if the compilers supports fastcall attribute.])
+AH_TEMPLATE([C_ATTRIBUTE_FASTCALL],[Determines if the compiler supports fastcall attribute.])
 AC_MSG_CHECKING(if compiler allows __attribute__((fastcall)) )
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([ void __attribute__((fastcall)) test(){}
 ])],[ AC_MSG_RESULT(yes);AC_DEFINE(C_ATTRIBUTE_FASTCALL)],AC_MSG_RESULT(no))
@@ -223,8 +174,6 @@ int x=10;if( __builtin_expect ((x==1),0) ) ;
 #switch language back
 AC_LANG_POP(C++)
 
-# Host compiler may support this, but Emscripten does not.
-AS_IF([test "x$enable_emscripten" != "xyes"],[
 dnl test if compiler supports -mno-ms-bitfields as it is bugged 
 # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52991
 BACKUP_CFLAGS="$CFLAGS"
@@ -239,7 +188,33 @@ AC_MSG_RESULT([yes])
 CXXFLAGS="$CXXFLAGS -mno-ms-bitfields"
 ],[AC_MSG_RESULT([no])])
 CFLAGS="$BACKUP_CFLAGS"
-])
+
+dnl When on macOS, enable support for Apple's Core MIDI and/or Core Audio if our compiler can #include their headers
+case "$host" in
+  *-*-darwin*)
+   AC_MSG_CHECKING(if compiler supports Apple's Core MIDI headers)
+   AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+   #include <CoreMIDI/MIDIServices.h>
+   int blah() { return 0; }
+   ]])], [AC_MSG_RESULT(yes);LIBS="$LIBS -framework CoreMIDI";AC_DEFINE([C_SUPPORTS_COREMIDI], [],
+   [Compiler supports Core MIDI headers])],
+   AC_MSG_RESULT(no);AC_MSG_WARN([Compiler can't compile Apple headers. CoreMIDI functionality disabled. Please use the Apple compiler!]))
+
+   AC_MSG_CHECKING(if compiler supports Apple's Core Audio headers)
+   AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+   #include <AudioToolbox/AUGraph.h>
+   #include <CoreServices/CoreServices.h>
+   int blah() { return 0; }
+   ]])], [AC_MSG_RESULT(yes);LIBS="$LIBS -framework AudioUnit -framework AudioToolbox";AC_DEFINE([C_SUPPORTS_COREAUDIO], [],
+   [Compiler supports Core Audio headers])], 
+   AC_MSG_RESULT(no);AC_MSG_WARN([Compiler can't compile Apple headers. CoreAudio functionality disabled. Please use the Apple compiler!]))
+   ;;
+
+  *)
+   AC_MSG_CHECKING(if compiler supports Apple's MIDI headers)
+   AC_MSG_RESULT([no, not on Apple])
+   ;;
+esac
 
 dnl enable disable alsa and pass it's cflags to CXXFLAGS
 AC_ARG_ENABLE(alsa-midi,
@@ -268,14 +243,14 @@ AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[Enable debug mode]),[
 
    if test x$enable_debug = xno; then
      AC_MSG_RESULT([Debugger not enabled])
-   elif test x$have_curses_lib = xyes -a x$have_curses_h = xyes ; then
-     LIBS="$LIBS -lcurses"
+   elif test x$have_ncurses_lib = xyes -a x$have_curses_h = xyes ; then
+     LIBS="$LIBS -lncurses"
      AC_DEFINE(C_DEBUG,1)
      if test x$enable_debug = xheavy ; then 
        AC_DEFINE(C_HEAVY_DEBUG,1)
      fi
-   elif test x$have_ncurses_lib = xyes -a x$have_curses_h = xyes ; then
-     LIBS="$LIBS -lncurses"
+   elif test x$have_curses_lib = xyes -a x$have_curses_h = xyes ; then
+     LIBS="$LIBS -lcurses"
      AC_DEFINE(C_DEBUG,1)
      if test x$enable_debug = xheavy ; then 
        AC_DEFINE(C_HEAVY_DEBUG,1)
@@ -291,48 +266,15 @@ AC_ARG_ENABLE(debug,AC_HELP_STRING([--enable-debug],[Enable debug mode]),[
    fi
 ],)
 
-AH_TEMPLATE(C_CURSOUT,[Define to 1 to enable Curses text mode output, requires libncursesw])
-AC_ARG_WITH(curses,
-   [AC_HELP_STRING([--with-curses],[Use Curses for text mode output. For Emscripten, provide path to emcurses. Otherwise, ncursesw will be used automatically.])],
-   [AS_IF([test "x$with_curses" = xno],
-       [AC_MSG_RESULT([Curses text mode output not enabled])],
-       [test "x$enable_debug" != xno -a "x$enable_debug" != x ],
-       [AC_MSG_ERROR([Debug uses Curses and cannot be used with Curses text mode output])],
-       [test "x$with_curses" = xyes],
-       [AS_IF([test "x$enable_emscripten" = "xyes"],
-           [AC_MSG_ERROR([For Emscripten, use --with-curses=/path/to/emcurses])],
-           [AC_CHECK_HEADER([ncursesw/curses.h],[have_ncursesw_h=yes])
-            AC_CHECK_LIB(ncursesw, initscr, [have_ncursesw_lib=yes])
-            AS_IF([test "x$have_ncursesw_lib" = xyes -a "x$have_ncursesw_h" = xyes],
-               [LIBS="$LIBS -lncursesw"
-                AC_DEFINE(C_CURSOUT,1)],
-               [AC_MSG_ERROR([Cannot find ncursesw for text mode output])])])],
-       dnl This is for Emscripten. Argument is path to emcurses.
-       [CXXFLAGS="$CXXFLAGS -Wno-warn-absolute-paths -I$with_curses"
-        LIBS="$LIBS -L$with_curses/emscripten -lpdcurses --pre-js $with_curses/emscripten/termlib.js --shell-file $with_curses/emscripten/template.html"
-        AC_DEFINE(C_CURSOUT,1)])],
-   [with_curses=no])
-
-AH_TEMPLATE(C_SDLGFX,[Define to 1 to enable SDL graphical output])
-AC_ARG_ENABLE(sdlgfx,AC_HELP_STRING([--enable-sdlgfx],
-                                    [Enable SDL graphical output]),[
-    AS_IF([test "x$enable_sdlgfx" = xno],
-          [AC_MSG_RESULT([SDL graphical output not enabled])],
-          [enable_sdlgfx=yes])],[
-    AS_IF([test "x$with_curses" = xno],
-          [enable_sdlgfx=yes],
-          [AC_MSG_RESULT([Disabling SDL graphical output by default because Curses output enabled.])
-           enable_sdlgfx=no])])
-AS_IF([test "x$enable_sdlgfx" = xyes],[AC_DEFINE(C_SDLGFX,1)])
-
 AH_TEMPLATE(C_CORE_INLINE,[Define to 1 to use inlined memory functions in cpu core])
-AC_ARG_ENABLE(core-inline,AC_HELP_STRING([--enable-core-inline],[Enable inlined memory handling in CPU Core]),[
-  if test x$enable_core_inline = xyes ; then 
-    AC_MSG_RESULT([enabling inlined memory handling in CPU Core])
+AC_ARG_ENABLE(core-inline,AC_HELP_STRING([--disable-core-inline],[Disable inlined memory handling in CPU Core]),,enable_core_inline=yes)
+AC_MSG_CHECKING(whether memory handling in the CPU Core will be inlined)
+if test x$enable_core_inline = xyes ; then
+    AC_MSG_RESULT(yes)
     AC_DEFINE(C_CORE_INLINE,1)
-  fi
-],)
-
+else
+    AC_MSG_RESULT(no)
+fi
 
 dnl The target cpu checks for dynamic cores
 AH_TEMPLATE(C_TARGETCPU,[The type of cpu this target has])
@@ -362,6 +304,24 @@ case "$host_cpu" in
     c_targetcpu="m68k"
     c_unalignedmemory=yes
     ;;
+   armv7l)
+    AC_DEFINE(C_TARGETCPU,ARMV7LE)
+    AC_MSG_RESULT(ARMv7 Little Endian)
+    c_targetcpu="arm"
+    c_unalignedmemory=yes
+    ;;
+   armv6l)
+    AC_DEFINE(C_TARGETCPU,ARMV4LE)
+    AC_MSG_RESULT(ARMv6 Little Endian)
+    c_targetcpu="arm"
+    dnl c_unalignedmemory=yes
+    ;;
+   aarch64)
+    AC_DEFINE(C_TARGETCPU,ARMV8LE)
+    AC_MSG_RESULT(ARMv8 Little Endian 64-bit)
+    c_targetcpu="arm"
+    c_unalignedmemory=yes
+    ;;
    *)
     AC_DEFINE(C_TARGETCPU,UNKNOWN)
     AC_MSG_RESULT(unknown)
@@ -369,15 +329,45 @@ case "$host_cpu" in
     ;;
 esac
 
+dnl check for size of pointer being 4 
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+#if SIZEOF_INT_P != 4
+#error size intp is not 4, this not something to worry about
+#endif
+void blah() {
+;
+}
+])],[c_sizep=4],[c_sizep=0])
+
+
+dnl automake 1.14 and upwards rewrite the host to have always 64 bit unless i386 as host is passed
+dnl this can make building a 32 bit executable a bit tricky, as dosbox relies on the host to select the
+dnl dynamic/dynrec core
+AC_MSG_CHECKING([whether Apple user wants to override the build process to produce a 32 bit binary])
+case "$host" in 
+  *-*-darwin*)
+   if test x$c_targetcpu = xx86_64 -a x$c_sizep = x4 ; then
+     AC_MSG_RESULT(yes)
+     AC_DEFINE(C_TARGETCPU,X86)
+     c_targetcpu="x86"
+   else
+     AC_MSG_RESULT(no)
+   fi
+   ;;
+  *)
+   AC_MSG_RESULT([no, not on Apple])
+   ;;
+esac
+
 AC_ARG_ENABLE(dynamic-core,AC_HELP_STRING([--disable-dynamic-core],[Disable all dynamic cores]),,enable_dynamic_core=yes)
 
-AH_TEMPLATE(C_DYNAMIC_X86,[Define to 1 to use x86 dynamic cpu core])
-AC_ARG_ENABLE(dynamic-x86,AC_HELP_STRING([--disable-dynamic-x86],[Disable x86 dynamic cpu core]),,enable_dynamic_x86=yes)
+AH_TEMPLATE(C_DYNAMIC_X86,[Define to 1 to use x86/x64 dynamic cpu core])
+AC_ARG_ENABLE(dynamic-x86,AC_HELP_STRING([--disable-dynamic-x86],[Disable x86/x64 dynamic cpu core]),,enable_dynamic_x86=yes)
 AC_MSG_CHECKING(whether x86 dynamic cpu core will be enabled) 
 if test x$enable_dynamic_x86 = xno -o x$enable_dynamic_core = xno; then 
    AC_MSG_RESULT(no)
 else
-  if test x$c_targetcpu = xx86 ; then
+  if test x$c_targetcpu = xx86 -o x$c_targetcpu = xx86_64; then
       AC_DEFINE(C_DYNAMIC_X86,1)
       AC_MSG_RESULT(yes)
   else
@@ -392,7 +382,7 @@ if test x$enable_dynrec = xno -o x$enable_dynamic_core = xno; then
    AC_MSG_RESULT(no)
 else
 dnl x86 only enable it if dynamic-x86 is disabled.
-  if test x$c_targetcpu = xx86 ; then
+  if test x$c_targetcpu = xx86 -o x$c_targetcpu = xx86_64; then
     if test x$enable_dynamic_x86 = xno ; then
         AC_DEFINE(C_DYNREC,1)
         AC_MSG_RESULT(yes)
@@ -400,10 +390,10 @@ dnl x86 only enable it if dynamic-x86 is disabled.
         AC_MSG_RESULT([no, using dynamic-x86])
     fi
   else 
-    if test x$c_targetcpu = xx86_64 ; then
-        AC_DEFINE(C_DYNREC,1)
-        AC_MSG_RESULT(yes)
-    else      
+    if test x$c_targetcpu = xarm ; then
+      AC_DEFINE(C_DYNREC,1)
+      AC_MSG_RESULT(yes)
+    else 
       AC_MSG_RESULT(no)
     fi
   fi
@@ -449,50 +439,65 @@ else
 fi
 
 AH_TEMPLATE(C_SSHOT,[Define to 1 to enable screenshots, requires libpng])
-dnl With Emscripten, this can find the native PNG library, causing problems.
-AS_IF([test "x$enable_emscripten" != "xyes"],[
-AC_CHECK_HEADER(png.h,have_png_h=yes,)
-AC_CHECK_LIB(png, png_get_io_ptr, have_png_lib=yes, ,-lz)
-if test x$have_png_lib = xyes -a x$have_png_h = xyes ; then
-  LIBS="$LIBS -lpng -lz"
-  AC_DEFINE(C_SSHOT,1)
+AC_ARG_ENABLE(screenshots,AC_HELP_STRING([--disable-screenshots],[Disable screenshots]),enable_screenshots=no,enable_screenshots=yes)
+AC_CHECK_HEADER(png.h,have_png_h=yes,have_png_h=no)
+AC_CHECK_LIB(png, png_get_io_ptr, have_png_lib=yes, have_png_lib=no,-lz)
+AC_MSG_CHECKING([whether screenshots will be enabled])
+if test x$enable_screenshots = xyes; then 
+  if test x$have_png_lib = xyes -a x$have_png_h = xyes ; then
+    LIBS="$LIBS -lpng -lz"
+    AC_DEFINE(C_SSHOT,1)
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no, can't find libpng.])
+  fi
 else
-  AC_MSG_WARN([Can't find libpng, screenshot support disabled])
+  AC_MSG_RESULT([no])
 fi
-])
+
+AH_TEMPLATE(C_SRECORD,[Define to 1 to enable movie recording, requires zlib built without Z_SOLO])
+AC_ARG_ENABLE(recording,AC_HELP_STRING([--disable-recording],[Disable movie recording]),,enable_recording=yes)
+AC_CHECK_HEADER(zlib.h,have_zlib_h=yes)
+AC_CHECK_LIB(z,compress,have_z_lib=yes,,)
+AC_MSG_CHECKING([whether recording will be enabled])
+if test x$enable_recording = xyes; then
+  if test x$have_z_lib = xyes -a x$have_zlib_h = xyes ; then
+    if test x$enable_screenshots = xno -o x$have_png_h = xno -o x$have_png_lib = xno ; then
+      LIBS="$LIBS -lz"
+    fi
+    AC_DEFINE(C_SRECORD,1)
+    AC_MSG_RESULT([yes])
+  else
+    AC_MSG_RESULT([no, can't find zlib.])
+  fi
+else
+  AC_MSG_RESULT([no])
+fi
 
 AH_TEMPLATE(C_MODEM,[Define to 1 to enable internal modem support, requires SDL_net])
 AH_TEMPLATE(C_IPX,[Define to 1 to enable IPX over Internet networking, requires SDL_net])
 AC_CHECK_HEADER(SDL_net.h,have_sdl_net_h=yes,)
 
-if test x$with_sdl2 = "xyes" ; then
-  LIBSDL_HEADER="SDL2"
-else
-  LIBSDL_HEADER="SDL"
-fi
-
 if test x$host = xi386-pc-os2-emx ; then
-  AC_MSG_CHECKING(for SDLNet_Init in ${LIBSDL_HEADER}_net);
+  AC_MSG_CHECKING(for SDLNet_Init in SDL_net);
   LIBS_BACKUP=$LIBS;
-  LIBS="$LIBS -l${LIBSDL_HEADER}_Net";
+  LIBS="$LIBS -lSDL_Net";
   AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL_Net.h>]],[[
 	SDLNet_Init ();
   ]])], [AC_MSG_RESULT(yes); have_sdl_net_lib=yes], AC_MSG_RESULT(no))
   LIBS=$LIBS_BACKUP
 else
-AC_CHECK_LIB(${LIBSDL_HEADER}_net, SDLNet_Init, have_sdl_net_lib=yes, , )
+AC_CHECK_LIB(SDL_net, SDLNet_Init, have_sdl_net_lib=yes, , )
 fi
 if test x$have_sdl_net_lib = xyes -a x$have_sdl_net_h = xyes ; then
-   LIBS="$LIBS -l${LIBSDL_HEADER}_net"
+   LIBS="$LIBS -lSDL_net"
    AC_DEFINE(C_MODEM,1)
    AC_DEFINE(C_IPX,1)
 else 
-   AC_MSG_WARN([Can't find ${LIBSDL_HEADER}_net, internal modem and ipx disabled])
+   AC_MSG_WARN([Can't find SDL_net, internal modem and ipx disabled])
 fi
 
 AH_TEMPLATE(C_X11_XKB,[define to 1 if you have XKBlib.h and X11 lib])
-dnl Emscripten has X11 headers now, but DOSBox should only use SDL.
-AS_IF([test "x$enable_emscripten" != "xyes"],[
 AC_CHECK_LIB(X11, main, have_x11_lib=yes, have_x11_lib=no, )
 AC_CHECK_HEADER(X11/XKBlib.h, have_x11_h=yes, have_x11_h=no, )
 AC_MSG_CHECKING(for XKBlib support)
@@ -503,11 +508,8 @@ if test x$have_x11_lib = xyes -a x$have_x11_h = xyes ; then
 else
    AC_MSG_RESULT(no)
 fi
-])
 
 AH_TEMPLATE(C_OPENGL,[Define to 1 to use opengl display output support])
-dnl OpenGL support cannot successfully compile yet with Emscripten.
-AS_IF([test "x$enable_emscripten" != "xyes"],[
 AC_CHECK_LIB(GL, main, have_gl_lib=yes, have_gl_lib=no , )
 AC_CHECK_LIB(opengl32, main, have_opengl32_lib=yes,have_opengl32_lib=no , )
 AC_CHECK_HEADER(GL/gl.h, have_gl_h=yes , have_gl_h=no , )
@@ -534,8 +536,29 @@ case "$host" in
        fi
        ;;
 esac
+else
+   AC_MSG_RESULT(no)
 fi
-])
+
+AH_TEMPLATE(C_DDRAW,[Define to 1 to enable output=ddraw (Win32)])
+AC_ARG_ENABLE(ddraw,AC_HELP_STRING([--disable-ddraw],[Disable ddraw support]),,enable_ddraw=yes)
+AC_CHECK_HEADER(ddraw.h, have_ddraw_h=yes , have_ddraw_h=no , )
+AC_MSG_CHECKING(whether ddraw display output will be enabled)
+if test x$enable_ddraw = xyes; then
+case "$host" in
+    *-*-cygwin* | *-*-mingw32*)
+       if test x$have_ddraw_h = xyes ; then
+         AC_MSG_RESULT(yes)
+         AC_DEFINE(C_DDRAW,1)
+       else
+         AC_MSG_RESULT(no)
+       fi
+       ;;
+    *)
+       AC_MSG_RESULT(no)
+       ;;
+esac
+fi
 
 AH_TEMPLATE(C_SDL_SOUND,[Define to 1 to enable SDL_sound support])
 AC_CHECK_HEADER(SDL_sound.h,have_SDL_sound_h=yes,)
@@ -558,6 +581,9 @@ AC_CHECK_HEADER([sys/mman.h], [
 AC_CHECK_FUNC([mprotect],[AC_DEFINE(C_HAVE_MPROTECT,1)])
 ])
 
+dnl Check for realpath. Used on Linux
+AC_CHECK_FUNCS([realpath])
+
 dnl Setpriority
 AH_TEMPLATE(C_SET_PRIORITY,[Define to 1 if you have setpriority support])
 AC_MSG_CHECKING(for setpriority support)
@@ -573,7 +599,6 @@ dnl Some target detection and actions for them
 case "$host" in
     *-*-cygwin* | *-*-mingw32*)
        LIBS="$LIBS -lwinmm"
-       AC_CHECK_HEADERS(ddraw.h)
        AC_DEFINE(C_DIRECTSERIAL, 1, [ Define to 1 if you want serial passthrough support (Win32, Posix and OS/2 only).])
        if test x$have_sdl_net_lib = xyes -a x$have_sdl_net_h = xyes ; then
          LIBS="$LIBS -lws2_32"
@@ -585,7 +610,6 @@ case "$host" in
        dnl to do more to distinguish them.
        dnl For now I am lazy and do not add proper detection code.
        AC_DEFINE(MACOSX, 1, [Compiling on Mac OS X])
-       LIBS="$LIBS -framework CoreMIDI -framework AudioUnit -framework AudioToolbox -framework AppKit"
        AC_DEFINE(C_DIRECTSERIAL, 1, [ Define to 1 if you want serial passthrough support (Win32, Posix and OS/2).])
        ;;
     *-*-linux*)
@@ -621,35 +645,6 @@ esac
        AC_SUBST(WINDRES)
 
 
-AH_TEMPLATE([EMTERPRETER_SYNC],[Compile for use with Emscripten emterpreter sync.])
-AC_ARG_ENABLE(
-  [sync],
-  [AC_HELP_STRING([--disable-sync],
-    [Do not use Emscripten emterpreter sync])],
-  [], [enable_sync=yes])
-AM_CONDITIONAL([EMTERPRETER], [test "x$enable_sync" != "xno"])
-
-AC_ARG_ENABLE(
-  [wasm],
-  [AC_HELP_STRING([--enable-wasm],
-    [Build to WebAssembly instead of asm.js])],
-  [], [enable_wasm=no])
-AM_CONDITIONAL([WEBASSEMBLY], [test "x$enable_wasm" == "xyes"])
-
-# Use of Emscripten-specific compiler flags breaks tests compiled with the
-# host compiler, so those flags are set at the end.
-AS_IF([test "x$enable_emscripten" = "xyes"],[
-  AS_IF([test "x$enable_sync" != "xno"], [AC_DEFINE([EMTERPRETER_SYNC],[1])])
-  AS_IF([test "x$with_sdl2" != "xno"],[
-    AS_IF([test "x$with_sdl2" = "xyes"],
-      [CXXFLAGS="$CXXFLAGS -s USE_SDL=2"],
-      [LIBS="$LIBS -L$with_sdl2/build/.libs/ -lSDL2"
-       CXXFLAGS="$CXXFLAGS -Wno-warn-absolute-paths -I$with_sdl2/include"
-    ])
-  ])
-])
-
-
 AC_CONFIG_FILES([ 
 Makefile
 src/Makefile
@@ -663,6 +658,7 @@ src/dos/Makefile
 src/fpu/Makefile
 src/gui/Makefile
 src/hardware/Makefile
+src/hardware/mame/Makefile
 src/hardware/serialport/Makefile
 src/ints/Makefile
 src/libs/Makefile

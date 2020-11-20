@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -48,14 +48,11 @@
 #include "render.h"
 #include "pci_bus.h"
 
-#include <jsdos-debug-mem.h>
 #include <jsdos-support.h>
 
 #if 1 // !SDL_VERSION_ATLEAST(2,0,0)
 #define SDL_TICKS_PASSED(A, B)  ((Sint32)((B) - (A)) <= 0)
 #endif
-
-const auto LOOP_EXECUTION_TIME = 1000 / 60;
 
 Config * control;
 MachineType machine;
@@ -102,7 +99,7 @@ void MPU401_Init(Section*);
 void PCSPEAKER_Init(Section*);
 void TANDYSOUND_Init(Section*);
 void DISNEY_Init(Section*);
-void SERIAL_Init(Section*); 
+void SERIAL_Init(Section*);
 
 
 #if C_IPX
@@ -145,28 +142,17 @@ bool ticksLocked;
 
 
 #ifdef JSDOS
-#ifdef EMTERPRETER_SYNC
+constexpr auto LOOP_EXECUTION_TIME = 1000 / 60;
 int nosleep_lock = 0;
-#else
-static int runcount = 0;
-#endif
-#endif
-
-
-#if defined(EMTERPRETER_SYNC) && defined(EMSCRIPTEN)
-#if defined(ASYNCIFY)
+#ifdef EMSCRIPTEN
 EM_JS(bool, isNormalState, (), {
-    return Asyncify.state === 0 ? 1 : 0;
-  });
-#else
-EM_JS(bool, isNormalState, (), {
-    return EmterpreterAsync.state === 0 ? 1 : 0;
-  });
-#endif
+  return Asyncify.state === 0 ? 1 : 0;
+});
 #else
 bool isNormalState() {
   return true;
 }
+#endif
 #endif
 
 void increaseticks();
@@ -197,10 +183,7 @@ static Bitu Normal_Loop(void) {
 			if (ticksRemain>0) {
 				TIMER_AddTick();
 				ticksRemain--;
-			} else {
-			    increaseticks();
-			    return 0;
-			}
+			} else {increaseticks();return 0;}
 		}
 	}
 }
@@ -218,16 +201,16 @@ void increaseticks() { //Make it return ticksRemain and set it in the function a
 		ticksScheduled = 0;
 		return;
 	}
-
+	
 	static Bit32s lastsleepDone = -1;
 	static Bitu sleep1count = 0;
 
 	Bit32u ticksNew;
-    ticksNew = GetTicks();
+	ticksNew = GetTicks();
 	ticksScheduled += ticksAdded;
 	if (ticksNew <= ticksLast) { //lower should not be possible, only equal.
-#if defined(JSDOS) && !defined(EMTERPRETER_SYNC) || true
-		ticksAdded = 0;
+#if true
+	ticksAdded = 0;
         ticksDone = 0;
         return;
 #endif
@@ -266,7 +249,7 @@ void increaseticks() { //Make it return ticksRemain and set it in the function a
 	}
 
 	//TicksNew > ticksLast
-	ticksRemain = ticksNew - ticksLast;
+	ticksRemain = ticksNew-ticksLast;
 	ticksLast = ticksNew;
 	ticksDone += ticksRemain;
 	if ( ticksRemain > 20 ) {
@@ -277,7 +260,7 @@ void increaseticks() { //Make it return ticksRemain and set it in the function a
 
 	// Is the system in auto cycle mode guessing ? If not just exit. (It can be temporary disabled)
 	if (!CPU_CycleAutoAdjust || CPU_SkipCycleAutoAdjust) return;
-
+	
 	if (ticksScheduled >= 250 || ticksDone >= 250 || (ticksAdded > 15 && ticksScheduled >= 5) ) {
 		if(ticksDone < 1) ticksDone = 1; // Protect against div by zero
 		/* ratio we are aiming for is around 90% usage*/
@@ -320,14 +303,17 @@ void increaseticks() { //Make it return ticksRemain and set it in the function a
 
 		if (new_cmax < CPU_CYCLES_LOWER_LIMIT)
 			new_cmax = CPU_CYCLES_LOWER_LIMIT;
-//		LOG(LOG_MISC,LOG_ERROR)("cyclelog: current %06d   cmax %06d   ratio  %05d  done %03d   sched %03d Add %d rr %4.2f",
-//			CPU_CycleMax,
-//			new_cmax,
-//			ratio,
-//			ticksDone,
-//			ticksScheduled,
-//			ticksAdded,
-//			ratioremoved);
+		/*
+		LOG(LOG_MISC,LOG_ERROR)("cyclelog: current %06d   cmax %06d   ratio  %05d  done %03d   sched %03d Add %d rr %4.2f",
+			CPU_CycleMax,
+			new_cmax,
+			ratio,
+			ticksDone,
+			ticksScheduled,
+			ticksAdded,
+			ratioremoved);
+		*/
+
 		/* ratios below 1% are considered to be dropouts due to
 		   temporary load imbalance, the cycles adjusting is skipped */
 		if (ratio > 10) {
@@ -366,70 +352,13 @@ void DOSBOX_SetNormalLoop() {
 	loop=Normal_Loop;
 }
 
-#ifdef JSDOS
-/* Many DOS games display a text mode screen after they exit.
- * This tries to ensure that screen will be visible. In other situations
- * this is used to display the screen to help diagnosis.
- */
-static void em_main_loop(void) {
-    //@caiiiycuk: this function is usually called from
-    // requestAnimationFrame OR setTimeout.
-    // minimal browser interval is ~5 ms for setTimeout
-    // and ~16ms for requestAnimationFrame
-    // if we will do 1 loop emulation per frame then
-    // our performance will be terrible
-    // to solve this we will try to emulate as much as
-    // we can while we fit into 60 fps (16ms)
-
-    mstime startedAt = GetTicks();
-    mstime usedTime;
-    mstime count = 0;
-    Bitu ret;
-
-    do {
-        ret=(*loop)();
-        usedTime = GetTicks() - startedAt;
-        count++;
-    } while (!ret && usedTime + (usedTime / count) <= LOOP_EXECUTION_TIME);
-
-    if (ret) {
-		/* Here, the function which called emscripten_set_main_loop() should
-		 * return, but that call stack is gone, so emulation ends.
-		 */
-		E_Exit("Emulation ended because program exited.");
-	}
-}
-#endif
-
 void DOSBOX_RunMachine(void){
-#if defined(JSDOS) && !defined(EMTERPRETER_SYNC)
-	if (runcount == 0) {
-		runcount = 1;
-	} else if (runcount == 1) {
-		runcount = 2;
-		emscripten_set_main_loop(em_main_loop, 0, 1);
-        return;
-	}
-#endif
-    mstime ticksStart = GetTicks();
 	Bitu ret;
 	do {
-    if (isNormalState() && (jsdos::isExitRequested())) {
-        break;
-    }
-
-		ret=(*loop)();
-#if defined(JSDOS) && !defined(EMTERPRETER_SYNC)
-		/* These should be very short operations, like interrupts.
-		 * Anything taking a long time will probably run indefinitely,
-		 * making DOSBox appear to hang.
-		 */
-		if (GetTicks() - ticksStart > 30000) {
-			LOG_MSG("[NOSYNC] Emulation aborted due to nested emulation timeout (%d).", GetTicks() - ticksStart);
-			em_exit(1);
-			break;
-		}
-#endif
+            if (isNormalState() && (jsdos::isExitRequested())) {
+              break;
+            }
+            ret=(*loop)();
 	} while (!ret);
 }
 
@@ -472,7 +401,7 @@ static void DOSBOX_RealInit(Section * sec) {
 	}
 
 	std::string mtype(section->Get_string("machine"));
-	svgaCard = SVGA_None; 
+	svgaCard = SVGA_None;
 	machine = MCH_VGA;
 	int10.vesa_nolfb = false;
 	int10.vesa_oldvbe = false;
@@ -521,7 +450,7 @@ void DOSBOX_Init(void) {
 	const char* machines[] = {
 		"hercules", "cga", "tandy", "pcjr", "ega",
 		"vgaonly", "svga_s3", "svga_et3000", "svga_et4000",
-		 "svga_paradise", "vesa_nolfb", "vesa_oldvbe", 0 };
+		"svga_paradise", "vesa_nolfb", "vesa_oldvbe", 0 };
 	secprop=control->AddSection_prop("dosbox",&DOSBOX_RealInit);
 	Pstring = secprop->Add_path("language",Property::Changeable::Always,"");
 	Pstring->Set_help("Select another language file.");
@@ -533,10 +462,10 @@ void DOSBOX_Init(void) {
 	Pstring = secprop->Add_path("captures",Property::Changeable::Always,"capture");
 	Pstring->Set_help("Directory where things like wave, midi, screenshot get captured.");
 
-#if C_DEBUG	
+#if C_DEBUG
 	LOG_StartUp();
 #endif
-	
+
 	secprop->AddInitFunction(&IO_Init);//done
 	secprop->AddInitFunction(&PAGING_Init);//done
 	secprop->AddInitFunction(&MEM_Init);//done
@@ -547,9 +476,9 @@ void DOSBOX_Init(void) {
 	Pint->SetMinMax(1,63);
 	Pint->Set_help(
 		"Amount of memory DOSBox has in megabytes.\n"
-		"  This value is best left at its default to avoid problems with some games,\n"
-		"  though few games might require a higher value.\n"
-		"  There is generally no speed advantage when raising this value.");
+		"This value is best left at its default to avoid problems with some games,\n"
+		"though few games might require a higher value.\n"
+		"There is generally no speed advantage when raising this value.");
 	secprop->AddInitFunction(&CALLBACK_Init);
 	secprop->AddInitFunction(&PIC_Init);//done
 	secprop->AddInitFunction(&PROGRAMS_Init);
@@ -567,9 +496,9 @@ void DOSBOX_Init(void) {
 	Pmulti = secprop->Add_multi("scaler",Property::Changeable::Always," ");
 	Pmulti->SetValue("none");
 	Pmulti->Set_help("Scaler used to enlarge/enhance low resolution modes. If 'forced' is appended,\n"
-	                 "  then the scaler will be used even if the result might not be desired.\n"
-	                 "  To fit a scaler in the resolution used at full screen may require a border or side bars,\n"
-	                 "  to fill the screen entirely, depending on your hardware, a different scaler/fullresolution might work.");
+	                 "then the scaler will be used even if the result might not be desired.\n"
+					 "To fit a scaler in the resolution used at full screen may require a border or side bars,\n"
+					 "to fill the screen entirely, depending on your hardware, a different scaler/fullresolution might work.");
 	Pstring = Pmulti->GetSection()->Add_string("type",Property::Changeable::Always,"normal2x");
 
 	const char *scalers[] = { 
@@ -589,6 +518,14 @@ void DOSBOX_Init(void) {
 	const char* force[] = { "", "forced", 0 };
 	Pstring = Pmulti->GetSection()->Add_string("force",Property::Changeable::Always,"");
 	Pstring->Set_values(force);
+#if C_OPENGL
+	Pstring = secprop->Add_path("glshader",Property::Changeable::Always,"none");
+	Pstring->Set_help("Path to GLSL shader source to use with OpenGL output (\"none\" to disable).\n"
+					  "Can be either an absolute path, a file in the \"glshaders\" subdirectory\n"
+					  "of the DOSBox configuration directory, or one of the built-in shaders:\n"
+					  "advinterp2x, advinterp3x, advmame2x, advmame3x, rgb2x, rgb3x, scan2x,\n"
+					  "scan3x, tv2x, tv3x, sharp.");
+#endif
 
 	secprop=control->AddSection_prop("cpu",&CPU_Init,true);//done
 	const char* cores[] = { "auto",
@@ -605,7 +542,7 @@ void DOSBOX_Init(void) {
 	);
 	Pstring->Set_values(cores);
 	Pstring->Set_help("CPU Core used in emulation. auto will switch to dynamic if available and\n"
-	                  "appropriate.");
+		"appropriate.");
 
 	const char* cputype_values[] = { "auto", "386", "386_slow", "486_slow", "pentium_slow", "386_prefetch", 0};
 	Pstring = secprop->Add_string("cputype",Property::Changeable::Always,"auto");
@@ -621,9 +558,9 @@ void DOSBOX_Init(void) {
 		"  'auto'          tries to guess what a game needs.\n"
 		"                  It usually works, but can fail for certain games.\n"
 		"  'fixed #number' will set a fixed amount of cycles. This is what you usually\n"
-	        "                  need if 'auto' fails. (Example: fixed 4000).\n"
+		"                  need if 'auto' fails (Example: fixed 4000).\n"
 		"  'max'           will allocate as much cycles as your computer is able to\n"
-	        "                  handle.");
+		"                  handle.");
 
 	const char* cyclest[] = { "auto","fixed","max","%u",0 };
 	Pstring = Pmulti_remain->GetSection()->Add_string("type",Property::Changeable::Always,"auto");
@@ -631,7 +568,7 @@ void DOSBOX_Init(void) {
 	Pstring->Set_values(cyclest);
 
 	Pstring = Pmulti_remain->GetSection()->Add_string("parameters",Property::Changeable::Always,"");
-	
+
 	Pint = secprop->Add_int("cycleup",Property::Changeable::Always,10);
 	Pint->SetMinMax(1,1000000);
 	Pint->Set_help("Amount of cycles to decrease/increase with keycombos.(CTRL-F11/CTRL-F12)");
@@ -639,7 +576,7 @@ void DOSBOX_Init(void) {
 	Pint = secprop->Add_int("cycledown",Property::Changeable::Always,20);
 	Pint->SetMinMax(1,1000000);
 	Pint->Set_help("Setting it lower than 100 will be a percentage.");
-		
+
 #if C_FPU
 	secprop->AddInitFunction(&FPU_Init);
 #endif
@@ -671,7 +608,7 @@ void DOSBOX_Init(void) {
 #ifdef JSDOS
 		40
 #else
-		20
+		25
 #endif
 	);
 	Pint->SetMinMax(0,100);
@@ -679,7 +616,7 @@ void DOSBOX_Init(void) {
 
 	secprop=control->AddSection_prop("midi",&MIDI_Init,true);//done
 	secprop->AddInitFunction(&MPU401_Init,true);//done
-	
+
 	const char* mputypes[] = { "intelligent", "uart", "none",0};
 	// FIXME: add some way to offer the actually available choices.
 	const char *devices[] = { "default", "win32", "alsa", "oss", "coreaudio", "coremidi","none", 0};
@@ -692,17 +629,19 @@ void DOSBOX_Init(void) {
 	Pstring->Set_help("Device that will receive the MIDI data from MPU-401.");
 
 	Pstring = secprop->Add_string("midiconfig",Property::Changeable::WhenIdle,"");
-	Pstring->Set_help("Special configuration options for the device driver. This is usually the id of the device you want to use\n"
-	                  "  (find the id with mixer/listmidi).\n"
-	                  "  Or in the case of coreaudio, you can specify a soundfont here.\n"
-	                  "  See the README/Manual for more details.");
+	Pstring->Set_help("Special configuration options for the device driver. This is usually the id or part of the name of the device you want to use\n"
+	                  "(find the id/name with mixer/listmidi).\n"
+	                  "Or in the case of coreaudio, you can specify a soundfont here.\n"
+	                  "When using a Roland MT-32 rev. 0 as midi output device, some games may require a delay in order to prevent 'buffer overflow' issues.\n"
+	                  "In that case, add 'delaysysex', for example: midiconfig=2 delaysysex\n"
+	                  "See the README/Manual for more details.");
 
 #if C_DEBUG
 	secprop=control->AddSection_prop("debug",&DEBUG_Init);
 #endif
 
 	secprop=control->AddSection_prop("sblaster",&SBLASTER_Init,true);//done
-	
+
 	const char* sbtypes[] = { "sb1", "sb2", "sbpro1", "sbpro2", "sb16", "gb", "none", 0 };
 	Pstring = secprop->Add_string("sbtype",Property::Changeable::WhenIdle,"sb16");
 	Pstring->Set_values(sbtypes);
@@ -732,7 +671,7 @@ void DOSBOX_Init(void) {
 	Pstring->Set_values(oplmodes);
 	Pstring->Set_help("Type of OPL emulation. On 'auto' the mode is determined by sblaster type. All OPL modes are Adlib-compatible, except for 'cms'.");
 
-	const char* oplemus[]={ "default", "compat", "fast", 0};
+	const char* oplemus[]={ "default", "compat", "fast", "mame", 0};
 	Pstring = secprop->Add_string("oplemu",Property::Changeable::WhenIdle,"default");
 	Pstring->Set_values(oplemus);
 	Pstring->Set_help("Provider for the OPL emulation. compat might provide better quality (see oplrate as well).");
@@ -743,12 +682,8 @@ void DOSBOX_Init(void) {
 
 
 	secprop=control->AddSection_prop("gus",&GUS_Init,true); //done
-	Pbool = secprop->Add_bool("gus",Property::Changeable::WhenIdle,false); 	
+	Pbool = secprop->Add_bool("gus",Property::Changeable::WhenIdle,false);
 	Pbool->Set_help("Enable the Gravis Ultrasound emulation.");
-
-	Pint = secprop->Add_int("gusrate",Property::Changeable::WhenIdle,44100);
-	Pint->Set_values(rates);
-	Pint->Set_help("Sample rate of Ultrasound emulation.");
 
 	Phex = secprop->Add_hex("gusbase",Property::Changeable::WhenIdle,0x240);
 	Phex->Set_values(iosgus);
@@ -782,20 +717,20 @@ void DOSBOX_Init(void) {
 	Pstring = secprop->Add_string("tandy",Property::Changeable::WhenIdle,"auto");
 	Pstring->Set_values(tandys);
 	Pstring->Set_help("Enable Tandy Sound System emulation. For 'auto', emulation is present only if machine is set to 'tandy'.");
-	
+
 	Pint = secprop->Add_int("tandyrate",Property::Changeable::WhenIdle,44100);
 	Pint->Set_values(rates);
 	Pint->Set_help("Sample rate of the Tandy 3-Voice generation.");
 
 	secprop->AddInitFunction(&DISNEY_Init,true);//done
-	
+
 	Pbool = secprop->Add_bool("disney",Property::Changeable::WhenIdle,true);
 	Pbool->Set_help("Enable Disney Sound Source emulation. (Covox Voice Master and Speech Thing compatible).");
 
 	secprop=control->AddSection_prop("joystick",&BIOS_Init,false);//done
 	secprop->AddInitFunction(&INT10_Init);
 	secprop->AddInitFunction(&MOUSE_Init); //Must be after int10 as it uses CurMode
-	secprop->AddInitFunction(&JOYSTICK_Init);
+	secprop->AddInitFunction(&JOYSTICK_Init,true);
 	const char* joytypes[] = { "auto", "2axis", "4axis", "4axis_2", "fcs", "ch", "none",0};
 	Pstring = secprop->Add_string("joysticktype",Property::Changeable::WhenIdle,"auto");
 	Pstring->Set_values(joytypes);
@@ -814,17 +749,25 @@ void DOSBOX_Init(void) {
 
 	Pbool = secprop->Add_bool("autofire",Property::Changeable::WhenIdle,false);
 	Pbool->Set_help("continuously fires as long as you keep the button pressed.");
-	
+
 	Pbool = secprop->Add_bool("swap34",Property::Changeable::WhenIdle,false);
 	Pbool->Set_help("swap the 3rd and the 4th axis. Can be useful for certain joysticks.");
 
 	Pbool = secprop->Add_bool("buttonwrap",Property::Changeable::WhenIdle,false);
 	Pbool->Set_help("enable button wrapping at the number of emulated buttons.");
+	
+	Pbool = secprop->Add_bool("circularinput",Property::Changeable::WhenIdle,false);
+	Pbool->Set_help("enable translation of circular input to square output.\n"
+	                "Try enabling this if your left analog stick can only move in a circle.");
+
+	Pint = secprop->Add_int("deadzone",Property::Changeable::WhenIdle,10);
+	Pint->SetMinMax(0,100);
+	Pint->Set_help("the percentage of motion to ignore. 100 turns the stick into a digital one.");
 
 	secprop=control->AddSection_prop("serial",&SERIAL_Init,true);
 	const char* serials[] = { "dummy", "disabled", "modem", "nullmodem",
 	                          "directserial",0 };
-   
+
 	Pmulti_remain = secprop->Add_multiremain("serial1",Property::Changeable::WhenIdle," ");
 	Pstring = Pmulti_remain->GetSection()->Add_string("type",Property::Changeable::WhenIdle,"dummy");
 	Pmulti_remain->SetValue("dummy");

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 /* Jumps */
@@ -228,14 +228,6 @@
 
 
 #define ROLB(op1,op2,load,save)						\
-	if (!(op2&0x7)) {								\
-		if (op2&0x18) {								\
-			FillFlagsNoCFOF();						\
-			SETFLAGBIT(CF,op1 & 1);					\
-			SETFLAGBIT(OF,(op1 & 1) ^ (op1 >> 7));	\
-		}											\
-		break;										\
-	}												\
 	FillFlagsNoCFOF();								\
 	lf_var1b=load(op1);								\
 	lf_var2b=op2&0x07;								\
@@ -246,14 +238,6 @@
 	SETFLAGBIT(OF,(lf_resb & 1) ^ (lf_resb >> 7));
 
 #define ROLW(op1,op2,load,save)						\
-	if (!(op2&0xf)) {								\
-		if (op2&0x10) {								\
-			FillFlagsNoCFOF();						\
-			SETFLAGBIT(CF,op1 & 1);					\
-			SETFLAGBIT(OF,(op1 & 1) ^ (op1 >> 15));	\
-		}											\
-		break;										\
-	}												\
 	FillFlagsNoCFOF();								\
 	lf_var1w=load(op1);								\
 	lf_var2b=op2&0xf;								\
@@ -264,7 +248,6 @@
 	SETFLAGBIT(OF,(lf_resw & 1) ^ (lf_resw >> 15));
 
 #define ROLD(op1,op2,load,save)						\
-	if (!op2) break;								\
 	FillFlagsNoCFOF();								\
 	lf_var1d=load(op1);								\
 	lf_var2b=op2;									\
@@ -276,14 +259,6 @@
 
 
 #define RORB(op1,op2,load,save)						\
-	if (!(op2&0x7)) {								\
-		if (op2&0x18) {								\
-			FillFlagsNoCFOF();						\
-			SETFLAGBIT(CF,op1>>7);					\
-			SETFLAGBIT(OF,(op1>>7) ^ ((op1>>6) & 1));			\
-		}											\
-		break;										\
-	}												\
 	FillFlagsNoCFOF();								\
 	lf_var1b=load(op1);								\
 	lf_var2b=op2&0x07;								\
@@ -294,14 +269,6 @@
 	SETFLAGBIT(OF,(lf_resb ^ (lf_resb<<1)) & 0x80);
 
 #define RORW(op1,op2,load,save)					\
-	if (!(op2&0xf)) {							\
-		if (op2&0x10) {							\
-			FillFlagsNoCFOF();					\
-			SETFLAGBIT(CF,op1>>15);				\
-			SETFLAGBIT(OF,(op1>>15) ^ ((op1>>14) & 1));			\
-		}										\
-		break;									\
-	}											\
 	FillFlagsNoCFOF();							\
 	lf_var1w=load(op1);							\
 	lf_var2b=op2&0xf;							\
@@ -312,7 +279,6 @@
 	SETFLAGBIT(OF,(lf_resw ^ (lf_resw<<1)) & 0x8000);
 
 #define RORD(op1,op2,load,save)					\
-	if (!op2) break;							\
 	FillFlagsNoCFOF();							\
 	lf_var1d=load(op1);							\
 	lf_var2b=op2;								\
@@ -366,8 +332,6 @@
 	SETFLAGBIT(OF,(reg_flags & 1) ^ (lf_resd >> 31));	\
 }
 
-
-
 #define RCRB(op1,op2,load,save)								\
 	if (op2%9) {											\
 		Bit8u cf=(Bit8u)FillFlags()&0x1;					\
@@ -413,21 +377,18 @@
 
 
 #define SHLB(op1,op2,load,save)								\
-	if (!op2) break;										\
 	lf_var1b=load(op1);lf_var2b=op2;				\
 	lf_resb=lf_var1b << lf_var2b;			\
 	save(op1,lf_resb);								\
 	lflags.type=t_SHLb;
 
 #define SHLW(op1,op2,load,save)								\
-	if (!op2) break;										\
 	lf_var1w=load(op1);lf_var2b=op2 ;				\
 	lf_resw=lf_var1w << lf_var2b;			\
 	save(op1,lf_resw);								\
 	lflags.type=t_SHLw;
 
 #define SHLD(op1,op2,load,save)								\
-	if (!op2) break;										\
 	lf_var1d=load(op1);lf_var2b=op2;				\
 	lf_resd=lf_var1d << lf_var2b;			\
 	save(op1,lf_resd);								\
@@ -435,21 +396,18 @@
 
 
 #define SHRB(op1,op2,load,save)								\
-	if (!op2) break;										\
 	lf_var1b=load(op1);lf_var2b=op2;				\
 	lf_resb=lf_var1b >> lf_var2b;			\
 	save(op1,lf_resb);								\
 	lflags.type=t_SHRb;
 
 #define SHRW(op1,op2,load,save)								\
-	if (!op2) break;										\
 	lf_var1w=load(op1);lf_var2b=op2;				\
 	lf_resw=lf_var1w >> lf_var2b;			\
 	save(op1,lf_resw);								\
 	lflags.type=t_SHRw;
 
 #define SHRD(op1,op2,load,save)								\
-	if (!op2) break;										\
 	lf_var1d=load(op1);lf_var2b=op2;				\
 	lf_resd=lf_var1d >> lf_var2b;			\
 	save(op1,lf_resd);								\
@@ -457,7 +415,6 @@
 
 
 #define SARB(op1,op2,load,save)								\
-	if (!op2) break;										\
 	lf_var1b=load(op1);lf_var2b=op2;				\
 	if (lf_var2b>8) lf_var2b=8;						\
     if (lf_var1b & 0x80) {								\
@@ -470,7 +427,6 @@
 	lflags.type=t_SARb;
 
 #define SARW(op1,op2,load,save)								\
-	if (!op2) break;								\
 	lf_var1w=load(op1);lf_var2b=op2;			\
 	if (lf_var2b>16) lf_var2b=16;					\
 	if (lf_var1w & 0x8000) {							\
@@ -483,7 +439,6 @@
 	lflags.type=t_SARw;
 
 #define SARD(op1,op2,load,save)								\
-	if (!op2) break;								\
 	lf_var2b=op2;lf_var1d=load(op1);			\
 	if (lf_var1d & 0x80000000) {						\
 		lf_resd=(lf_var1d >> lf_var2b)|		\
@@ -679,6 +634,7 @@
 	if (quo>0xff) EXCEPTION(0);								\
 	reg_ah=rem;												\
 	reg_al=quo8;											\
+	SETFLAGBIT(OF,false);									\
 }
 
 
@@ -693,6 +649,7 @@
 	if (quo!=(Bit32u)quo16) EXCEPTION(0);					\
 	reg_dx=rem;												\
 	reg_ax=quo16;											\
+	SETFLAGBIT(OF,false);									\
 }
 
 #define DIVD(op1,load,save)									\
@@ -706,6 +663,7 @@
 	if (quo!=(Bit64u)quo32) EXCEPTION(0);					\
 	reg_edx=rem;											\
 	reg_eax=quo32;											\
+	SETFLAGBIT(OF,false);									\
 }
 
 
@@ -719,6 +677,7 @@
 	if (quo!=(Bit16s)quo8s) EXCEPTION(0);					\
 	reg_ah=rem;												\
 	reg_al=quo8s;											\
+	SETFLAGBIT(OF,false);									\
 }
 
 
@@ -733,6 +692,7 @@
 	if (quo!=(Bit32s)quo16s) EXCEPTION(0);					\
 	reg_dx=rem;												\
 	reg_ax=quo16s;											\
+	SETFLAGBIT(OF,false);									\
 }
 
 #define IDIVD(op1,load,save)								\
@@ -746,12 +706,15 @@
 	if (quo!=(Bit64s)quo32s) EXCEPTION(0);					\
 	reg_edx=rem;											\
 	reg_eax=quo32s;											\
+	SETFLAGBIT(OF,false);									\
 }
 
 #define IMULB(op1,load,save)								\
 {															\
 	reg_ax=((Bit8s)reg_al) * ((Bit8s)(load(op1)));			\
 	FillFlagsNoCFOF();										\
+	SETFLAGBIT(ZF,reg_al == 0);								\
+	SETFLAGBIT(SF,reg_al & 0x80);							\
 	if ((reg_ax & 0xff80)==0xff80 ||						\
 		(reg_ax & 0xff80)==0x0000) {						\
 		SETFLAGBIT(CF,false);SETFLAGBIT(OF,false);			\
@@ -767,6 +730,8 @@
 	reg_ax=(Bit16s)(temps);									\
 	reg_dx=(Bit16s)(temps >> 16);							\
 	FillFlagsNoCFOF();										\
+	SETFLAGBIT(ZF,reg_ax == 0);								\
+	SETFLAGBIT(SF,reg_ax & 0x8000);							\
 	if (((temps & 0xffff8000)==0xffff8000 ||				\
 		(temps & 0xffff8000)==0x0000)) {					\
 		SETFLAGBIT(CF,false);SETFLAGBIT(OF,false);			\
@@ -782,6 +747,8 @@
 	reg_eax=(Bit32u)(temps);								\
 	reg_edx=(Bit32u)(temps >> 32);							\
 	FillFlagsNoCFOF();										\
+	SETFLAGBIT(ZF,reg_eax == 0);							\
+	SETFLAGBIT(SF,reg_eax & 0x80000000);					\
 	if ((reg_edx==0xffffffff) &&							\
 		(reg_eax & 0x80000000) ) {							\
 		SETFLAGBIT(CF,false);SETFLAGBIT(OF,false);			\
@@ -824,6 +791,7 @@
 	if (rm >= 0xc0) {										\
 		GetEArb;											\
 		Bit8u val=blah & 0x1f;								\
+		if (!val) break;									\
 		switch (which)	{									\
 		case 0x00:ROLB(*earb,val,LoadRb,SaveRb);break;		\
 		case 0x01:RORB(*earb,val,LoadRb,SaveRb);break;		\
@@ -837,6 +805,7 @@
 	} else {												\
 		GetEAa;												\
 		Bit8u val=blah & 0x1f;								\
+		if (!val) break;									\
 		switch (which) {									\
 		case 0x00:ROLB(eaa,val,LoadMb,SaveMb);break;		\
 		case 0x01:RORB(eaa,val,LoadMb,SaveMb);break;		\
@@ -858,6 +827,7 @@
 	if (rm >= 0xc0) {										\
 		GetEArw;											\
 		Bit8u val=blah & 0x1f;								\
+		if (!val) break;									\
 		switch (which)	{									\
 		case 0x00:ROLW(*earw,val,LoadRw,SaveRw);break;		\
 		case 0x01:RORW(*earw,val,LoadRw,SaveRw);break;		\
@@ -871,6 +841,7 @@
 	} else {												\
 		GetEAa;												\
 		Bit8u val=blah & 0x1f;								\
+		if (!val) break;									\
 		switch (which) {									\
 		case 0x00:ROLW(eaa,val,LoadMw,SaveMw);break;		\
 		case 0x01:RORW(eaa,val,LoadMw,SaveMw);break;		\
@@ -891,6 +862,7 @@
 	if (rm >= 0xc0) {										\
 		GetEArd;											\
 		Bit8u val=blah & 0x1f;								\
+		if (!val) break;									\
 		switch (which)	{									\
 		case 0x00:ROLD(*eard,val,LoadRd,SaveRd);break;		\
 		case 0x01:RORD(*eard,val,LoadRd,SaveRd);break;		\
@@ -904,6 +876,7 @@
 	} else {												\
 		GetEAa;												\
 		Bit8u val=blah & 0x1f;								\
+		if (!val) break;									\
 		switch (which) {									\
 		case 0x00:ROLD(eaa,val,LoadMd,SaveMd);break;		\
 		case 0x01:RORD(eaa,val,LoadMd,SaveMd);break;		\

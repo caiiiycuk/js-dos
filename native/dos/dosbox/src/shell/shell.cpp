@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -32,13 +32,18 @@
 Bitu call_shellstop;
 /* Larger scope so shell_del autoexec can use it to
  * remove things from the environment */
-Program * first_shell = 0;
+DOS_Shell * first_shell = 0;
 
 static Bitu shellstop_handler(void) {
 	return CBRET_STOP;
 }
 
 static void SHELL_ProgramStart(Program * * make) {
+	*make = new DOS_Shell;
+}
+//Repeat it with the correct type, could do it in the function below, but this way it should be 
+//clear that if the above function is changed, this function might need a change as well.
+static void SHELL_ProgramStart_First_shell(DOS_Shell * * make) {
 	*make = new DOS_Shell;
 }
 
@@ -92,14 +97,28 @@ void AutoexecObject::CreateAutoexec(void) {
 	//Create a new autoexec.bat
 	autoexec_data[0] = 0;
 	size_t auto_len;
-	for(auto_it it=  autoexec_strings.begin(); it != autoexec_strings.end(); it++) {
+	for(auto_it it = autoexec_strings.begin(); it != autoexec_strings.end(); it++) {
+
+		std::string linecopy = (*it);
+		std::string::size_type offset = 0;
+		//Lets have \r\n as line ends in autoexec.bat.
+		while(offset < linecopy.length()) {
+			std::string::size_type  n = linecopy.find("\n",offset);
+			if ( n == std::string::npos ) break;
+			std::string::size_type rn = linecopy.find("\r\n",offset);
+			if ( rn != std::string::npos && rn + 1 == n) {offset = n + 1; continue;}
+			// \n found without matching \r
+			linecopy.replace(n,1,"\r\n");
+			offset = n + 2;
+		}
+
 		auto_len = strlen(autoexec_data);
-		if ((auto_len+(*it).length()+3)>AUTOEXEC_SIZE) {
+		if ((auto_len+linecopy.length() + 3) > AUTOEXEC_SIZE) {
 			E_Exit("SYSTEM:Autoexec.bat file overflow");
 		}
-		sprintf((autoexec_data+auto_len),"%s\r\n",(*it).c_str());
+		sprintf((autoexec_data + auto_len),"%s\r\n",linecopy.c_str());
 	}
-	if(first_shell) VFILE_Register("AUTOEXEC.BAT",(Bit8u *)autoexec_data,(Bit32u)strlen(autoexec_data));
+	if (first_shell) VFILE_Register("AUTOEXEC.BAT",(Bit8u *)autoexec_data,(Bit32u)strlen(autoexec_data));
 }
 
 AutoexecObject::~AutoexecObject(){
@@ -107,21 +126,32 @@ AutoexecObject::~AutoexecObject(){
 
 	// Remove the line from the autoexecbuffer and update environment
 	for(auto_it it = autoexec_strings.begin(); it != autoexec_strings.end(); ) {
-		if((*it) == buf) {
-			it = autoexec_strings.erase(it);
+		if ((*it) == buf) {
 			std::string::size_type n = buf.size();
 			char* buf2 = new char[n + 1];
 			safe_strncpy(buf2, buf.c_str(), n + 1);
+			bool stringset = false;
 			// If it's a environment variable remove it from there as well
-			if((strncasecmp(buf2,"set ",4) == 0) && (strlen(buf2) > 4)){
+			if ((strncasecmp(buf2,"set ",4) == 0) && (strlen(buf2) > 4)){
 				char* after_set = buf2 + 4;//move to variable that is being set
 				char* test = strpbrk(after_set,"=");
-				if(!test) continue;
+				if (!test) {
+					delete [] buf2;
+					continue;
+				}
 				*test = 0;
+				stringset = true;
 				//If the shell is running/exists update the environment
-				if(first_shell) first_shell->SetEnv(after_set,"");
+				if (first_shell) first_shell->SetEnv(after_set,"");
 			}
 			delete [] buf2;
+			if (stringset && first_shell && first_shell->bf && first_shell->bf->filename.find("AUTOEXEC.BAT") != std::string::npos) {
+				//Replace entry with spaces if it is a set and from autoexec.bat, as else the location counter will be off.
+				*it = buf.assign(buf.size(),' ');
+				it++;
+			} else {
+				it = autoexec_strings.erase(it);
+			}
 		} else it++;
 	}
 	this->CreateAutoexec();
@@ -360,14 +390,25 @@ public:
 		char * extra = const_cast<char*>(section->data.c_str());
 		if (extra && !secure && !control->cmdline->FindExist("-noautoexec",true)) {
 			/* detect if "echo off" is the first line */
+			size_t firstline_length = strcspn(extra,"\r\n");
 			bool echo_off  = !strncasecmp(extra,"echo off",8);
-			if (!echo_off) echo_off = !strncasecmp(extra,"@echo off",9);
+			if (echo_off && firstline_length == 8) extra += 8;
+			else {
+				echo_off = !strncasecmp(extra,"@echo off",9);
+				if (echo_off && firstline_length == 9) extra += 9;
+				else echo_off = false;
+			}
 
-			/* if "echo off" add it to the front of autoexec.bat */
-			if(echo_off) autoexec_echo.InstallBefore("@echo off");
+			/* if "echo off" move it to the front of autoexec.bat */
+			if (echo_off)  { 
+				autoexec_echo.InstallBefore("@echo off");
+				if (*extra == '\r') extra++; //It can point to \0
+				if (*extra == '\n') extra++; //same
+			}
 
-			/* Install the stuff from the configfile */
-			autoexec[0].Install(section->data);
+			/* Install the stuff from the configfile if anything left after moving echo off */
+
+			if (*extra) autoexec[0].Install(std::string(extra));
 		}
 
 		/* Check to see for extra command line options to be added (before the command specified on commandline) */
@@ -712,6 +753,12 @@ void SHELL_Init() {
 	DOS_OpenFile("CON",OPEN_READWRITE,&dummy);	/* STDAUX */
 	DOS_OpenFile("PRN",OPEN_READWRITE,&dummy);	/* STDPRN */
 
+	/* Create appearance of handle inheritance by first shell */
+	for (Bit16u i=0;i<5;i++) {
+		Bit8u handle=psp.GetFileHandle(i);
+		if (Files[handle]) Files[handle]->AddRef();
+	}
+
 	psp.SetParent(psp_seg);
 	/* Set the environment */
 	psp.SetEnvironment(env_seg);
@@ -727,7 +774,7 @@ void SHELL_Init() {
 	dos.psp(psp_seg);
 
 
-	SHELL_ProgramStart(&first_shell);
+	SHELL_ProgramStart_First_shell(&first_shell);
 	first_shell->Run();
 	delete first_shell;
 	first_shell = 0;//Make clear that it shouldn't be used anymore

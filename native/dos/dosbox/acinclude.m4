@@ -3,7 +3,7 @@ dnl Test for SDL, and define SDL_CFLAGS and SDL_LIBS
 dnl
 AC_DEFUN([AM_PATH_SDL],
 [dnl 
-dnl Get the cflags and libraries from the sdl-config (or sdl2-config) script
+dnl Get the cflags and libraries from the sdl-config script
 dnl
 AC_ARG_WITH(sdl-prefix,[  --with-sdl-prefix=PFX   Prefix where SDL is installed (optional)],
             sdl_prefix="$withval", sdl_prefix="")
@@ -12,30 +12,21 @@ AC_ARG_WITH(sdl-exec-prefix,[  --with-sdl-exec-prefix=PFX Exec prefix where SDL 
 AC_ARG_ENABLE(sdltest, [  --disable-sdltest       Do not try to compile and run a test SDL program],
 		    , enable_sdltest=yes)
 
-  if test x$with_sdl2 = xyes ; then
-    SDL_CONFIG_EXE=sdl2-config
-  else
-    SDL_CONFIG_EXE=sdl-config
-  fi
   if test x$sdl_exec_prefix != x ; then
      sdl_args="$sdl_args --exec-prefix=$sdl_exec_prefix"
      if test x${SDL_CONFIG+set} != xset ; then
-        SDL_CONFIG=$sdl_exec_prefix/bin/$SDL_CONFIG_EXE
+        SDL_CONFIG=$sdl_exec_prefix/bin/sdl-config
      fi
   fi
   if test x$sdl_prefix != x ; then
      sdl_args="$sdl_args --prefix=$sdl_prefix"
      if test x${SDL_CONFIG+set} != xset ; then
-        SDL_CONFIG=$sdl_prefix/bin/$SDL_CONFIG_EXE
+        SDL_CONFIG=$sdl_prefix/bin/sdl-config
      fi
   fi
 
-  AC_PATH_PROG(SDL_CONFIG, $SDL_CONFIG_EXE, no)
-  if test x$with_sdl2 = xyes ; then
-    min_sdl_version=2.0.0
-  else
-    min_sdl_version=1.2.0
-  fi
+  AC_PATH_PROG(SDL_CONFIG, sdl-config, no)
+  min_sdl_version=ifelse([$1], ,0.11.0,$1)
   AC_MSG_CHECKING(for SDL - version >= $min_sdl_version)
   no_sdl=""
   if test "$SDL_CONFIG" = "no" ; then
@@ -57,7 +48,7 @@ AC_ARG_ENABLE(sdltest, [  --disable-sdltest       Do not try to compile and run 
       LIBS="$LIBS $SDL_LIBS"
 dnl
 dnl Now check if the installed SDL is sufficiently new. (Also sanity
-dnl checks the results of sdl-config, or sdl2-config, to some extent
+dnl checks the results of sdl-config to some extent
 dnl
       rm -f conf.sdltest
       AC_TRY_RUN([
@@ -107,11 +98,11 @@ int main (int argc, char *argv[])
     }
   else
     {
-      printf("\n*** '$SDL_CONFIG_EXE --version' returned %d.%d.%d, but the minimum version\n", $sdl_major_version, $sdl_minor_version, $sdl_micro_version);
-      printf("*** of SDL required is %d.%d.%d. If $SDL_CONFIG_EXE is correct, then it is\n", major, minor, micro);
+      printf("\n*** 'sdl-config --version' returned %d.%d.%d, but the minimum version\n", $sdl_major_version, $sdl_minor_version, $sdl_micro_version);
+      printf("*** of SDL required is %d.%d.%d. If sdl-config is correct, then it is\n", major, minor, micro);
       printf("*** best to upgrade to the required version.\n");
-      printf("*** If $SDL_CONFIG_EXE was wrong, set the environment variable SDL_CONFIG\n");
-      printf("*** to point to the correct copy of $SDL_CONFIG_EXE, and remove the file\n");
+      printf("*** If sdl-config was wrong, set the environment variable SDL_CONFIG\n");
+      printf("*** to point to the correct copy of sdl-config, and remove the file\n");
       printf("*** config.cache before re-running configure\n");
       return 1;
     }
@@ -128,10 +119,10 @@ int main (int argc, char *argv[])
   else
      AC_MSG_RESULT(no)
      if test "$SDL_CONFIG" = "no" ; then
-       echo "*** The $SDL_CONFIG_EXE script installed by SDL could not be found"
+       echo "*** The sdl-config script installed by SDL could not be found"
        echo "*** If SDL was installed in PREFIX, make sure PREFIX/bin is in"
        echo "*** your path, or set the SDL_CONFIG environment variable to the"
-       echo "*** full path to $SDL_CONFIG_EXE."
+       echo "*** full path to sdl-config."
      else
        if test -f conf.sdltest ; then
         :
@@ -153,16 +144,16 @@ int main (int argc, char *argv[])
           echo "*** If you have an old version installed, it is best to remove it, although"
           echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"],
         [ echo "*** The test program failed to compile or link. See the file config.log for the"
-          echo "*** exact error that occured. This usually means SDL was incorrectly installed"
+          echo "*** exact error that occurred. This usually means SDL was incorrectly installed"
           echo "*** or that you have moved SDL since it was installed. In the latter case, you"
-          echo "*** may want to edit the $SDL_CONFIG_EXE script: $SDL_CONFIG" ])
+          echo "*** may want to edit the sdl-config script: $SDL_CONFIG" ])
           CFLAGS="$ac_save_CFLAGS"
           LIBS="$ac_save_LIBS"
        fi
      fi
      SDL_CFLAGS=""
      SDL_LIBS=""
-     AC_MSG_ERROR([*** SDL version $min_sdl_version not found!])
+     ifelse([$3], , :, [$3])
   fi
   AC_SUBST(SDL_CFLAGS)
   AC_SUBST(SDL_LIBS)
@@ -314,7 +305,7 @@ AC_SUBST(ALSA_LIBS)
 
 AH_TOP([
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -326,9 +317,9 @@ AH_TOP([
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Library General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 ])
 
@@ -376,35 +367,44 @@ typedef         double     Real64;
   typedef   signed short Bit16s;
 #endif
 
-/* When ./configure is run for Emscripten, native binaries are built,
- * giving wrong answers on a 64 bit host. This corrects the errors.
- */
-#if SIZEOF_UNSIGNED_INT == 4 || defined(EMSCRIPTEN)
+#if SIZEOF_UNSIGNED_INT == 4
   typedef unsigned int Bit32u;
   typedef   signed int Bit32s;
+#define sBit32t
 #elif SIZEOF_UNSIGNED_LONG == 4
   typedef unsigned long Bit32u;
   typedef   signed long Bit32s;
+#define sBit32t "l"
 #else
 #  error "can't find sizeof(type) of 4 bytes!"
 #endif
+#define sBit32fs(a) sBit32t #a
 
-#if SIZEOF_UNSIGNED_LONG == 8 && !defined(EMSCRIPTEN)
+#if SIZEOF_UNSIGNED_LONG == 8
   typedef unsigned long Bit64u;
   typedef   signed long Bit64s;
-#elif SIZEOF_UNSIGNED_LONG_LONG == 8 || defined(EMSCRIPTEN)
+#define sBit64t "l"
+#elif SIZEOF_UNSIGNED_LONG_LONG == 8
   typedef unsigned long long Bit64u;
   typedef   signed long long Bit64s;
+#define sBit64t "ll"
 #else
 #  error "can't find data type of 8 bytes"
 #endif
+#define sBit64fs(a) sBit64t #a
 
-#if SIZEOF_INT_P == 4 || defined(EMSCRIPTEN)
-  typedef Bit32u Bitu;
-  typedef Bit32s Bits;
-#else
-  typedef Bit64u Bitu;
-  typedef Bit64s Bits;
+#if SIZEOF_INT_P == 4
+
+typedef Bit32u Bitu;
+typedef Bit32s Bits;
+#define sBitfs sBit32fs
+
+#else //SIZEOF_INT_P 
+
+typedef Bit64u Bitu;
+typedef Bit64s Bits;
+#define sBitfs sBit64fs
+
 #endif
 
 ])

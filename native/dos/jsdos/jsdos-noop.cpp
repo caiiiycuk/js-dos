@@ -7,7 +7,7 @@
 
 class SDL_Surface;
 
-void GFX_SetTitle(Bit32s cycles, Bits frameskip, bool paused) {
+void GFX_SetTitle(Bit32s cycles, int frameskip, bool paused) {
 }
 
 void restart_program(std::vector<std::string> & parameters) {

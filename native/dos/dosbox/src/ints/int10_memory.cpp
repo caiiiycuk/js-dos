@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -133,12 +133,10 @@ void INT10_SetupRomMemory(void) {
 		// set up the start of the ROM
 		phys_writew(rom_base+0,0xaa55);
 		phys_writeb(rom_base+2,0x40);		// Size of ROM: 64 512-blocks = 32KB
-		if (IS_VGA_ARCH) {
-			phys_writeb(rom_base+0x1e,0x49);	// IBM string
-			phys_writeb(rom_base+0x1f,0x42);
-			phys_writeb(rom_base+0x20,0x4d);
-			phys_writeb(rom_base+0x21,0x00);
-		}
+		phys_writeb(rom_base+0x1e,0x49);	// IBM string
+		phys_writeb(rom_base+0x1f,0x42);
+		phys_writeb(rom_base+0x20,0x4d);
+		phys_writeb(rom_base+0x21,0x20);
 		int10.rom.used=0x100;
 	}
 

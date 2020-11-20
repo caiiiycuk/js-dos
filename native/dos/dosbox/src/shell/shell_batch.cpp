@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -58,6 +58,7 @@ bool BatchFile::ReadLine(char * line) {
 
 	Bit8u c=0;Bit16u n=1;
 	char temp[CMD_MAXLINE];
+	char temp_cycles_hack[CMD_MAXLINE];
 emptyline:
 	char * cmd_write=temp;
 	do {
@@ -125,8 +126,29 @@ emptyline:
 			} else {
 				/* Not a command line number has to be an environment */
 				char * first = strchr(cmd_read,'%');
+
 				/* No env afterall. Ignore a single % */
-				if (!first) {/* *cmd_write++ = '%';*/continue;}
+				if (!first) {
+					/* *cmd_write++ = '%';*/
+					//check if input contains cycles + max/auto  and that next character is space or empty
+					//If so, don't ignore it. This way cycles can still be set from within batch files
+					char peak = *(cmd_read);
+					if (peak == 0 || peak == ' ' || peak == '\r' || peak == '\n') {
+						strncpy(temp_cycles_hack,temp,cmd_read-temp);
+						temp_cycles_hack[cmd_read-temp] = 0;
+						upcase(temp_cycles_hack);
+						const char* cycles_test_cycles = strstr(temp_cycles_hack,"CYCLES");
+						if (cycles_test_cycles) {
+							const char* cycles_test_max = strstr(cycles_test_cycles,"MAX");
+							const char* cycles_test_auto = strstr(cycles_test_cycles,"AUTO");
+							if ( cycles_test_max  || cycles_test_auto )	{
+								   if (((cmd_write - line) + 1) < (CMD_MAXLINE - 1))
+									   *cmd_write++ = '%';
+							}
+						}
+					}
+					continue;
+				}
 				*first++ = 0;
 				std::string env;
 				if (shell->GetEnvStr(cmd_read,env)) {

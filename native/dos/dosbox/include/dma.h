@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -24,7 +24,7 @@ enum DMAEvent {
 	DMA_REACHED_TC,
 	DMA_MASKED,
 	DMA_UNMASKED,
-	DMA_TRANSFEREND
+//	DMA_TRANSFEREND, this shouldn't really be a ignal
 };
 
 class DmaChannel;
@@ -42,7 +42,7 @@ public:
 	Bit8u DMA16;
 	bool increment;
 	bool autoinit;
-	Bit8u trantype;
+//	Bit8u trantype; //Not used at the moment
 	bool masked;
 	bool tcount;
 	bool request;
@@ -86,8 +86,8 @@ private:
 	bool flipflop;
 	DmaChannel *DmaChannels[4];
 public:
-	IO_ReadHandleObject DMA_ReadHandler[0x11];
-	IO_WriteHandleObject DMA_WriteHandler[0x11];
+	IO_ReadHandleObject DMA_ReadHandler[0x12];
+	IO_WriteHandleObject DMA_WriteHandler[0x12];
 	DmaController(Bit8u num) {
 		flipflop = false;
 		ctrlnum = num;		/* first or second DMA controller */

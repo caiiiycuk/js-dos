@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,13 +11,18 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #ifndef DOSBOX_FPU_H
 #define DOSBOX_FPU_H
+
+#ifndef DOSBOX_DOSBOX_H
+//So the right config.h gets included for C_DEBUG
+#include "dosbox.h"
+#endif
 
 #ifndef DOSBOX_MEM_H
 #include "mem.h"
@@ -150,5 +155,26 @@ static INLINE void FPU_SET_C3(Bitu C){
 	if(C) fpu.sw |= 0x4000;
 }
 
+static INLINE void FPU_LOG_WARN(Bitu tree, bool ea, Bitu group, Bitu sub) {
+	LOG(LOG_FPU,LOG_WARN)("ESC %" sBitfs(d) "%s:Unhandled group %" sBitfs(d) " subfunction %" sBitfs(d),tree,ea?" EA":"",group,sub);
+}
+
+#define DB_FPU_STACK_CHECK_NONE 0
+#define DB_FPU_STACK_CHECK_LOG  1
+#define DB_FPU_STACK_CHECK_EXIT 2
+//NONE is 0.74 behavior: not care about stack overflow/underflow
+//Overflow is always logged/exited on.
+//Underflow can be controlled with by this. 
+//LOG is giving a message when encountered
+//EXIT is to hard exit.
+//Currently pop is ignored in release mode and overflow is exit.
+//in debug mode: pop will log and overflow is exit. 
+#if C_DEBUG
+#define DB_FPU_STACK_CHECK_POP DB_FPU_STACK_CHECK_LOG
+#define DB_FPU_STACK_CHECK_PUSH DB_FPU_STACK_CHECK_EXIT
+#else
+#define DB_FPU_STACK_CHECK_POP DB_FPU_STACK_CHECK_NONE
+#define DB_FPU_STACK_CHECK_PUSH DB_FPU_STACK_CHECK_EXIT
+#endif
 
 #endif

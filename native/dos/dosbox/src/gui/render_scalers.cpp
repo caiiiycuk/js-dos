@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -30,9 +30,10 @@ Bit16u Scaler_ChangedLines[SCALER_MAXHEIGHT];
 Bitu Scaler_ChangedLineIndex;
 
 static union {
-	Bit32u b32 [4][SCALER_MAXWIDTH*3];
-	Bit16u b16 [4][SCALER_MAXWIDTH*3];
-	Bit8u b8 [4][SCALER_MAXWIDTH*3];
+	 //The +1 is a at least for the normal scalers not needed. (-1 is enough)
+	Bit32u b32 [SCALER_MAX_MUL_HEIGHT + 1][SCALER_MAXLINE_WIDTH];
+	Bit16u b16 [SCALER_MAX_MUL_HEIGHT + 1][SCALER_MAXLINE_WIDTH];
+	Bit8u   b8 [SCALER_MAX_MUL_HEIGHT + 1][SCALER_MAXLINE_WIDTH];
 } scalerWriteCache;
 //scalerFrameCache_t scalerFrameCache;
 scalerSourceCache_t scalerSourceCache;

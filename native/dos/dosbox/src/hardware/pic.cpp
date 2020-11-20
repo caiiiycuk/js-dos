@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include "dosbox.h"
@@ -184,6 +184,7 @@ static void write_command(Bitu port,Bitu val,Bitu iolen) {
 		if (val&0x04) E_Exit("PIC: 4 byte interval not handled");
 		if (val&0x08) E_Exit("PIC: level triggered mode not handled");
 		if (val&0xe0) E_Exit("PIC: 8080/8085 mode not handled");
+		pic->set_imr(0);
 		pic->single=(val&0x02)==0x02;
 		pic->icw_index=1;			// next is ICW2
 		pic->icw_words=2 + (val&0x01);	// =3 if ICW4 needed

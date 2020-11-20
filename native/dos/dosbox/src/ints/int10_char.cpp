@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -58,7 +58,7 @@ static void TANDY16_CopyRow(Bit8u cleft,Bit8u cright,Bit8u rold,Bit8u rnew,PhysP
 	PhysPt dest=base+((CurMode->twidth*rnew)*(cheight/banks)+cleft)*4;
 	PhysPt src=base+((CurMode->twidth*rold)*(cheight/banks)+cleft)*4;
 	Bitu copy=(cright-cleft)*4;Bitu nextline=CurMode->twidth*4;
-	for (Bitu i=0;i<cheight/banks;i++) {
+	for (Bitu i=0;i<static_cast<Bitu>(cheight/banks);i++) {
 		for (Bitu b=0;b<banks;b++) MEM_BlockCopy(dest+b*8*1024,src+b*8*1024,copy);
 		dest+=nextline;src+=nextline;
 	}
@@ -140,7 +140,7 @@ static void TANDY16_FillRow(Bit8u cleft,Bit8u cright,Bit8u row,PhysPt base,Bit8u
 	PhysPt dest=base+((CurMode->twidth*row)*(cheight/banks)+cleft)*4;
 	Bitu copy=(cright-cleft)*4;Bitu nextline=CurMode->twidth*4;
 	attr=(attr & 0xf) | (attr & 0xf) << 4;
-	for (Bitu i=0;i<cheight/banks;i++) {
+	for (Bitu i=0;i<static_cast<Bitu>(cheight/banks);i++) {
 		for (Bitu x=0;x<copy;x++) {
 			for (Bitu b=0;b<banks;b++) mem_writeb(dest+b*8*1024+x,attr);
 		}
@@ -487,7 +487,7 @@ void INT10_ReadCharAttr(Bit16u * result,Bit8u page) {
 }
 void WriteChar(Bit16u col,Bit16u row,Bit8u page,Bit8u chr,Bit8u attr,bool useattr) {
 	/* Externally used by the mouse routine */
-	PhysPt fontdata;
+	RealPt fontdata;
 	Bit16u cols = real_readw(BIOSMEM_SEG,BIOSMEM_NB_COLS);
 	Bit8u back,cheight = real_readb(BIOSMEM_SEG,BIOSMEM_CHAR_HEIGHT);
 	switch (CurMode->type) {
@@ -507,27 +507,27 @@ void WriteChar(Bit16u col,Bit16u row,Bit8u page,Bit8u chr,Bit8u attr,bool useatt
 	case M_TANDY16:
 		if (chr>=128) {
 			chr-=128;
-			fontdata=Real2Phys(RealGetVec(0x1f));
+			fontdata=RealGetVec(0x1f);
 			break;
 		}
 		switch (machine) {
 		case MCH_CGA:
 		case MCH_HERC:
-			fontdata=PhysMake(0xf000,0xfa6e);
+			fontdata=RealMake(0xf000,0xfa6e);
 			break;
 		case TANDY_ARCH_CASE:
-			fontdata=Real2Phys(RealGetVec(0x44));
+			fontdata=RealGetVec(0x44);
 			break;
 		default:
-			fontdata=Real2Phys(RealGetVec(0x43));
+			fontdata=RealGetVec(0x43);
 			break;
 		}
 		break;
 	default:
-		fontdata=Real2Phys(RealGetVec(0x43));
+		fontdata=RealGetVec(0x43);
 		break;
 	}
-	fontdata+=chr*cheight;
+	fontdata=RealMake(RealSeg(fontdata),RealOff(fontdata)+chr*cheight);
 
 	if(GCC_UNLIKELY(!useattr)) { //Set attribute(color) to a sensible value
 		static bool warned_use = false;
@@ -577,7 +577,8 @@ void WriteChar(Bit16u col,Bit16u row,Bit8u page,Bit8u chr,Bit8u attr,bool useatt
 	Bit16u ty=(Bit16u)y;
 	for (Bit8u h=0;h<cheight;h++) {
 		Bit8u bitsel=128;
-		Bit8u bitline=mem_readb(fontdata++);
+		Bit8u bitline=mem_readb(Real2Phys(fontdata));
+		fontdata=RealMake(RealSeg(fontdata),RealOff(fontdata)+1);
 		Bit16u tx=(Bit16u)x;
 		while (bitsel) {
 			INT10_PutPixel(tx,ty,page,(bitline&bitsel)?attr:back);
@@ -624,6 +625,11 @@ void INT10_WriteChar(Bit8u chr,Bit8u attr,Bit8u page,Bit16u count,bool showattr)
 			cur_col=0;
 			cur_row++;
 		}
+	}
+
+	if (CurMode->type==M_EGA) {
+		// Reset write ops for EGA graphics modes
+		IO_Write(0x3ce,0x3);IO_Write(0x3cf,0x0);
 	}
 }
 

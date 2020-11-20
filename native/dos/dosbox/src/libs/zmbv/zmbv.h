@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #ifndef DOSBOX_DOSBOX_H
@@ -105,12 +105,13 @@ private:
 		INLINE void CopyBlock(int vx, int vy,FrameBlock * block);
 public:
 	VideoCodec();
+	~VideoCodec();
 	bool SetupCompress( int _width, int _height);
 	bool SetupDecompress( int _width, int _height);
 	zmbv_format_t BPPFormat( int bpp );
 	int NeededSize( int _width, int _height, zmbv_format_t _format);
 
-	void CompressLines(int lineCount, void *lineData[]);
+	void CompressLines(int lineCount, const void *lineData[]);
 	bool PrepareCompressFrame(int flags,  zmbv_format_t _format, char * pal, void *writeBuf, int writeSize);
 	int FinishCompressFrame( void );
 	bool DecompressFrame(void * framedata, int size);

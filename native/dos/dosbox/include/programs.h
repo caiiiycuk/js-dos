@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -44,7 +44,7 @@ public:
 	const char * GetFileName(){ return file_name.c_str();}
 
 	bool FindExist(char const * const name,bool remove=false);
-	bool FindHex(char const * const name,int & value,bool remove=false);
+	bool FindHex(char const * const name,unsigned int & value,bool remove=false);
 	bool FindInt(char const * const name,int & value,bool remove=false);
 	bool FindString(char const * const name,std::string & value,bool remove=false);
 	bool FindCommand(unsigned int which,std::string & value);

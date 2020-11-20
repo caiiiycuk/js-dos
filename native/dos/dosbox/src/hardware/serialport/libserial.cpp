@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -41,7 +41,7 @@ bool SERIAL_open(const char* portname, COMPORT* port) {
 
 	// open the port in NT object space (recommended by Microsoft)
 	// allows the user to open COM10+ and custom port names.
-	int len = strlen(portname);
+	size_t len = strlen(portname);
 	if(len > 240) {
 		SetLastError(ERROR_BUFFER_OVERFLOW);
 		free(cp);
@@ -125,7 +125,7 @@ void SERIAL_close(COMPORT port) {
 	free(port);
 }
 
-void SERIAL_getErrorString(char* buffer, int length) {
+void SERIAL_getErrorString(char* buffer, size_t length) {
 	int error = GetLastError();
 	if(length < 50) return;
 	memset(buffer,0,length);
@@ -141,7 +141,7 @@ void SERIAL_getErrorString(char* buffer, int length) {
 	const char* err5text = "The specified port is already in use.\n";
 	const char* err2text = "The specified port does not exist.\n";
 
-	int sysmsg_offset = 0;
+	size_t sysmsg_offset = 0;
 
 	if(error == 5) {
 		sysmsg_offset = strlen(err5text);
@@ -151,10 +151,13 @@ void SERIAL_getErrorString(char* buffer, int length) {
 		sysmsg_offset = strlen(err2text);
 		memcpy(buffer,err2text,sysmsg_offset);
 	}
-
-	if((length - sysmsg_offset - strlen((const char*)sysmessagebuffer)) >= 0)
+	
+	// Go for length > so there will be bytes left afterwards.
+	// (which are 0 due to memset, thus the buffer is 0 terminated
+	if ( length > (sysmsg_offset + strlen((const char*)sysmessagebuffer)) ) {
 		memcpy(buffer + sysmsg_offset, sysmessagebuffer,
-		strlen((const char*)sysmessagebuffer));
+		       strlen((const char*)sysmessagebuffer));
+	}
 		
 	LocalFree(sysmessagebuffer);
 }
@@ -284,8 +287,9 @@ bool SERIAL_open(const char* portname, COMPORT* port) {
 
 	cp->breakstatus=false;
 
-	int len = strlen(portname);
+	size_t len = strlen(portname);
 	if(len > 240) {
+		free(cp);
 		///////////////////////////////////SetLastError(ERROR_BUFFER_OVERFLOW);
 		return false;
 	}
@@ -296,7 +300,7 @@ bool SERIAL_open(const char* portname, COMPORT* port) {
 	if (cp->porthandle < 0) goto cleanup_error;
 
 	result = tcgetattr(cp->porthandle,&cp->backup);
-	if (result==-1) goto cleanup_error;
+	if (result == -1) goto cleanup_error;
 
 	// get port settings
 	termios termInfo;
@@ -331,7 +335,7 @@ void SERIAL_close(COMPORT port) {
 	free(port);
 }
 
-void SERIAL_getErrorString(char* buffer, int length) {
+void SERIAL_getErrorString(char* buffer, size_t length) {
 	int error = errno;
 	if(length < 50) return;
 	memset(buffer,0,length);
@@ -341,7 +345,7 @@ void SERIAL_getErrorString(char* buffer, int length) {
 	const char* err5text = "The specified port is already in use.\n";
 	const char* err2text = "The specified port does not exist.\n";
 	
-	int sysmsg_offset = 0;
+	size_t sysmsg_offset = 0;
 
 	if(error == EBUSY) {
 		sysmsg_offset = strlen(err5text);
@@ -545,7 +549,7 @@ cleanup_error:
 	return false;
 }
 
-void SERIAL_getErrorString(char* buffer, int length) {
+void SERIAL_getErrorString(char* buffer, size_t length) {
 	sprintf(buffer, "TODO: error handling is not fun");
 }
 void SERIAL_close(COMPORT port) {

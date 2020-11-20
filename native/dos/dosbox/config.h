@@ -3,7 +3,7 @@
 
 
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -15,9 +15,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Library General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -27,14 +27,14 @@
 /* Compiling on BSD */
 /* #undef BSD */
 
-/* Determines if the compilers supports always_inline attribute. */
+/* Determines if the compiler supports always_inline attribute. */
 #define C_ATTRIBUTE_ALWAYS_INLINE 1
 
-/* Determines if the compilers supports fastcall attribute. */
+/* Determines if the compiler supports fastcall attribute. */
 /* #undef C_ATTRIBUTE_FASTCALL */
 
 /* Define to 1 to use inlined memory functions in cpu core */
-/* #undef C_CORE_INLINE */
+#define C_CORE_INLINE 1
 
 /* Define to 1 to enable Curses text mode output, requires libncursesw */
 /* #undef C_CURSOUT */
@@ -46,24 +46,30 @@
    */
 /* #undef C_DIRECTSERIAL */
 
+#ifdef X86_64
 /* Define to 1 to use x86 dynamic cpu core */
-/* #undef C_DYNAMIC_X86 */
+#define C_DYNAMIC_X86 1
 
 /* Define to 1 to use recompiling cpu core. Can not be used together with the
    dynamic-x86 core */
-#ifdef X86_64
-#define C_DYNREC 1
+/* #undef C_DYNREC */
 #else
+/* #undef C_DYNAMIC_X86 */
 /* #undef C_DYNREC */
 #endif
 
 /* Define to 1 to enable floating point emulation */
 #define C_FPU 1
 
+#ifdef X86_64
+/* Define to 1 to use a x86/x64 assembly fpu core */
+#define C_FPU_X86 1
+#else
 /* Define to 1 to use a x86/x64 assembly fpu core */
 /* #undef C_FPU_X86 */
+#endif
 
-/* Determines if the compilers supports attributes for structures. */
+/* Determines if the compiler supports attributes for structures. */
 #define C_HAS_ATTRIBUTE 1
 
 /* Determines if the compilers supports __builtin_expect for branch
@@ -92,10 +98,20 @@
 /* #undef C_SDL_SOUND */
 
 /* Define to 1 if you have setpriority support */
-/* #undef C_SET_PRIORITY */
+#define C_SET_PRIORITY 1
+
+/* Define to 1 to enable movie recording, requires zlib built without Z_SOLO
+   */
+/* #undef C_SRECORD 1 */
 
 /* Define to 1 to enable screenshots, requires libpng */
-/* #undef C_SSHOT */
+/* #undef C_SSHOT 1 */
+
+/* Compiler supports Core Audio headers */
+/* #undef C_SUPPORTS_COREAUDIO */
+
+/* Compiler supports Core MIDI headers */
+/* #undef C_SUPPORTS_COREMIDI */
 
 /* The type of cpu this target has */
 #ifdef X86_64
@@ -123,17 +139,11 @@
 /* struct dirent has d_type */
 #define DIRENT_HAS_D_TYPE 1
 
-/* Compile for use with Emscripten emterpreter sync. */
-/* #define EMTERPRETER_SYNC 1 */
-
 /* environ can be included */
 /* #undef ENVIRON_INCLUDED */
 
 /* environ can be linked */
 #define ENVIRON_LINKED 1
-
-/* use array of function pointers in core */
-#define FUNARRAY_CORE 0
 
 /* Define to 1 to use ALSA for MIDI */
 /* #undef HAVE_ALSA */
@@ -155,6 +165,9 @@
 
 /* Define to 1 if you have the <pwd.h> header file. */
 #define HAVE_PWD_H 1
+
+/* Define to 1 if you have the `realpath' function. */
+#define HAVE_REALPATH 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -243,7 +256,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "jsdos"
+#define VERSION "jsdos" // dosbox-r4392
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
@@ -315,35 +328,44 @@ typedef         double     Real64;
   typedef   signed short Bit16s;
 #endif
 
-/* When ./configure is run for Emscripten, native binaries are built,
- * giving wrong answers on a 64 bit host. This corrects the errors.
- */
 #if SIZEOF_UNSIGNED_INT == 4 || defined(EMSCRIPTEN)
   typedef unsigned int Bit32u;
   typedef   signed int Bit32s;
+#define sBit32t
 #elif SIZEOF_UNSIGNED_LONG == 4
   typedef unsigned long Bit32u;
   typedef   signed long Bit32s;
+#define sBit32t "l"
 #else
 #  error "can't find sizeof(type) of 4 bytes!"
 #endif
+#define sBit32fs(a) sBit32t #a
 
 #if SIZEOF_UNSIGNED_LONG == 8 && !defined(EMSCRIPTEN)
   typedef unsigned long Bit64u;
   typedef   signed long Bit64s;
+#define sBit64t "l"
 #elif SIZEOF_UNSIGNED_LONG_LONG == 8 || defined(EMSCRIPTEN)
   typedef unsigned long long Bit64u;
   typedef   signed long long Bit64s;
+#define sBit64t "ll"
 #else
 #  error "can't find data type of 8 bytes"
 #endif
+#define sBit64fs(a) sBit64t #a
 
 #if SIZEOF_INT_P == 4 || defined(EMSCRIPTEN)
-  typedef Bit32u Bitu;
-  typedef Bit32s Bits;
-#else
-  typedef Bit64u Bitu;
-  typedef Bit64s Bits;
+
+typedef Bit32u Bitu;
+typedef Bit32s Bits;
+#define sBitfs sBit32fs
+
+#else //SIZEOF_INT_P 
+
+typedef Bit64u Bitu;
+typedef Bit64s Bits;
+#define sBitfs sBit64fs
+
 #endif
 
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -446,7 +446,9 @@ restart_prefix:
 		case 0xcb:dyn_ret_far(0);goto finish_block;
 
 		// int/iret
+#if !(C_DEBUG)
 		case 0xcd:dyn_interrupt(decode_fetchb());goto finish_block;
+#endif
 		case 0xcf:dyn_iret();goto finish_block;
 
 //		case 0xd4: AAM missing
@@ -553,7 +555,7 @@ restart_prefix:
 		case 0xfb:		//STI
 			gen_call_function_raw((void *)&CPU_STI);
 			dyn_check_exception(FC_RETOP);
-			if (max_opcodes<=0) max_opcodes=1;		//Allow 1 extra opcode
+			max_opcodes=1;		//Allow 1 extra opcode
 			break;
 
 		case 0xfc:		//CLD

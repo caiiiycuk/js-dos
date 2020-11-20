@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -113,7 +113,7 @@ void DOS_SetupFiles (void);
 bool DOS_ReadFile(Bit16u handle,Bit8u * data,Bit16u * amount, bool fcb = false);
 bool DOS_WriteFile(Bit16u handle,Bit8u * data,Bit16u * amount,bool fcb = false);
 bool DOS_SeekFile(Bit16u handle,Bit32u * pos,Bit32u type,bool fcb = false);
-bool DOS_CloseFile(Bit16u handle,bool fcb = false);
+bool DOS_CloseFile(Bit16u handle,bool fcb = false,Bit8u * refcnt = NULL);
 bool DOS_FlushFile(Bit16u handle);
 bool DOS_DuplicateEntry(Bit16u entry,Bit16u * newentry);
 bool DOS_ForceDuplicateEntry(Bit16u entry,Bit16u newentry);
@@ -386,6 +386,7 @@ public:
 	void SetDiskBufferHeadPt(Bit32u _dbheadpt);
 	void SetStartOfUMBChain(Bit16u _umbstartseg);
 	void SetUMBChainState(Bit8u _umbchaining);
+	void SetBlockDevices(Bit8u _count);
 	Bit16u	GetStartOfUMBChain(void);
 	Bit8u	GetUMBChainState(void);
 	RealPt	GetPointer(void);
@@ -627,6 +628,7 @@ struct DOS_Block {
 	bool breakcheck;
 	bool echo;          // if set to true dev_con::read will echo input 
 	bool direct_output;
+	bool internal_output;
 	struct  {
 		RealPt mediaid;
 		RealPt tempdta;

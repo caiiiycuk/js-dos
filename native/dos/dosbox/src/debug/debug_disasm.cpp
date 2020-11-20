@@ -246,7 +246,7 @@ static char const * op386map1[256] = {
   "int 03",           "int %Ib",         "into",           "iret",
 /* d */
   "%g1 %Eb,1",        "%g1 %Ev,1",       "%g1 %Eb,cl",     "%g1 %Ev,cl",
-  "aam ; %Ib",        "aad ; %Ib",       "setalc",         "xlat",
+  "aam ; %Ib",        "aad ; %Ib",       "setalc",         "%P xlat",
 #if 0
   "esc 0,%Ib",        "esc 1,%Ib",       "esc 2,%Ib",      "esc 3,%Ib",
   "esc 4,%Ib",        "esc 5,%Ib",       "esc 6,%Ib",      "esc 7,%Ib",
@@ -490,6 +490,7 @@ static void uprintf(char const *s, ...)
 	va_list	arg_ptr;
 	va_start (arg_ptr, s);
 	vsprintf(ubufp, s, arg_ptr);
+	va_end(arg_ptr);
 	while (*ubufp)
 		ubufp++;
 }

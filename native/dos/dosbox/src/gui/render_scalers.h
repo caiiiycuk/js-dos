@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #ifndef _RENDER_SCALERS_H
@@ -21,17 +21,30 @@
 
 //#include "render.h"
 #include "video.h"
+
+#define SCALER_MAX_MUL_WIDTH  3
+#define SCALER_MAX_MUL_HEIGHT 3
+
 #if RENDER_USE_ADVANCED_SCALERS>0
-#define SCALER_MAXWIDTH		1280 
+#define SCALER_MAXWIDTH 	1280 
 #define SCALER_MAXHEIGHT	1024
+#define SCALER_MAXX     	4096
 #else
 // reduced to save some memory
-#define SCALER_MAXWIDTH		800 
+#define SCALER_MAXWIDTH 	800 
 #define SCALER_MAXHEIGHT	600
+#define SCALER_MAXX     	2048
 #endif
 
+#if (SCALER_MAX_MUL_WIDTH * SCALER_MAXWIDTH) > SCALER_MAXX
+#define SCALER_MAXLINE_WIDTH SCALER_MAXX
+#else 
+#define SCALER_MAXLINE_WIDTH (SCALER_MAX_MUL_WIDTH * SCALER_MAXWIDTH)
+#endif
+
+
 #if RENDER_USE_ADVANCED_SCALERS>1
-#define SCALER_COMPLEXWIDTH		800
+#define SCALER_COMPLEXWIDTH 	800
 #define SCALER_COMPLEXHEIGHT	600
 #endif
 

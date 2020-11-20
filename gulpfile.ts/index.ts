@@ -4,6 +4,7 @@ import { emulators } from "./emulators";
 import { test } from "./test";
 
 import { emitTypes } from "./types";
+import { updateDosbox } from "./update-dosbox";
 
 exports.default = series(
     wasm,
@@ -11,5 +12,6 @@ exports.default = series(
 );
 
 exports.wasm = wasm;
+exports.updateDosbox = updateDosbox;
 
 

@@ -9,12 +9,14 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 #include <CoreMIDI/MIDIServices.h>
+#include <sstream>
+#include <string>
 
 class MidiHandler_coremidi : public MidiHandler {
 private:
@@ -30,9 +32,32 @@ public:
 		m_endpoint = 0;
 		OSStatus result;
 		Bitu numDests = MIDIGetNumberOfDestinations();
-		Bitu destId = 0;
-		if(conf && conf[0]) destId = atoi(conf);
-		
+		Bitu destId = numDests;
+		if(conf && *conf) {
+			std::string strconf(conf);
+			std::istringstream configmidi(strconf);
+			configmidi >> destId;
+			if (configmidi.fail() && numDests) {
+				lowcase(strconf);
+				for(Bitu i = 0; i<numDests; i++) {
+					MIDIEndpointRef dummy = MIDIGetDestination(i);
+					if (!dummy) continue;
+					CFStringRef midiname = 0;
+					if (MIDIObjectGetStringProperty(dummy,kMIDIPropertyDisplayName,&midiname) == noErr) {
+						const char* s = CFStringGetCStringPtr(midiname,kCFStringEncodingMacRoman);
+						if (s) {
+							std::string devname(s);
+							lowcase(devname);
+							if (devname.find(strconf) != std::string::npos) { 
+								destId = i;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (destId >= numDests) destId = 0;
 		if (destId < numDests)
 		{
 			m_endpoint = MIDIGetDestination(destId);
@@ -104,11 +129,11 @@ public:
 		Bitu numDests = MIDIGetNumberOfDestinations();
 		for(Bitu i = 0; i < numDests; i++){
 			MIDIEndpointRef dest = MIDIGetDestination(i);
-			if(!dest) continue;
+			if (!dest) continue;
 			CFStringRef midiname = 0;
 			if(MIDIObjectGetStringProperty(dest, kMIDIPropertyDisplayName, &midiname) == noErr) {
 				const char * s = CFStringGetCStringPtr(midiname, kCFStringEncodingMacRoman);
-				if(s) base->WriteOut("%02d\t%s\n",i,s);
+				if (s) base->WriteOut("%02d\t%s\n",i,s);
 			}
 			//This is for EndPoints created by us.
 			//MIDIEndpointDispose(dest);

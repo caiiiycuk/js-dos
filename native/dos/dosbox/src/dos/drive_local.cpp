@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2002-2015  The DOSBox Team
+ *  Copyright (C) 2002-2020  The DOSBox Team
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -11,9 +11,9 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *  You should have received a copy of the GNU General Public License along
+ *  with this program; if not, write to the Free Software Foundation, Inc.,
+ *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
 
@@ -30,23 +30,6 @@
 #include "cross.h"
 #include "inout.h"
 
-class localFile : public DOS_File {
-public:
-	localFile(const char* name, FILE * handle);
-	bool Read(Bit8u * data,Bit16u * size);
-	bool Write(Bit8u * data,Bit16u * size);
-	bool Seek(Bit32u * pos,Bit32u type);
-	bool Close();
-	Bit16u GetInformation(void);
-	bool UpdateDateTimeFromHost(void);   
-	void FlagReadOnlyMedium(void);
-	void Flush(void);
-private:
-	FILE * fhandle;
-	bool read_only_medium;
-	enum { NONE,READ,WRITE } last_action;
-};
-
 
 bool localDrive::FileCreate(DOS_File * * file,char * name,Bit16u /*attributes*/) {
 //TODO Maybe care for attributes but not likely
@@ -56,16 +39,16 @@ bool localDrive::FileCreate(DOS_File * * file,char * name,Bit16u /*attributes*/)
 	CROSS_FILENAME(newname);
 	char* temp_name = dirCache.GetExpandName(newname); //Can only be used in till a new drive_cache action is preformed */
 	/* Test if file exists (so we need to truncate it). don't add to dirCache then */
-	bool existing_file=false;
+	bool existing_file = false;
 	
-	FILE * test=fopen(temp_name,"rb+");
+	FILE * test = fopen_wrap(temp_name,"rb+");
 	if(test) {
 		fclose(test);
 		existing_file=true;
 
 	}
 	
-	FILE * hand=fopen(temp_name,"wb+");
+	FILE * hand = fopen_wrap(temp_name,"wb+");
 	if (!hand){
 		LOG_MSG("Warning: file creation failed: %s",newname);
 		return false;
@@ -112,11 +95,11 @@ bool localDrive::FileOpen(DOS_File * * file,char * name,Bit32u flags) {
 		}
 	}
 
-	FILE * hand=fopen(newname,type);
+	FILE * hand = fopen_wrap(newname,type);
 //	Bit32u err=errno;
 	if (!hand) { 
 		if((flags&0xf) != OPEN_READ) {
-			FILE * hmm=fopen(newname,"rb");
+			FILE * hmm = fopen_wrap(newname,"rb");
 			if (hmm) {
 				fclose(hmm);
 				LOG_MSG("Warning: file %s exists and failed to open in write mode.\nPlease Remove write-protection",newname);
@@ -139,7 +122,7 @@ FILE * localDrive::GetSystemFilePtr(char const * const name, char const * const 
 	CROSS_FILENAME(newname);
 	dirCache.ExpandName(newname);
 
-	return fopen(newname,type);
+	return fopen_wrap(newname,type);
 }
 
 bool localDrive::GetSystemFilename(char *sysName, char const * const dosName) {
@@ -160,10 +143,18 @@ bool localDrive::FileUnlink(char * name) {
 	if (unlink(fullname)) {
 		//Unlink failed for some reason try finding it.
 		struct stat buffer;
-		if(stat(fullname,&buffer)) return false; // File not found.
+		if(stat(fullname,&buffer)) {
+			//file not found
+			DOS_SetError(DOSERR_FILE_NOT_FOUND);
+			return false;
+		}
 
-		FILE* file_writable = fopen(fullname,"rb+");
-		if(!file_writable) return false; //No acces ? ERROR MESSAGE NOT SET. FIXME ?
+		//Do we have access?
+		FILE* file_writable = fopen_wrap(fullname,"rb+");
+		if(!file_writable) {
+			DOS_SetError(DOSERR_ACCESS_DENIED);
+			return false;
+		}
 		fclose(file_writable);
 
 		//File exists and can technically be deleted, nevertheless it failed.
@@ -180,11 +171,15 @@ bool localDrive::FileUnlink(char * name) {
 				found_file=true;
 			}
 		}
-		if(!found_file) return false;
+		if(!found_file) {
+			DOS_SetError(DOSERR_ACCESS_DENIED);
+			return false;
+		}
 		if (!unlink(fullname)) {
 			dirCache.DeleteEntry(newname);
 			return true;
 		}
+		DOS_SetError(DOSERR_ACCESS_DENIED);
 		return false;
 	} else {
 		dirCache.DeleteEntry(newname);
@@ -467,7 +462,8 @@ bool localFile::Read(Bit8u * data,Bit16u * size) {
 }
 
 bool localFile::Write(Bit8u * data,Bit16u * size) {
-	if ((this->flags & 0xf) == OPEN_READ) {	// check if file opened in read-only mode
+	Bit32u lastflags = this->flags & 0xf;
+	if (lastflags == OPEN_READ || lastflags == OPEN_READ_NO_MOD) {	// check if file opened in read-only mode
 		DOS_SetError(DOSERR_ACCESS_DENIED);
 		return false;
 	}
@@ -575,7 +571,10 @@ bool MSCDEX_GetVolumeName(Bit8u subUnit, char* name);
 
 
 cdromDrive::cdromDrive(const char driveLetter, const char * startdir,Bit16u _bytes_sector,Bit8u _sectors_cluster,Bit16u _total_clusters,Bit16u _free_clusters,Bit8u _mediaid, int& error)
-		   :localDrive(startdir,_bytes_sector,_sectors_cluster,_total_clusters,_free_clusters,_mediaid) {
+		   :localDrive(startdir,_bytes_sector,_sectors_cluster,_total_clusters,_free_clusters,_mediaid),
+		    subUnit(0),
+		    driveLetter('\0')
+{
 	// Init mscdex
 	error = MSCDEX_AddDrive(driveLetter,startdir,subUnit);
 	strcpy(info, "CDRom ");
