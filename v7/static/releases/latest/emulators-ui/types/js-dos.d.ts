@@ -1,11 +1,11 @@
 import { CommandInterface } from "emulators";
 import { EmulatorsUi } from "./emulators-ui";
-import { Layers, ControlSelector } from "./dom/layers";
+import { Layers, LayersOptions } from "./dom/layers";
 export declare type EmulatorFunction = "dosWorker" | "dosDirect" | "janus";
 export interface DosOptions {
-    controlSelector?: ControlSelector;
     emulatorFunction?: EmulatorFunction;
     clickToStart?: boolean;
+    layersOptions?: LayersOptions;
 }
 export declare class DosInstance {
     emulatorsUi: EmulatorsUi;

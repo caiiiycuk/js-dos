@@ -23,21 +23,29 @@ export type ActionType = "click" | "hold";
 export interface Button {
     action: ActionType,
     mapTo: number,
-    size?: number,
     symbol?: string,
-    style?: ElementCSSInlineStyle;
+    position: {
+        left?: 1 | 2,
+        top?: 1 | 2,
+        right?: 1 | 2,
+        bottom?: 1 | 2,
+    },
 }
 ```
 
-For example, digger configuration is:
+Each side of screen can snap up to two buttons. For example:
+* `{ left: 1, top: 1 }` - button will be placed to left-top corner
+* `{ left: 2, top: 1 }` - button will be placed at the top and after previous button
+
+For example, [digger](ui-digger.md) configuration is:
 ```typescript
 const buttons = [
     {
         action: "click",
         mapTo: 88 /*KBD_x*/,
-        style: {
-            left: "16px",
-            bottom: "32px",
+        position: {
+            left: 1,
+            bottom: 1,
         }
     },
 ];
@@ -47,6 +55,30 @@ emulatorsUi.controls.button(layers, ci, buttons);
 
 This snippet will add button "X" in the bottom of screen, when you press it keyboard event for
 key "x" will be generated.
+
+## All possible buttons
+
+You can create up to 16 buttons per [layer](multiple-layers.md). Layout of all buttons:
+<img alt="all buttons" src={useBaseUrl('img/all-buttons.jpg')} />
+
+:::warning
+If you use default js-dos installation then button `10` will be created automatically.
+This button will be a options button that give access to built-in functions (fullscreen, save-load, etc)
+<img alt="special button" src={useBaseUrl('img/special-button.jpg')} />
+:::
+
+## Changing style
+
+Currently you can change size of buttons by passing `scale` in layersOptions.
+```js
+ const layers = emulatorsUi.dom.layers(document.getElementById("root"), { scale: 0.7 });
+```
+
+## All buttons example
+
+```html title="examples/all-buttons.html"
+{}
+```
 
 ## GameStudio
 

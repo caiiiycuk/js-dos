@@ -1,20 +1,14 @@
 import { Notyf } from "notyf";
-export interface ControlSelector {
-    select: () => HTMLSelectElement;
-    input: () => HTMLInputElement;
-    send: () => HTMLElement;
-    save: () => HTMLElement;
-    fullscreen: () => HTMLElement;
+export interface LayersOptions {
+    scale: number;
 }
-export declare function layers(root: HTMLDivElement, controlSelector?: ControlSelector): Layers;
+export declare function layers(root: HTMLDivElement, options?: LayersOptions): Layers;
 export declare class Layers {
     root: HTMLDivElement;
     loading: HTMLDivElement;
     canvas: HTMLCanvasElement;
     video: HTMLVideoElement;
     mouseOverlay: HTMLDivElement;
-    controls: HTMLDivElement | null;
-    controlSelector: ControlSelector;
     width: number;
     height: number;
     notyf: Notyf;
@@ -25,10 +19,10 @@ export declare class Layers {
     private onKeyUp;
     private onKeyPress;
     private onSave;
-    private controlsOpened;
-    private selectParentElement;
-    private selectParentDisplay;
-    constructor(root: HTMLDivElement, controlSelector?: ControlSelector);
+    private fullscreen;
+    private onFullscreenChanged;
+    private scale;
+    constructor(root: HTMLDivElement, options: LayersOptions);
     setOnResize(handler: (width: number, height: number) => void): void;
     setOnKeyDown(handler: (keyCode: number) => void): void;
     fireKeyDown(keyCode: number): void;
@@ -36,11 +30,14 @@ export declare class Layers {
     fireKeyUp(keyCode: number): void;
     setOnKeyPress(handler: (keyCode: number) => void): void;
     fireKeyPress(keyCode: number): void;
+    toggleFullscreen(): void;
+    setOnFullscreen(onFullscreenChanged: (fullscreen: boolean) => void): void;
+    save(): void;
     setOnSave(handler: () => Promise<void>): void;
     hideLoadingLayer(): void;
     showLoadingLayer(): void;
     setLoadingMessage(message: string): void;
     switchToVideo(): void;
     showClickToStart(): void;
-    setControlLayers(layers: string[], onChange: (layer: string) => void): void;
+    getScale(): number;
 }

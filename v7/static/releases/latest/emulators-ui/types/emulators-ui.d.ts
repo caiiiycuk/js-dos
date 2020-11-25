@@ -5,6 +5,7 @@ import { video } from "./graphics/video";
 import { keyboard } from "./controls/keyboard";
 import { nipple } from "./controls/nipple";
 import { button } from "./controls/button";
+import { options } from "./controls/options";
 import { domToKeyCode } from "./dom/keys";
 import { audioNode } from "./sound/audio-node";
 import { notyf } from "./notification/notyf";
@@ -42,6 +43,7 @@ export declare class EmulatorsUi {
         keyboard: typeof keyboard;
         nipple: typeof nipple;
         button: typeof button;
+        options: typeof options;
     };
     notifications: {
         notyf: typeof notyf;

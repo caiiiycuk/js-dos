@@ -60,9 +60,9 @@
                      {
                          action: "click",
                          mapTo: 88 /*KBD_x*/,
-                         style: {
-                             left: "16px",
-                             bottom: "32px",
+                         position: {
+                             left: 1,
+                             bottom: 1,
                          }
                      },
                  ];
@@ -72,6 +72,7 @@
                  emulatorsUi.controls.keyboard(layers, ci, mapper);
                  emulatorsUi.controls.button(layers, ci, buttons);
                  emulatorsUi.controls.nipple(layers, ci, mapping);
+                 emulatorsUi.controls.options(layers, ci, [], () => {/**/});
                  layers.hideLoadingLayer();
              });
          }
