@@ -4,7 +4,7 @@ title: Save/Load
 ---
 
 js-dos supports saving and restoring game progress. You can play in game from time to time
-without losing progress. It's working automically while you dont't change bundle url,
+without losing progress. It's working automatically while you don't change bundle url,
 or version of js-dos.
 
 This feature works by dumping whole file system in updated `js-dos bundle` and using it instead of
@@ -28,11 +28,11 @@ const ci = await Dos(<element>)
 
 ## Where progress is stored
 
-While you using default Save/Load feature of js-dos all updates are stored in indexed db.
+While you use default Save/Load feature of js-dos all updates are stored in indexed db.
 This indexed db is used for caching js-dos wasm binaries. The updated bundle is stored
 like key value record, where key is a `bundle url` and value is `Uint8Array` from `ci.persist()` call.
 
-All progress will be lost if you update js-dos version or change bundle url.
+All progress will be lost if you update the js-dos version or change bundle url.
 
 
 Default implementation:

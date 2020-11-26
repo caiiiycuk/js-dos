@@ -3,7 +3,7 @@ id: ui-components
 title: UI Components
 ---
 
-`emulators-ui` is a set of components that used to create js-dos player. You can use them one by one. To use `emulators-ui` components, you need to import `emulators-ui.js`.
+`emulators-ui` is a set of components that are used to create a js-dos player. You can use them one by one. To use `emulators-ui` components, you need to import `emulators-ui.js`.
 
 Package provides following components:
 

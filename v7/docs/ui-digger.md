@@ -7,7 +7,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 In this example you will learn how to start digger in browser using only
 `emulators-ui` components. We will build simple dos player with start/stop functions 
 and backend selector.
-In same way you can build your dos player.
+In the same way you can build your dos player.
 
 <img alt="Result" src={useBaseUrl('img/ui-digger.jpg')} />
 

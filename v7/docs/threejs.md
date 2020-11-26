@@ -5,7 +5,7 @@ title: Three.js
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 In this example you will learn how to use parts of `emulators-ui` with `three.js` renderer.
-We will create rotating cube with digger game as on image.
+We will create a rotating cube with a digger game.
 
 <img alt="Result" src={useBaseUrl('img/threejs.jpg')} />
 

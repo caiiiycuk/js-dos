@@ -5,14 +5,14 @@ title: Buttons
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
 **emulators-ui** and **js-dos bundles** support adding on screen buttons. 
-This buttons can be mapped to key events.
+These buttons can be mapped to key events.
 
 To enable buttons support, you need to add `buttons` section in [jsdos.json](configuration#jsdosjsdosjson).
 In that case js-dos will automatically configure buttons support.
 
 **OR**
 
-You can directly create `button` control like in [Digger](ui-digger) example.
+You can directly create a `button` control like in [Digger](ui-digger) example.
 
 Each button should conform following interface:
 
@@ -33,7 +33,7 @@ export interface Button {
 }
 ```
 
-Each side of screen can snap up to two buttons. For example:
+Each side of the screen can snap up to two buttons. For example:
 * `{ left: 1, top: 1 }` - button will be placed to left-top corner
 * `{ left: 2, top: 1 }` - button will be placed at the top and after previous button
 
@@ -63,13 +63,13 @@ You can create up to 16 buttons per [layer](multiple-layers.md). Layout of all b
 
 :::warning
 If you use default js-dos installation then button `10` will be created automatically.
-This button will be a options button that give access to built-in functions (fullscreen, save-load, etc)
+This button will be an options button that gives access to built-in functions (fullscreen, save-load, etc)
 <img alt="special button" src={useBaseUrl('img/special-button.jpg')} />
 :::
 
 ## Changing style
 
-Currently you can change size of buttons by passing `scale` in layersOptions.
+Currently you can change the size of buttons by passing `scale` in layersOptions.
 ```js
  const layers = emulatorsUi.dom.layers(document.getElementById("root"), { scale: 0.7 });
 ```

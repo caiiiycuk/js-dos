@@ -9,12 +9,10 @@ DOS Direct is an emulation backend based on dosbox, you can create it with follo
 const ci = await emulators.dosDirect(bundle);
 ```
 
-In theory direct version is fastest possible version of emulator backend. But it have strong disadvantage: 
-it's working on main browser thread. So it can easily hangs browser for some amount of time, and not very 
-responsive.
+In theory the direct version is the fastest possible version of the emulator backend. But it has a strong disadvantage: it's working on the main browser thread. So it can easily hang a browser for some amount of time, and not be very responsive.
 
 :::note
 
-[DOS Worker](dos-worker.md) is more preffered version of emulator backend, because it not block the browser.
+[DOS Worker](dos-worker.md) is a more preferred version of the emulator backend, because it does not block the browser.
 
 :::

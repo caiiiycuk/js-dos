@@ -47,7 +47,7 @@ same way to communicate between client (native UI, browser UI) and dosbox.
 ## Server
 
 For simplicity you can think that the server is a dosbox.
-In future server can be implemented with different emulators. Now we support
+In the future servers can be implemented with different emulators. Now we support
 only **dosbox implementation** (look at `jsdos.cmake`).
 
 ### server_run()
@@ -90,8 +90,8 @@ void runRuntime() {
 
 ### client_frame_set_size(width, height)
 
-When server starts it will send frame size of dosbox window by invoking `client_frame_set_size`. You should allocate
-rgba buffer to store frame content. This function will be called each time when dosbox window size is changed.
+When the server starts it will send the frame size of the dosbox window by invoking `client_frame_set_size`. You should allocate rgba buffer to store frame content. This function will be called each time when dosbox window size is changed.
+
 
 ```cpp
 extern int frameWidth = 0;

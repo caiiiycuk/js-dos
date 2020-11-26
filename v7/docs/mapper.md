@@ -11,7 +11,7 @@ In that case js-dos will automatically configure mapper support.
 
 **OR**
 
-You can directly pass `mapper` object to `keyboard` control like in [Digger](ui-digger) example.
+You can directly pass the `mapper` object to `keyboard` control like in [Digger](ui-digger) example.
 
 Mapper should conform following interface:
 

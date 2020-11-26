@@ -3,11 +3,10 @@ id: doszone
 title: Overview
 ---
 
-DOS.Zone - is a js-dos community project. The main target of it is to build repository of `js-dos bundles`, that can be easily used
-to integrate DOS program on any website.
+DOS.Zone - is a js-dos community project. The main target of it is to build repository of `js-dos bundles`, that can be easily used to integrate DOS programs on any website.
 
 DOS.Zone consist of:
-* **Talks** it's place to discuss and publish new `js-dos bundles`. Approved bundles are pushed in dos.zone [repository](https://talks.dos.zone/c/rep/11).
+* [talk.dos.zone](https://talks.dos.zone) is a  place to discuss and publish new `js-dos bundles`. Approved bundles are pushed in dos.zone [repository](https://talks.dos.zone/c/rep/11).
 * [DOS.Zone](https://dos.zone) it's a default player for `js-dos bundles` based on js-dos api.
 * [Game Studio](game-studio) it's a full featured bundles creator for js-dos.
 
