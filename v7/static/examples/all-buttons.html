@@ -15,7 +15,7 @@
          emulators.pathPrefix = "/v7/build/releases/latest/emulators/";
 
          async function start() {
-             const layers = emulatorsUi.dom.layers(document.getElementById("root"), { scale: 1.0 });
+             const layers = emulatorsUi.dom.layers(document.getElementById("root"), { scale: 0.7 });
              layers.showLoadingLayer();
 
              const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos";
@@ -40,10 +40,10 @@
                  }
              };
 
-             addButtonsGroup(buttons, "left", "top", 1);
-             addButtonsGroup(buttons, "left", "bottom", 5);
-             addButtonsGroup(buttons, "right", "top", 10);
-             addButtonsGroup(buttons, "right", "bottom", 15);
+             addButtonsGroup(buttons, "left", "bottom", 1);
+             addButtonsGroup(buttons, "right", "bottom", 5);
+             addButtonsGroup(buttons, "left", "top", 9);
+             addButtonsGroup(buttons, "right", "top", 12);
 
              emulatorsUi.controls.button(layers, ci, buttons);
              layers.hideLoadingLayer();
