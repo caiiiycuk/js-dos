@@ -62,7 +62,7 @@ You can create up to 16 buttons per [layer](multiple-layers.md). Layout of all b
 <img alt="all buttons" src={useBaseUrl('img/all-buttons.jpg')} />
 
 :::warning
-If you use default js-dos installation then button `12` will be created automatically.
+If you use default js-dos installation then button `13` will be created automatically.
 This button will be an options button that gives access to built-in functions (fullscreen, save-load, etc)
 <img alt="special button" src={useBaseUrl('img/special-button.jpg')} />
 :::
