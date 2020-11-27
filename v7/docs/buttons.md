@@ -67,6 +67,11 @@ This button will be an options button that gives access to built-in functions (f
 <img alt="special button" src={useBaseUrl('img/special-button.jpg')} />
 :::
 
+## KBD_NONE
+
+Setting `mapTo` to `KBD_NONE` (keycode: 0) key has the same effect as not defining this virtual button at all.
+
+
 ## Changing style
 
 Currently you can change the size of buttons by passing `scale` in layersOptions.

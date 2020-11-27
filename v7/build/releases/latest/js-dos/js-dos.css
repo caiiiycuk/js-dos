@@ -150,6 +150,7 @@
     background-position: center;
 
     filter: opacity(0.7);
+    background-color: rgba(128, 128, 128, 0.3);
 }
 
 
@@ -197,6 +198,7 @@
     left: 0;
     right: 0;
     z-index: 999;
+    color: black;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
