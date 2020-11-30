@@ -9,9 +9,10 @@ import LibZip from "../../src/libzip/libzip";
 import emulators from "../../src/impl/emulators-impl";
 
 async function toFs(bundle: DosBundle,
-                    cb: (libzip: LibZip) => Promise<void>) {
+                    cb: (libzip: LibZip) => Promise<void>,
+                    overwriteConfig: boolean = false) {
     const packer = await makeLibZip();
-    const array = await bundle.toUint8Array();
+    const array = await bundle.toUint8Array(overwriteConfig);
     destroy(packer);
 
     const unpacker = await makeLibZip();
@@ -60,6 +61,24 @@ export function testDosBundle() {
             assert.ok(digger);
         });
     });
+
+    test("bundle conf can be overwritten", async () => {
+        const dosBundle = await (await emulators.dosBundle());
+        const testPhrase = "overwritten by test";
+        dosBundle.config.autoexec.options.script.value = testPhrase; 
+        dosBundle.extract("digger.jsdos", "/");
+
+        await toFs(dosBundle, async (fs) => {
+            const conf = (await fs.readFile(".jsdos/dosbox.conf", "utf8")) as string;
+            assert.ok(conf.indexOf(testPhrase) === -1, "dosbox.conf should not contains test phrase");
+        });
+
+        await toFs(dosBundle, async (fs) => {
+            const conf = (await fs.readFile(".jsdos/dosbox.conf", "utf8")) as string;
+            assert.ok(conf.indexOf(testPhrase) > 0, "dosbox.conf should contains test phrase");
+        }, true);
+    });
+
 
     test("bundle should download and extract archive to path", async () => {
         const dosBundle = (await emulators.dosBundle())

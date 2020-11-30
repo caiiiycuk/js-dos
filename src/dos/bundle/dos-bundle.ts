@@ -55,14 +55,14 @@ export default class DosBundle {
     }
 
     // ### extractAll
-    public extractAll(sources: DosArchiveSource[]): DosBundle {
+    extractAll(sources: DosArchiveSource[]): DosBundle {
         // download given [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=jsdos-bundle#dosfs-dosarchivesource)
         // and extract them to mountPoint's.
         this.sources.push(...sources);
         return this;
     }
 
-    async toUint8Array(): Promise<Uint8Array> {
+    async toUint8Array(overwriteConfig: boolean = false): Promise<Uint8Array> {
         const module = {};
         await this.libzipWasm.instantiate(module);
         const libzip = new LibZip(module, "/home/web_user");
@@ -87,13 +87,21 @@ export default class DosBundle {
             promises.push(resource);
         }
 
-        await libzip.writeFile(".jsdos/dosbox.conf", conf);
-        await libzip.writeFile(".jsdos/readme.txt", readmeTxt);
-        await libzip.writeFile(".jsdos/jsdos.json", JSON.stringify(this.config, null, 2));
+        if (!overwriteConfig) {
+            await libzip.writeFile(".jsdos/dosbox.conf", conf);
+            await libzip.writeFile(".jsdos/readme.txt", readmeTxt);
+            await libzip.writeFile(".jsdos/jsdos.json", JSON.stringify(this.config, null, 2));
+        }
 
         const resources = await Promise.all(promises);
         for (const resource of resources) {
             libzip.zipToFs(resource.data, resource.source.path);
+        }
+
+        if (overwriteConfig) {
+            await libzip.writeFile(".jsdos/dosbox.conf", conf);
+            await libzip.writeFile(".jsdos/readme.txt", readmeTxt);
+            await libzip.writeFile(".jsdos/jsdos.json", JSON.stringify(this.config, null, 2));
         }
 
         const bundle = await libzip.zipFromFs();
