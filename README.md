@@ -5,6 +5,10 @@ js-dos 7.xx
 
 **DO NOT USE IN PRODUCTION** use 6.22 instead.
 
+Subscribe our [twitter](https://twitter.com/doszone_db/) channel for updates. 
+
+Join our [discord](https://discord.com/invite/hMVYEbG) community.
+
 [js-dos 6.22](https://js-dos.com)
 ===========
 
