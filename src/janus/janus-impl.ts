@@ -29,6 +29,8 @@ function dataAssembler(onMessage: (data: string) => void,
 }
 
 class JanusBackendImpl implements CommandInterface {
+    private startedAt = Date.now();
+
     private janus: JanusJS.Janus;
     private eventsImpl: CommandInterfaceEventsImpl;
 
@@ -160,18 +162,25 @@ class JanusBackendImpl implements CommandInterface {
     }
 
     simulateKeyPress(...keyCodes: number[]) {
-        keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, true));
-        keyCodes.forEach(keyCode => this.sendKeyEvent(keyCode, false));
+        const timeMs = Date.now() - this.startedAt;
+        keyCodes.forEach(keyCode => this.addKey(keyCode, true, timeMs));
+        keyCodes.forEach(keyCode => this.addKey(keyCode, false, timeMs + 16));
     }
 
-    async sendKeyEvent(keyCode: number, pressed: boolean) {
-        const handle = await this.handlePromise;
+    sendKeyEvent(keyCode: number, pressed: boolean) {
+        this.addKey(keyCode, pressed, Date.now() - this.startedAt);
+    }
+
+    async addKey(keyCode: number, pressed: boolean, timeMs: number) {
         const keyPressed = this.keyMatrix[keyCode] === true;
         if (keyPressed === pressed) {
             return;
         }
         this.keyMatrix[keyCode] = pressed;
-        handle.data({ text: "pipe k" + (pressed ? "down" : "up") + " " + keyCode })
+
+        const handle = await this.handlePromise;
+        handle.data({ text: "pipe k" + (pressed ? "down" : "up") + " " + keyCode +
+            " " + timeMs});
     }
 
     persist(): Promise<Uint8Array> {
