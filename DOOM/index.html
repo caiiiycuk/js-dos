@@ -12,7 +12,6 @@
   <meta name="description" content="Play in the DOOM in browser.">
   <meta name="keywords" content="DOOM,pc,game,javscript">
   <meta name="author" content="Guryanov Aleksander aka caiiiycuk">
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 
 
   <title>
@@ -415,19 +414,12 @@
 </div>
 
     </div>
-
-            <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
         <script>
-         (new Notyf({
-             duration: 30000,
-             position: { x: 'center', y: 'center'},
-             dismissible: true,
-             types: [{
-                 type: 'error',
-                 background: 'indianred',
-                 icon: false,
-             }],
-         })).error('This version of the game is outdated and does not support mobiles, follow <strong><a href="https://dos.zone/rep/my/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2Fe%2Fede529c8e71c94363f9f3c8fd84519608bd632ea.jsdos">this link</a></strong> for better experience.');
-    </script>
+         var url = "https://dos.zone/rep/my/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2Fe%2Fede529c8e71c94363f9f3c8fd84519608bd632ea.jsdos";
+         var wrapper = document.createElement("div");
+         wrapper.style.cssText = "position: absolute;background: indianred;padding: 10px;z-index: 999;top: 0;color: #fffefe;text-transform: uppercase;background: rgb(220,29,29);background: linear-gradient(45deg, rgb(220, 29, 29) 0%, rgb(200, 29, 29) 100%);";
+         wrapper.innerHTML = 'This version of the game is outdated and does not support mobiles, play on <strong><a href="' + url + '">DOS.Zone</a></strong> for better experience.'
+         document.body.appendChild(wrapper);
+        </script>
   </body>
 </html>
