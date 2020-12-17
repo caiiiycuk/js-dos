@@ -12,6 +12,8 @@
   <meta name="description" content="Play in the DOOM in browser.">
   <meta name="keywords" content="DOOM,pc,game,javscript">
   <meta name="author" content="Guryanov Aleksander aka caiiiycuk">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+
 
   <title>
     
@@ -24,10 +26,7 @@
   <meta property="og:type" content="game" />
   <meta property="og:url" content="https://js-dos.com/DOOM/" />
   <meta property="og:image" content="https://js-dos.com/cdn/DOOM.png" />
-    
-    <script>
-     window.location.href = "https://dos.zone/rep/my/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2Fe%2Fede529c8e71c94363f9f3c8fd84519608bd632ea.jsdos";
-    </script>
+
 
   <!-- CSS -->
   <link rel="stylesheet" href="/public/css/poole.css">
@@ -416,6 +415,19 @@
 </div>
 
     </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+        <script>
+         (new Notyf({
+             duration: 30000,
+             position: { x: 'center', y: 'center'},
+             dismissible: true,
+             types: [{
+                 type: 'error',
+                 background: 'indianred',
+                 icon: false,
+             }],
+         })).error('This version of the game is outdated and does not support mobiles, follow <strong><a href="https://dos.zone/rep/my/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2Fe%2Fede529c8e71c94363f9f3c8fd84519608bd632ea.jsdos">this link</a></strong> for better experience.');
 
   </body>
 </html>
