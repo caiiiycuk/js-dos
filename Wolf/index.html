@@ -24,10 +24,6 @@
   <meta property="og:type" content="game" />
   <meta property="og:url" content="https://js-dos.com/Wolf/" />
   <meta property="og:image" content="https://js-dos.com/cdn/Wolf.png" />
-    
-  <script>
-     window.location.href = "https://dos.zone/rep/my/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2Fa%2Fac888d1660aa253f0ed53bd6c962c894125aaa19.jsdos";
-  </script>
 
   <!-- CSS -->
   <link rel="stylesheet" href="/public/css/poole.css">
@@ -406,6 +402,13 @@
 </div>
 
     </div>
+    <script>
+     var url = "https://dos.zone/rep/my/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2Fa%2Fac888d1660aa253f0ed53bd6c962c894125aaa19.jsdos";
+     var wrapper = document.createElement("div");
+     wrapper.style.cssText = "position: absolute;background: indianred;padding: 10px;z-index: 999;top: 0;color: #fffefe;text-transform: uppercase;background: rgb(220,29,29);background: linear-gradient(45deg, rgb(220, 29, 29) 0%, rgb(200, 29, 29) 100%);text-align:center;left:0;right:0;";
+     wrapper.innerHTML = 'This version of the game is outdated and does not support mobiles.<br/>Play on <strong><a style="color: yellow;text-decoration:underline;" href="' + url + '">DOS.Zone</a></strong> for better experience.'
+     document.body.appendChild(wrapper);
+    </script>
 
   </body>
 </html>
