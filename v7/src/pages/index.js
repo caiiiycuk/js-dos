@@ -17,6 +17,7 @@ const features = [
         <code>
           Dos(element).run("game.jsdos")
         </code><br/>
+        <strong>1500+ bundles are ready to run in browser</strong><br/>
         <a href="docs">Read more</a>
       </>
     ),
