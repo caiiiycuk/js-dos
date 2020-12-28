@@ -85,7 +85,6 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
-          homePageId: 'overview',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
             'https://github.com/caiiiycuk/js-dos/edit/gh-pages/v7/',
