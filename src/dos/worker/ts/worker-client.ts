@@ -2,7 +2,7 @@ import { WasmModule } from "../../../impl/modules";
 import { DosConfig } from "../../bundle/dos-conf";
 
 type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" |
-    "wc-add-key" | "wc-exit";
+    "wc-add-key" | "wc-mouse-move" | "wc-mouse-button" | "wc-exit";
 type ServerMessage = "ws-ready" | "ws-server-ready" | "ws-frame-set-size" |
     "ws-update-lines" | "ws-log" | "ws-warn" | "ws-err" | "ws-stdout" |
     "ws-exit" | "ws-persist" | "ws-sound-init" | "ws-sound-push" |
@@ -143,11 +143,11 @@ export class WorkerClient {
     }
 
     sendMouseMotion(x: number, y: number, timeMs: number) {
-        throw new Error("Not implemented");
+        this.sendMessage("wc-mouse-move", { x, y, timeMs })
     }
 
     sendMouseButton(button: number, pressed: boolean, timeMs: number) {
-        throw new Error("Not Implemented");
+        this.sendMessage("wc-mouse-button", { button, pressed, timeMs });
     }
 
     persist() {

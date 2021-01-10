@@ -46,9 +46,6 @@ const compare = (imageUrl: string, ci: CommandInterface, threshold: number) => {
 
                 const actualImage = new Image();
                 actualImage.onload = () => {
-                    assert(img.width === actualImage.width, "Invalid width: " + actualImage.width + ", should be " + img.width);
-                    assert(img.height === actualImage.height, "Invalid height: " + actualImage.height + ", should be " + img.height);
-
                     const renderComparsion = () => {
                         document.body.appendChild(document.createElement("hr"));
                         document.body.appendChild(img); // for comparisons
@@ -57,6 +54,13 @@ const compare = (imageUrl: string, ci: CommandInterface, threshold: number) => {
                         document.body.appendChild(div);
                         document.body.appendChild(actualImage); // to grab it for creating the test reference
                     };
+
+                    if (img.width !== actualImage.width ||
+                        img.height !== actualImage.height) {
+                        renderComparsion();
+                        assert(img.width === actualImage.width, "Invalid width: " + actualImage.width + ", should be " + img.width);
+                        assert(img.height === actualImage.height, "Invalid height: " + actualImage.height + ", should be " + img.height);
+                    }
 
                     const actualCanvas = document.createElement("canvas");
                     actualCanvas.width = actualImage.width;

@@ -66,6 +66,12 @@ EM_JS(void, ws_init_runtime, (), {
         case "wc-add-key": {
           Module._addKey(data.props.key, data.props.pressed, data.props.timeMs);
         } break;
+        case "wc-mouse-move": {
+          Module._mouseMove(data.props.x, data.props.y, data.props.timeMs);
+        } break;
+        case "wc-mouse-button": {
+          Module._mouseButton(data.props.button, data.props.pressed, data.props.timeMs);
+        } break;
         default: {
           console.log("ws " + JSON.stringify(data));
         } break;
@@ -213,6 +219,18 @@ extern "C" void EMSCRIPTEN_KEEPALIVE packFsToBundle() {
 
 extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed, uint64_t timeMs) {
   server_add_key(key, pressed, timeMs);
+}
+
+extern "C" void EMSCRIPTEN_KEEPALIVE mouseMove(float x, float y, uint64_t movedMs) {
+  static float prevX = 0;
+  static float prevY = 0;
+  server_mouse_moved(x - prevX, y - prevY, x, y, movedMs);
+  prevX = x;
+  prevY = y;
+}
+
+extern "C" void EMSCRIPTEN_KEEPALIVE mouseButton(int button, bool pressed, uint64_t pressedMs) {
+  server_mouse_button(button, pressed, pressedMs);
 }
 
 extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime() {

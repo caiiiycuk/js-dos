@@ -208,7 +208,7 @@ function testServer(factory: CIFactory, name: string) {
             }
 
             const screenshot = () => {
-                compareAndExit("digger-end.png", ci, 2)
+                compareAndExit("mousetst.png", ci, 2)
                     .then(resolve)
                     .catch(reject);
             };
