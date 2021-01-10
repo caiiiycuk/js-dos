@@ -380,7 +380,7 @@ void server_mouse_moved(float xrel, float yrel, float x, float y, uint64_t moved
 #ifndef EMSCRIPTEN
   std::lock_guard<std::mutex> g(eventsMutex);
 #endif
-  Mouse_CursorMoved(xrel, yrel, x, y, false);
+  Mouse_CursorMoved(xrel, yrel, x / surfaceWidth, y / surfaceHeight, false);
 }
 
 void server_mouse_button(int button, bool pressed, uint64_t pressedMs) {
