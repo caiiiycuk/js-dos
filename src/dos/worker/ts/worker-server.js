@@ -5,17 +5,19 @@ onmessage = (e) => {
     }
 
     if (data.name === "wc-install") {
-        const wasmModule = data.props.module;
-        const instantiateWasm = (info, receiveInstance) => {
-            info.env = info.env || {};
-            WebAssembly.instantiate(wasmModule, info)
-                .then((instance) => receiveInstance(instance, wasmModule));
-            return; // no-return
-        };
+        const module = {};
 
-        const module = {
-            instantiateWasm,
-        };
+        if (data.props.module !== undefined) {
+            const wasmModule = data.props.module;
+            const instantiateWasm = (info, receiveInstance) => {
+                info.env = info.env || {};
+                WebAssembly.instantiate(wasmModule, info)
+                    .then((instance) => receiveInstance(instance, wasmModule));
+                return; // no-return
+            };
+
+            module.instantiateWasm = instantiateWasm;
+        }
 
         module.onRuntimeInitialized = () => {
             module.callMain([]);
@@ -25,4 +27,3 @@ onmessage = (e) => {
         return;
     }
 };
-

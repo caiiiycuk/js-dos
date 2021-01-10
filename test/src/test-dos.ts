@@ -192,4 +192,29 @@ function testServer(factory: CIFactory, name: string) {
         await ci.exit();
     });
 
+    test(name + " can simulate mouse events", async () => {
+        const buffer = await HTTPRequest("mousetst.jsdos", {
+            cache: new CacheNoop(),
+            responseType: "arraybuffer",
+        });
+
+        const ci = await factory(new Uint8Array(buffer as ArrayBuffer));
+        assert.ok(ci);
+
+        await new Promise((resolve, reject) => {
+            const sendFn = () => {
+                ci.sendMouseMotion(320, 200);
+                ci.sendMouseButton(0, true);
+            }
+
+            const screenshot = () => {
+                compareAndExit("digger-end.png", ci, 2)
+                    .then(resolve)
+                    .catch(reject);
+            };
+
+            setTimeout(sendFn, 1000);
+            setTimeout(screenshot, 2000);
+        });
+    });
 }

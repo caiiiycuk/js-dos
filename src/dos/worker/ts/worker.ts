@@ -175,6 +175,14 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
         this.client.addKey(keyCode, pressed, timeMs);
     }
 
+    sendMouseMotion(x: number, y: number) {
+        this.client.sendMouseMotion(x, y, Date.now() - this.startedAt);
+    }
+
+    sendMouseButton(button: number, pressed: boolean) {
+        this.client.sendMouseButton(button, pressed, Date.now() - this.startedAt);
+    }
+
     public persist(): Promise<Uint8Array> {
         if (this.persistPromise !== undefined) {
             return this.persistPromise;

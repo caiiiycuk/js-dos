@@ -50,6 +50,12 @@ export interface CommandInterface {
     // * `sendKeyEvent(keyCode, pressed)` - sends single key (press or release) event to backend
     sendKeyEvent: (keyCode: number, pressed: boolean) => void;
 
+    // * `simulateMouseMotion` - sends mouse motion event to backend
+    sendMouseMotion: (x: number, y: number) => void;
+
+    // * `simulateMouseButton` - sends mouse button event (press or release) to backend
+    sendMouseButton: (button: number, pressed: boolean) => void;
+
     // dump FS as Uint8Array <zip archive>
     persist(): Promise<Uint8Array>;
 

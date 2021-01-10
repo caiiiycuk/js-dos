@@ -144,6 +144,14 @@ class DirectCommandInterface implements CommandInterface {
         this.module._addKey(keyCode, pressed, timeMs);
     }
 
+    public sendMouseMotion(x: number, y: number) {
+        this.module._mouseMoved(x, y, Date.now() - this.startedAt);
+    }
+
+    public sendMouseButton(button: number, pressed: boolean) {
+        this.module._mouseButton(button, pressed, Date.now() - this.startedAt);
+    }
+
     public persist(): Promise<Uint8Array> {
         if (this.persistPromise !== undefined) {
             return this.persistPromise;

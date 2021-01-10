@@ -10,6 +10,7 @@
 #include <programs.h>
 #include <protocol.h>
 #include <video.h>
+#include <mouse.h>
 #include <cstdarg>
 
 #include "timer.h"
@@ -375,6 +376,23 @@ void server_add_key(KBD_KEYS key, bool pressed, uint64_t pressedMs) {
     }
 }
 
+void server_mouse_moved(float xrel, float yrel, float x, float y, uint64_t movedMs) {
+#ifndef EMSCRIPTEN
+  std::lock_guard<std::mutex> g(eventsMutex);
+#endif
+  Mouse_CursorMoved(xrel, yrel, x, y, false);
+}
+
+void server_mouse_button(int button, bool pressed, uint64_t pressedMs) {
+#ifndef EMSCRIPTEN
+  std::lock_guard<std::mutex> g(eventsMutex);
+#endif
+  if (pressed) {
+    Mouse_ButtonPressed(button);
+  } else {
+    Mouse_ButtonReleased(button);
+  }
+}
 
 void server_exit() {
     jsdos::requestExit();

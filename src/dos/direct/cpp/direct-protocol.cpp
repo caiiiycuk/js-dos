@@ -159,6 +159,18 @@ extern "C" void EMSCRIPTEN_KEEPALIVE addKey(KBD_KEYS key, bool pressed, uint64_t
   server_add_key(key, pressed, timeMs);
 }
 
+extern "C" void EMSCRIPTEN_KEEPALIVE mouseMoved(float x, float y, uint64_t movedMs) {
+  static float prevX = 0;
+  static float prevY = 0;
+  server_mouse_moved(x - prevX, y - prevY, x, y, movedMs);
+  prevX = x;
+  prevY = y;
+}
+
+extern "C" void EMSCRIPTEN_KEEPALIVE mouseButton(int button, bool pressed, uint64_t pressedMs) {
+  server_mouse_button(button, pressed, pressedMs);
+}
+
 extern "C" void EMSCRIPTEN_KEEPALIVE exitRuntime() {
 #ifdef EMSCRIPTEN
   emsc_exit_runtime();

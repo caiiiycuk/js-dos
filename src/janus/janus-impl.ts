@@ -183,6 +183,16 @@ class JanusBackendImpl implements CommandInterface {
             " " + timeMs});
     }
 
+    async sendMouseMotion(x: number, y: number) {
+        (await this.handlePromise)
+            .data({ text: "pipe mmove " + x + " " + y + " " + (Date.now() - this.startedAt)});
+    }
+
+    async sendMouseButton(button: number, pressed: boolean) {
+        (await this.handlePromise)
+            .data({ text: "pipe m" + (pressed ? "down" : "up") + " " + button + " " + (Date.now() - this.startedAt)});
+    }
+
     persist(): Promise<Uint8Array> {
         return Promise.reject(new Error("Not supported"));
     }

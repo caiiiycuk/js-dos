@@ -65,7 +65,12 @@ export class WorkerClient {
         }
 
         wasmModule.instantiate({});
-        this.sendMessage("wc-install", { module: (wasmModule as any).wasmModule });
+        try {
+            this.sendMessage("wc-install", { module: (wasmModule as any).wasmModule });
+        } catch (e) {
+            console.error("Can't send wasmModule to worker", e);
+            this.sendMessage("wc-install");
+        }
     }
 
     sendMessage(name: ClientMessage, props?: {[key: string]: any}) {
@@ -135,6 +140,14 @@ export class WorkerClient {
         }
         this.keyMatrix[keyCode] = pressed;
         this.sendMessage("wc-add-key", { key: keyCode, pressed, timeMs });
+    }
+
+    sendMouseMotion(x: number, y: number, timeMs: number) {
+        throw new Error("Not implemented");
+    }
+
+    sendMouseButton(button: number, pressed: boolean, timeMs: number) {
+        throw new Error("Not Implemented");
     }
 
     persist() {
