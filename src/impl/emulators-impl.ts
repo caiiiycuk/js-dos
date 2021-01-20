@@ -11,13 +11,14 @@ import Janus from "../janus/janus-impl";
 
 class EmulatorsImpl implements Emulators {
     pathPrefix = "";
+    cacheSeed = "";
 
     private cachePromise?: Promise<Cache>;
     private wasmModulesPromise?: Promise<IWasmModules>;
 
-    cache(seed?: string): Promise<Cache> {
+    cache(): Promise<Cache> {
         if (this.cachePromise === undefined) {
-            this.cachePromise = CacheDb(Build.version + (seed !== undefined ? " " + seed : ""), {
+            this.cachePromise = CacheDb(Build.version + " " + this.cacheSeed, {
                 // tslint:disable-next-line
                 onErr: console.error,
             });

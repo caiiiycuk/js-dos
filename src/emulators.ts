@@ -10,8 +10,11 @@ export interface Emulators {
     // you should specify path prefix if you want to load them from different place
     pathPrefix: string;
 
+    // * cacheSeed
+    cacheSeed: string;
+
     // * cache - default cache that store wasm binaries, this cache is wiped on any js-dos version change
-    cache: (seed?: string) => Promise<Cache>;
+    cache: () => Promise<Cache>;
 
     dosBundle: () => Promise<DosBundle>;
 
