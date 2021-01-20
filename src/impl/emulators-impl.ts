@@ -15,9 +15,9 @@ class EmulatorsImpl implements Emulators {
     private cachePromise?: Promise<Cache>;
     private wasmModulesPromise?: Promise<IWasmModules>;
 
-    cache(): Promise<Cache> {
+    cache(seed?: string): Promise<Cache> {
         if (this.cachePromise === undefined) {
-            this.cachePromise = CacheDb(Build.version, {
+            this.cachePromise = CacheDb(Build.version + (seed !== undefined ? " " + seed : ""), {
                 // tslint:disable-next-line
                 onErr: console.error,
             });
