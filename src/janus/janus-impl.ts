@@ -11,21 +11,25 @@ function dataAssembler(onMessage: (data: string) => void,
                        onError: (message: any) => void) {
     let acc: string = "";
 
-    return (data: string) => {
+    const assemble = (data: string) => {
         const splitIndex = data.indexOf("\n");
         if (splitIndex == -1) {
             acc += data;
         } else {
             const payload = acc + data.substr(0, splitIndex);
-            acc = data.substr(splitIndex + 1);
+            acc = "";
 
             try {
                 onMessage(atob(payload));
             } catch (e) {
                 onError(e);
             }
+
+            assemble(data.substr(splitIndex + 1));
         }
     };
+
+    return assemble;
 }
 
 class JanusBackendImpl implements CommandInterface {
@@ -45,6 +49,9 @@ class JanusBackendImpl implements CommandInterface {
     private handleResolveFn: (handle: JanusJS.PluginHandle) => void = () => {/**/};
 
     private keyMatrix: {[keyCode: number]: boolean} = {};
+
+    private frameWidth = 0;
+    private frameHeight = 0;
 
     constructor(janus: JanusJS.Janus, opaqueId: string) {
         this.eventsImpl = new CommandInterfaceEventsImpl();
@@ -93,6 +100,10 @@ class JanusBackendImpl implements CommandInterface {
     private onDataMessage = (data: string) => {
         if (data.startsWith("config=")) {
             this.configResolveFn(JSON.parse(data.substr("config=".length)));
+        } else if (data.startsWith("frame=")) {
+            const [width, height] = data.substr("frame=".length).split("x");
+            this.frameWidth = Number.parseInt(width, 10) || 0;
+            this.frameHeight = Number.parseInt(height, 10) || 0;
         } else {
             this.eventsImpl.fireStdout(data);
         }
@@ -146,15 +157,15 @@ class JanusBackendImpl implements CommandInterface {
     }
 
     width(): number {
-        throw new Error("Please use videoWidth property of binded HTMLVideoElement");
+        return this.frameWidth;
     }
 
     height(): number {
-        throw new Error("Please use videoHeight property of binded HTMLVideoElement");
+        return this.frameHeight;
     }
 
     soundFrequency(): number {
-        throw new Error("Not supported in this backend");
+        return 44100;
     }
 
     screenshot() {
