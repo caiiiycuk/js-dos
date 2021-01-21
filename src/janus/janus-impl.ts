@@ -33,6 +33,7 @@ function dataAssembler(onMessage: (data: string) => void,
 }
 
 class JanusBackendImpl implements CommandInterface {
+    private live = true;
     private startedAt = Date.now();
 
     private janus: JanusJS.Janus;
@@ -41,7 +42,7 @@ class JanusBackendImpl implements CommandInterface {
     private exitPromise: Promise<void>;
     private exitResolveFn: () => void = () => {/**/};
 
-    private configPromise?: Promise<DosConfig>;
+    private configPromise: Promise<DosConfig>;
     private configResolveFn: (dosConfig: DosConfig) => void = () => {/**/};
 
     private opaqueId: string;
@@ -53,15 +54,51 @@ class JanusBackendImpl implements CommandInterface {
     private frameWidth = 0;
     private frameHeight = 0;
 
+    private eventQueue = "";
+    private eventIntervalId = -1;
+
     constructor(janus: JanusJS.Janus, opaqueId: string) {
         this.eventsImpl = new CommandInterfaceEventsImpl();
         this.janus = janus;
         this.opaqueId = opaqueId;
+
         this.exitPromise = new Promise<void>((resolve) => {
             this.exitResolveFn = resolve;
         });
-        this.handlePromise = new Promise<JanusJS.PluginHandle>((resolve) => {
-            this.handleResolveFn = resolve;
+
+        this.configPromise = new Promise<DosConfig>((resolve) => {
+            this.configResolveFn = resolve;
+        });
+
+        this.handlePromise = new Promise<JanusJS.PluginHandle>((resolve, reject) => {
+            this.handleResolveFn = (handle: JanusJS.PluginHandle) => {
+                if (!this.live) {
+                    reject(new Error("exit() was called"));
+                    return;
+                }
+
+                // workaround for sending immediately after init
+                setTimeout(() => {
+                    if (!this.live) {
+                        return;
+                    }
+
+                    handle.data({ text: "pipe config" });
+                }, 1000);
+
+                this.config().then(() => {
+                    if (!this.live) {
+                        return;
+                    }
+
+                    // start events exchange
+                    this.eventIntervalId = setInterval(() => {
+                        this.sendEventsData(handle);
+                    }, 8) as any;
+                });
+
+                resolve(handle);
+            }
         });
         this.attach();
     }
@@ -142,17 +179,6 @@ class JanusBackendImpl implements CommandInterface {
     }
 
     async config(): Promise<DosConfig> {
-        if (this.configPromise !== undefined) {
-            return this.configPromise;
-        }
-        this.configPromise = new Promise<DosConfig>((resolve) => {
-            this.configResolveFn = resolve;
-        });
-        const handle = await this.handlePromise;
-        // workaround for sending immediately after init
-        setTimeout(() => {
-            handle.data({ text: "pipe config" });
-        }, 1000);
         return this.configPromise;
     }
 
@@ -189,19 +215,24 @@ class JanusBackendImpl implements CommandInterface {
         }
         this.keyMatrix[keyCode] = pressed;
 
-        const handle = await this.handlePromise;
-        handle.data({ text: "pipe k" + (pressed ? "down" : "up") + " " + keyCode +
-            " " + timeMs});
+        this.eventQueue += "pipe k" + (pressed ? "down" : "up") + " " + keyCode +
+            " " + timeMs + "\n";
     }
 
     async sendMouseMotion(x: number, y: number) {
-        (await this.handlePromise)
-            .data({ text: "pipe mmove " + x + " " + y + " " + (Date.now() - this.startedAt)});
+        this.eventQueue += "pipe mmove " + x + " " + y + " " + (Date.now() - this.startedAt) + "\n";
     }
 
     async sendMouseButton(button: number, pressed: boolean) {
-        (await this.handlePromise)
-            .data({ text: "pipe m" + (pressed ? "down" : "up") + " " + button + " " + (Date.now() - this.startedAt)});
+        this.eventQueue += "pipe m" + (pressed ? "down" : "up") + " " + button + " " + (Date.now() - this.startedAt) + "\n";
+    }
+
+    private async sendEventsData(handle: JanusJS.PluginHandle) {
+        if (this.eventQueue.length === 0) {
+            return;
+        }
+        handle.data({ text: this.eventQueue });
+        this.eventQueue = "";
     }
 
     persist(): Promise<Uint8Array> {
@@ -209,6 +240,9 @@ class JanusBackendImpl implements CommandInterface {
     }
 
     exit() {
+        this.live = false;
+        clearInterval(this.eventIntervalId);
+        this.eventIntervalId = -1;
         this.janus.destroy()
         return this.exitPromise;
     }

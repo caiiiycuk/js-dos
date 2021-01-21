@@ -78,6 +78,17 @@ test("should render playable video game", async() => {
     window.addEventListener("keyup", (e) => {
         ci.sendKeyEvent(getKeyCode(e.keyCode), false);
     });
+    const videoEl = document.getElementById("video");
+    videoEl.addEventListener("mousedown", (e) => {
+        ci.sendMouseButton(0, true);
+    });
+    videoEl.addEventListener("mousemove", (e) => {
+        ci.sendMouseMotion(e.offsetX / 320 * ci.width(),
+                           e.offsetY / 240 * ci.height());
+    });
+    videoEl.addEventListener("mouseup", (e) => {
+        ci.sendMouseButton(0, false);
+    });
 
     await new Promise<void>((resolve) => {
         ci.events().onMessage((msgType: JanusMessageType, stream: MediaStream) => {
