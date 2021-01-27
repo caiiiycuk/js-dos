@@ -7,12 +7,12 @@ import { DosConfig } from "../../bundle/dos-conf";
 
 export default function DosWorker(workerUrl: string,
                                   wasm: WasmModule,
-                                  bundle: Uint8Array): Promise<CommandInterface> {
+                                  bundles: Uint8Array[]): Promise<CommandInterface> {
     return new Promise<CommandInterface>((resolve, reject) => {
         try {
             new WorkerCommandInterface(workerUrl,
                                        wasm,
-                                       bundle,
+                                       bundles,
                                        (ci, error) => {
                                            if (error !== undefined) {
                                                ci.exit()
@@ -52,12 +52,12 @@ class WorkerCommandInterface implements CommandInterface, WorkerHost {
 
     constructor(workerUrl: string,
                 wasmModule: WasmModule,
-                bundle: Uint8Array,
+                bundles: Uint8Array[],
                 ready: (ci: CommandInterface, err?: Error) => void) {
         this.configPromise = new Promise<DosConfig>((resolve) => this.configResolve = resolve);
         this.client = new WorkerClient(workerUrl,
                                        wasmModule,
-                                       bundle,
+                                       bundles,
                                        this,
                                        () => {
                                            if ((this.startupErrorLog || "").length > 0) {

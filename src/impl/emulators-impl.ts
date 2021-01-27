@@ -33,16 +33,18 @@ class EmulatorsImpl implements Emulators {
         return new DosBundle(libzipWasm, cache);
     }
 
-    async dosDirect(bundle: Uint8Array): Promise<CommandInterface> {
+    async dosDirect(bundle: Uint8Array | Uint8Array[]): Promise<CommandInterface> {
         const modules = await this.wasmModules();
         const dosDirectWasm = await modules.dosDirect();
-        return DosDirect(dosDirectWasm, bundle);
+        return DosDirect(dosDirectWasm,
+                         Array.isArray(bundle) ? bundle : [bundle]);
     }
 
-    async dosWorker(bundle: Uint8Array): Promise<CommandInterface> {
+    async dosWorker(bundle: Uint8Array | Uint8Array[]): Promise<CommandInterface> {
         const modules = await this.wasmModules();
         const dosWorkerWasm = await modules.dosWorker();
-        return DosWorker(this.pathPrefix + "wworker.js", dosWorkerWasm, bundle);
+        return DosWorker(this.pathPrefix + "wworker.js", dosWorkerWasm,
+                         Array.isArray(bundle) ? bundle : [bundle]);
     }
 
     async janus(restUrl: string): Promise<CommandInterface> {

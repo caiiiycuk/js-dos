@@ -32,7 +32,7 @@ export interface WorkerHost {
 export class WorkerClient {
 
     private worker: Worker;
-    private bundle?: Uint8Array;
+    private bundles?: Uint8Array[];
     private host: WorkerHost;
     private ready: () => void;
 
@@ -40,10 +40,10 @@ export class WorkerClient {
 
     constructor(workerUrl: string,
                 wasmModule: WasmModule,
-                bundle: Uint8Array,
+                bundles: Uint8Array[],
                 host: WorkerHost,
                 ready: () => void) {
-        this.bundle = bundle;
+        this.bundles = bundles;
         this.host = host;
         this.ready = ready;
         this.worker = new Worker(workerUrl);
@@ -84,9 +84,9 @@ export class WorkerClient {
         switch (name) {
             case "ws-ready": {
                 this.sendMessage("wc-run", {
-                    bundle: this.bundle,
+                    bundles: this.bundles,
                 });
-                delete this.bundle;
+                delete this.bundles;
             } break;
             case "ws-server-ready": {
                 this.ready();

@@ -19,10 +19,10 @@ export interface Emulators {
     dosBundle: () => Promise<DosBundle>;
 
     // * dosDirect - create DOS Direct emulator backend
-    dosDirect: (bundle: Uint8Array) => Promise<CommandInterface>;
+    dosDirect: (bundle: Uint8Array | Uint8Array[]) => Promise<CommandInterface>;
 
     // * dosWorker - create DOS Worker emulator backend
-    dosWorker: (bundle: Uint8Array) => Promise<CommandInterface>;
+    dosWorker: (bundle: Uint8Array | Uint8Array[]) => Promise<CommandInterface>;
 
     janus: (restUrl: string) => Promise<CommandInterface>;
 }
@@ -59,7 +59,7 @@ export interface CommandInterface {
     // * `simulateMouseButton` - sends mouse button event (press or release) to backend
     sendMouseButton: (button: number, pressed: boolean) => void;
 
-    // dump FS as Uint8Array <zip archive>
+    // dump **changed** FS as Uint8Array <zip archive>
     persist(): Promise<Uint8Array>;
 
     // events

@@ -11,7 +11,7 @@ import { CacheNoop } from "../../src/cache";
 import { Keys } from "../../src/keys";
 import { createDosConfig } from "../../src/dos/bundle/dos-conf";
 
-type CIFactory = (bundle: Uint8Array) => Promise<CommandInterface>;
+type CIFactory = (bundle: Uint8Array | Uint8Array[]) => Promise<CommandInterface>;
 
 export function testDos() {
     testServer((bundle) => emulatorsImpl.dosDirect(bundle), "dosDirect");
@@ -83,7 +83,12 @@ function testServer(factory: CIFactory, name: string) {
     });
 
     test(name + " should store fs updates between sessions [existent db]", async () => {
-        const ci = await factory(cachedBundle);
+        const buffer = await HTTPRequest("digger.jsdos", {
+            cache: new CacheNoop(),
+            responseType: "arraybuffer",
+        });
+
+        const ci = await factory([new Uint8Array(buffer as ArrayBuffer), cachedBundle]);
         assert.ok(ci);
         cachedBundle = new Uint8Array();
         await compareAndExit("persistent-mount-second.png", ci);

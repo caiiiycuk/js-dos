@@ -4,7 +4,7 @@ import { WasmModule } from "../../../impl/modules";
 import { CommandInterfaceEventsImpl } from "../../../impl/ci-impl";
 
 export default async function DosDirect(wasm: WasmModule,
-                                        bundle: Uint8Array): Promise<CommandInterface> {
+                                        bundles: Uint8Array[]): Promise<CommandInterface> {
     const eventsImpl = new CommandInterfaceEventsImpl();
 
     let startupErrorLog: string = "";
@@ -39,7 +39,7 @@ export default async function DosDirect(wasm: WasmModule,
 
     const ci = await new Promise<CommandInterface>((resolve, reject) => {
         try {
-            new DirectCommandInterface(module, bundle, eventsImpl, resolve);
+            new DirectCommandInterface(module, bundles, eventsImpl, resolve);
         } catch (e) {
             reject(e);
         }
@@ -66,7 +66,7 @@ class DirectCommandInterface implements CommandInterface {
     private keyMatrix: {[keyCode: number]: boolean} = {};
 
     constructor(module: any,
-                bundle: Uint8Array,
+                bundles: Uint8Array[],
                 eventsImpl: CommandInterfaceEventsImpl,
                 ready: (ci: CommandInterface) => void) {
         this.module = module;
@@ -84,7 +84,7 @@ class DirectCommandInterface implements CommandInterface {
             const soundData = this.module.HEAPF32.slice(samples / 4, samples /4 + numSamples);
             eventsImpl.fireSoundPush(soundData);
         };
-        this.module.bundle = new Uint8Array(bundle);
+        this.module.bundles = bundles;
         this.eventsImpl = eventsImpl;
         this.module.callMain([]);
         ready(this);
