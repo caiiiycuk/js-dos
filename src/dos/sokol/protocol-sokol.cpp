@@ -19,7 +19,7 @@
 std::mutex mutex;
 
 #define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 400
+#define WINDOW_HEIGHT 480
 
 int renderedFrame = 0;
 int frameCount = 0;
@@ -190,22 +190,16 @@ void client_run() {
         keyEvent(event);
         break;
       case SAPP_EVENTTYPE_MOUSE_MOVE: {
-        float x = event->mouse_x;
-        float y = event->mouse_y;
-        server_mouse_moved(x - prevX, y - prevY, x, y,
+        server_mouse_moved(event->mouse_x / WINDOW_WIDTH,
+                           event->mouse_y / WINDOW_HEIGHT,
                            GetMsPassedFromStart());
-        prevX = x;
-        prevY = y;
       } break;
       case SAPP_EVENTTYPE_MOUSE_UP:
       case SAPP_EVENTTYPE_MOUSE_DOWN: {
-        float x = event->mouse_x;
-        float y = event->mouse_y;
-        server_mouse_moved(x - prevX, y - prevY, x, y,
+        server_mouse_moved(event->mouse_x / WINDOW_WIDTH,
+                           event->mouse_y / WINDOW_HEIGHT,
                            GetMsPassedFromStart());
         server_mouse_button(event->mouse_button, event->type == SAPP_EVENTTYPE_MOUSE_DOWN, GetMsPassedFromStart());
-        prevX = x;
-        prevY = y;
       } break;
       default:;
     }

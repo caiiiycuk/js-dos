@@ -203,7 +203,7 @@ function testServer(factory: CIFactory, name: string) {
 
         await new Promise((resolve, reject) => {
             const sendFn = () => {
-                ci.sendMouseMotion(380, 250);
+                ci.sendMouseMotion(380 / 640, 250 / 400);
                 ci.sendMouseButton(0, true);
             }
 

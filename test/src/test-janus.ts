@@ -83,8 +83,8 @@ test("should render playable video game", async() => {
         ci.sendMouseButton(0, true);
     });
     videoEl.addEventListener("mousemove", (e) => {
-        ci.sendMouseMotion(e.offsetX / 320 * ci.width(),
-                           e.offsetY / 240 * ci.height());
+        ci.sendMouseMotion(e.offsetX / 320,
+                           e.offsetY / 240);
     });
     videoEl.addEventListener("mouseup", (e) => {
         ci.sendMouseButton(0, false);

@@ -16,7 +16,7 @@ void client_stdout(const char* data, uint32_t amount);
 
 extern int server_run();
 extern void server_add_key(KBD_KEYS key, bool pressed, uint64_t pressedMs);
-extern void server_mouse_moved(float xrel, float yrel, float x, float y, uint64_t movedMs);
+extern void server_mouse_moved(float x, float y, uint64_t movedMs);
 extern void server_mouse_button(int button, bool pressed, uint64_t pressedMs);
 extern void server_exit();
 

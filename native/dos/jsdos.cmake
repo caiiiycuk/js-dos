@@ -44,7 +44,6 @@ set(SOURCES_CORE_CXX03
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/ints/xms.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/ints/int10_put_pixel.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/ints/bios_disk.cpp"
-        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/ints/mouse.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/ints/bios.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/ints/int10_misc.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/ints/int10_char.cpp"
@@ -153,6 +152,7 @@ set(SOURCES_SDL_CXX03
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/sdlmain.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/hardware/mixer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/gui/sdl_mapper.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/dosbox/src/ints/mouse.cpp"
         #"${CMAKE_CURRENT_LIST_DIR}/jsdos-cpp/gui/sdlmain.cpp"
         )
 
@@ -161,6 +161,7 @@ set(SOURCES_JSDOS_CXX11
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-mixer.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-mapper-noop.cpp"
         "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-noop.cpp"
+        "${CMAKE_CURRENT_LIST_DIR}/jsdos/jsdos-mouse.cpp"
         )
 
 set_source_files_properties(${SOURCES_CORE_CXX03} PROPERTIES COMPILE_FLAGS "${CORE_FLAGS} -std=c++03 -Wno-switch")

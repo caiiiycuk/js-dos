@@ -39,10 +39,12 @@ bool isPointerLocked() {
 }
 
 Bit8u *surface = 0;
-Bitu surfaceWidth = 0;
-Bitu surfaceHeight = 0;
+extern Bitu surfaceWidth = 0;
+extern Bitu surfaceHeight = 0;
 Bitu surfacePitch = 0;
 bool surfaceUpdating = false;
+float mouseX = 0.5f;
+float mouseY = 0.5f;
 
 Bitu GFX_GetBestMode(Bitu flags) {
     return GFX_CAN_32 | GFX_CAN_RANDOM;
@@ -62,6 +64,9 @@ Bitu GFX_SetSize(Bitu width, Bitu height, Bitu flags, double scalex, double scal
     surfacePitch = width * sizeof(uint32_t); // RGBA
     surface = new Bit8u[height * surfacePitch];
     client_frame_set_size(width, height);
+
+    mouseX = 0.5f;
+    mouseY = 0.5f;
 
     return GFX_CAN_32 | GFX_CAN_RANDOM | GFX_HARDWARE;
 }
@@ -376,11 +381,18 @@ void server_add_key(KBD_KEYS key, bool pressed, uint64_t pressedMs) {
     }
 }
 
-void server_mouse_moved(float xrel, float yrel, float x, float y, uint64_t movedMs) {
+void server_mouse_moved(float x, float y, uint64_t movedMs) {
 #ifndef EMSCRIPTEN
   std::lock_guard<std::mutex> g(eventsMutex);
 #endif
-  Mouse_CursorMoved(xrel, yrel, x / surfaceWidth, y / surfaceHeight, false);
+  Mouse_CursorMoved((x - mouseX) * surfaceWidth,
+                    (y - mouseY) * surfaceHeight,
+                    x,
+                    y,
+                    false);
+
+  mouseX = x;
+  mouseY = y;
 }
 
 void server_mouse_button(int button, bool pressed, uint64_t pressedMs) {
