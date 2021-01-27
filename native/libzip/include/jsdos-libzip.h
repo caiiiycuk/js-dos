@@ -8,14 +8,11 @@
 
 #include <stdint.h>
 
-struct zipArchive {
-    uint32_t length;
-    char* data;
-};
+// <uint32_t:length><char*:data>
+typedef void* ZipArchive;
 
-typedef struct zipArchive ZipArchive;
-
-ZipArchive* EMSCRIPTEN_KEEPALIVE zip_from_fs();
+ZipArchive EMSCRIPTEN_KEEPALIVE zip_from_fs();
+ZipArchive EMSCRIPTEN_KEEPALIVE zip_changed_fs(double changedAfterMs);
 
 int EMSCRIPTEN_KEEPALIVE zip_to_fs(const char *data, uint32_t length);
 

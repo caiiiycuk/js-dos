@@ -71,6 +71,34 @@ export function testLibZip() {
         destroy(libzip);
     });
 
+    test("libzip can create archive with changed files", async () => {
+        let libzip = await makeLibZip();
+        await libzip.zipToFs(archive);
+        const changedAfterMs = Date.now();
+
+        await (new Promise<void>((r) => setTimeout(r, 4)));
+
+        libzip.writeFile("file2", "file2-contents-new");
+        libzip.writeFile("dir1/file1", "dir1-file1-contents-changed");
+        libzip.writeFile("dir1/file3", "dir1-file3-contents-new");
+
+        const updated = await libzip.zipFromFs(changedAfterMs);
+        destroy(libzip);
+
+        libzip = await makeLibZip();
+        await libzip.zipToFs(updated);
+
+        assert.ok(!libzip.exists("file1"));
+        assert.ok(!libzip.exists("dir1/file2"));
+        assert.ok(!libzip.exists("dir1/dir2/file1"));
+
+        assert.equal(await libzip.readFile("file2"), "file2-contents-new");
+        assert.equal(await libzip.readFile("dir1/file1"), "dir1-file1-contents-changed");
+        assert.equal(await libzip.readFile("dir1/file3"), "dir1-file3-contents-new");
+
+        destroy(libzip);
+    });
+
     test("libzip writeFile error handling", async () => {
         const libzip = await makeLibZip();
 

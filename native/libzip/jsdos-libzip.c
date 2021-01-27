@@ -11,6 +11,13 @@
 
 #include <sys/stat.h>
 
+#ifdef EMSCRIPTEN
+EM_JS(double, getMTimeMs, (const char* path), {
+  var lookup = FS.lookupPath(UTF8ToString(path));
+  return lookup.node.timestamp;
+});
+#endif
+
 const char *libzipTempArchive = "libzip-temp-archive.zip";
 
 ZipArchive *readZipArchiveFile(const char *path) {
@@ -51,7 +58,8 @@ static int is_dir(const char *dir) {
 }
 
 
-int zip_recursively(zip_t *zipArchive, const char *directory) {
+int zip_recursively(zip_t *zipArchive, const char *directory, double changedAfterMs) {
+    struct stat fileStat;
     struct dirent *dirp;
 
     DIR *dp = opendir(directory);
@@ -75,10 +83,26 @@ int zip_recursively(zip_t *zipArchive, const char *directory) {
                             zip_strerror(zipArchive));
                     return 0;
                 }
-                if (!zip_recursively(zipArchive, nameInFs)) {
+                if (!zip_recursively(zipArchive, nameInFs, changedAfterMs)) {
                     return 0;
                 }
             } else {
+                if (changedAfterMs > 0) {
+#ifdef EMSCRIPTEN
+                  double mTimeMs = getMTimeMs(nameInFs);
+#else
+                  if (stat(nameInFs, &fileStat) == -1) {
+                    fprintf(stderr, "zip_from_fs: can't stat file %s\n", nameInFs);
+                    return 0;
+                  }                  
+                  double mTimeMs = fileStat.st_mtim.tv_sec * 1000.0 + fileStat.st_mtim.tv_nsec / 1000000.0;
+#endif
+                  if (mTimeMs <= changedAfterMs) {
+                    free(nameInFs);
+                    continue;
+                  }
+                }
+
                 zip_source_t *source = zip_source_file(zipArchive, nameInArchive, 0, 0);
                 if (source == 0) {
                     fprintf(stderr, "zip_from_fs: can't create file %s, cause %s\n", nameInFs,
@@ -106,7 +130,7 @@ int zip_recursively(zip_t *zipArchive, const char *directory) {
     return 1;
 }
 
-ZipArchive *EMSCRIPTEN_KEEPALIVE zip_from_fs() {
+ZipArchive zip_fs(double changedAfterMs) {
     struct zip *zipArchive;
     char buf[100];
     int err;
@@ -118,7 +142,7 @@ ZipArchive *EMSCRIPTEN_KEEPALIVE zip_from_fs() {
     }
 
 
-    int success = zip_recursively(zipArchive, ".");
+    int success = zip_recursively(zipArchive, ".", changedAfterMs);
     if (zip_close(zipArchive) == -1) {
         fprintf(stderr, "zip_from_fs: can't close zip archive %s\n", zip_strerror(zipArchive));
         return 0;
@@ -139,6 +163,10 @@ ZipArchive *EMSCRIPTEN_KEEPALIVE zip_from_fs() {
     }
 
     return archive;
+}
+
+ZipArchive EMSCRIPTEN_KEEPALIVE zip_from_fs(double changedAfterMs) {
+  return zip_fs(changedAfterMs);
 }
 
 int EMSCRIPTEN_KEEPALIVE zip_to_fs(const char *data, uint32_t length) {

@@ -9,10 +9,10 @@ export default class LibZip {
         this.chdirToHome();
     }
 
-    zipFromFs(): Promise<Uint8Array> {
+    zipFromFs(changedAfterMs: number = -1): Promise<Uint8Array> {
         this.chdirToHome();
 
-        const ptr = this.module._zip_from_fs();
+        const ptr = this.module._zip_from_fs(changedAfterMs);
         if (ptr === 0) {
             return Promise.reject(new Error("Can't create zip, see more info in logs"));
         }
@@ -47,7 +47,7 @@ export default class LibZip {
     }
 
     // ### writeFile
-    async writeFile(file: string, body: ArrayBuffer | Uint8Array | string): Promise<void> {
+    writeFile(file: string, body: ArrayBuffer | Uint8Array | string) {
         // Allow to create file in FS, it will be created relatively cwd
         // All directories will be created
         //
