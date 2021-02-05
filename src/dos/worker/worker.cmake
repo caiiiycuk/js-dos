@@ -1,5 +1,5 @@
 if (${EMSCRIPTEN})
-  set(WORKER_LINK_FLAGS "-g")
+  set(WORKER_LINK_FLAGS "")
 endif ()
 
 include_directories(
