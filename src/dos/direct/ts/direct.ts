@@ -22,6 +22,7 @@ export default async function DosDirect(wasm: WasmModule,
     }
 
     const startupErrFn = (...args: any[]) => {
+        console.error(...args);
         eventsImpl.fireMessage("error", ...args);
         startupErrorLog += JSON.stringify(args) + "\n";
     }

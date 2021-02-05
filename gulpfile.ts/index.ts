@@ -5,6 +5,7 @@ import { test } from "./test";
 
 import { emitTypes } from "./types";
 import { updateDosbox } from "./update-dosbox";
+import { asyncifyAdd } from "./asyncify";
 
 exports.default = series(
     wasm,
@@ -13,5 +14,6 @@ exports.default = series(
 
 exports.wasm = wasm;
 exports.updateDosbox = updateDosbox;
+exports.asyncifyAdd = asyncifyAdd;
 
 

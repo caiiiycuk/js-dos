@@ -25,3 +25,4 @@ native
 src
 gulpfile.ts
 .clang-format
+temp.jsdos
