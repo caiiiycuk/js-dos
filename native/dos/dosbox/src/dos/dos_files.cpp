@@ -434,7 +434,16 @@ void client_stdout_wrapper(const char* data, uint32_t amount) {
     timeIndex = (timeIndex + 1) % 2;
     reportRuns = timeIndex == 0;
   } else {
-    client_stdout(data, amount);
+    std::string message;
+    for (int i = 0; i < amount; ++i) {
+      char next = data[i];
+      if (std::isalnum(next) || next == '\n' || next == ' ') {
+          message += next;
+      }
+    }
+    if (message.length() > 0) {
+      client_stdout(message.c_str(), message.length());
+    }
   }
 }
 
