@@ -6,5 +6,4 @@ namespace jsdos {
     void requestExit();
 }
 
-
 #endif

@@ -6,6 +6,8 @@
 #include <config.h>
 #include <control.h>
 #include <jsdos-support.h>
+#include <jsdos-asyncify.h>
+#include <jsdos-timer.h>
 #include <mapper.h>
 #include <programs.h>
 #include <protocol.h>
@@ -411,7 +413,11 @@ void server_exit() {
 }
 
 int server_run() {
-    CommandLine commandLine(0, 0);
-    Config config(&commandLine);
-    return jsdos_main(&config);
+  jsdos::initTimer();
+  jsdos::initAsyncify();
+  CommandLine commandLine(0, nullptr);
+  Config config(&commandLine);
+  auto code = jsdos_main(&config);
+  jsdos::destroyAsyncify();
+  return code;
 }

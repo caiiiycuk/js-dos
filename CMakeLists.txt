@@ -27,7 +27,7 @@ if(${EMSCRIPTEN})
 		-s EXTRA_EXPORTED_RUNTIME_METHODS=\"['addRunDependency', 'removeRunDependency','FS', 'FS_createPath', 'FS_createPreloadedFile', \
 			'FS_createDataFile', 'lengthBytesUTF8', 'stringToUTF8', 'UTF16ToString', 'UTF8ToString', 'callMain']\" \
                 -s EXPORTED_FUNCTIONS=\"['_main', '_malloc', '_free', '_abort']\" \
-		-s ERROR_ON_UNDEFINED_SYMBOLS=0")
+		-s ERROR_ON_UNDEFINED_SYMBOLS=1")
 else()
 	set(CMAKE_C_FLAGS "${OPT_FLAG} -O0 -g")
 	set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")

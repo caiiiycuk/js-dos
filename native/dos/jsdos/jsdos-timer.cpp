@@ -12,9 +12,19 @@
 #include <thread>
 #endif
 
+#include <jsdos-timer.h>
+
+void jsdos::initTimer() {
+#ifdef EMSCRIPTEN
+  EM_ASM(({
+    Module.performance = Module.performance || performance;
+  }));
+#endif
+}
+
 #ifdef EMSCRIPTEN
 EM_JS(double, now, (void), {
-    return performance.now();
+    return Module.performance.now();
 });
 #else
 double now() {
@@ -23,7 +33,6 @@ double now() {
     return ts.tv_sec * 1000. + ts.tv_nsec / 1000000.;
 }
 #endif
-
 
 double GetMsPassedFromStart() {
     static double startedAt = now();
@@ -39,7 +48,7 @@ void DelayWithYield(int ms) {
     emscripten_sleep_with_yield(ms);
 #else
     if (ms == 0) {
-        ms = 10;
+      return;
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));

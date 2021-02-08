@@ -1,6 +1,7 @@
 //
 // Created by caiiiycuk on 13.11.2019.
 //
+#include <jsdos-asyncify.h>
 
 #ifdef EMSCRIPTEN
 // clang-format off
@@ -15,20 +16,7 @@ EM_JS(void, syncSleep, (), {
     return Asyncify.handleSleep(function(wakeUp) { Module.sync_sleep(wakeUp); });
   });
 
-#if defined(PROMISE_SLEEP)
-EM_JS(bool, initSyncSleep, (bool worker), {
-    Module.alive = true;
-    Module.sync_sleep = function(wakeUp) {
-      Promise.resolve(1).then(function() {
-          if (Module.alive) {
-            wakeUp();
-          }
-        });
-    }
-    return true;
-  });
-#elif defined(TIMEOUT_SLEEP)
-EM_JS(bool, initSyncSleep, (bool worker), {
+EM_JS(bool, initTimeoutSyncSleep, (), {
     Module.alive = true;
     Module.sync_sleep = function(wakeUp) {
       setTimeout(function() {
@@ -36,11 +24,11 @@ EM_JS(bool, initSyncSleep, (bool worker), {
             wakeUp();
           }
         });
-    }
+    };
     return true;
   });
-#else
-EM_JS(bool, initSyncSleep, (bool worker), {
+
+EM_JS(bool, initMessageSyncSleep, (bool worker), {
     Module.alive = true;
     Module.sync_id = Date.now();
     Module.sync_sleep = function(wakeUp) {
@@ -80,9 +68,13 @@ EM_JS(bool, initSyncSleep, (bool worker), {
 
     return true;
   });
-#endif
 
-EM_JS(void, destroySyncSleep, (), {
+EM_JS(void, destroyTimeoutSyncSleep, (), {
+    Module.alive = true;
+    delete Module.sync_sleep;
+  });
+
+EM_JS(void, destroyMessageSyncSleep, (bool worker), {
     if (worker) {
       self.removeEventListener("message", Module.receive);
     } else {
@@ -96,10 +88,32 @@ EM_JS(bool, isWorker, (), {
     return typeof importScripts === 'function';
   });
 
-bool init = initSyncSleep(isWorker());
+EM_JS(bool, isNode, (), {
+    return typeof process === "object" && typeof process.versions === "object" && typeof process.versions.node === "string";
+  });
 
 // clang-format on
 #endif
+
+void jsdos::initAsyncify() {
+#ifdef EMSCRIPTEN
+  if (isNode()) {
+    initTimeoutSyncSleep();
+  } else {
+    initMessageSyncSleep(isWorker());
+  }
+#endif
+}
+
+void jsdos::destroyAsyncify() {
+#ifdef EMSCRIPTEN
+  if (isNode()) {
+    destroyTimeoutSyncSleep();
+  } else {
+    destroyMessageSyncSleep(isWorker());
+  }
+#endif
+}
 
 extern "C" void asyncify_sleep(unsigned int ms) {
 #ifdef EMSCRIPTEN
