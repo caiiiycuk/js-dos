@@ -107,5 +107,6 @@ test("should render playable video game", async() => {
                 resolve();
             }
         });
+        ci.events().onStdout(console.log);
     });
 });

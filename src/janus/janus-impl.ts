@@ -159,6 +159,11 @@ class JanusBackendImpl implements CommandInterface {
             const bitrateStr = this.handle?.getBitrate() as any || "0 kbits/sec";
             const bitrate = Number.parseInt(bitrateStr.split(" ")[0], 10);
             this.sendPipeMessage("rtt-data", Date.now(), sentAt, receivedAt, returnedAt, bitrate);
+            if (opaqueId === this.opaqueId) {
+                this.eventsImpl.fireStdout("rtt-data=" + (returnedAt - sentAt) + " " + bitrate);
+            }
+        } else {
+            this.eventsImpl.fireStdout(data);
         }
     }
 
