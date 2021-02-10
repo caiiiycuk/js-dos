@@ -46,6 +46,7 @@ class JanusBackendImpl implements CommandInterface {
     private configResolveFn: (dosConfig: DosConfig) => void = () => {/**/};
 
     private opaqueId: string;
+    private handle?: JanusJS.PluginHandle;
     private handlePromise: Promise<JanusJS.PluginHandle>;
     private handleResolveFn: (handle: JanusJS.PluginHandle) => void = () => {/**/};
 
@@ -56,6 +57,7 @@ class JanusBackendImpl implements CommandInterface {
 
     private eventQueue = "";
     private eventIntervalId = -1;
+    private rttIntervalId = -1;
 
     constructor(janus: JanusJS.Janus, opaqueId: string) {
         this.eventsImpl = new CommandInterfaceEventsImpl();
@@ -72,6 +74,8 @@ class JanusBackendImpl implements CommandInterface {
 
         this.handlePromise = new Promise<JanusJS.PluginHandle>((resolve, reject) => {
             this.handleResolveFn = (handle: JanusJS.PluginHandle) => {
+                this.handle = handle;
+
                 if (!this.live) {
                     reject(new Error("exit() was called"));
                     return;
@@ -83,7 +87,7 @@ class JanusBackendImpl implements CommandInterface {
                         return;
                     }
 
-                    handle.data({ text: "pipe config" });
+                    handle.data({ text: "pipe " + this.opaqueId + " config" });
                 }, 1000);
 
                 this.config().then(() => {
@@ -95,6 +99,12 @@ class JanusBackendImpl implements CommandInterface {
                     this.eventIntervalId = setInterval(() => {
                         this.sendEventsData(handle);
                     }, 8) as any;
+
+
+                    // start rtt check
+                    this.rttIntervalId = setInterval(() => {
+                        this.sendPipeMessage("rtt", Date.now());
+                    }, 1000) as any;
                 });
 
                 resolve(handle);
@@ -141,8 +151,14 @@ class JanusBackendImpl implements CommandInterface {
             const [width, height] = data.substr("frame=".length).split("x");
             this.frameWidth = Number.parseInt(width, 10) || 0;
             this.frameHeight = Number.parseInt(height, 10) || 0;
-        } else {
-            this.eventsImpl.fireStdout(data);
+        } else if (data.startsWith("rtt=")){
+            const [opaqueId, sentAtStr, receivedAtStr] = data.substr("rtt=".length).split(" ");
+            const sentAt = Number.parseInt(sentAtStr, 10);
+            const receivedAt = Number.parseInt(receivedAtStr, 10);
+            const returnedAt = Date.now();
+            const bitrateStr = this.handle?.getBitrate() as any || "0 kbits/sec";
+            const bitrate = Number.parseInt(bitrateStr.split(" ")[0], 10);
+            this.sendPipeMessage("rtt-data", Date.now(), sentAt, receivedAt, returnedAt, bitrate);
         }
     }
 
@@ -215,16 +231,23 @@ class JanusBackendImpl implements CommandInterface {
         }
         this.keyMatrix[keyCode] = pressed;
 
-        this.eventQueue += "pipe k" + (pressed ? "down" : "up") + " " + keyCode +
-            " " + timeMs + "\n";
+        this.sendPipeMessage("k" + (pressed ? "down" : "up"), keyCode, timeMs);
     }
 
     async sendMouseMotion(x: number, y: number) {
-        this.eventQueue += "pipe mmove " + x + " " + y + " " + (Date.now() - this.startedAt) + "\n";
+        this.sendPipeMessage("mmove", x, y, Date.now() - this.startedAt);
     }
 
     async sendMouseButton(button: number, pressed: boolean) {
-        this.eventQueue += "pipe m" + (pressed ? "down" : "up") + " " + button + " " + (Date.now() - this.startedAt) + "\n";
+        this.sendPipeMessage("m" + (pressed ? "down" : "up"), button, Date.now() - this.startedAt);
+    }
+
+    private sendPipeMessage(...parts: any[]) {
+        this.eventQueue += "pipe " + this.opaqueId;
+        for (const part of parts) {
+            this.eventQueue += " " + part;
+        }
+        this.eventQueue += "\n";
     }
 
     private async sendEventsData(handle: JanusJS.PluginHandle) {
@@ -243,6 +266,8 @@ class JanusBackendImpl implements CommandInterface {
         this.live = false;
         clearInterval(this.eventIntervalId);
         this.eventIntervalId = -1;
+        clearInterval(this.rttIntervalId);
+        this.rttIntervalId = -1;
         this.janus.destroy()
         return this.exitPromise;
     }

@@ -19,6 +19,7 @@
     <body>
         <div id="mocha"></div>
 	      <button id="button" onclick="javacript:start()">Start Test</button>
+	      <button id="button" onclick="javacript:fullscreen()">FullScreen</button>
         <video id="video" width="320px" height="240px" autoplay="autoplay" playsinline></video>
         <div class="info">To complete this test Janus server should be started on http://127.0.0.1:8088</div>
         <script>
@@ -41,7 +42,10 @@
                      mocha.run();
                  },
              });
-		     }
+		     };
+		     function fullscreen() {
+             document.getElementById("video").requestFullscreen()
+         };
         </script>
     </body>
 
