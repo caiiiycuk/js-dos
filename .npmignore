@@ -26,3 +26,5 @@ src
 gulpfile.ts
 .clang-format
 temp.jsdos
+bench
+emulators.zip
