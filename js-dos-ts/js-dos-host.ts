@@ -143,6 +143,7 @@ class DosHost {
     private compileJsDosBox(url: string, cache: ICache, module: DosModule): Promise<any> {
         return new Promise((resolve, reject) => {
             const buildTotal = Build.jsSize;
+            // @ts-ignore the unusued local for memUrl not being read
             const memUrl = url.replace(".js", ".js.mem");
 
             // * Host download `dosbox.js`

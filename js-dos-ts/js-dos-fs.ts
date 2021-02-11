@@ -224,6 +224,7 @@ export class DosFS {
         }
 
         this.syncingPromise = new Promise<void>((resolve, reject) => {
+            // @ts-ignore the unusued local for startedAt not being read
             const startedAt = Date.now();
             this.fs.syncfs(false, (err: any) => {
                 if (err) {
