@@ -47,6 +47,7 @@ EM_JS(void, ws_init_runtime, (), {
           try {
             Module._requestExit();
           } catch (e) {
+            Module.err(e.message);
             if (e.name !== "ExitStatus") {
               throw e;
             }
