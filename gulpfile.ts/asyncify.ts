@@ -57,13 +57,29 @@ function extractFnSignature(next: string): string {
         return "";
     }
 
-    const index = next.indexOf("@");
-    if (index === -1) {
+    let fnSig = "";
+
+    // case 1
+    let index = next.indexOf("@");
+    if (index >= 0) {
+        fnSig = next.substr(0, index).trim();
+    }
+
+    // case 2
+    if (fnSig.length === 0) {
+        const matched = /at\s+(.*)\s+\(</.exec(next);
+        if (matched) {
+            fnSig = matched[1];
+        }
+    }
+
+    fnSig = fnSig.trim();
+
+    if (fnSig.length == 0) {
         warn("Unparsable entry '" + next + "'");
         return "";
     }
 
-    const fnSig = next.substr(0, index).trim();
     if (fnSig.indexOf("\"") !== -1) {
         warn("Entry contains \" '" + next + "', skipping...");
         return "";
