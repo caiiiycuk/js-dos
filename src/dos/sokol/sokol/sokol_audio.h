@@ -1,3 +1,6 @@
+#if defined(SOKOL_IMPL) && !defined(SOKOL_AUDIO_IMPL)
+#define SOKOL_AUDIO_IMPL
+#endif
 #ifndef SOKOL_AUDIO_INCLUDED
 /*
     sokol_audio.h -- cross-platform audio-streaming API
@@ -5,7 +8,8 @@
     Project URL: https://github.com/floooh/sokol
 
     Do this:
-        #define SOKOL_IMPL
+        #define SOKOL_IMPL or
+        #define SOKOL_AUDIO_IMPL
     before you include this file in *one* C or C++ file to create the
     implementation.
 
@@ -16,7 +20,8 @@
     SOKOL_LOG(msg)      - your own logging function (default: puts(msg))
     SOKOL_MALLOC(s)     - your own malloc() implementation (default: malloc(s))
     SOKOL_FREE(p)       - your own free() implementation (default: free(p))
-    SOKOL_API_DECL      - public function declaration prefix (default: extern)
+    SOKOL_AUDIO_API_DECL- public function declaration prefix (default: extern)
+    SOKOL_API_DECL      - same as SOKOL_AUDIO_API_DECL
     SOKOL_API_IMPL      - public function implementation prefix (default: -)
 
     SAUDIO_RING_MAX_SLOTS   - max number of slots in the push-audio ring buffer (default 1024)
@@ -26,7 +31,7 @@
 
     SOKOL_DLL
 
-    On Windows, SOKOL_DLL will define SOKOL_API_DECL as __declspec(dllexport)
+    On Windows, SOKOL_DLL will define SOKOL_AUDIO_API_DECL as __declspec(dllexport)
     or __declspec(dllimport) as needed.
 
     FEATURE OVERVIEW
@@ -62,14 +67,19 @@
     callback function running in a separate thread, for such cases Sokol Audio
     provides the push-model as a convenience.
 
-    SOKOL AUDIO AND SOLOUD
-    ======================
+    SOKOL AUDIO, SOLOUD AND MINIAUDIO
+    =================================
     The WASAPI, ALSA, OpenSLES and CoreAudio backend code has been taken from the
     SoLoud library (with some modifications, so any bugs in there are most
     likely my fault). If you need a more fully-featured audio solution, check
     out SoLoud, it's excellent:
 
         https://github.com/jarikomppa/soloud
+
+    Another alternative which feature-wise is somewhere inbetween SoLoud and
+    sokol-audio might be MiniAudio:
+
+        https://github.com/mackron/miniaudio
 
     GLOSSARY
     ========
@@ -369,13 +379,16 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#ifndef SOKOL_API_DECL
-#if defined(_WIN32) && defined(SOKOL_DLL) && defined(SOKOL_IMPL)
-#define SOKOL_API_DECL __declspec(dllexport)
+#if defined(SOKOL_API_DECL) && !defined(SOKOL_AUDIO_API_DECL)
+#define SOKOL_AUDIO_API_DECL SOKOL_API_DECL
+#endif
+#ifndef SOKOL_AUDIO_API_DECL
+#if defined(_WIN32) && defined(SOKOL_DLL) && defined(SOKOL_AUDIO_IMPL)
+#define SOKOL_AUDIO_API_DECL __declspec(dllexport)
 #elif defined(_WIN32) && defined(SOKOL_DLL)
-#define SOKOL_API_DECL __declspec(dllimport)
+#define SOKOL_AUDIO_API_DECL __declspec(dllimport)
 #else
-#define SOKOL_API_DECL extern
+#define SOKOL_AUDIO_API_DECL extern
 #endif
 #endif
 
@@ -395,33 +408,37 @@ typedef struct saudio_desc {
 } saudio_desc;
 
 /* setup sokol-audio */
-SOKOL_API_DECL void saudio_setup(const saudio_desc* desc);
+SOKOL_AUDIO_API_DECL void saudio_setup(const saudio_desc* desc);
 /* shutdown sokol-audio */
-SOKOL_API_DECL void saudio_shutdown(void);
+SOKOL_AUDIO_API_DECL void saudio_shutdown(void);
 /* true after setup if audio backend was successfully initialized */
-SOKOL_API_DECL bool saudio_isvalid(void);
+SOKOL_AUDIO_API_DECL bool saudio_isvalid(void);
 /* return the saudio_desc.user_data pointer */
-SOKOL_API_DECL void* saudio_userdata(void);
+SOKOL_AUDIO_API_DECL void* saudio_userdata(void);
 /* return a copy of the original saudio_desc struct */
-SOKOL_API_DECL saudio_desc saudio_query_desc(void);
+SOKOL_AUDIO_API_DECL saudio_desc saudio_query_desc(void);
 /* actual sample rate */
-SOKOL_API_DECL int saudio_sample_rate(void);
+SOKOL_AUDIO_API_DECL int saudio_sample_rate(void);
 /* return actual backend buffer size in number of frames */
-SOKOL_API_DECL int saudio_buffer_frames(void);
+SOKOL_AUDIO_API_DECL int saudio_buffer_frames(void);
 /* actual number of channels */
-SOKOL_API_DECL int saudio_channels(void);
+SOKOL_AUDIO_API_DECL int saudio_channels(void);
 /* get current number of frames to fill packet queue */
-SOKOL_API_DECL int saudio_expect(void);
+SOKOL_AUDIO_API_DECL int saudio_expect(void);
 /* push sample frames from main thread, returns number of frames actually pushed */
-SOKOL_API_DECL int saudio_push(const float* frames, int num_frames);
+SOKOL_AUDIO_API_DECL int saudio_push(const float* frames, int num_frames);
 
 #ifdef __cplusplus
 } /* extern "C" */
+
+/* reference-based equivalents for c++ */
+inline void saudio_setup(const saudio_desc& desc) { return saudio_setup(&desc); }
+
 #endif
 #endif // SOKOL_AUDIO_INCLUDED
 
 /*=== IMPLEMENTATION =========================================================*/
-#ifdef SOKOL_IMPL
+#ifdef SOKOL_AUDIO_IMPL
 #define SOKOL_AUDIO_IMPL_INCLUDED (1)
 #include <string.h> /* memset, memcpy */
 
@@ -452,26 +469,45 @@ SOKOL_API_DECL int saudio_push(const float* frames, int num_frames);
 #endif
 
 #ifndef _SOKOL_PRIVATE
-    #if defined(__GNUC__)
+    #if defined(__GNUC__) || defined(__clang__)
         #define _SOKOL_PRIVATE __attribute__((unused)) static
     #else
         #define _SOKOL_PRIVATE static
     #endif
 #endif
 
-#if (defined(__APPLE__) || defined(__linux__) || defined(__unix__)) && !defined(__EMSCRIPTEN__)
+#ifndef _SOKOL_UNUSED
+    #define _SOKOL_UNUSED(x) (void)(x)
+#endif
+
+#if defined(SOKOL_DUMMY_BACKEND)
+    // No threads needed for SOKOL_DUMMY_BACKEND
+#elif (defined(__APPLE__) || defined(__linux__) || defined(__unix__)) && !defined(__EMSCRIPTEN__)
     #include <pthread.h>
 #elif defined(_WIN32)
     #ifndef WIN32_LEAN_AND_MEAN
     #define WIN32_LEAN_AND_MEAN
     #endif
+    #ifndef NOMINMAX
+    #define NOMINMAX
+    #endif
     #include <windows.h>
     #include <synchapi.h>
-    #pragma comment (lib, "kernel32.lib")
-    #pragma comment (lib, "ole32.lib")
+    #if (defined(WINAPI_FAMILY_PARTITION) && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP))
+        #define SOKOL_WIN32_NO_MMDEVICE
+        #pragma comment (lib, "WindowsApp")
+    #else
+        #pragma comment (lib, "kernel32")
+        #pragma comment (lib, "ole32")
+        #if defined(SOKOL_WIN32_NO_MMDEVICE)
+            #pragma comment (lib, "mmdevapi")
+        #endif
+    #endif
 #endif
 
-#if defined(__APPLE__)
+#if defined(SOKOL_DUMMY_BACKEND)
+    // No audio API needed for SOKOL_DUMMY_BACKEND
+#elif defined(__APPLE__)
     #include <AudioToolbox/AudioToolbox.h>
 #elif (defined(__linux__) || defined(__unix__)) && !defined(__EMSCRIPTEN__) && !defined(__ANDROID__)
     #define ALSA_PCM_NEW_HW_PARAMS_API
@@ -494,6 +530,8 @@ SOKOL_API_DECL int saudio_push(const float* frames, int num_frames);
     static const IID _saudio_IID_IMMDeviceEnumerator = { 0xa95664d2, 0x9614, 0x4f35, { 0xa7, 0x46, 0xde, 0x8d, 0xb6, 0x36, 0x17, 0xe6 } };
     static const CLSID _saudio_CLSID_IMMDeviceEnumerator = { 0xbcde0395, 0xe52f, 0x467c, { 0x8e, 0x3d, 0xc4, 0x57, 0x92, 0x91, 0x69, 0x2e } };
     static const IID _saudio_IID_IAudioRenderClient = { 0xf294acfc, 0x3146, 0x4483,{ 0xa7, 0xbf, 0xad, 0xdc, 0xa7, 0xc2, 0x60, 0xe2 } };
+    static const IID _saudio_IID_Devinterface_Audio_Render = { 0xe6327cad, 0xdcec, 0x4949, {0xae, 0x8a, 0x99, 0x1e, 0x97, 0x6a, 0x79, 0xd2 } };
+    static const IID _saudio_IID_IActivateAudioInterface_Completion_Handler = { 0x94ea2b94, 0xe9cc, 0x49e0, {0xc0, 0xff, 0xee, 0x64, 0xca, 0x8f, 0x5b, 0x90} };
     #if defined(__cplusplus)
     #define _SOKOL_AUDIO_WIN32COM_ID(x) (x)
     #else
@@ -528,7 +566,11 @@ SOKOL_API_DECL int saudio_push(const float* frames, int num_frames);
 #endif
 
 /*=== MUTEX WRAPPER DECLARATIONS =============================================*/
-#if (defined(__APPLE__) || defined(__linux__) || defined(__unix__)) && !defined(__EMSCRIPTEN__)
+#if defined(SOKOL_DUMMY_BACKEND)
+
+typedef struct { int dummy_mutex; } _saudio_mutex_t;
+
+#elif (defined(__APPLE__) || defined(__linux__) || defined(__unix__)) && !defined(__EMSCRIPTEN__)
 
 typedef struct {
     pthread_mutex_t mutex;
@@ -541,11 +583,16 @@ typedef struct {
 } _saudio_mutex_t;
 
 #else
-typedef struct { } _saudio_mutex_t;
+typedef struct { int dummy_mutex; } _saudio_mutex_t;
 #endif
 
+/*=== DUMMY BACKEND DECLARATIONS =============================================*/
+#if defined(SOKOL_DUMMY_BACKEND)
+typedef struct {
+    int dummy_backend;
+} _saudio_backend_t;
 /*=== COREAUDIO BACKEND DECLARATIONS =========================================*/
-#if defined(__APPLE__)
+#elif defined(__APPLE__)
 
 typedef struct {
     AudioQueueRef ca_audio_queue;
@@ -610,8 +657,15 @@ typedef struct {
 } _saudio_wasapi_thread_data_t;
 
 typedef struct {
+#if defined(SOKOL_WIN32_NO_MMDEVICE)
+    LPOLESTR interface_activation_audio_interface_uid_string;
+    IActivateAudioInterfaceAsyncOperation* interface_activation_operation;
+    BOOL interface_activation_success;
+    HANDLE interface_activation_mutex;
+#else
     IMMDeviceEnumerator* device_enumerator;
     IMMDevice* device;
+#endif
     IAudioClient* audio_client;
     IAudioRenderClient* render_client;
     int si16_bytes_per_frame;
@@ -685,7 +739,12 @@ _SOKOL_PRIVATE void _saudio_stream_callback(float* buffer, int num_frames, int n
 }
 
 /*=== MUTEX IMPLEMENTATION ===================================================*/
-#if (defined(__APPLE__) || defined(__linux__) || defined(__unix__)) && !defined(__EMSCRIPTEN__)
+#if defined(SOKOL_DUMMY_BACKEND)
+_SOKOL_PRIVATE void _saudio_mutex_init(_saudio_mutex_t* m) { (void)m; }
+_SOKOL_PRIVATE void _saudio_mutex_destroy(_saudio_mutex_t* m) { (void)m; }
+_SOKOL_PRIVATE void _saudio_mutex_lock(_saudio_mutex_t* m) { (void)m; }
+_SOKOL_PRIVATE void _saudio_mutex_unlock(_saudio_mutex_t* m) { (void)m; }
+#elif (defined(__APPLE__) || defined(__linux__) || defined(__unix__)) && !defined(__EMSCRIPTEN__)
 _SOKOL_PRIVATE void _saudio_mutex_init(_saudio_mutex_t* m) {
     pthread_mutexattr_t attr;
     pthread_mutexattr_init(&attr);
@@ -913,7 +972,8 @@ _SOKOL_PRIVATE void _saudio_backend_shutdown(void) { };
 #elif defined(__APPLE__)
 
 /* NOTE: the buffer data callback is called on a separate thread! */
-_SOKOL_PRIVATE void _sapp_ca_callback(void* user_data, AudioQueueRef queue, AudioQueueBufferRef buffer) {
+_SOKOL_PRIVATE void _saudio_coreaudio_callback(void* user_data, AudioQueueRef queue, AudioQueueBufferRef buffer) {
+    _SOKOL_UNUSED(user_data);
     if (_saudio_has_callback()) {
         const int num_frames = buffer->mAudioDataByteSize / _saudio.bytes_per_frame;
         const int num_channels = _saudio.num_channels;
@@ -944,7 +1004,7 @@ _SOKOL_PRIVATE bool _saudio_backend_init(void) {
     fmt.mBytesPerFrame = sizeof(float) * _saudio.num_channels;
     fmt.mBytesPerPacket = fmt.mBytesPerFrame;
     fmt.mBitsPerChannel = 32;
-    OSStatus res = AudioQueueNewOutput(&fmt, _sapp_ca_callback, 0, NULL, NULL, 0, &_saudio.backend.ca_audio_queue);
+    OSStatus res = AudioQueueNewOutput(&fmt, _saudio_coreaudio_callback, 0, NULL, NULL, 0, &_saudio.backend.ca_audio_queue);
     SOKOL_ASSERT((res == 0) && _saudio.backend.ca_audio_queue);
 
     /* create 2 audio buffers */
@@ -979,6 +1039,7 @@ _SOKOL_PRIVATE void _saudio_backend_shutdown(void) {
 
 /* the streaming callback runs in a separate thread */
 _SOKOL_PRIVATE void* _saudio_alsa_cb(void* param) {
+    _SOKOL_UNUSED(param);
     while (!_saudio.backend.thread_stop) {
         /* snd_pcm_writei() will be blocking until it needs data */
         int write_res = snd_pcm_writei(_saudio.backend.device, _saudio.backend.buffer, _saudio.backend.buffer_frames);
@@ -1003,37 +1064,47 @@ _SOKOL_PRIVATE void* _saudio_alsa_cb(void* param) {
 }
 
 _SOKOL_PRIVATE bool _saudio_backend_init(void) {
-    int dir; unsigned int val;
+    int dir; unsigned int rate;
     int rc = snd_pcm_open(&_saudio.backend.device, "default", SND_PCM_STREAM_PLAYBACK, 0);
     if (rc < 0) {
+        SOKOL_LOG("sokol_audio.h: snd_pcm_open() failed");
         return false;
     }
+
+    /* configuration works by restricting the 'configuration space' step
+       by step, we require all parameters except the sample rate to
+       match perfectly
+    */
     snd_pcm_hw_params_t* params = 0;
     snd_pcm_hw_params_alloca(&params);
     snd_pcm_hw_params_any(_saudio.backend.device, params);
     snd_pcm_hw_params_set_access(_saudio.backend.device, params, SND_PCM_ACCESS_RW_INTERLEAVED);
-    snd_pcm_hw_params_set_channels(_saudio.backend.device, params, _saudio.num_channels);
-    snd_pcm_hw_params_set_buffer_size(_saudio.backend.device, params, _saudio.buffer_frames);
-    if (0 > snd_pcm_hw_params_test_format(_saudio.backend.device, params, SND_PCM_FORMAT_FLOAT_LE)) {
+    if (0 > snd_pcm_hw_params_set_format(_saudio.backend.device, params, SND_PCM_FORMAT_FLOAT_LE)) {
+        SOKOL_LOG("sokol_audio.h: float samples not supported");
         goto error;
     }
-    else {
-        snd_pcm_hw_params_set_format(_saudio.backend.device, params, SND_PCM_FORMAT_FLOAT_LE);
+    if (0 > snd_pcm_hw_params_set_buffer_size(_saudio.backend.device, params, _saudio.buffer_frames)) {
+        SOKOL_LOG("sokol_audio.h: requested buffer size not supported");
+        goto error;
     }
-    val = _saudio.sample_rate;
+    if (0 > snd_pcm_hw_params_set_channels(_saudio.backend.device, params, _saudio.num_channels)) {
+        SOKOL_LOG("sokol_audio.h: requested channel count not supported");
+        goto error;
+    }
+    /* let ALSA pick a nearby sampling rate */
+    rate = _saudio.sample_rate;
     dir = 0;
-    if (0 > snd_pcm_hw_params_set_rate_near(_saudio.backend.device, params, &val, &dir)) {
+    if (0 > snd_pcm_hw_params_set_rate_near(_saudio.backend.device, params, &rate, &dir)) {
+        SOKOL_LOG("sokol_audio.h: snd_pcm_hw_params_set_rate_near() failed");
         goto error;
     }
     if (0 > snd_pcm_hw_params(_saudio.backend.device, params)) {
+        SOKOL_LOG("sokol_audio.h: snd_pcm_hw_params() failed");
         goto error;
     }
 
     /* read back actual sample rate and channels */
-    snd_pcm_hw_params_get_rate(params, &val, &dir);
-    _saudio.sample_rate = val;
-    snd_pcm_hw_params_get_channels(params, &val);
-    SOKOL_ASSERT((int)val == _saudio.num_channels);
+    _saudio.sample_rate = rate;
     _saudio.bytes_per_frame = _saudio.num_channels * sizeof(float);
 
     /* allocate the streaming buffer */
@@ -1044,6 +1115,7 @@ _SOKOL_PRIVATE bool _saudio_backend_init(void) {
 
     /* create the buffer-streaming start thread */
     if (0 != pthread_create(&_saudio.backend.thread, 0, _saudio_alsa_cb, 0)) {
+        SOKOL_LOG("sokol_audio.h: pthread_create() failed");
         goto error;
     }
 
@@ -1067,6 +1139,48 @@ _SOKOL_PRIVATE void _saudio_backend_shutdown(void) {
 
 /*=== WASAPI BACKEND IMPLEMENTATION ==========================================*/
 #elif defined(_WIN32)
+
+#if defined(SOKOL_WIN32_NO_MMDEVICE)
+/* Minimal implementation of an IActivateAudioInterfaceCompletionHandler COM object in plain C.
+   Meant to be a static singleton (always one reference when add/remove reference)
+   and implements IUnknown and IActivateAudioInterfaceCompletionHandler when queryinterface'd
+
+   Do not know why but IActivateAudioInterfaceCompletionHandler's GUID is not the one system queries for,
+   so I'm advertising the one actually requested.
+*/
+_SOKOL_PRIVATE HRESULT STDMETHODCALLTYPE _saudio_interface_completion_handler_queryinterface(IActivateAudioInterfaceCompletionHandler* instance, REFIID riid, void** ppvObject) {
+    if (!ppvObject) {
+        return E_POINTER;
+    }
+
+    if (IsEqualIID(riid, _SOKOL_AUDIO_WIN32COM_ID(_saudio_IID_IActivateAudioInterface_Completion_Handler)) || IsEqualIID(riid, _SOKOL_AUDIO_WIN32COM_ID(IID_IUnknown)))
+    {
+        *ppvObject = (void*)instance;
+        return S_OK;
+    }
+
+    *ppvObject = NULL;
+    return E_NOINTERFACE;
+}
+
+_SOKOL_PRIVATE ULONG STDMETHODCALLTYPE _saudio_interface_completion_handler_addref_release(IActivateAudioInterfaceCompletionHandler* instance) {
+    _SOKOL_UNUSED(instance);
+    return 1;
+}
+
+_SOKOL_PRIVATE HRESULT STDMETHODCALLTYPE _saudio_backend_activate_audio_interface_cb(IActivateAudioInterfaceCompletionHandler* instance, IActivateAudioInterfaceAsyncOperation* activateOperation) {
+    _SOKOL_UNUSED(instance);
+    WaitForSingleObject(_saudio.backend.interface_activation_mutex, INFINITE);
+    _saudio.backend.interface_activation_success = TRUE;
+    HRESULT activation_result;
+    if (FAILED(activateOperation->lpVtbl->GetActivateResult(activateOperation, &activation_result, (IUnknown**)(&_saudio.backend.audio_client))) || FAILED(activation_result)) {
+        _saudio.backend.interface_activation_success = FALSE;
+    }
+
+    ReleaseMutex(_saudio.backend.interface_activation_mutex);
+    return S_OK;
+}
+#endif
 
 /* fill intermediate buffer with new data and reset buffer_pos */
 _SOKOL_PRIVATE void _saudio_wasapi_fill_buffer(void) {
@@ -1119,7 +1233,7 @@ _SOKOL_PRIVATE DWORD WINAPI _saudio_wasapi_thread_fn(LPVOID param) {
         if (FAILED(IAudioClient_GetCurrentPadding(_saudio.backend.audio_client, &padding))) {
             continue;
         }
-        SOKOL_ASSERT(_saudio.backend.thread.dst_buffer_frames >= (int)padding);
+        SOKOL_ASSERT(_saudio.backend.thread.dst_buffer_frames >= padding);
         UINT32 num_frames = _saudio.backend.thread.dst_buffer_frames - padding;
         if (num_frames > 0) {
             _saudio_wasapi_submit_buffer(num_frames);
@@ -1141,6 +1255,16 @@ _SOKOL_PRIVATE void _saudio_wasapi_release(void) {
         IAudioClient_Release(_saudio.backend.audio_client);
         _saudio.backend.audio_client = 0;
     }
+#if defined(SOKOL_WIN32_NO_MMDEVICE)
+    if (_saudio.backend.interface_activation_audio_interface_uid_string) {
+        CoTaskMemFree(_saudio.backend.interface_activation_audio_interface_uid_string);
+        _saudio.backend.interface_activation_audio_interface_uid_string = 0;
+    }
+    if (_saudio.backend.interface_activation_operation) {
+        IActivateAudioInterfaceAsyncOperation_Release(_saudio.backend.interface_activation_operation);
+        _saudio.backend.interface_activation_operation = 0;
+    }
+#else
     if (_saudio.backend.device) {
         IMMDevice_Release(_saudio.backend.device);
         _saudio.backend.device = 0;
@@ -1149,6 +1273,7 @@ _SOKOL_PRIVATE void _saudio_wasapi_release(void) {
         IMMDeviceEnumerator_Release(_saudio.backend.device_enumerator);
         _saudio.backend.device_enumerator = 0;
     }
+#endif
     if (0 != _saudio.backend.thread.buffer_end_event) {
         CloseHandle(_saudio.backend.thread.buffer_end_event);
         _saudio.backend.thread.buffer_end_event = 0;
@@ -1157,15 +1282,57 @@ _SOKOL_PRIVATE void _saudio_wasapi_release(void) {
 
 _SOKOL_PRIVATE bool _saudio_backend_init(void) {
     REFERENCE_TIME dur;
-    if (FAILED(CoInitializeEx(0, COINIT_MULTITHREADED))) {
-        SOKOL_LOG("sokol_audio wasapi: CoInitializeEx failed");
-        return false;
-    }
+    /* UWP Threads are CoInitialized by default with a different threading model, and this call fails
+    See https://github.com/Microsoft/cppwinrt/issues/6#issuecomment-253930637 */
+#if (defined(WINAPI_FAMILY_PARTITION) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP))
+    /* CoInitializeEx could have been called elsewhere already, in which
+        case the function returns with S_FALSE (thus it doesn't make much
+        sense to check the result)
+    */
+    HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+    _SOKOL_UNUSED(hr);
+#endif
     _saudio.backend.thread.buffer_end_event = CreateEvent(0, FALSE, FALSE, 0);
     if (0 == _saudio.backend.thread.buffer_end_event) {
         SOKOL_LOG("sokol_audio wasapi: failed to create buffer_end_event");
         goto error;
     }
+#if defined(SOKOL_WIN32_NO_MMDEVICE)
+    _saudio.backend.interface_activation_mutex = CreateMutexA(NULL, FALSE, "interface_activation_mutex");
+    if (_saudio.backend.interface_activation_mutex == NULL) {
+        SOKOL_LOG("sokol_audio wasapi: failed to create interface activation mutex");
+        goto error;
+    }
+    if (FAILED(StringFromIID(_SOKOL_AUDIO_WIN32COM_ID(_saudio_IID_Devinterface_Audio_Render), &_saudio.backend.interface_activation_audio_interface_uid_string))) {
+        SOKOL_LOG("sokol_audio wasapi: failed to get default audio device ID string");
+        goto error;
+    }
+
+    /* static instance of the fake COM object */
+    static IActivateAudioInterfaceCompletionHandlerVtbl completion_handler_interface_vtable = {
+        _saudio_interface_completion_handler_queryinterface,
+        _saudio_interface_completion_handler_addref_release,
+        _saudio_interface_completion_handler_addref_release,
+        _saudio_backend_activate_audio_interface_cb
+    };
+    static IActivateAudioInterfaceCompletionHandler completion_handler_interface = { &completion_handler_interface_vtable };
+
+    if (FAILED(ActivateAudioInterfaceAsync(_saudio.backend.interface_activation_audio_interface_uid_string, _SOKOL_AUDIO_WIN32COM_ID(_saudio_IID_IAudioClient), NULL, &completion_handler_interface, &_saudio.backend.interface_activation_operation))) {
+        SOKOL_LOG("sokol_audio wasapi: failed to get default audio device ID string");
+        goto error;
+    }
+    while (!(_saudio.backend.audio_client)) {
+        if (WaitForSingleObject(_saudio.backend.interface_activation_mutex, 10) != WAIT_TIMEOUT) {
+            ReleaseMutex(_saudio.backend.interface_activation_mutex);
+        }
+    }
+
+    if (!(_saudio.backend.interface_activation_success)) {
+        SOKOL_LOG("sokol_audio wasapi: interface activation failed. Unable to get audio client");
+        goto error;
+    }
+
+#else
     if (FAILED(CoCreateInstance(_SOKOL_AUDIO_WIN32COM_ID(_saudio_CLSID_IMMDeviceEnumerator),
         0, CLSCTX_ALL,
         _SOKOL_AUDIO_WIN32COM_ID(_saudio_IID_IMMDeviceEnumerator),
@@ -1189,6 +1356,7 @@ _SOKOL_PRIVATE bool _saudio_backend_init(void) {
         SOKOL_LOG("sokol_audio wasapi: device activate failed");
         goto error;
     }
+#endif
     WAVEFORMATEX fmt;
     memset(&fmt, 0, sizeof(fmt));
     fmt.nChannels = (WORD) _saudio.num_channels;
@@ -1255,7 +1423,10 @@ _SOKOL_PRIVATE void _saudio_backend_shutdown(void) {
         IAudioClient_Stop(_saudio.backend.audio_client);
     }
     _saudio_wasapi_release();
+
+#if (defined(WINAPI_FAMILY_PARTITION) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP))
     CoUninitialize();
+#endif
 }
 
 /*=== EMSCRIPTEN BACKEND IMPLEMENTATION ======================================*/
@@ -1299,14 +1470,12 @@ EM_JS(int, saudio_js_init, (int sample_rate, int num_channels, int buffer_size),
             sampleRate: sample_rate,
             latencyHint: 'interactive',
         });
-        console.log('sokol_audio.h: created AudioContext');
     }
     else if (typeof webkitAudioContext !== 'undefined') {
         Module._saudio_context = new webkitAudioContext({
             sampleRate: sample_rate,
             latencyHint: 'interactive',
         });
-        console.log('sokol_audio.h: created webkitAudioContext');
     }
     else {
         Module._saudio_context = null;
@@ -1348,6 +1517,18 @@ EM_JS(int, saudio_js_init, (int sample_rate, int num_channels, int buffer_size),
     }
 });
 
+/* shutdown the WebAudioContext and ScriptProcessorNode */
+EM_JS(void, saudio_js_shutdown, (void), {
+    if (Module._saudio_context !== null) {
+        if (Module._saudio_node) {
+            Module._saudio_node.disconnect();
+        }
+        Module._saudio_context.close();
+        Module._saudio_context = null;
+        Module._saudio_node = null;
+    }
+});
+
 /* get the actual sample rate back from the WebAudio context */
 EM_JS(int, saudio_js_sample_rate, (void), {
     if (Module._saudio_context) {
@@ -1383,9 +1564,11 @@ _SOKOL_PRIVATE bool _saudio_backend_init(void) {
 }
 
 _SOKOL_PRIVATE void _saudio_backend_shutdown(void) {
-    /* on HTML5, there's always a 'hard exit' without warning,
-        so nothing useful to do here
-    */
+    saudio_js_shutdown();
+    if (_saudio.backend.buffer) {
+        SOKOL_FREE(_saudio.backend.buffer);
+        _saudio.backend.buffer = 0;
+    }
 }
 
 /*=== ANDROID BACKEND IMPLEMENTATION ======================================*/
@@ -1658,7 +1841,15 @@ SOKOL_API_IMPL void saudio_setup(const saudio_desc* desc) {
     _saudio.num_channels = _saudio_def(_saudio.desc.num_channels, 1);
     _saudio_fifo_init_mutex(&_saudio.fifo);
     if (_saudio_backend_init()) {
-        SOKOL_ASSERT(0 == (_saudio.buffer_frames % _saudio.packet_frames));
+        /* the backend might not support the requested exact buffer size,
+           make sure the actual buffer size is still a multiple of
+           the requested packet size
+        */
+        if (0 != (_saudio.buffer_frames % _saudio.packet_frames)) {
+            SOKOL_LOG("sokol_audio.h: actual backend buffer size isn't multiple of requested packet size");
+            _saudio_backend_shutdown();
+            return;
+        }
         SOKOL_ASSERT(_saudio.bytes_per_frame > 0);
         _saudio_fifo_init(&_saudio.fifo, _saudio.packet_frames * _saudio.bytes_per_frame, _saudio.num_packets);
         _saudio.valid = true;
@@ -1726,4 +1917,4 @@ SOKOL_API_IMPL int saudio_push(const float* frames, int num_frames) {
 #pragma warning(pop)
 #endif
 
-#endif /* SOKOL_IMPL */
+#endif /* SOKOL_AUDIO_IMPL */

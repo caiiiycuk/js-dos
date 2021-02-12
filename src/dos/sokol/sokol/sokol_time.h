@@ -1,3 +1,6 @@
+#if defined(SOKOL_IMPL) && !defined(SOKOL_TIME_IMPL)
+#define SOKOL_TIME_IMPL
+#endif
 #ifndef SOKOL_TIME_INCLUDED
 /*
     sokol_time.h    -- simple cross-platform time measurement
@@ -5,13 +8,15 @@
     Project URL: https://github.com/floooh/sokol
 
     Do this:
-        #define SOKOL_IMPL
+        #define SOKOL_IMPL or
+        #define SOKOL_TIME_IMPL
     before you include this file in *one* C or C++ file to create the
     implementation.
 
     Optionally provide the following defines with your own implementations:
     SOKOL_ASSERT(c)     - your own assert macro (default: assert(c))
-    SOKOL_API_DECL      - public function declaration prefix (default: extern)
+    SOKOL_TIME_API_DECL - public function declaration prefix (default: extern)
+    SOKOL_API_DECL      - same as SOKOL_TIME_API_DECL
     SOKOL_API_IMPL      - public function implementation prefix (default: -)
 
     If sokol_time.h is compiled as a DLL, define the following before
@@ -19,7 +24,7 @@
 
     SOKOL_DLL
 
-    On Windows, SOKOL_DLL will define SOKOL_API_DECL as __declspec(dllexport)
+    On Windows, SOKOL_DLL will define SOKOL_TIME_API_DECL as __declspec(dllexport)
     or __declspec(dllimport) as needed.
 
     void stm_setup();
@@ -47,6 +52,15 @@
         last_time for the next call. If the value in last_time is 0,
         the return value will be zero (this usually happens on the
         very first call).
+
+    uint64_t stm_round_to_common_refresh_rate(uint64_t duration)
+        This oddly named function takes a measured frame time and
+        returns the closest "nearby" common display refresh rate frame duration
+        in ticks. If the input duration isn't close to any common display
+        refresh rate, the input duration will be returned unchanged as a fallback.
+        The main purpose of this function is to remove jitter/inaccuracies from
+        measured frame times, and instead use the display refresh rate as
+        frame duration.
 
     Use the following functions to convert a duration in ticks into
     useful time units:
@@ -92,13 +106,16 @@
 #define SOKOL_TIME_INCLUDED (1)
 #include <stdint.h>
 
-#ifndef SOKOL_API_DECL
-#if defined(_WIN32) && defined(SOKOL_DLL) && defined(SOKOL_IMPL)
-#define SOKOL_API_DECL __declspec(dllexport)
+#if defined(SOKOL_API_DECL) && !defined(SOKOL_TIME_API_DECL)
+#define SOKOL_TIME_API_DECL SOKOL_API_DECL
+#endif
+#ifndef SOKOL_TIME_API_DECL
+#if defined(_WIN32) && defined(SOKOL_DLL) && defined(SOKOL_TIME_IMPL)
+#define SOKOL_TIME_API_DECL __declspec(dllexport)
 #elif defined(_WIN32) && defined(SOKOL_DLL)
-#define SOKOL_API_DECL __declspec(dllimport)
+#define SOKOL_TIME_API_DECL __declspec(dllimport)
 #else
-#define SOKOL_API_DECL extern
+#define SOKOL_TIME_API_DECL extern
 #endif
 #endif
 
@@ -106,15 +123,16 @@
 extern "C" {
 #endif
 
-SOKOL_API_DECL void stm_setup(void);
-SOKOL_API_DECL uint64_t stm_now(void);
-SOKOL_API_DECL uint64_t stm_diff(uint64_t new_ticks, uint64_t old_ticks);
-SOKOL_API_DECL uint64_t stm_since(uint64_t start_ticks);
-SOKOL_API_DECL uint64_t stm_laptime(uint64_t* last_time);
-SOKOL_API_DECL double stm_sec(uint64_t ticks);
-SOKOL_API_DECL double stm_ms(uint64_t ticks);
-SOKOL_API_DECL double stm_us(uint64_t ticks);
-SOKOL_API_DECL double stm_ns(uint64_t ticks);
+SOKOL_TIME_API_DECL void stm_setup(void);
+SOKOL_TIME_API_DECL uint64_t stm_now(void);
+SOKOL_TIME_API_DECL uint64_t stm_diff(uint64_t new_ticks, uint64_t old_ticks);
+SOKOL_TIME_API_DECL uint64_t stm_since(uint64_t start_ticks);
+SOKOL_TIME_API_DECL uint64_t stm_laptime(uint64_t* last_time);
+SOKOL_TIME_API_DECL uint64_t stm_round_to_common_refresh_rate(uint64_t frame_ticks);
+SOKOL_TIME_API_DECL double stm_sec(uint64_t ticks);
+SOKOL_TIME_API_DECL double stm_ms(uint64_t ticks);
+SOKOL_TIME_API_DECL double stm_us(uint64_t ticks);
+SOKOL_TIME_API_DECL double stm_ns(uint64_t ticks);
 
 #ifdef __cplusplus
 } /* extern "C" */
@@ -122,7 +140,7 @@ SOKOL_API_DECL double stm_ns(uint64_t ticks);
 #endif // SOKOL_TIME_INCLUDED
 
 /*-- IMPLEMENTATION ----------------------------------------------------------*/
-#ifdef SOKOL_IMPL
+#ifdef SOKOL_TIME_IMPL
 #define SOKOL_TIME_IMPL_INCLUDED (1)
 #include <string.h> /* memset */
 
@@ -134,7 +152,7 @@ SOKOL_API_DECL double stm_ns(uint64_t ticks);
     #define SOKOL_ASSERT(c) assert(c)
 #endif
 #ifndef _SOKOL_PRIVATE
-    #if defined(__GNUC__)
+    #if defined(__GNUC__) || defined(__clang__)
         #define _SOKOL_PRIVATE __attribute__((unused)) static
     #else
         #define _SOKOL_PRIVATE static
@@ -258,6 +276,34 @@ SOKOL_API_IMPL uint64_t stm_laptime(uint64_t* last_time) {
     return dt;
 }
 
+// first number is frame duration in ns, second number is tolerance in ns,
+// the resulting min/max values must not overlap!
+static const uint64_t _stm_refresh_rates[][2] = {
+    { 16666667, 1000000 },  //  60 Hz: 16.6667 +- 1ms
+    { 13888889,  250000 },  //  72 Hz: 13.8889 +- 0.25ms
+    { 13333333,  250000 },  //  75 Hz: 13.3333 +- 0.25ms
+    { 11764706,  250000 },  //  85 Hz: 11.7647 +- 0.25
+    { 11111111,  250000 },  //  90 Hz: 11.1111 +- 0.25ms
+    {  8333333,  500000 },  // 120 Hz:  8.3333 +- 0.5ms
+    {  6944445,  500000 },  // 144 Hz:  6.9445 +- 0.5ms
+    {  4166667, 1000000 },  // 240 Hz:  4.1666 +- 1ms
+    {        0,       0 },  // keep the last element always at zero
+};
+
+SOKOL_API_IMPL uint64_t stm_round_to_common_refresh_rate(uint64_t ticks) {
+    uint64_t ns;
+    int i = 0;
+    while (0 != (ns = _stm_refresh_rates[i][0])) {
+        uint64_t tol = _stm_refresh_rates[i][1];
+        if ((ticks > (ns - tol)) && (ticks < (ns + tol))) {
+            return ns;
+        }
+        i++;
+    }
+    // fallthough: didn't fit into any buckets
+    return ticks;
+}
+
 SOKOL_API_IMPL double stm_sec(uint64_t ticks) {
     return (double)ticks / 1000000000.0;
 }
@@ -273,5 +319,5 @@ SOKOL_API_IMPL double stm_us(uint64_t ticks) {
 SOKOL_API_IMPL double stm_ns(uint64_t ticks) {
     return (double)ticks;
 }
-#endif /* SOKOL_IMPL */
+#endif /* SOKOL_TIME_IMPL */
 

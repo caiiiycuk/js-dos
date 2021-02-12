@@ -16,7 +16,7 @@ set(SOURCES_SERVER_SOKOL ${SOURCES_SERVER_JSDOS} ${SOURCES_LIBZIP})
 
 add_executable(sokol ${SOURCES_SERVER_SOKOL} ${SOURCES_SOKOL_CXX11} ${SOURCES_SOKOL_CXX03})
 target_link_libraries(sokol
-  X11 z ncurses dl GL pthread asound
+  X11 Xcursor Xi z ncurses dl GL pthread asound
   )
 
 if (X86_64)
