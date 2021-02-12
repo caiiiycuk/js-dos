@@ -347,7 +347,7 @@ struct KeyEvent {
 };
 
 std::list<KeyEvent> keyEvents;
-mstime executeNextKeyEventAt = 0;
+double executeNextKeyEventAt = 0;
 
 void GFX_Events() {
 #ifndef EMSCRIPTEN
@@ -359,15 +359,17 @@ void GFX_Events() {
 
     auto frameTime = GetMsPassedFromStart();
     auto it = keyEvents.begin();
+    auto clientTime = it->clientTime;
+
     while (executeNextKeyEventAt <= frameTime && it != keyEvents.end()) {
       auto key = it->key;
       auto pressed = it->pressed;
-      auto clientTime = it->clientTime;
 
       KEYBOARD_AddKey(key, pressed);
       it = keyEvents.erase(it);
       if (it != keyEvents.end()) {
         executeNextKeyEventAt = frameTime + (it->clientTime - clientTime);
+        clientTime = it->clientTime;
       }
     }
 }

@@ -6,6 +6,7 @@
 #include <thread>
 #include <mutex>
 #include <timer.h>
+#include <unordered_map>
 
 #define SOKOL_NO_ENTRY
 #define SOKOL_IMPL
@@ -26,7 +27,7 @@ int frameCount = 0;
 
 extern int frameWidth = 0;
 extern int frameHeight = 0;
-extern uint32_t *frameRgba = 0;
+extern uint32_t *frameRgba = nullptr;
 
 static float vertices[] = {0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
                            0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};
@@ -71,10 +72,13 @@ class GfxState {
     bind.fs_images[0] = sg_make_image(&imageDescription);
   }
 
-  ~GfxState() { sg_destroy_image(bind.fs_images[0]); }
+  ~GfxState() {
+    sg_destroy_pipeline(pipeline);
+    sg_destroy_image(bind.fs_images[0]);
+  }
 };
 
-GfxState *state = 0;
+GfxState *state = nullptr;
 
 void client_frame_set_size(int width, int height) {
   std::lock_guard<std::mutex> g(mutex);
@@ -90,7 +94,6 @@ void client_frame_set_size(int width, int height) {
 void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
   std::lock_guard<std::mutex> g(mutex);
 
-  frameCount++;
   if (!frameRgba) {
     return;
   }
@@ -102,6 +105,8 @@ void client_frame_update_lines(uint32_t *lines, uint32_t count, void *rgba) {
     memcpy(&frameRgba[start * frameWidth], (char *)rgba + offset,
            sizeof(uint32_t) * count * frameWidth);
   }
+
+  frameCount++;
 }
 
 void client_stdout(const char* data, uint32_t amount) {
@@ -166,10 +171,14 @@ void sokolFrame() {
 }
 
 void keyEvent(const sapp_event *event) {
-  server_add_key(
-      (KBD_KEYS)event->key_code,
-      event->type == SAPP_EVENTTYPE_KEY_DOWN,
-      GetMsPassedFromStart());
+  static std::unordered_map<KBD_KEYS, bool> keyMatrix;
+  auto keyCode = (KBD_KEYS) event->key_code;
+  auto pressed = event->type == SAPP_EVENTTYPE_KEY_DOWN;
+  if (keyMatrix[keyCode] == pressed) {
+    return;
+  }
+  keyMatrix[keyCode] = pressed;
+  server_add_key(keyCode, pressed, GetMsPassedFromStart());
 }
 
 void client_run() {
@@ -212,7 +221,7 @@ void client_run() {
   appDescription.html5_ask_leave_site = false;
   appDescription.html5_canvas_resize = true;
 
-  _sapp_run(&appDescription);
+  sapp_run(&appDescription);
 }
 
 void runRuntime() {

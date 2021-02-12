@@ -75,10 +75,13 @@ test("should render playable video game", async() => {
             case 37: return 263;
             case 40: return 264;
             case 17: return 341;
-            default: return 0;
+            default: return code;
         }
     }
+
+    const keyCharTimes: {[keyChar: string]: number} = {};
     window.addEventListener("keydown", (e) => {
+        keyCharTimes[e.key] = Date.now();
         ci.sendKeyEvent(getKeyCode(e.keyCode), true);
     });
     window.addEventListener("keyup", (e) => {
@@ -107,6 +110,11 @@ test("should render playable video game", async() => {
                 resolve();
             }
         });
-        ci.events().onStdout(console.log);
+        ci.events().onStdout((message) => {
+            if (keyCharTimes[message] !== undefined) {
+                console.log("char", message, "rtt", Date.now() - keyCharTimes[message]);
+                delete keyCharTimes[message];
+            }
+        });
     });
 });
