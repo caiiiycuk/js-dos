@@ -7,6 +7,7 @@ include_directories(
 
 set(SOURCES_DIRECT_CXX11
   "${CMAKE_CURRENT_LIST_DIR}/cpp/direct-protocol.cpp"
+  "${CMAKE_CURRENT_LIST_DIR}/cpp/direct-debugger.cpp"
   )
 
 set(SOURCES_DIRECT_CXX03
