@@ -73,6 +73,7 @@ class GfxState {
   }
 
   ~GfxState() {
+    sg_destroy_buffer(bind.vertex_buffers[0]);
     sg_destroy_pipeline(pipeline);
     sg_destroy_image(bind.fs_images[0]);
   }
@@ -232,4 +233,5 @@ void runRuntime() {
 
 int main(int argc, char *argv[]) {
   runRuntime();
+  return 0;
 }
