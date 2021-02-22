@@ -43,7 +43,7 @@ EM_JS(void, emsc_dump_memory_contents, (HostPt memBase,
         },
         "numPages": numPages,
         "memoryCopy": undefined
-        };
+    };
     if (copyDosMemory) {
         Module.memoryContents['memoryCopy'] = Module.HEAPU8.slice(
                 memBase, memBase + (numPages / 4096)*1024*1024);
@@ -67,4 +67,4 @@ extern "C" void EMSCRIPTEN_KEEPALIVE rescanFilesystem() {
   return;
 }
 
-#endif // ifdef EMSCRIPT
+#endif // ifdef EMSCRIPTEN
