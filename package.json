@@ -1,6 +1,6 @@
 {
     "name": "js-dos",
-    "version": "7.0.0-beta.r25",
+    "version": "7.0.0-beta.r26",
     "description": "Easiest API to run dos programs in browser",
     "main": "dist/js-dos.js",
     "types": "dist/types/js-dos.d.ts",
@@ -27,8 +27,8 @@
         "@types/gulp-rename": "0.0.33",
         "@types/node": "^10.17.21",
         "del": "^5.1.0",
-        "emulators": "0.0.42",
-        "emulators-ui": "0.0.44",
+        "emulators": "0.0.55",
+        "emulators-ui": "0.0.51",
         "gulp": "^4.0.2",
         "gulp-concat": "^2.6.1",
         "gulp-rename": "^2.0.0",
