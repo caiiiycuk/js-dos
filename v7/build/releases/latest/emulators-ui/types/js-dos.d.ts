@@ -8,6 +8,7 @@ export interface DosOptions {
     layersOptions?: LayersOptions;
 }
 export declare class DosInstance {
+    static initialRun: boolean;
     emulatorsUi: EmulatorsUi;
     emulatorFunction: EmulatorFunction;
     layers: Layers;
