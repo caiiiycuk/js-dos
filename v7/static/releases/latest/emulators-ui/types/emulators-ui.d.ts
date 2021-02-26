@@ -3,6 +3,7 @@ import { resolveBundle } from "./network/xhr";
 import { webGl } from "./graphics/webgl";
 import { video } from "./graphics/video";
 import { keyboard } from "./controls/keyboard";
+import { mouse } from "./controls/mouse";
 import { nipple } from "./controls/nipple";
 import { button } from "./controls/button";
 import { options } from "./controls/options";
@@ -41,6 +42,7 @@ export declare class EmulatorsUi {
             [index: number]: number;
         };
         keyboard: typeof keyboard;
+        mouse: typeof mouse;
         nipple: typeof nipple;
         button: typeof button;
         options: typeof options;

@@ -16,5 +16,5 @@ export default class DosBundle {
     cycles(cycles: string): DosBundle;
     extract(url: string, path?: string, type?: "zip"): DosBundle;
     extractAll(sources: DosArchiveSource[]): DosBundle;
-    toUint8Array(): Promise<Uint8Array>;
+    toUint8Array(overwriteConfig?: boolean): Promise<Uint8Array>;
 }
