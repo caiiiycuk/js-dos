@@ -7,7 +7,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 **emulators-ui** and **js-dos bundles** support configuring touch controls for mobile.
 It can map simple gestures like: left, right, up, down swipes and tap for two fingers.
 
-To enable gestures support, you need to add `gestures` section in [jsdos.json](configuration#jsdosjsdosjson).
+To enable gestures support, you need to add `gestures` section in [jsdos.json](jsdos-bundle#jsdosjsdosjson).
 In that case js-dos will automatically configure gestures support.
 
 **OR**
@@ -77,7 +77,7 @@ When the user taps on the screen by finger.
 
 ## GameStudio
 
-You can use [Game Studio](game-studio) to easily configure gestures.
+You can use [Game Studio](jsdos-bundle#game-studio) to easily configure gestures.
 
 ## nipplejs
 

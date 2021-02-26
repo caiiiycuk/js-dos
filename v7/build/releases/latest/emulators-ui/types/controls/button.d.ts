@@ -13,11 +13,6 @@ export interface Button {
         bottom?: 1 | 2;
     };
 }
-export declare const toBind: {
-    starters: string[];
-    enders: string[];
-    prevents: string[];
-};
 export interface ButtonHandler {
     onDown?: () => void;
     onUp?: () => void;

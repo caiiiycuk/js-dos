@@ -9,7 +9,7 @@ Layer is a conjunction of [Mapper](mapper), [Gestures](gestures) and [Buttons](b
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/iEaRErl76jM?start=35" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Layer information are stored inside [jsdos.json](configuration#jsdosjsdosjson) file and generated with Dos.Zone [game studio](game-studio).
+Layer information are stored inside [jsdos.json](jsdos-bundle#jsdosjsdosjson) file and generated with Dos.Zone [game studio](jsdos-bundle#game-studio).
 
 Often one layer is enough for a game, but sometimes the game has a complex UI that requires changing layers between scenes. In that case you can attach multiple layers to the game and then switch between them when needed.
 

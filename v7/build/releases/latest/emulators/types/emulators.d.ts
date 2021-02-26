@@ -3,10 +3,11 @@ import { Cache } from "./cache";
 import { DosConfig } from "./dos/bundle/dos-conf";
 export interface Emulators {
     pathPrefix: string;
+    cacheSeed: string;
     cache: () => Promise<Cache>;
     dosBundle: () => Promise<DosBundle>;
-    dosDirect: (bundle: Uint8Array) => Promise<CommandInterface>;
-    dosWorker: (bundle: Uint8Array) => Promise<CommandInterface>;
+    dosDirect: (bundle: Uint8Array | Uint8Array[]) => Promise<CommandInterface>;
+    dosWorker: (bundle: Uint8Array | Uint8Array[]) => Promise<CommandInterface>;
     janus: (restUrl: string) => Promise<CommandInterface>;
 }
 export interface CommandInterface {
@@ -18,6 +19,8 @@ export interface CommandInterface {
     exit: () => Promise<void>;
     simulateKeyPress: (...keyCodes: number[]) => void;
     sendKeyEvent: (keyCode: number, pressed: boolean) => void;
+    sendMouseMotion: (x: number, y: number) => void;
+    sendMouseButton: (button: number, pressed: boolean) => void;
     persist(): Promise<Uint8Array>;
     events(): CommandInterfaceEvents;
 }

@@ -12,6 +12,7 @@ export declare class Layers {
     width: number;
     height: number;
     notyf: Notyf;
+    toggleKeyboard: () => boolean;
     private clickToStart;
     private loaderText;
     private onResize;
@@ -23,6 +24,8 @@ export declare class Layers {
     private onFullscreenChanged;
     private scale;
     constructor(root: HTMLDivElement, options: LayersOptions);
+    private initKeyEvents;
+    preventContextMenu(): void;
     setOnResize(handler: (width: number, height: number) => void): void;
     setOnKeyDown(handler: (keyCode: number) => void): void;
     fireKeyDown(keyCode: number): void;
@@ -32,7 +35,7 @@ export declare class Layers {
     fireKeyPress(keyCode: number): void;
     toggleFullscreen(): void;
     setOnFullscreen(onFullscreenChanged: (fullscreen: boolean) => void): void;
-    save(): void;
+    save(): Promise<void>;
     setOnSave(handler: () => Promise<void>): void;
     hideLoadingLayer(): void;
     showLoadingLayer(): void;

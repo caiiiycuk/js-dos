@@ -7,7 +7,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 **emulators-ui** and **js-dos bundles** support adding on screen buttons. 
 These buttons can be mapped to key events.
 
-To enable buttons support, you need to add `buttons` section in [jsdos.json](configuration#jsdosjsdosjson).
+To enable buttons support, you need to add `buttons` section in [jsdos.json](jsdos-bundle#jsdosjsdosjson).
 In that case js-dos will automatically configure buttons support.
 
 **OR**
@@ -87,4 +87,4 @@ Currently you can change the size of buttons by passing `scale` in layersOptions
 
 ## GameStudio
 
-You can use [Game Studio](game-studio) to easily configure gestures.
+You can use [Game Studio](jsdos-bundle#game-studio) to easily configure gestures.

@@ -3,7 +3,7 @@ id: releases
 title: Releases
 ---
 
-There are no stable releases of js-dos 7. However, latest version always available in npm repository: 
+There are no stable releases of js-dos 7. However, latest version always available on [github](https://github.com/caiiiycuk/js-dos/releases) and npm repository: 
 
 * emulators - [npm package](https://www.npmjs.com/package/emulators)
 * emulators-ui - [npm package](https://www.npmjs.com/package/emulators-ui)

@@ -11,10 +11,10 @@ We will create a rotating cube with a digger game.
 
 First you need to add `emulators.js` and `emulators-ui.js`:
 ```html
-<script src="/v7/build/releases/latest/emulators/emulators.js"></script>
-<script src="/v7/build/releases/latest/emulators-ui/emulators-ui.js"></script>
+<script src="emulators/emulators.js"></script>
+<script src="emulators-ui/emulators-ui.js"></script>
 <script>
-  emulators.pathPrefix = "/v7/build/releases/latest/emulators/";
+  emulators.pathPrefix = "emulators/";
 ```
 
 Complete example:

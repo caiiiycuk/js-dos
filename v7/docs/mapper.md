@@ -6,7 +6,7 @@ title: Mapper
 **emulators-ui** and **js-dos bundles** support adding keyboard mapping. With this feature you can
 remap one key to another.
 
-To enable mapper support, you need to add `mapper` section in [jsdos.json](configuration#jsdosjsdosjson).
+To enable mapper support, you need to add `mapper` section in [jsdos.json](jsdos-bundle#jsdosjsdosjson).
 In that case js-dos will automatically configure mapper support.
 
 **OR**
@@ -32,4 +32,4 @@ This snippet will map button "X" to button "F1" which is fire for digger.
 
 ## GameStudio
 
-You can use [Game Studio](game-studio) to easily configure gestures.
+You can use [Game Studio](jsdos-bundle#game-studio) to easily configure gestures.

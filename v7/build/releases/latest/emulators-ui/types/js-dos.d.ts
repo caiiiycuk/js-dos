@@ -12,9 +12,11 @@ export declare class DosInstance {
     emulatorFunction: EmulatorFunction;
     layers: Layers;
     ciPromise?: Promise<CommandInterface>;
+    enableMobileControls: () => void;
+    disableMobileControls: () => void;
     private clickToStart;
     constructor(root: HTMLDivElement, emulatorsUi: EmulatorsUi, options: DosOptions);
-    run(bundleUrl: string): Promise<CommandInterface>;
+    run(bundleUrl: string, optionalChangesUrl?: string): Promise<CommandInterface>;
     stop(): Promise<void>;
 }
 export declare type DosFactoryType = (root: HTMLDivElement, options?: DosOptions) => DosInstance;

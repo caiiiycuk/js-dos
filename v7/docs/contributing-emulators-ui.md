@@ -19,7 +19,7 @@ To contribute to the `emulators-ui` package do the following:
 
 ### Adding new client-side features
 
-js-dos has an [optional config](configuration) file that you can put in `js-dos bundle`. This
+js-dos has an [optional config](jsdos-bundle) file that you can put in `js-dos bundle`. This
 file should be in json format. It can contain any information you want and it accessible from [Command Interface](command-interface):
 
 ```js

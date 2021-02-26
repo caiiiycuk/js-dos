@@ -159,6 +159,15 @@
     filter: opacity(1.0) hue-rotate(-70deg) saturate(5) sepia(1);
 }
 
+.emulator-button-control {
+    filter: opacity(1.0) !important;
+    background-color: rgb(128, 128, 128) !important;
+    z-index: 999;
+}
+
+.emulator-button-control:hover {
+    filter: opacity(1.0) hue-rotate(-70deg) saturate(5) sepia(1) !important;
+}
 
 .emulator-control-select {
     overflow: hidden;
