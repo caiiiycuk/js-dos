@@ -20,7 +20,7 @@ class Host {
     public wasmSupported = false;
     public globals: Globals;
     constructor() {
-        this.globals = window as any;
+        this.globals = typeof window === "undefined" ? {} : window as any;
         if (!this.globals.exports) {
             this.globals.exports = {};
         }
@@ -142,7 +142,35 @@ export class WasmModulesImpl implements IWasmModules {
 export function loadWasmModule(url: string,
                                moduleName: string,
                                cache: Cache,
-                               onprogress: (stage: string, total: number, loaded: number) => void) {
+                               onprogress: (stage: string, total: number, loaded: number) => void): Promise<WasmModule> {
+    if (typeof XMLHttpRequest === "undefined") {
+        return loadWasmModuleNode(url, moduleName, cache, onprogress);
+    } else {
+        return loadWasmModuleBrowser(url, moduleName, cache, onprogress);
+    }
+}
+
+function loadWasmModuleNode(url: string,
+                            moduleName: string,
+                            cache: Cache,
+                            onprogress: (stage: string, total: number, loaded: number) => void) {
+    if (host.globals.compiled[moduleName] !== undefined) {
+        return host.globals.compiled[moduleName];
+    }
+
+    const emModule = require(url);
+    const compiledModulePromise = Promise.resolve(new CompiledNodeModule(emModule));
+    if (moduleName) {
+        host.globals.compiled[moduleName] = compiledModulePromise;
+    }
+
+    return compiledModulePromise;
+}
+
+function loadWasmModuleBrowser(url: string,
+                          moduleName: string,
+                          cache: Cache,
+                          onprogress: (stage: string, total: number, loaded: number) => void) {
     if (host.globals.compiled[moduleName] !== undefined) {
         return host.globals.compiled[moduleName];
     }
@@ -184,9 +212,9 @@ export function loadWasmModule(url: string,
         eval.call(window, script as string);
         /* tslint:enable:no-eval */
 
-        return new CompiledModule(wasmModule,
-                                  host.globals.exports[moduleName],
-                                  instantiateWasm);
+        return new CompiledBrowserModule(wasmModule,
+                                         host.globals.exports[moduleName],
+                                         instantiateWasm);
     };
 
     const promise = load();
@@ -198,7 +226,24 @@ export function loadWasmModule(url: string,
     return promise;
 }
 
-class CompiledModule implements WasmModule {
+class CompiledNodeModule implements WasmModule {
+    private emModule: any;
+    constructor(emModule: any) {
+        this.emModule = emModule;
+    }
+
+    instantiate(initialModule: any): Promise<void> {
+        return new Promise<void>((resolve) => {
+            initialModule.onRuntimeInitialized = () => {
+                resolve();
+            };
+
+            new this.emModule(initialModule);
+        });
+    }
+}
+
+class CompiledBrowserModule implements WasmModule {
     public wasmModule: WebAssembly.Module;
     private module: any;
     private instantiateWasm: any;

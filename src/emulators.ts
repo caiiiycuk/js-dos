@@ -78,6 +78,8 @@ export interface CommandInterfaceEvents {
     onMessage: (consumer: (msgType: MessageType, ...args: any[]) => void) => void;
 }
 
-if (typeof window !== undefined) {
+if (typeof window !== "undefined") {
     (window as any).emulators = emulatorsImpl;
+} if (typeof global !== "undefined") {
+    (global as any).emulators = emulatorsImpl;
 }

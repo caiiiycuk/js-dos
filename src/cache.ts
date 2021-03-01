@@ -45,8 +45,8 @@ class CacheDbImpl implements Cache {
 
     constructor(version: string, onready: (cache: Cache) => void, onerror: (msg: string) => void) {
         this.version = version;
-        this.indexedDB = window.indexedDB || (window as any).mozIndexedDB
-            || (window as any).webkitIndexedDB || (window as any).msIndexedDB;
+        this.indexedDB = (typeof window === "undefined" ? undefined : window.indexedDB || (window as any).mozIndexedDB
+            || (window as any).webkitIndexedDB || (window as any).msIndexedDB) as any;
 
         if (!this.indexedDB) {
             onerror("Indexed db is not supported on this host");
