@@ -15,6 +15,9 @@ function copyCss() {
 
 function copyWasm() {
     return src([
+        "node_modules/emulators/dist/wdirect.js",
+        "node_modules/emulators/dist/wdirect.js.symbols",
+        "node_modules/emulators/dist/wdirect.wasm",
         "node_modules/emulators/dist/wworker.js",
         "node_modules/emulators/dist/wworker.js.symbols",
         "node_modules/emulators/dist/wworker.wasm",
