@@ -79,6 +79,17 @@ const features = [
             </>
         ),
     },
+    {
+        title: <>node.js support</>,
+        imageUrl: 'img/node.png',
+        description: (
+            <>
+              Emulators package supports execution in node.js environment.
+              It means that you can start dos program in node.js without hacks.<br/>
+              <a href="docs/node">Read more</a>
+            </>
+        ),
+    },
 ];
 
 function Feature({imageUrl, title, description}) {
