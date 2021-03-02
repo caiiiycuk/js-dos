@@ -13,6 +13,7 @@
 #endif
 
 #include <jsdos-timer.h>
+#include <jsdos-asyncify.h>
 
 void jsdos::initTimer() {
 #ifdef EMSCRIPTEN
@@ -44,15 +45,7 @@ mstime GetTicks() {
 }
 
 void DelayWithYield(int ms) {
-#ifdef EMSCRIPTEN
-    emscripten_sleep_with_yield(ms);
-#else
-    if (ms == 0) {
-      return;
-    }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-#endif
+    asyncify_sleep(ms);
 }
 
 void Delay(int ms) {

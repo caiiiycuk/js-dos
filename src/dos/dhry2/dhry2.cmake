@@ -20,9 +20,8 @@ add_custom_command(TARGET dhry2
 )
 
 if (${EMSCRIPTEN})
-  target_compile_definitions(dhry2 PUBLIC -DASYNCIFY -Demscripten_sleep_with_yield=asyncify_sleep -Demscripten_sleep=asyncify_sleep)
   set_target_properties(dhry2 PROPERTIES SUFFIX .js)
-  set_target_properties(dhry2 PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY -s 'ASYNCIFY_IMPORTS=[\"emscripten_sleep\",\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../../native/dos/asyncify.txt -s EXPORT_NAME='WDHRY2'")
+  set_target_properties(dhry2 PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY=1 -s 'ASYNCIFY_IMPORTS=[\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../../native/dos/asyncify.txt -s EXPORT_NAME='WDHRY2'")
 else()
   if (X86_64)
     add_definitions(-DX86_64)

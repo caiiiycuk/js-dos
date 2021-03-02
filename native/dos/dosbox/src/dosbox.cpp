@@ -143,7 +143,6 @@ bool ticksLocked;
 
 #ifdef JSDOS
 constexpr auto LOOP_EXECUTION_TIME = 1000 / 60;
-int nosleep_lock = 0;
 #ifdef EMSCRIPTEN
 EM_JS(bool, isNormalState, (), {
   return Asyncify.state === 0 ? 1 : 0;
@@ -161,7 +160,7 @@ static Bitu Normal_Loop(void) {
 	Bits ret;
 #if defined(JSDOS)
     static mstime lastSleepTime = GetTicks();
-    if (nosleep_lock == 0 && GetTicks() - lastSleepTime > LOOP_EXECUTION_TIME) {
+    if (GetTicks() - lastSleepTime > LOOP_EXECUTION_TIME) {
         DelayWithYield(0);
         lastSleepTime = GetTicks();
     }

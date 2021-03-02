@@ -93,6 +93,8 @@ EM_JS(bool, isNode, (), {
   });
 
 // clang-format on
+#else
+#include <thread>
 #endif
 
 void jsdos::initAsyncify() {
@@ -118,5 +120,11 @@ void jsdos::destroyAsyncify() {
 extern "C" void asyncify_sleep(unsigned int ms) {
 #ifdef EMSCRIPTEN
   syncSleep();
+#else
+  if (ms == 0) {
+    return;
+  }
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 #endif
 }

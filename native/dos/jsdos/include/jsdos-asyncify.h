@@ -9,4 +9,6 @@ namespace jsdos {
   void destroyAsyncify();
 }
 
+extern "C" void asyncify_sleep(unsigned int ms);
+
 #endif  // JS_DOS_JSDOS_ASYNCIFY_H
