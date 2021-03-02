@@ -28,6 +28,10 @@
 #include "fpu.h"
 #include "paging.h"
 
+#ifdef JSDOS
+#include <jsdos-asyncify.h>
+#endif
+
 #if C_DEBUG
 #include "debug.h"
 #endif
@@ -138,7 +142,15 @@ static INLINE Bit32u Fetchd() {
 
 #define EALookupTable (core.ea_table)
 
+Bits CPU_Core_Normal_Run_Impl(void);
 Bits CPU_Core_Normal_Run(void) {
+  jsdos::asyncifyLock();
+  auto result = CPU_Core_Normal_Run_Impl();
+  jsdos::asyncifyUnlock();
+  return result;
+}
+
+Bits CPU_Core_Normal_Run_Impl(void) {
 	while (CPU_Cycles-->0) {
 		LOADIP;
 		core.opcode_index=cpu.code.big*0x200;

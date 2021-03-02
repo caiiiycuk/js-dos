@@ -70,7 +70,7 @@ EM_JS(bool, initMessageSyncSleep, (bool worker), {
   });
 
 EM_JS(void, destroyTimeoutSyncSleep, (), {
-    Module.alive = true;
+    Module.alive = false;
     delete Module.sync_sleep;
   });
 
@@ -117,9 +117,20 @@ void jsdos::destroyAsyncify() {
 #endif
 }
 
+int asyncifyLockCount = 0;
+void jsdos::asyncifyLock() {
+  ++asyncifyLockCount;
+}
+
+void jsdos::asyncifyUnlock() {
+  --asyncifyLockCount;
+}
+
 extern "C" void asyncify_sleep(unsigned int ms) {
 #ifdef EMSCRIPTEN
-  syncSleep();
+  if (asyncifyLockCount == 0) {
+    syncSleep();
+  }
 #else
   if (ms == 0) {
     return;
