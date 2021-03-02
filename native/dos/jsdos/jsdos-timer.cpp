@@ -18,7 +18,7 @@
 void jsdos::initTimer() {
 #ifdef EMSCRIPTEN
   EM_ASM(({
-    Module.performance = Module.performance || performance;
+    Module.performance = Module.performance || (typeof performance === "object" ? performance : Date);
   }));
 #endif
 }
