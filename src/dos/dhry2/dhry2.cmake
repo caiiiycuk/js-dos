@@ -1,3 +1,7 @@
+if (${EMSCRIPTEN})
+  set(DHRY2_LINK_FLAGS "")
+endif ()
+
 set(SOURCES_DHRY2_CXX11
   "${CMAKE_CURRENT_LIST_DIR}/dhry2.cpp"
   )
@@ -21,7 +25,7 @@ add_custom_command(TARGET dhry2
 
 if (${EMSCRIPTEN})
   set_target_properties(dhry2 PROPERTIES SUFFIX .js)
-  set_target_properties(dhry2 PROPERTIES LINK_FLAGS "-s WASM=1 -s ASYNCIFY=1 -s 'ASYNCIFY_IMPORTS=[\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../../native/dos/asyncify.txt -s EXPORT_NAME='WDHRY2'")
+  set_target_properties(dhry2 PROPERTIES LINK_FLAGS "${DHRY2_LINK_FLAGS} -s WASM=1 -s ASYNCIFY=1 -s 'ASYNCIFY_IMPORTS=[\"syncSleep\"]' -s ASYNCIFY_WHITELIST=@${CMAKE_CURRENT_LIST_DIR}/../../../native/dos/asyncify.txt -s EXPORT_NAME='WDHRY2'")
 else()
   if (X86_64)
     add_definitions(-DX86_64)

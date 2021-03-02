@@ -146,9 +146,9 @@ void sokolFrame() {
 // @caiiiycuk: think about better solution
 //   https://github.com/floooh/sokol/issues/478
 //
-//  if (frameWidth == 0 || frameHeight == 0 || renderedFrame == frameCount) {
-//    return;
-//  }
+  if (frameWidth == 0 || frameHeight == 0) {
+    return;
+  }
 
   if (!state || state->width != frameWidth || state->height != frameHeight) {
     delete state;
