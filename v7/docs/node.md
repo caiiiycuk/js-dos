@@ -17,7 +17,7 @@ In node environment you can use only [emulators](https://www.npmjs.com/package/e
 npm install --save emulators jimp
 ``` 
 
-Next we need to download Digger [jsdos bundle](jsdos-bundle):
+Next we need to download Digger [js-dos bundle](jsdos-bundle):
 ```sh
 curl https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos -o digger.jsdos
 ```

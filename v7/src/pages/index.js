@@ -90,6 +90,27 @@ const features = [
             </>
         ),
     },
+    {
+        title: <>typescirpt support</>,
+        imageUrl: 'img/ts.png',
+        description: (
+            <>
+              All source code of js-dos is written in TypeScript. So, you can use
+              type checking when you use js-dos.<br/>
+              <a href="docs/react">Read more</a>
+            </>
+        ),
+    },
+    {
+        title: <>react support</>,
+        imageUrl: 'img/react.png',
+        description: (
+            <>
+              js-dos can be easily wrapped as react component.<br/>
+              <a href="docs/react">Creating React component</a>
+            </>
+        ),
+    },
 ];
 
 function Feature({imageUrl, title, description}) {

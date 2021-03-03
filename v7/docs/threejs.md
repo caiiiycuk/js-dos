@@ -1,6 +1,6 @@
 ---
 id: threejs 
-title: Three.js 
+title: In Three.js 
 ---
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
