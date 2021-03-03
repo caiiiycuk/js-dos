@@ -9,4 +9,6 @@ namespace jsdos {
   void initTimer();
 }
 
+void DelayWithYield(int);
+
 #endif  // JS_DOS_JSDOS_TIMER_H
