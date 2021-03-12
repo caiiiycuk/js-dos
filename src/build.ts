@@ -4,8 +4,8 @@
 // gulpfile.ts/wasm.ts --> generateBuildInfo
 
 export const Build = {
-    version: "0.0.57 (14ec9b908bbf779b2c1c5da1d713d6b2)",
-    buildSeed: 1614700252862,
+    version: "0.0.57 (169001f70706f39500746c472eec5ce2)",
+    buildSeed: 1615529172391,
     "dhry2.wasm": {
         "size": 1780440,
         "gzSize": 643690

@@ -6,7 +6,7 @@ import { compareAndExit } from "./compare"
 
 import emulatorsImpl from "../../src/impl/emulators-impl";
 import emulators from "../../src/impl/emulators-impl";
-import { JanusMessageType } from "../../src/janus/janus-impl";
+import { JanusMessageType, JanusCommandInterface } from "../../src/janus/janus-impl";
 emulatorsImpl.pathPrefix = "/";
 
 function restUrl() {
@@ -64,7 +64,7 @@ test("Should provide js-dos config", async () => {
 });
 
 test("should render playable video game", async() => {
-    const ci = await emulators.janus(restUrl());
+    const ci = await emulators.janus(restUrl()) as JanusCommandInterface;
     assert.ok(ci);
 
     function getKeyCode(code: number) {
@@ -79,9 +79,7 @@ test("should render playable video game", async() => {
         }
     }
 
-    const keyCharTimes: {[keyChar: string]: number} = {};
     window.addEventListener("keydown", (e) => {
-        keyCharTimes[e.key] = Date.now();
         ci.sendKeyEvent(getKeyCode(e.keyCode), true);
     });
     window.addEventListener("keyup", (e) => {
@@ -100,20 +98,26 @@ test("should render playable video game", async() => {
     });
 
     await new Promise<void>((resolve) => {
+        const video = document.getElementById("video") as HTMLVideoElement;
         ci.events().onMessage((msgType: JanusMessageType, stream: MediaStream) => {
             if (msgType === "onremotestream") {
-                const video = document.getElementById("video") as HTMLVideoElement;
                 if (video !== null) {
 								    (window as any).Janus.attachMediaStream(video, stream);
                 }
             } else if (msgType === "started") {
+                ci.logVisual(video);
                 resolve();
             }
         });
         ci.events().onStdout((message) => {
-            if (keyCharTimes[message] !== undefined) {
-                console.log("char", message, "rtt", Date.now() - keyCharTimes[message]);
-                delete keyCharTimes[message];
+            const colors = ["white", "red", "yellow"];
+            const signals = ["pipe", "frame", "stream"];
+            for (const signal of signals) {
+                for (const color of colors) {
+                    if (message.startsWith(color + "-" + signal + ":")) {
+                        document.getElementById(color + "-" + signal).innerHTML = message.substr((color + "-" + signal + ":").length);
+                    }
+                }
             }
         });
     });

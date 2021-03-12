@@ -9,6 +9,11 @@
 	           margin: 0;
 	           background: darkseagreen;
          }
+
+         video, table, tr {
+             margin: 5px;
+             border: 1px solid black;
+         }
         </style>
         <script src="mocha.js"></script>
         <script src="chai.js"></script>
@@ -18,10 +23,18 @@
 
     <body>
         <div id="mocha"></div>
+        <video id="video" width="320px" height="240px" autoplay="autoplay" playsinline></video>
+        <br/>
+        <table>
+            <tr><td>signal</td><td>pipe</td><td>frame</td><td>stream</td></tr>
+            <tr><td>white</td><td id="white-pipe">0</td><td id="white-frame">0</td><td id="white-stream">0</td></tr>
+            <tr><td>red</td><td id="red-pipe">0</td><td id="red-frame">0</td><td id="red-stream">0</td></tr>
+            <tr><td>yellow</td><td id="yellow-pipe">0</td><td id="yellow-frame">0</td><td id="yellow-stream">0</td></tr>
+        </table>
+        <div class="info">To complete this test Janus server should be started on http://127.0.0.1:8088</div>
+        <br/>
 	      <button id="button" onclick="javacript:start()">Start Test</button>
 	      <button id="button" onclick="javacript:fullscreen()">FullScreen</button>
-        <video id="video" width="320px" height="240px" autoplay="autoplay" playsinline></video>
-        <div class="info">To complete this test Janus server should be started on http://127.0.0.1:8088</div>
         <script>
          mocha.setup({
              ui: 'qunit',

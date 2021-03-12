@@ -32,7 +32,13 @@ function dataAssembler(onMessage: (data: string) => void,
     return assemble;
 }
 
-class JanusBackendImpl implements CommandInterface {
+export interface JanusCommandInterface extends CommandInterface {
+    logVisual: (video: HTMLVideoElement) => void;
+}
+
+type LogColor = "white" | "red" | "yellow" | "not set";
+
+class JanusBackendImpl implements JanusCommandInterface {
     private live = true;
     private startedAt = Date.now();
 
@@ -58,6 +64,12 @@ class JanusBackendImpl implements CommandInterface {
     private eventQueue = "";
     private eventIntervalId = -1;
     private rttIntervalId = -1;
+
+    private logIntervalId = -1;
+    private logColor: LogColor = "not set";
+    private logWhiteMs = 0;
+    private logRedMs = 0;
+    private logYellowMs = 0;
 
     constructor(janus: JanusJS.Janus, opaqueId: string) {
         this.eventsImpl = new CommandInterfaceEventsImpl();
@@ -162,6 +174,18 @@ class JanusBackendImpl implements CommandInterface {
             if (opaqueId === this.opaqueId) {
                 this.eventsImpl.fireStdout("rtt-data=" + (returnedAt - sentAt) + " " + bitrate);
             }
+        } else if (data.startsWith("log-visual-")) {
+            switch (data) {
+                case "log-visual-white": this.eventsImpl.fireStdout("yellow-frame:" + (Date.now() - this.logYellowMs)); break;
+                case "log-visual-red": this.eventsImpl.fireStdout("white-frame:" + (Date.now() - this.logWhiteMs)); break;
+                case "log-visual-yellow": this.eventsImpl.fireStdout("red-frame:" + (Date.now() - this.logRedMs)); break;
+            }
+        } else if (data.startsWith("log-command-")) {
+            switch (data) {
+                case "log-command-white": this.eventsImpl.fireStdout("yellow-pipe:" + (Date.now() - this.logYellowMs)); break;
+                case "log-command-red": this.eventsImpl.fireStdout("white-pipe:" + (Date.now() - this.logWhiteMs)); break;
+                case "log-command-yellow": this.eventsImpl.fireStdout("red-pipe:" + (Date.now() - this.logRedMs)); break;
+            }
         } else {
             this.eventsImpl.fireStdout(data);
         }
@@ -229,22 +253,62 @@ class JanusBackendImpl implements CommandInterface {
         this.addKey(keyCode, pressed, Date.now() - this.startedAt);
     }
 
-    async addKey(keyCode: number, pressed: boolean, timeMs: number) {
+    addKey(keyCode: number, pressed: boolean, timeMs: number) {
         const keyPressed = this.keyMatrix[keyCode] === true;
         if (keyPressed === pressed) {
             return;
         }
         this.keyMatrix[keyCode] = pressed;
-
         this.sendPipeMessage("k" + (pressed ? "down" : "up"), keyCode, timeMs);
+
+        if (this.logIntervalId !== -1 && pressed) {
+            switch (this.logColor) {
+                case "white": this.logWhiteMs = Date.now(); break;
+                case "red": this.logRedMs = Date.now(); break;
+                case "yellow": this.logYellowMs = Date.now(); break;
+            }
+        }
     }
 
-    async sendMouseMotion(x: number, y: number) {
+    sendMouseMotion(x: number, y: number) {
         this.sendPipeMessage("mmove", x, y, Date.now() - this.startedAt);
     }
 
-    async sendMouseButton(button: number, pressed: boolean) {
+    sendMouseButton(button: number, pressed: boolean) {
         this.sendPipeMessage("m" + (pressed ? "down" : "up"), button, Date.now() - this.startedAt);
+    }
+
+    logVisual(video: HTMLVideoElement) {
+        this.sendPipeMessage("log-visual-on");
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = 1;
+        canvas.height = 1;
+
+        this.logIntervalId = setInterval(async () => {
+            const startedAt = Date.now();
+            ctx?.drawImage(video, 0, 0, 1, 1, 0, 0, 1, 1);
+            const imageData = ctx?.getImageData(0, 0, 1, 1)?.data as Uint8ClampedArray;
+            const captureTime = Date.now() - startedAt;
+
+            let newColor: LogColor = "not set";
+            if (imageData[0] > 200 && imageData[1] > 200 && imageData[2] > 200) {
+                newColor = "white";
+            } else if (imageData[0] > 200 && imageData[1] < 200 && imageData[2] < 200) {
+                newColor = "red";
+            } else if (imageData[0] > 200 && imageData[1] > 200 && imageData[2] < 200) {
+                newColor = "yellow";
+            }
+
+            if (newColor !== this.logColor) {
+                switch (newColor) {
+                    case "white": this.eventsImpl.fireStdout("yellow-stream:" + (Date.now() - this.logYellowMs - captureTime)); break;
+                    case "red": this.eventsImpl.fireStdout("white-stream:" + (Date.now() - this.logWhiteMs - captureTime)); break;
+                    case "yellow": this.eventsImpl.fireStdout("red-stream:" + (Date.now() - this.logRedMs -captureTime)); break;
+                }
+                this.logColor = newColor;
+            }
+        }, 16) as any;
     }
 
     private sendPipeMessage(...parts: any[]) {
@@ -269,6 +333,8 @@ class JanusBackendImpl implements CommandInterface {
 
     exit() {
         this.live = false;
+        clearInterval(this.logIntervalId);
+        this.logIntervalId = -1;
         clearInterval(this.eventIntervalId);
         this.eventIntervalId = -1;
         clearInterval(this.rttIntervalId);

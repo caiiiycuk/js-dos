@@ -145,7 +145,7 @@ static INLINE Bit32u Fetchd() {
 Bits CPU_Core_Normal_Run_Impl(void);
 Bits CPU_Core_Normal_Run(void) {
   jsdos::asyncifyLock();
-  auto result = CPU_Core_Normal_Run_Impl();
+  Bits result = CPU_Core_Normal_Run_Impl();
   jsdos::asyncifyUnlock();
   return result;
 }
