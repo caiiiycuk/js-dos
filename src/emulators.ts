@@ -13,8 +13,8 @@ export interface Emulators {
     // * cacheSeed
     cacheSeed: string;
 
-    // * cache - default cache that store wasm binaries, this cache is wiped on any js-dos version change
-    cache: () => Promise<Cache>;
+    // * cache - by default cache that store wasm binaries, this cache is wiped on any js-dos version change
+    cache: (cacheName?: string) => Promise<Cache>;
 
     dosBundle: () => Promise<DosBundle>;
 

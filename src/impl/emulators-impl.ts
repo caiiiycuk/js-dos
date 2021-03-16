@@ -13,17 +13,26 @@ class EmulatorsImpl implements Emulators {
     pathPrefix = "";
     cacheSeed = "";
 
-    private cachePromise?: Promise<Cache>;
+    private cachePromises: {[cacheName: string]: Promise<Cache>} = {};
     private wasmModulesPromise?: Promise<IWasmModules>;
 
-    cache(): Promise<Cache> {
-        if (this.cachePromise === undefined) {
-            this.cachePromise = CacheDb(Build.version + " " + this.cacheSeed, {
+    cache(cacheName?: string): Promise<Cache> {
+        if (cacheName === undefined || cacheName === null || cacheName.length === 0) {
+            cacheName = Build.version + " " + this.cacheSeed;
+        }
+
+        const cachePromise = this.cachePromises[cacheName];
+
+        if (cachePromise === undefined) {
+            const promise = CacheDb(cacheName, {
                 // tslint:disable-next-line
                 onErr: console.error,
             });
+
+            this.cachePromises[cacheName] = promise;
         }
-        return this.cachePromise;
+
+        return this.cachePromises[cacheName];
     }
 
     async dosBundle(): Promise<DosBundle> {
