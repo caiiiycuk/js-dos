@@ -21,6 +21,9 @@ target_link_libraries(sokol
 
 if (X86_64)
   add_definitions(-DX86_64)
+elseif (X86)
+  add_definitions(-DX86)
+  set_target_properties(sokol PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
 else()
   set_target_properties(sokol PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
 endif()

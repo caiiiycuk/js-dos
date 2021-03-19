@@ -46,7 +46,7 @@
    */
 /* #undef C_DIRECTSERIAL */
 
-#ifdef X86_64
+#if defined(X86_64) || defined(X86)
 /* Define to 1 to use x86 dynamic cpu core */
 #define C_DYNAMIC_X86 1
 
@@ -61,7 +61,7 @@
 /* Define to 1 to enable floating point emulation */
 #define C_FPU 1
 
-#ifdef X86_64
+#if defined(X86_64) || defined(X86)
 /* Define to 1 to use a x86/x64 assembly fpu core */
 #define C_FPU_X86 1
 #else
@@ -116,12 +116,14 @@
 /* The type of cpu this target has */
 #ifdef X86_64
 #define C_TARGETCPU X86_64
+#elif X86
+#define C_TARGETCPU X86
 #else
 #define C_TARGETCPU UNKNOWN
 #endif
 
 /* Define to 1 to use a unaligned memory access */
-#ifdef X86_64
+#if defined(X86_64) || defined(X86)
 #define C_UNALIGNED_MEMORY 1
 #else
 /* #undef C_UNALIGNED_MEMORY */

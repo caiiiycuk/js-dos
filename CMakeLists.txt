@@ -1,7 +1,9 @@
 project(js-dos)
 cmake_minimum_required(VERSION 3.6)
 
+set(X86 false)
 set(X86_64 false)
+
 set(OPT_FLAG "-Oz -fno-exceptions -w -Werror=return-type")
 
 if(${EMSCRIPTEN})
