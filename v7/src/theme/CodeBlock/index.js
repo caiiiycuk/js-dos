@@ -11,7 +11,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import clsx from 'clsx';
 import Highlight, {defaultProps} from 'prism-react-renderer';
 import copy from 'copy-text-to-clipboard';
-import rangeParser from 'parse-numeric-range';
+// import rangeParser from 'parse-numeric-range';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import usePrismTheme from '@theme/hooks/usePrismTheme';
 
@@ -117,9 +117,9 @@ export default ({children, className: languageClassName, metastring}) => {
 
     if (metastring && highlightLinesRangeRegex.test(metastring)) {
         const highlightLinesRange = metastring.match(highlightLinesRangeRegex)[1];
-        highlightLines = rangeParser
+        highlightLines = []; /* rangeParser
             .parse(highlightLinesRange)
-            .filter((n) => n > 0);
+            .filter((n) => n > 0); */
     }
 
     if (metastring && codeBlockTitleRegex.test(metastring)) {
@@ -194,7 +194,7 @@ export default ({children, className: languageClassName, metastring}) => {
                 index += 1;
             }
         }
-        highlightLines = rangeParser.parse(range);
+        highlightLines = []; /* rangeParser.parse(range); */
         code = lines.join('\n');
     }
 

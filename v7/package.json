@@ -9,13 +9,13 @@
     "deploy": "docusaurus deploy"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-alpha.66",
-    "@docusaurus/plugin-google-analytics": "^2.0.0-alpha.66",
-    "@docusaurus/preset-classic": "^2.0.0-alpha.66",
+    "@docusaurus/core": "^2.0.0-alpha.72",
+    "@docusaurus/plugin-google-analytics": "^2.0.0-alpha.72",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.72",
     "clsx": "^1.1.1",
-    "emulators": "^0.0.55",
-    "emulators-ui": "^0.0.52",
-    "js-dos": "^7.0.0-beta.r27",
+    "emulators": "^0.0.59",
+    "emulators-ui": "^0.0.57",
+    "js-dos": "^7.0.0-beta.r29",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
     "three": "^0.118.3"

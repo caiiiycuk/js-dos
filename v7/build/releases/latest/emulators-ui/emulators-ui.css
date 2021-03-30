@@ -126,17 +126,9 @@
     z-index: 999;
 }
 
+.emulator-button-touch-zone,
 .emulator-button {
     cursor: pointer;
-    background: none;
-    color: rgb(255, 255, 255);
-    text-shadow: -1px -1px 0 rgb(0, 0, 0), 1px -1px 0 rgb(0, 0, 0), -1px 1px 0 rgb(0, 0, 0), 1px 1px 0 rgb(0, 0, 0);
-    text-align: center;
-    border-radius: 50%;
-    border: 1px solid rgb(255, 255, 255);
-    box-shadow: 0px 0px 0px 1px rgb(0, 0, 0);
-    overflow: hidden;
-
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -145,21 +137,44 @@
     user-select: none;
     touch-action: none;
 
+    overflow: hidden;
+    background: none;
+    color: rgb(255, 255, 255);
+
+    border-radius: 50%;
+    filter: opacity(0.8);
+}
+
+.emulator-button-touch-zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-color: rgba(255, 255, 255, 0.5);
+
+    border-style: solid;
+    box-shadow: 0 0 2px 2px rgb(255 255 255 / 50%), inset 0 0 2px 2px rgb(255 255 255 / 50%);
+}
+
+.emulator-button {
+    background-color: rgba(128, 128, 128, 0.5);
     background-size: 50%;
     background-repeat: no-repeat;
     background-position: center;
 
-    filter: opacity(0.7);
-    background-color: rgba(128, 128, 128, 0.3);
+    border: 1px solid rgb(255, 255, 255);
+    text-shadow: -1px -1px 0 rgb(0, 0, 0), 1px -1px 0 rgb(0, 0, 0), -1px 1px 0 rgb(0, 0, 0), 1px 1px 0 rgb(0, 0, 0);
+    text-align: center;
+    box-shadow: 0px 0px 0px 1px rgb(0, 0, 0);
 }
 
 
 .emulator-control-select:hover,
-.emulator-button:hover {
+.emulator-button-touch-zone:hover {
     filter: opacity(1.0) hue-rotate(-70deg) saturate(5) sepia(1);
 }
 
-.emulator-button-control {
+.emulator-button-touch-zone.emulator-button-control  {
     filter: opacity(1.0) !important;
     background-color: rgb(128, 128, 128) !important;
     z-index: 999;

@@ -5,9 +5,9 @@ import DosBundle from "../dos/bundle/dos-bundle";
 declare class EmulatorsImpl implements Emulators {
     pathPrefix: string;
     cacheSeed: string;
-    private cachePromise?;
+    private cachePromises;
     private wasmModulesPromise?;
-    cache(): Promise<Cache>;
+    cache(cacheName?: string): Promise<Cache>;
     dosBundle(): Promise<DosBundle>;
     dosDirect(bundle: Uint8Array | Uint8Array[]): Promise<CommandInterface>;
     dosWorker(bundle: Uint8Array | Uint8Array[]): Promise<CommandInterface>;

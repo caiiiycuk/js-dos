@@ -4,7 +4,7 @@ import { DosConfig } from "./dos/bundle/dos-conf";
 export interface Emulators {
     pathPrefix: string;
     cacheSeed: string;
-    cache: () => Promise<Cache>;
+    cache: (cacheName?: string) => Promise<Cache>;
     dosBundle: () => Promise<DosBundle>;
     dosDirect: (bundle: Uint8Array | Uint8Array[]) => Promise<CommandInterface>;
     dosWorker: (bundle: Uint8Array | Uint8Array[]) => Promise<CommandInterface>;

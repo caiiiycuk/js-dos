@@ -8,6 +8,6 @@ export declare const pointer: {
 export interface PointerState {
     x: number;
     y: number;
-    button: number;
+    button?: number;
 }
 export declare function getPointerState(e: Event, el: HTMLElement): PointerState;

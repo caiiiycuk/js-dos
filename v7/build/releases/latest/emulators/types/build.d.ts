@@ -1,6 +1,14 @@
 export declare const Build: {
     version: string;
     buildSeed: number;
+    "dhry2.wasm": {
+        size: number;
+        gzSize: number;
+    };
+    "dhry2.js": {
+        size: number;
+        gzSize: number;
+    };
     "wdirect.wasm": {
         size: number;
         gzSize: number;
