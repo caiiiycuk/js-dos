@@ -1,3 +1,8 @@
+**This branch is moved to [emulators](https://github.com/js-dos/emulators) repository**
+**WILL BE REMOVED SOON**
+
+---
+
 Emulators for [js-dos 7.xx](https://js-dos.com/v7/build/)
 
 
