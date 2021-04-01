@@ -3,7 +3,7 @@ module.exports = {
   tagline: 'The simpliest API to run DOS games in browser',
   url: 'https://js-dos.com',
   baseUrl: '/v7/build/',
-  favicon: 'img/favicon.ico',
+  favicon: 'favicon.ico',
   organizationName: 'caiiiycuk',
   projectName: 'js-dos',
   themeConfig: {
@@ -14,7 +14,7 @@ module.exports = {
       title: 'js-dos',
       logo: {
         alt: 'js-dos logo',
-        src: 'img/logo.png',
+        src: 'js-dos-logo.png',
       },
       items: [
         {
