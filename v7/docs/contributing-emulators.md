@@ -5,17 +5,13 @@ title: Contributing
 
 To contribute to the `emulators` package do the following:
 
-1. Checkout `js-dos` repository
+1. Checkout `emulators` repository
   
-  `git clone https://github.com/caiiiycuk/js-dos`
+  `git clone https://github.com/js-dos/emulators`
 
-2. Switch to `emulators` branch
+2. Install [emscripten sdk](https://emscripten.org/docs/tools_reference/emsdk.html), and confgure environment to use it.
 
-  `git checkout -b dev origin/emulators`
-  
-3. Install [emscripten sdk](https://emscripten.org/docs/tools_reference/emsdk.html), and confgure environment to use it.
-
-4. Install [cmake](https://cmake.org/) and [gulp 4](https://gulpjs.com/).
+3. Install [cmake](https://cmake.org/) and [gulp 4](https://gulpjs.com/).
 
 4. Now you can build everything with `gulp` command
 
@@ -40,7 +36,7 @@ The idea of new js-dos v7 is that all targets (native and web) have exactly
 same way to communicate between client (native UI, browser UI) and dosbox.
 
 
-```c title="https://raw.githubusercontent.com/caiiiycuk/js-dos/emulators/src/include/protocol.h"
+```c title="https://raw.githubusercontent.com/js-dos/emulators/main/src/include/protocol.h"
 {}
 ```
 
@@ -233,7 +229,7 @@ When user closes sokol window we need to stop server:
 ```
 
 
-That is. Check complete [source](https://github.com/caiiiycuk/js-dos/tree/emulators/src/dos/sokol) of sokol implementation.
+That is. Check complete [source](https://github.com/js-dos/emulators/tree/main/src/dos/sokol) of sokol implementation.
 
 ## Testing
 

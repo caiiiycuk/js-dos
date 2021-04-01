@@ -35,6 +35,6 @@ All progress will be lost if you change bundle url.
 
 
 Default implementation:
-```typescript title="https://raw.githubusercontent.com/caiiiycuk/js-dos/emulators-ui/src/persist/save-load.ts"
+```typescript title="https://raw.githubusercontent.com/js-dos/emulators-ui/main/src/persist/save-load.ts"
 {}
 ```

@@ -5,17 +5,13 @@ title: Contributing in client-side features
 
 To contribute to the `emulators-ui` package do the following:
 
-1. Checkout `js-dos` repository
+1. Checkout `emulators-ui` repository
   
-  `git clone https://github.com/caiiiycuk/js-dos`
+  `git clone https://github.com/js-dos/emulators-ui`
 
-2. Switch to `emulators-ui` branch
+2. Install [gulp 4](https://gulpjs.com/)
 
-  `git checkout -b dev origin/emulators-ui`
-  
-3. Install [gulp 4](https://gulpjs.com/)
-
-4. Now you can build everything with `gulp` command
+3. Now you can build everything with `gulp` command
 
 ### Adding new client-side features
 

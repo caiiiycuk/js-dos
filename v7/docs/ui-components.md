@@ -7,7 +7,7 @@ title: UI Components
 
 Package provides following components:
 
-```js title="https://raw.githubusercontent.com/caiiiycuk/js-dos/emulators-ui/src/emulators-ui.ts"
+```js title="https://raw.githubusercontent.com/js-dos/emulators-ui/main/src/emulators-ui.ts"
 {}
 ```
 
