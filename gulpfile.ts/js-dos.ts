@@ -15,12 +15,9 @@ function copyCss() {
 
 function copyWasm() {
     return src([
-        "node_modules/emulators/dist/wdirect.js",
-        "node_modules/emulators/dist/wdirect.js.symbols",
-        "node_modules/emulators/dist/wdirect.wasm",
-        "node_modules/emulators/dist/wworker.js",
-        "node_modules/emulators/dist/wworker.js.symbols",
-        "node_modules/emulators/dist/wworker.wasm",
+        "node_modules/emulators/dist/wdosbox.js",
+        "node_modules/emulators/dist/wdosbox.js.symbols",
+        "node_modules/emulators/dist/wdosbox.wasm",
     ]).pipe(dest("dist"));
 }
 
@@ -33,4 +30,9 @@ function concatJs() {
         .pipe(dest("dist"));
 }
 
-export const jsdos = series(clean, concatJs, copyCss, copyWasm);
+function copyAssets() {
+    return src("node_modules/emulators-ui/dist/emulators-ui-loader.gif")
+        .pipe(dest("dist"));
+}
+
+export const jsdos = series(clean, concatJs, copyCss, copyWasm, copyAssets);
