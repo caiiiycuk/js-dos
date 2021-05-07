@@ -444,6 +444,52 @@ In other words to store game progress just extract game archive into some folder
 
 **NOTE 3: ** Because content of folder is stored in indexed db original archive is downloaded and extracted only once to avoid rewriting stored content! This means that you can't update it from archive, and of course you can't store different content (from different archives) into one path.
 
+#### Exporting/Importing stored state to/from a file
+
+Save game files are stored inside a browser's indexed db database. If you wish to transfer 
+these files to another machine (or make a backup) you must first store them in 
+a normal file on a file system.
+
+Here is an example how you can achieve that. When you click an 'export' button 
+these will write all the files in dos file system matched by reg-ex /SAVEGAME/ 
+to a file on local file system. This file can then be copied to another machine, 
+where it can be imported via 'import' button.
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        fs.extract("game.zip", "/game").then(() => {
+            main(["-c", "cd game", "-c", "game.exe"]).then((ci) => {
+            
+                function exportState() {                
+                    let filename = "game_" + new Date().getTime() + ".state";
+                    fs.writeFsToFile(filename, /SAVEGAME/, "/game");            
+                }
+                
+                function importState() {
+                                            
+                    if (confirm("This will overwrite your current state. Are you sure?")) {
+                        let importInput = document.getElementById('importStateInput');                                          
+                        if (!importInput.oninput) {
+                            importInput.oninput =  function (e) {                           
+                                fs.readFsFromFile(e.target.files[0]);
+                                alert("State was imported successfully!");
+                            };                          
+                        }                                   
+                        importInput.click();
+                    }                           
+                }
+                
+                let exportButton = document.getElementById("exportState");
+                exportButton.addEventListener("click", exportState);
+            
+                let importButton = document.getElementById("importState");
+                importButton.addEventListener("click", importState);
+            
+            }
+        });
+    });
+```
+
 ### Using multiple archives at once
 
 This section requires that you read section above. Sometimes need to have multiple persistent folders to run single game.
