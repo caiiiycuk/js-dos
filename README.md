@@ -206,6 +206,51 @@ You can change button style through options object.
     });
 ```
 
+### GamepadController
+allows games to be played via gamepad. It maps gamepad buttons to key strokes.
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        main([...]).then((ci) => {
+            DosController.Gamepad(ci, {
+                gamepads: [
+                    {
+                        keymap: {
+                            a: 13,
+                            b: 27
+                        },
+                        mapArrows: true,     // auto map arrows and sticks
+                        stickThreshold: 0.6  // stick trigger threshold                         
+                    }
+                ],
+                scanEvery: 200,         // scan input via timer
+                scanOnTick: true,       // scan input on tick               
+            });             
+        });
+    });
+```
+
+#### Change gamepad layout
+Default gamepad layout is for XBox360 gamepad, it can be changed via buttons
+parameter:
+
+```javascript
+
+    DosController.Gamepad(ci, {
+        gamepads: [
+            {
+                buttons: [
+                    "a", "b", "x", "y",                 // 0, 1, 2, 3
+                    "lb", "rb", "lt", "rt",             // 4, 5, 6, 7
+                    "back", "start", "N/A", "N/A",      // 8, 9, 10, 11
+                    "up", "down", "left", "right"       // 12, 13, 14, 15
+                ],                
+            }
+        ],	    
+    });             
+
+```
+
 ## FAQ
 
 ### How to pass command line arguments
