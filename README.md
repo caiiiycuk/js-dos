@@ -663,7 +663,16 @@ Building process have two steps:
 ### Dosbox
 
 Project uses dosbox as emulation layer for running dos programs. You should build it before building javascript API. To do this you should have emscripten installed in your system and CMake. Build process should be easy if you familar with cmake, just run this commands:
+
 ```
+// install emscripten
+git clone https://github.com/emscripten-core/emsdk.git
+cd emskd
+./emsdk install 1.39.4
+./emsdk activate 1.39.4
+source ./emsdk_env.sh
+emcc --clear-cache
+
 // set to llvm backend
 mkdir build
 cd build
@@ -681,6 +690,10 @@ make wdosbox-emterp dosbox-emterp
 
 You can build javascript API with gulp, just type gulp.
 ```
+// requires node 11.8.0
+// install gulp 
+npm install
+npm install gulp@3.9.1
 gulp
 ```
 
