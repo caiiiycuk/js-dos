@@ -72,7 +72,7 @@ test("loader should show progress loading and use cache", (done) => {
         onerror: (message: string) => {
             assert.fail();
         },
-    } as DosModule);
+    } as any);
 });
 
 test("loader should never load twice wdosbox", (done) => {
@@ -86,7 +86,7 @@ test("loader should never load twice wdosbox", (done) => {
         onerror: (message: string) => {
             assert.fail();
         },
-    } as DosModule);
+    } as any);
 });
 
 test("loader should fire event when wdosbox is loaded", (done) => {
@@ -98,7 +98,7 @@ test("loader should fire event when wdosbox is loaded", (done) => {
         onerror: (message: string) => {
             assert.fail();
         },
-    } as DosModule);
+    } as any);
 });
 
 suite("js-dos");

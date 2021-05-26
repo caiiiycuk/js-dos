@@ -70,6 +70,7 @@ export class DosFS {
 
     // ### extractAll
     public extractAll(sources: DosArchiveSource[]): Promise<void> {
+        // tslint:disable-next-line
         // download given [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-dosarchivesource)
         // and extract them to mountPoint's.
         //

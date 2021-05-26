@@ -1,23 +1,8 @@
-
-
-
-
 JsonStream
 ==========
 
 
-
-
-
-
-
-
-
-
-  
-
 ```
-
 #include <js-dos-json.h>
 
 jsonstream::jsonstream() : keyNext(true) {}
@@ -37,9 +22,6 @@ jsonstream &jsonstream::operator<<(const std::string &str) {
   keyNext = !keyNext;
   return *this;
 }
-
 ```
-
-
 
 

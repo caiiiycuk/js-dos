@@ -164,6 +164,7 @@ export class DosCommandInterface {
         Object.defineProperty(event, "charCode", getter);
 
         event.initKeyboardEvent
+            // tslint:disable-next-line
             ? event.initKeyboardEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, keyCode)
             : event.initKeyEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, 0);
 

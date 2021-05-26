@@ -1,16 +1,9 @@
-
-
-
-
 # DosModule
 DosModule is [emscripten module object](https://kripken.github.io/emscripten-site/docs/api_reference/module.html),
 with additional functionality
+@ts-ignore the unusued local for Dos not being used
 
-
-  
-
-```
-import Dos, { DosRuntime } from "./js-dos";
+```import Dos, { DosRuntime } from "./js-dos";
 import { Build } from "./js-dos-build";
 import { DosCommandInterface } from "./js-dos-ci";
 import getJsDosConfig from "./js-dos-conf";
@@ -25,7 +18,11 @@ export class DosModule extends DosOptions {
     public onglobals?: (...args: any[]) => void;
     public ci: Promise<DosCommandInterface>;
 
-    private instance: any;
+```
+
+@ts-ignore the unusued local for instance not being read
+
+```    private instance: any;
     private fs: DosFS | null = null;
     private ui: DosUi | null = null;
     private onready: (runtime: DosRuntime) => void;
@@ -35,7 +32,7 @@ export class DosModule extends DosOptions {
     private resumeListeners: Array< () => void > = [];
     private terminateListeners: Array< () => void > = [];
 
-    private ciResolveFn: (ci: DosCommandInterface) => void = () => {};
+    private ciResolveFn: (ci: DosCommandInterface) => void = () => {/**/};
 
     constructor(canvas: HTMLCanvasElement, onready: (runtime: DosRuntime) => void) {
         super();
@@ -50,7 +47,11 @@ export class DosModule extends DosOptions {
 
     private registerDefaultListeners() {
         let hidden: string;
-        let visibilityChange: string;
+```
+
+@ts-ignore the unusued local for visibilityChange not being read
+
+```        let visibilityChange: string;
 
         if (typeof document.hidden !== "undefined") {
             hidden = "hidden";
@@ -75,24 +76,13 @@ export class DosModule extends DosOptions {
         });
     }
 
-
 ```
-
-
-
-
-
-
 
 ### logging
 DosModule implements simply logging features:
 `debug`, `info`, `warn`, `error` methods
 
-
-  
-
-```
-    public debug(message: string) {
+```    public debug(message: string) {
         if (this.log !== undefined) {
             this.log("[DEBUG] " + message);
         }
@@ -116,35 +106,17 @@ DosModule implements simply logging features:
         }
     }
 
-
 ```
-
-
-
-
-
-
 
 ### ondosbox
 
-
-  
-
-```
-    public ondosbox(dosbox: any, instantiateWasm: any) {
+```    public ondosbox(dosbox: any, instantiateWasm: any) {
         this.info("DosBox resolved");
         (this as any).instantiateWasm = instantiateWasm;
         this.instance = new dosbox(this);
     }
 
-
 ```
-
-
-
-
-
-
 
 Method `ondosbox` is called when
 [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host) is resolved.
@@ -152,11 +124,7 @@ This method instaniate wasm dosbox module with `this` as emscripten
 module object. It means that emscripten will call
 `this.onRuntimeInitialized` when runtime will be ready
 
-
-  
-
 ```
-
     public resolve() {
         if (!this.wdosboxUrl) {
             this.wdosboxUrl = "wdosbox.js";
@@ -183,24 +151,13 @@ module object. It means that emscripten will call
             };
         }
 
-
 ```
-
-
-
-
-
-
 
 ### sdl defaults
 DosModule overrides defaults for emscripten SDL wrapper
 for maximum performance
 
-
-  
-
-```
-        (this as any).SDL = {
+```        (this as any).SDL = {
             defaults: {
                 widht: 320,
                 height: 200,
@@ -213,42 +170,20 @@ for maximum performance
         this.isValid = true;
     }
 
-
 ```
-
-
-
-
-
-
 
 ### onRuntimeInitialized
 
-
-  
-
-```
-    public onRuntimeInitialized() {
+```    public onRuntimeInitialized() {
         const mainFn = (args?: string[]) => {
-
 ```
-
-
-
-
-
-
 
 When emscripten runtime is initialized and main
 function is called:
 
 * DosModule detach [auto ui](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ui)
 
-
-  
-
-```
-            if (this.ui !== null) {
+```            if (this.ui !== null) {
                 this.ui.detach();
                 this.ui = null;
             }
@@ -265,73 +200,29 @@ function is called:
 
             this.fs.chdir("/");
 
-
 ```
-
-
-
-
-
-
 
 * Write default [dosbox.conf](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-conf)
 file to user directory
 
-
-  
-
+```            this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", getJsDosConfig(this));
 ```
-            this.fs.createFile("/home/web_user/.dosbox/dosbox-jsdos.conf", getJsDosConfig(this));
-
-```
-
-
-
-
-
-
 
 * Mount emscripten FS as drive c:
 
-
-  
-
+```            args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
 ```
-            args.unshift("-userconf", "-c", "mount c .", "-c", "c:");
-
-```
-
-
-
-
-
-
 
 [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci)
 
-
-  
-
-```
-            new DosCommandInterface(this, (ci: DosCommandInterface) => {
+```            new DosCommandInterface(this, (ci: DosCommandInterface) => {
                 this.ciResolveFn(ci);
             });
-
 ```
-
-
-
-
-
-
 
 * Run dosbox with passed arguments and resolve
 
-
-  
-
-```
-            (this as any).callMain(args);
+```            (this as any).callMain(args);
             return this.ci;
         };
         this.fs = new DosFS(this);
@@ -341,170 +232,82 @@ file to user directory
         });
     }
 
-
 ```
-
-
-
-
-
-
 
 ### registerTickListener
 registred tick listener it will be called each frame
 
-
-  
-
-```
-    public registerTickListener(listener: () => void) {
+```    public registerTickListener(listener: () => void) {
         this.tickListeners.push(listener);
     }
 
-
 ```
-
-
-
-
-
-
 
 ### registerPauseListener
 registred tick listener it will be called each frame
 
-
-  
-
-```
-    public registerPauseListener(listener: () => void) {
+```    public registerPauseListener(listener: () => void) {
         this.pauseListeners.push(listener);
     }
 
-
 ```
-
-
-
-
-
-
 
 ### registerResumeListener
 registred tick listener it will be called each frame
 
-
-  
-
-```
-    public registerResumeListener(listener: () => void) {
+```    public registerResumeListener(listener: () => void) {
         this.resumeListeners.push(listener);
     }
 
-
 ```
-
-
-
-
-
-
 
 ### registerTerminateListener
 registred tick listener it will be called each frame
 
-
-  
-
-```
-    public registerTerminateListener(listener: () => void) {
+```    public registerTerminateListener(listener: () => void) {
         this.terminateListeners.push(listener);
     }
 
-
 ```
-
-
-
-
-
-
 
 ### tick
 tick is called internally each frame, no need to call
 it manually
 
-
-  
-
-```
-    public tick() {
+```    public tick() {
         for (const l of this.tickListeners) {
             l();
         }
     }
 
-
 ```
-
-
-
-
-
-
 
 ### pause
 pause is called when dosbox tab became inactive
 
-
-  
-
-```
-    public pause() {
+```    public pause() {
         for (const l of this.pauseListeners) {
             l();
         }
     }
 
-
 ```
-
-
-
-
-
-
 
 ### tick
 resume is called when dosbox tab became active
 
-
-  
-
-```
-    public resume() {
+```    public resume() {
         for (const l of this.resumeListeners) {
             l();
         }
     }
 
-
 ```
-
-
-
-
-
-
 
 ### tick
 terminate is called when dosbox tab is closed
 
-
-  
-
-```
-    public terminate() {
+```    public terminate() {
         for (const l of this.terminateListeners) {
             l();
         }
@@ -512,9 +315,6 @@ terminate is called when dosbox tab is closed
 
 }
 
-
 ```
-
-
 
 

@@ -1,23 +1,8 @@
-
-
-
-
 CommandInterface
 =================================
 
 
-
-
-
-
-
-
-
-
-  
-
-```
-#include <js-dos-ci.h>
+```#include <js-dos-ci.h>
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
 extern "C" void destroySyncSleep();
@@ -26,54 +11,21 @@ extern "C" void destroySyncSleep();
 CommandInterface::CommandInterface(): m_events(new Events()) {
 #ifdef EMSCRIPTEN
   EM_ASM(({
-
 ```
-
-
-
-
-
-
 
 export whole SDL
 
-
-  
-
+```    Module['SDL'] = SDL;
 ```
-    Module['SDL'] = SDL;
-
-```
-
-
-
-
-
-
 
 ios.iframe.fix
 
-
-  
-
+```    Module['canvas'].addEventListener('touchstart', function(event) {}, true);
 ```
-    Module['canvas'].addEventListener('touchstart', function(event) {}, true);
-
-```
-
-
-
-
-
-
 
 ios.swipe.fix
 
-
-  
-
-```
-    Module['canvas'].addEventListener('touchmove', function(event) { event.preventDefault() }, true);
+```    Module['canvas'].addEventListener('touchmove', function(event) { event.preventDefault() }, true);
 
     var fixSounds = function(event) {
       if (SDL && SDL.audioContext && SDL.audioContext.state) {
@@ -88,25 +40,14 @@ ios.swipe.fix
 #endif
 }
 
-
 ```
-
-
-
-
-
-
 
 When CommandInterface is destroyed, it means
 that client wants to stop dosbox, so we stop
 whole environment. Any other calls to any API
 is no safe
 
-
-  
-
-```
-CommandInterface::~CommandInterface() {
+```CommandInterface::~CommandInterface() {
 #ifdef EMSCRIPTEN
     destroySyncSleep();
     emscripten_force_exit(0);
@@ -115,29 +56,15 @@ CommandInterface::~CommandInterface() {
 
 Events *CommandInterface::events() { return m_events.get(); }
 
-
 ```
-
-
-
-
-
-
 
 Singleton of CommandInterface
 
-
-  
-
-```
-CommandInterface *ci() {
+```CommandInterface *ci() {
   static CommandInterface *commandInterface = new CommandInterface();
   return commandInterface;
 }
 
-
 ```
-
-
 
 

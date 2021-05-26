@@ -1,15 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
-
 # Example
 ```javascript
 Dos(canvas).ready((fs, main) => {
@@ -21,20 +10,9 @@ Dos(canvas).ready((fs, main) => {
 Dos function is entry point that provides emulation layer.
 As emulation layer js-dos uses [DosBox ported to emscripten](https://github.com/dreamlayers/em-dosbox/#compiling).
 
-
-
-
-
-
-
-
 # Dos
 
-
-  
-
 ```
-
 import openCache from "./js-dos-cache";
 import { DosCommandInterface } from "./js-dos-ci";
 import { DosFS } from "./js-dos-fs";
@@ -45,14 +23,7 @@ import { DosOptions } from "./js-dos-options";
 import Move from "./controller/move";
 import Qwerty from "./controller/qwerty";
 
-
 ```
-
-
-
-
-
-
 
 When you call `Dos(canvas, options)` js-dos behind the scene will download
 dosbox and prepare it to start. This function will return `Promise<DosReadyPromise>`
@@ -63,11 +34,7 @@ will be rejected.
 * `options`: [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options) -
 optional configuration object
 
-
-  
-
-```
-export type DosFactory = (canvas: HTMLCanvasElement, options?: DosOptions) => DosReadyPromise;
+```export type DosFactory = (canvas: HTMLCanvasElement, options?: DosOptions) => DosReadyPromise;
 const Dos: DosFactory = (canvas: HTMLCanvasElement, options?: DosOptions) => {
     const promise = new Promise<DosRuntime>((resolve, reject) => {
         const module = new DosModule(canvas, resolve);
@@ -86,14 +53,7 @@ const Dos: DosFactory = (canvas: HTMLCanvasElement, options?: DosOptions) => {
 
         Object.assign(module, options);
 
-
 ```
-
-
-
-
-
-
 
 ### Error handling
 Error handling should support both ways:
@@ -101,11 +61,7 @@ Error handling should support both ways:
 * Through rejecting of promise
 * Fire onerror function of DosOptions object
 
-
-  
-
 ```
-
         const onerror = module.onerror;
         module.onerror = (message: string) => {
             reject(message);
@@ -128,46 +84,24 @@ Error handling should support both ways:
         }
 
         openCache(module, (cache) => {
-
 ```
-
-
-
-
-
-
 
 See [Host](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-host)
 to understand resolving of emulation layer (dosbox).
 
-
-  
-
-```
-            Host.resolveDosBox(module.wdosboxUrl as string, cache, module);
+```            Host.resolveDosBox(module.wdosboxUrl as string, cache, module);
         });
 
     });
 
-
 ```
-
-
-
-
-
-
 
 ### DosReadyPromise
 Is a Promise object with additional method ready.
 Method `ready` is just a wrapper over `then` method that
 split resolved object into meaningful parts.
 
-
-  
-
 ```
-
     const dosReadyPromise = (promise as unknown) as DosReadyPromise;
     dosReadyPromise.ready = (onready) => {
         dosReadyPromise.then((runtime: DosRuntime) => {
@@ -182,14 +116,7 @@ export default Dos;
 
 export type DosMainFn = (args?: string[]) => Promise<DosCommandInterface>;
 
-
 ```
-
-
-
-
-
-
 
 Plain promise will be resolved with `DosRuntime` interface, that
 includes:
@@ -201,32 +128,17 @@ dosbox. It's like a main function in C++, or shell command line. This function
 will return Promise of [DosCommandInterface](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-ci).
 You can use it to control runned dosbox.
 
-
-  
-
-```
-export interface DosRuntime {
+```export interface DosRuntime {
     fs: DosFS;
     main: DosMainFn;
 }
 
 export interface DosReadyPromise extends Promise<DosRuntime> {
-
 ```
-
-
-
-
-
-
 
 `onready` - callback that receive DosRuntime splitted by fields
 
-
-  
-
-```
-    ready: (onready: (fs: DosFS, main: DosMainFn) => void) => Promise<DosRuntime>;
+```    ready: (onready: (fs: DosFS, main: DosMainFn) => void) => Promise<DosRuntime>;
 }
 
 (window as any).Dos = Dos;
@@ -235,9 +147,6 @@ export interface DosReadyPromise extends Promise<DosRuntime> {
     Move,
 };
 
-
 ```
-
-
 
 
