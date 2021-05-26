@@ -1,15 +1,7 @@
-
-
-
-
 # DosCommandInterface
 Is abstraction that allows you to control runned instance of js-dos
 
-
-  
-
-```
-import { DosModule } from "./js-dos-module";
+```import { DosModule } from "./js-dos-module";
 
 export interface DosKeyEventConsumer {
     onPress(keyCode: number): void;
@@ -22,7 +14,7 @@ export class DosCommandInterface {
     private onready: (ci: DosCommandInterface) => void;
 
     private shellInputQueue: string[] = [];
-    private shellInputClients: Array<() => void> = [];
+    private shellInputClients: Array<(value?: unknown) => void> = [];
     private onstdout?: (data: string) => void = undefined;
     private keyEventConsumer: DosKeyEventConsumer = {
         onPress: (keyCode) => this.simulateKeyEvent(keyCode, true),
@@ -40,62 +32,29 @@ export class DosCommandInterface {
         this.onready = onready;
     }
 
-
 ```
-
-
-
-
-
-
 
 * `width()` - return dosbox window width in pixels
 
-
-  
-
-```
-    public width() {
+```    public width() {
         return this.dos.canvas.width;
     }
 
-
 ```
-
-
-
-
-
-
 
 * `height()` - return dosbox window height in pixels
 
-
-  
-
-```
-    public height() {
+```    public height() {
         return this.dos.canvas.height;
     }
 
-
 ```
-
-
-
-
-
-
 
 * `fullscreen()` - enters fullscreen mode
 This function can be called anywhere, but for web security reasons its associated request can only be raised
 inside the event handler for a user-generated event (for example a key, mouse or touch press/release).
 
-
-  
-
-```
-    public fullscreen() {
+```    public fullscreen() {
         const requestFn = (element: any) => {
             if (element.requestFullscreen) {
                 element.requestFullscreen();
@@ -129,22 +88,11 @@ inside the event handler for a user-generated event (for example a key, mouse or
         }
     }
 
-
 ```
-
-
-
-
-
-
 
 * `exitFullscreen()` allows you to leave fullscreen entered with `fullscreen()` call
 
-
-  
-
-```
-    public exitFullscreen() {
+```    public exitFullscreen() {
         const requestFn = (element: any) => {
             if (this.fullscreenInitialCssStyle !== undefined) {
                 (element as HTMLElement).style.cssText = this.fullscreenInitialCssStyle;
@@ -168,44 +116,22 @@ inside the event handler for a user-generated event (for example a key, mouse or
         }
     }
 
-
 ```
-
-
-
-
-
-
 
 * `listenStdout()` - redirect everything that printed by dosbox into
 console to passed function
 
-
-  
-
-```
-    public listenStdout(onstdout: (data: string) => void) {
+```    public listenStdout(onstdout: (data: string) => void) {
         this.onstdout = onstdout;
     }
 
-
 ```
-
-
-
-
-
-
 
 * `shell([cmd1, cmd2, ...])` - executes passed commands
 in dosbox shell if it's runned, returns Promise that
 resolves when commands sequence is executed
 
-
-  
-
-```
-    public shell(...cmd: string[]) {
+```    public shell(...cmd: string[]) {
         if (cmd.length === 0) {
             return;
         }
@@ -219,22 +145,11 @@ resolves when commands sequence is executed
         });
     }
 
-
 ```
-
-
-
-
-
-
 
 * `screenshot()` - get screnshot of canvas as ImageData
 
-
-  
-
-```
-    public screenshot() {
+```    public screenshot() {
         return new Promise((resolve) => {
             this.api.send("screenshot", "", (data) => {
                 resolve(data);
@@ -242,22 +157,11 @@ resolves when commands sequence is executed
         });
     }
 
-
 ```
-
-
-
-
-
-
 
 * `exit()` - immediately exit from runtime
 
-
-  
-
-```
-    public exit() {
+```    public exit() {
         try {
             this.dos.terminate();
             this.api.send("exit");
@@ -269,22 +173,11 @@ resolves when commands sequence is executed
         return -1;
     }
 
-
 ```
-
-
-
-
-
-
 
 * `simulateKeyEvent(keyCode, pressed)` - allows to simulate key press OR release on js-dos canvas
 
-
-  
-
-```
-    public simulateKeyEvent(keyCode: number, pressed: boolean): void {
+```    public simulateKeyEvent(keyCode: number, pressed: boolean): void {
         const name = pressed ? "keydown" : "keyup";
         const event = document.createEvent("KeyboardEvent") as any;
         const getter: any = {
@@ -293,49 +186,31 @@ resolves when commands sequence is executed
             },
         };
 
-
 ```
-
-
-
-
-
-
 
 Chromium Hack
 
-
-  
-
-```
-        Object.defineProperty(event, "keyCode", getter);
+```        Object.defineProperty(event, "keyCode", getter);
         Object.defineProperty(event, "which", getter);
         Object.defineProperty(event, "charCode", getter);
 
         event.initKeyboardEvent
-            ? event.initKeyboardEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, keyCode)
+```
+
+tslint:disable-next-line
+
+```            ? event.initKeyboardEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, keyCode)
             : event.initKeyEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, 0);
 
         event.keyCodeVal = keyCode;
         this.dos.canvas && this.dos.canvas.dispatchEvent(event);
     }
 
-
 ```
-
-
-
-
-
-
 
 * `simulateKeyPress(keyCode)` - allows to simulate key press AND release on js-dos canvas
 
-
-  
-
-```
-    public simulateKeyPress(keyCode: number): void {
+```    public simulateKeyPress(keyCode: number): void {
         this.simulateKeyEvent(keyCode, true);
         setTimeout(() => this.simulateKeyEvent(keyCode, false), 100);
     }
@@ -420,9 +295,6 @@ interface LowLevelApi {
     ping: (msg: string) => void;
 }
 
-
 ```
-
-
 
 

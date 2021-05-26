@@ -28,7 +28,7 @@ export class DosModule extends DosOptions {
     private resumeListeners: Array< () => void > = [];
     private terminateListeners: Array< () => void > = [];
 
-    private ciResolveFn: (ci: DosCommandInterface) => void = () => {};
+    private ciResolveFn: (ci: DosCommandInterface) => void = () => {/**/};
 
     constructor(canvas: HTMLCanvasElement, onready: (runtime: DosRuntime) => void) {
         super();

@@ -9,7 +9,6 @@ Subscribe our [twitter](https://twitter.com/doszone_db/) channel for updates.
 
 Join our [discord](https://discord.com/invite/hMVYEbG) community.
 
-
 [js-dos 6.22](https://js-dos.com)
 ===========
 
@@ -127,21 +126,35 @@ See example of React component in FAQ section
 All examples are interactive, read more in [**Examples**](https://js-dos.com/6.22/examples/) sections.
 
 ### Demo app
-<a href="https://dosify.me">Demo app</a> that allows try js-dos box with your game archive.
+<a href="https://caiiiycuk.github.io/dosify/">Demo app</a> that allows try js-dos box with your game archive.
 
 ### Clients
 You can found real use of js-dos on certain websites about dos games.
 
-* [JS-DOS Games](https://js-dos.com/games/)
-* [Dos Games Archive](https://www.dosgamesarchive.com/play-online/)
-* [Emupedia](https://emupedia.net/beta/emuos/)
-* [Abandonware France](https://www.abandonware-france.org/online)
+* https://dos.zone/ by @caiiiycuk 
+* https://js-dos.com/games/  by @caiiiycuk 
+* https://www.dosgamesarchive.com/play-online/
+* https://emupedia.net/beta/ by @ZaDarkSide 
+* https://www.abandonware-france.org/online
+* https://dosgames.com/
+* https://sites.google.com/ccboe.us/retrobitrecreation by @YaBoyRetro
+* https://sonictruth.github.io/vr-dos/
+* https://x.dustinbrett.com/
+* https://github.com/xsro/masm-tasm
+* https://unchartedwater2.wani.kr/
+* https://github.com/sonictruth/vr-dos
+* https://boatcad.web.app/
+* https://github.com/matthewturk/jupyterlab_dosbox by @powersoffour 
+* https://www.classicdosgames.com/
+* https://www.bestoldgames.net/games/online
+* http://nesninja.com/ by @AGB 
+
 
 Please open issue on github if you want to add link for another site that uses js-dos.
 
 ## Performance
 
-To measure performance used variant of **Dhrystone 2 Test** originally taken from [this page](http://www.roylongbottom.org.uk/dhrystone%20results.htm). Original version used `clock()` to calculate delta time. Which is good for real pc, but does not very accurate for dosbox emulator. When `clock()` call happend modifed version send `~>dtime` marker which intercepted by test page
+To measure performance used variant of **Dhrystone 2 Test** originally taken from [this page](http://www.roylongbottom.org.uk/dhrystone%20results.htm). Original version used `clock()` to calculate delta time. Which is good for real pc, but does not very accurate for dosbox emulator. When `clock()` call happens modified version send `~>dtime` marker which intercepted by test page
 and used to calculate delta time with `performance.now()` from browser. Source code of modified test is [here](https://github.com/caiiiycuk/js-dos/tree/6.22/programms/dhry2). 
 
 Basically this test produce a lot of int operations and measure amount of operations (Dhrystones) produced per second. Output is 
@@ -150,6 +163,20 @@ a **VAX MIPS RATING** which is Drhystones per second divided by 1757 (is as DEC 
 You can run [this test](https://js-dos.com/6.22/examples/?dhry2) for your PC, change variant and see how different implementations
 affects performance.
 
+### Latest
+![Current results for `6.22.59`](/6.22/performance/6.22.59.png)
+
+Host for this run is **Ubuntu 19.10 Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz**.
+Host result for same test but with native dosbox is **125**.
+
+Current version is **~6 times slower then native dosbox**. Optimal version to use is
+a **asyncify** (wdosbox.js) which have similar performance as a nosync version (wdosbox-nosync.js)
+but much more stable. 
+
+ASM.JS versions emterpJs (wdosbox-emterp.js) and nosyncJs (wdosbox-nosync.js) have better performance
+only in Firefox, other browser seems does not do any optimization and performance is much worse.
+
+### 6.22.53
 ![Current results for `6.22.53`](/6.22/performance/6.22.53.png)
 
 ||iPhone 8 2.1Ghz|Linux FF i7 - 2.7Ghz|Linux Chrome i7 - 2.7GHz|Xiaomi Mi Max 2 - 2Ghz|Huawei Mate 10 Pro 2.36Ghz|
@@ -160,16 +187,6 @@ affects performance.
 |asyncifyJs|2,12|0,96|0,12|0,03|0,1|
 |emterpJs|0,2|7,19|2|0,84|0,88|
 |nosyncJs|0,21|9,02|1,95|0|0|
-
-Host for this run is **Ubuntu 19.10 Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz**.
-Host result for same test but with native dosbox is **125**.
-
-Current version is **~10 times slower then native dosbox**. Optimal version to use is
-a **asyncify** (wdosbox.js) whice have similar performance as a nosync version (wdosbox-nosync.js)
-but much more stable. 
-
-ASM.JS versions emterpJs (wdosbox-emterp.js) and nosyncJs (wdosbox-nosync.js) have better performance
-only in Firefox, other browser seems does not do any optimization and performance is much worse.
 
 
 ## API Reference
@@ -205,6 +222,10 @@ You can change button style through options object.
         });
     });
 ```
+
+With qwerty controller you can send special characters in Qwerty controller using <Char> notation.
+List of supported [<Char> names](https://github.com/caiiiycuk/js-dos/pull/92).
+
 
 ## FAQ
 
@@ -577,7 +598,7 @@ Project uses dosbox as emulation layer for running dos programs. You should buil
 mkdir build
 cd build
 emcmake cmake ..
-make wdosbox dosbox wdosbox-sync dosbox-sync
+make wdosbox dosbox wdosbox-nosync dosbox-nosync
 
 // set to fastcomp backend
 mkdir build-emterp

@@ -1,13 +1,5 @@
 
-
-
-
-
-
-  
-
-```
-#include <js-dos-3rdparty.h>
+```#include <js-dos-3rdparty.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -123,9 +115,6 @@ extern int EMSCRIPTEN_KEEPALIVE extract_zip(const void *data, zip_uint64_t lengt
     }
     return 0;
 }
-
 ```
-
-
 
 

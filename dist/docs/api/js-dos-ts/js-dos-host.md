@@ -1,16 +1,8 @@
-
-
-
-
 # DosHost
 This class is used to detect and provide information about
 features that supported in current environment
 
-
-  
-
 ```
-
 /* tslint:disable:member-ordering */
 import { Build } from "./js-dos-build";
 import { ICache } from "./js-dos-cache";
@@ -27,24 +19,13 @@ class DosHost {
     constructor() {
         this.global.exports = {};
 
-
 ```
-
-
-
-
-
-
 
 ### WebAssembly
 Host able to detect is WebAssembly supported or not,
 this information is stored in `Host.wasmSupported` variable
 
-
-  
-
-```
-        try {
+```        try {
             if (typeof WebAssembly === "object" &&
                 typeof WebAssembly.instantiate === "function" &&
                 typeof WebAssembly.compile === "function") {
@@ -58,42 +39,20 @@ this information is stored in `Host.wasmSupported` variable
             /* do nothing WebAssembly is not supported */
         }
 
-
 ```
-
-
-
-
-
-
 
 ### polyfill
 Host also provides limited set of polyfills to support legacy browsers
 
-
-  
-
-```
-        this.polyfill();
+```        this.polyfill();
     }
 
-
 ```
-
-
-
-
-
-
 
 Currently polyfill contains implementations for:
 `Math.imul`, `Math.fround`, `Math.clz32`, `Math.trunc`
 
-
-  
-
-```
-    /* tslint:disable:no-bitwise */
+```    /* tslint:disable:no-bitwise */
     /* tslint:disable:only-arrow-functions */
     private polyfill() {
         if (!Math.imul || Math.imul(0xffffffff, 5) !== -5) {
@@ -131,41 +90,19 @@ Currently polyfill contains implementations for:
         Math.trunc = Math.trunc;
     }
 
-
 ```
-
-
-
-
-
-
 
 ### resolveDosBox
 `resolveDosBox` is another important task of DosHost
 
-
-  
-
+```    public resolveDosBox(url: string, cache: ICache, module: DosModule) {
 ```
-    public resolveDosBox(url: string, cache: ICache, module: DosModule) {
-
-```
-
-
-
-
-
-
 
 When dosbox is resolved, WDOSBOX module is set to
 global variable `exports.WDOSBOX`. This variable is
 used to prevent next loads of same dosbox module.
 
-
-  
-
-```
-        if (this.global.exports.WDOSBOX) {
+```        if (this.global.exports.WDOSBOX) {
             module.ondosbox(this.global.exports.WDOSBOX, this.global.exports.instantiateWasm);
             return;
         }
@@ -193,22 +130,11 @@ used to prevent next loads of same dosbox module.
         });
     }
 
-
 ```
-
-
-
-
-
-
 
 If dosbox is not yet resolved, then:
 
-
-  
-
-```
-    private compileDosBox(url: string, cache: ICache, module: DosModule) {
+```    private compileDosBox(url: string, cache: ICache, module: DosModule) {
         const fromIndex = url.lastIndexOf("/");
         const wIndex = url.indexOf("w", fromIndex);
         const isWasmUrl = wIndex === fromIndex + 1 && wIndex >= 0;
@@ -221,40 +147,18 @@ If dosbox is not yet resolved, then:
                 module.log("[DEBUG] Wasm supported: " + this.wasmSupported + ", url: " + url);
             }
 
-
 ```
-
-
-
-
-
-
 
 fallback to js version if wasm not supported
 
-
-  
-
-```
-            if (isWasmUrl) {
+```            if (isWasmUrl) {
                 url = url.substr(0, wIndex) + url.substr(wIndex + 1);
                 if (url.endsWith("dosbox.js")) {
-
 ```
-
-
-
-
-
-
 
 do not use dosbox.js, because it's not asm.js
 
-
-  
-
-```
-                    url = url.replace("dosbox.js", "dosbox-emterp.js");
+```                    url = url.replace("dosbox.js", "dosbox-emterp.js");
                 }
             }
             return this.compileJsDosBox(url, cache, module);
@@ -264,24 +168,17 @@ do not use dosbox.js, because it's not asm.js
     private compileJsDosBox(url: string, cache: ICache, module: DosModule): Promise<any> {
         return new Promise((resolve, reject) => {
             const buildTotal = Build.jsSize;
-            const memUrl = url.replace(".js", ".js.mem");
-
-
 ```
 
+@ts-ignore the unusued local for memUrl not being read
 
+```            const memUrl = url.replace(".js", ".js.mem");
 
-
-
-
+```
 
 * Host download `dosbox.js`
 
-
-  
-
-```
-            new Xhr(url, {
+```            new Xhr(url, {
                 cache,
                 progress: (total, loaded) => {
                     if (module.onprogress) {
@@ -314,22 +211,11 @@ do not use dosbox.js, because it's not asm.js
             const buildTotal = Build.wasmSize + Build.wasmJsSize;
             const wasmUrl = url.replace(".js", ".wasm.js");
 
-
 ```
-
-
-
-
-
-
 
 * Host downloads `wdosbox` asm + js scripts
 
-
-  
-
-```
-            new Xhr(wasmUrl, {
+```            new Xhr(wasmUrl, {
                 cache,
                 responseType: "arraybuffer",
                 progress: (total, loaded) => {
@@ -343,22 +229,11 @@ do not use dosbox.js, because it's not asm.js
                         ", message: " + message + ", url: " + url);
                 },
                 success: (response: any) => {
-
 ```
-
-
-
-
-
-
 
 * Compile dosbox wasm module
 
-
-  
-
-```
-                    const promise = WebAssembly.compile(response);
+```                    const promise = WebAssembly.compile(response);
                     const onreject = (reason: any) => {
                         reject(reason + "");
                     };
@@ -370,22 +245,11 @@ do not use dosbox.js, because it's not asm.js
                                     module.onglobals.apply(null, args);
                                 }
                             };
-
 ```
-
-
-
-
-
-
 
 *  Instaniate it for each new dosbox runtime
 
-
-  
-
-```
-                            return WebAssembly.instantiate(wasmModule, info)
+```                            return WebAssembly.instantiate(wasmModule, info)
                                 .catch(onreject)
                                 .then((instance) => {
                                     receiveInstance(instance, wasmModule);
@@ -426,9 +290,6 @@ do not use dosbox.js, because it's not asm.js
 
 export const Host = new DosHost();
 
-
 ```
-
-
 
 

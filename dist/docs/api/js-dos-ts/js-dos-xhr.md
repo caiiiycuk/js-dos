@@ -1,42 +1,16 @@
 
-
-
-
-
-
-  
-
-```
-import { ICache } from "./js-dos-cache";
+```import { ICache } from "./js-dos-cache";
 import CacheNoop from "./js-dos-cache-noop";
 
-
 ```
-
-
-
-
-
-
 
 # Xhr
 `Xhr` is small wrapper over XMLHttpRequest, that provides some
 handy methods
 
-
-
-
-
-
-
-
 You can configre Xhr with XhrOptions object:
 
-
-  
-
-```
-interface XhrOptions {
+```interface XhrOptions {
     cache: ICache;
     method?: string;
     success?: (response: any) => void;
@@ -45,14 +19,7 @@ interface XhrOptions {
     data?: string;
     responseType?: XMLHttpRequestResponseType;
 }
-
 ```
-
-
-
-
-
-
 
 * `method` - "GET" | "POST"
 * `success` - callback when resource is downloaded
@@ -61,20 +28,9 @@ interface XhrOptions {
 * `data` - data for POST request, should typeof `application/x-www-form-urlencoded`
 * `responseType` - XMLHttpRequestResponseType
 
-
-
-
-
-
-
-
 Class Xhr does not have any public methods
 
-
-  
-
-```
-export class Xhr {
+```export class Xhr {
     private cache: ICache;
     private resource: string;
     private options: XhrOptions;
@@ -161,9 +117,6 @@ export class Xhr {
 
 }
 
-
 ```
-
-
 
 

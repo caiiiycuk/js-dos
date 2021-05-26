@@ -1,13 +1,5 @@
 
-
-
-
-
-
-  
-
-```
-import { ICache } from "./js-dos-cache";
+```import { ICache } from "./js-dos-cache";
 
 export default class CacheDb implements ICache {
 
@@ -98,9 +90,6 @@ export default class CacheDb implements ICache {
     }
 }
 
-
 ```
-
-
 
 

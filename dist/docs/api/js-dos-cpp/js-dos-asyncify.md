@@ -1,16 +1,8 @@
 
-
-
-
-
 Created by caiiiycuk on 13.11.2019.
 
 
-
-  
-
 ```
-
 #ifdef EMSCRIPTEN
 
 #import <emscripten.h>
@@ -86,9 +78,6 @@ extern "C" void asyncify_sleep(unsigned int ms) {
 #endif
 }
 
-
 ```
-
-
 
 
