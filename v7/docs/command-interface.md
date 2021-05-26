@@ -32,13 +32,20 @@ export interface CommandInterface {
     // * `exit()` - exit from runtime
     exit: () => Promise<void>;
 
-    // * `simulateKeyPress(keyCode)` - allows to simulate key press **AND** release event for key code
-    // see `sendKeyEvent` to find meaning of keyCode
-    simulateKeyEvent: (keyCode: number) => void;
+    // * `simulateKeyPress(...keyCodes)` - allows to simulate key press **AND** release event for key code
+    // see `sendKeyPress` to find meaning of keyCode. Key combination is suported when more than 1 keyCode is set.
+    simulateKeyPress: (...keyCodes: number[]) => void;
 
+    // * `sendKeyEvent(keyCode, pressed)` - sends single key (press or release) event to backend
     sendKeyEvent: (keyCode: number, pressed: boolean) => void;
 
-    // dump FS as Uint8Array <zip archive>
+    // * `simulateMouseMotion` - sends mouse motion event to backend
+    sendMouseMotion: (x: number, y: number) => void;
+
+    // * `simulateMouseButton` - sends mouse button event (press or release) to backend
+    sendMouseButton: (button: number, pressed: boolean) => void;
+
+    // dump **changed** FS as Uint8Array <zip archive>
     persist(): Promise<Uint8Array>;
 
     // events
@@ -48,11 +55,15 @@ export interface CommandInterface {
 
 Events interface:
 ```typescript
+export type MessageType = "log" | "warn" | "error" | string;
+
 export interface CommandInterfaceEvents {
     onStdout: (consumer: (message: string) => void) => void;
     onFrameSize: (consumer: (width: number, height: number) => void) => void;
-    onFrame: (consumer: (frame: Uint8Array) => void) => void;
+    onFrame: (consumer: (rgb: Uint8Array) => void) => void;
     onSoundPush: (consumer: (samples: Float32Array) => void) => void;
     onExit: (consumer: () => void) => void;
+
+    onMessage: (consumer: (msgType: MessageType, ...args: any[]) => void) => void;
 }
 ```

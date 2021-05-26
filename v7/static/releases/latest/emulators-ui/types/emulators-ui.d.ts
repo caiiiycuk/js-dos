@@ -1,5 +1,6 @@
 import { layers } from "./dom/layers";
 import { resolveBundle } from "./network/xhr";
+import { _2d } from "./graphics/_2d";
 import { webGl } from "./graphics/webgl";
 import { video } from "./graphics/video";
 import { keyboard } from "./controls/keyboard";
@@ -11,6 +12,7 @@ import { domToKeyCode } from "./dom/keys";
 import { audioNode } from "./sound/audio-node";
 import { notyf } from "./notification/notyf";
 import { save, load } from "./persist/save-load";
+import { getGrid } from "./controls/grid";
 import { DosFactoryType } from "./js-dos";
 export declare class EmulatorsUi {
     dom: {
@@ -21,6 +23,7 @@ export declare class EmulatorsUi {
     };
     graphics: {
         webGl: typeof webGl;
+        _2d: typeof _2d;
         video: typeof video;
     };
     sound: {
@@ -31,6 +34,7 @@ export declare class EmulatorsUi {
         load: typeof load;
     };
     controls: {
+        getGrid: typeof getGrid;
         namedKeyCodes: {
             [name: string]: number;
         };

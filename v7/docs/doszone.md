@@ -9,7 +9,7 @@ DOS.Zone consist of:
 * [discord](https://discord.com/invite/hMVYEbG) to instant talks.
 * [talk.dos.zone](https://talks.dos.zone) is a  place to discuss and publish new `js-dos bundles`. Approved bundles are pushed in dos.zone [repository](https://talks.dos.zone/c/rep/11).
 * [dos.zone](https://dos.zone) it's a default player for `js-dos bundles` based on js-dos api.
-* [game studio](jsdos-bundle#game-studio) it's a full featured bundles creator for js-dos.
+* [game studio](https://dos.zone/en/studio) it's a full featured bundles creator for js-dos.
 * [twitter](https://twitter.com/intent/user?screen_name=doszone_db) our news channel
 
 ## Database

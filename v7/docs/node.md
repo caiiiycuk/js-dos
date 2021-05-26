@@ -38,7 +38,7 @@ emulators.pathPrefix = "./";
 :::note
 
 emulators package is made for browser, it didn't export anything. It inject itself into global object.
-In node `pathPrefix` is relative to require file
+In node `pathPrefix` is relative to `require`
 
 :::
 
@@ -57,21 +57,23 @@ When dos emulation starts, we will recive [Command Interface](command-interface)
 to subscribe on frame updates and to send key/mouse events.
 
 ```js
-    let rgba = new Uint8Array(0);
+    let rgb = new Uint8Array(0);
     ci.events().onFrame((frame) => {
-        rgba = frame;
+        this.rgb = frame;
     });
 ```
 
-**Now we have frame, it's in RGBA format. We only need to save it to png image:**
+**Now we have frame, it's in RGB format. We only need to save it to png image:**
 ```js
     const width = ci.width();
     const height = ci.height();
 
-    for (let y = 0; y < height; ++y) {
-        for (let x = 0; x < width; ++x) {
-            rgba[(y * width + x) * 4 + 3] = 255; // rewrite alpha 0 -> 255
-        }
+    const rgba = new Uint8Array(width * height * 4);
+    for (let next = 0; next < width * height; ++next) {
+        rgba[next * 4 + 0] = rgb[next * 3 + 0];
+        rgba[next * 4 + 1] = rgb[next * 3 + 1];
+        rgba[next * 4 + 2] = rgb[next * 3 + 2];
+        rgba[next * 4 + 3] = 255;
     }
 
     new jimp({ data: rgba, width, height }, (err, image) => {
@@ -115,11 +117,14 @@ emulators
             const width = ci.width();
             const height = ci.height();
 
-            for (let y = 0; y < height; ++y) {
-                for (let x = 0; x < width; ++x) {
-                    rgba[(y * width + x) * 4 + 3] = 255; // rewrite alpha 0 -> 255
-                }
+            const rgba = new Uint8Array(width * height * 4);
+            for (let next = 0; next < width * height; ++next) {
+                rgba[next * 4 + 0] = rgb[next * 3 + 0];
+                rgba[next * 4 + 1] = rgb[next * 3 + 1];
+                rgba[next * 4 + 2] = rgb[next * 3 + 2];
+                rgba[next * 4 + 3] = 255;
             }
+
             new jimp({ data: rgba, width, height }, (err, image) => {
                 image.write("./screenshot.png", () => {
                     ci.exit();

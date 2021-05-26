@@ -9,7 +9,7 @@ You just need the url of a `jsdos bundle` (you can get it from our game database
 ```html
 <iframe
   id="jsdos"
-  src="https://dos.zone/en/player/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2F5%2F5c63f84bae9688046b9a7c0a9f1f1c8904616052.jsdos"
+  src="https://dos.zone/en/player/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2F2%2F24b00b14f118580763440ecaddcc948f8cb94f14.jsdos"
 />
 ```
 
@@ -32,7 +32,8 @@ Complete example:
 
 :::info
 
-1. Drag with the mouse to play without a keyboard!
+Mobile support:
+1. Swipe to change direction of digger.
 2. Open top menu to type records name on mobile.
 
 :::

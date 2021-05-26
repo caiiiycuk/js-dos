@@ -8,7 +8,7 @@ title: Bundle creation
 <details><summary>Historical background</summary>
 <p>
 <br/>
-Previous version (6.22) has a very simple API to run a DOS program in the browser. <br/> BUT, before starting it you need to perform some setup:
+Previous version (6.22) has a very simple API to run a DOS program in the browser. <br/> BUT, before start it requires perform some setup:
 <ul>
 <li> download game archive (usually zip) </li>
 <li> extract it </li>
@@ -39,7 +39,7 @@ File `.jsdos/dosbox.conf` is required. js-dos would not start if this file does 
 :::
 
 You can generate a `js-dos bundle` programmatically. But, we recommend you use our [bundle generator](https://dos.zone/en/studio)
-Moreover you can search [our database](https://talks.dos.zone/search?expanded=true&q=%23rep%20tags%3Ajsdos) to see if someone already uploaded a `js-dos bundle` for a program.
+Moreover you can search [our database](https://talks.dos.zone/c/rep/11) to see if someone already uploaded a `js-dos bundle` for a program.
 
 ## Game Studio
 
