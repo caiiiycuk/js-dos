@@ -1,33 +1,14 @@
-
-
-
-
 # DosDom
 Simple API to work with DOM
 
-
-  
-
 ```
-
 const isTouchDevice = "ontouchstart" in document.documentElement;
 
-
 ```
-
-
-
-
-
-
 
 ### applyCss - add new css style if no html element with id exists
 
-
-  
-
-```
-export function applyCss(id: string, css: string) {
+```export function applyCss(id: string, css: string) {
     if (document.getElementById(id) === null) {
         const style = document.createElement("style") as HTMLStyleElement;
         style.id = id;
@@ -36,22 +17,11 @@ export function applyCss(id: string, css: string) {
     }
 }
 
-
 ```
-
-
-
-
-
-
 
 ### createDiv - typesafe shortcut for creating HTMLDivElement
 
-
-  
-
-```
-export function createDiv(className?: string, css?: string): HTMLDivElement {
+```export function createDiv(className?: string, css?: string): HTMLDivElement {
     const el = document.createElement("div") as HTMLDivElement;
 
     if (className !== undefined) {
@@ -65,23 +35,12 @@ export function createDiv(className?: string, css?: string): HTMLDivElement {
     return el;
 }
 
-
 ```
-
-
-
-
-
-
 
 ### addButtonListener - create touch & mouse listeners that send onPress & onRelease
 events
 
-
-  
-
-```
-export function addButtonListener(el: HTMLElement,
+```export function addButtonListener(el: HTMLElement,
                                   onPress: () => void,
                                   onRelease: () => void) {
     let isTouchHeld = false;
@@ -94,22 +53,11 @@ export function addButtonListener(el: HTMLElement,
             }
 
             const touches = event.changedTouches;
-
 ```
-
-
-
-
-
-
 
 tslint:disable-next-line:prefer-for-of
 
-
-  
-
-```
-            for (let touchIndex = 0; touchIndex < touches.length; touchIndex++) {
+```            for (let touchIndex = 0; touchIndex < touches.length; touchIndex++) {
                 const main = touches[touchIndex];
                 const identifier = main.identifier;
 
@@ -170,9 +118,6 @@ tslint:disable-next-line:prefer-for-of
     el.addEventListener("mouseleave", onMouseLeave, true);
 }
 
-
 ```
-
-
 
 

@@ -1,13 +1,5 @@
 
-
-
-
-
-
-  
-
-```
-#include <js-dos-ci.h>
+```#include <js-dos-ci.h>
 #include <js-dos-events.h>
 #include <js-dos-json.h>
 #include <unordered_map>
@@ -18,24 +10,10 @@
 #include <emscripten.h>
 #endif
 
-
 ```
-
-
-
-
-
-
 
 send
 ----
-
-
-
-
-
-
-
 
 Send is low level api to communicate with CommandInterface, it is used by
 javascript. Javascript can use this method to send information into c++
@@ -48,39 +26,17 @@ layer, like this:
 callback will be called only if 'event' is know for c++ layer, and only when
 c++ layer call callback so IT IS ASYNC!
 
-
-
-
-
-
-
-
 Types:
 * **send_callback_fn** - function that C++ code should call, to trigger
 javascript callback function (that passed to send method)
 
-
-  
-
-```
-typedef void (*send_callback_fn)(const std::string &callback_name,
+```typedef void (*send_callback_fn)(const std::string &callback_name,
                                  const jsonstream &);
-
 ```
-
-
-
-
-
-
 
 * **send_handler_fn** - handler for javascript callbacks
 
-
-  
-
-```
-typedef void (*send_handler_fn)(const std::string &callback_name,
+```typedef void (*send_handler_fn)(const std::string &callback_name,
                                 const char *data, send_callback_fn callback_fn);
 
 std::unordered_map<std::string, send_handler_fn> &getSendHandlers() {
@@ -88,22 +44,11 @@ std::unordered_map<std::string, send_handler_fn> &getSendHandlers() {
   return sendHandlers;
 }
 
-
 ```
-
-
-
-
-
-
 
 **_send** - is actual implemenation of Module['__send']
 
-
-  
-
-```
-extern "C" void EMSCRIPTEN_KEEPALIVE _send(const char *ckey, const char *data,
+```extern "C" void EMSCRIPTEN_KEEPALIVE _send(const char *ckey, const char *data,
                                            const char *ccallback) {
   jsonstream emptystream;
   static void (*fn)(const std::string &, const jsonstream &) =
@@ -139,22 +84,11 @@ extern "C" void EMSCRIPTEN_KEEPALIVE _send(const char *ckey, const char *data,
   printf("WARN! Can't find handler for key '%s'\n", ckey);
 }
 
-
 ```
-
-
-
-
-
-
 
 **registerSendFn** - add send function to Module object
 
-
-  
-
-```
-void registerSendFn() {
+```void registerSendFn() {
 #ifdef EMSCRIPTEN
   EM_ASM(({
     Module['send'] = function(key, data, callback) {
@@ -190,32 +124,14 @@ void registerSendFn() {
 #endif
 }
 
-
 ```
-
-
-
-
-
-
 
 Ping
 ----
 
-
-
-
-
-
-
-
 Ping is opposite to send, it called by c++ to trigger something in javascript
 
-
-  
-
-```
-void ping(const char *event) {
+```void ping(const char *event) {
 #ifdef EMSCRIPTEN
   EM_ASM(({
            const event = UTF8ToString($0);
@@ -248,22 +164,11 @@ void Events::frame() {
   static long frameCount = 0;
 
   if (frameCount == 0) {
-
 ```
-
-
-
-
-
-
 
 do nothing
 
-
-  
-
-```
-  } else if (frameCount == 1) {
+```  } else if (frameCount == 1) {
     ready();
   } else {
     supplyScreenshotIfNeeded();
@@ -312,32 +217,14 @@ void Events::supplyScreenshotIfNeeded() {
 }
 
 void Events::fixEventKeyCode(SDL_Event* event) {
-
 ```
-
-
-
-
-
-
 
 event->key.keysum.sym is used to map keys
 You can find correct key by logging CreateKeyBind
 
-
-
-
-
-
-
-
 printf("event-in  %d %d \n", event->key.keysym.sym, event->key.keysym.scancode);
 
-
-  
-
-```
-#ifdef EMSCRIPTEN
+```#ifdef EMSCRIPTEN
   if (browser != Browser::Firefox) {
     switch ((int)event->key.keysym.sym) {
       case 186: { // ':'
@@ -360,22 +247,11 @@ printf("event-in  %d %d \n", event->key.keysym.sym, event->key.keysym.scancode);
     default:;
   }
 
-
 ```
-
-
-
-
-
-
 
 printf("event-out  %d %d \n", event->key.keysym.sym, event->key.keysym.scancode);
 
-
-  
-
-```
-#endif
+```#endif
 }
 
 std::vector<SDL_Event> sdlEvents;
@@ -399,14 +275,7 @@ void Events::registerPushSDLEvent() {
   getSendHandlers().insert(std::make_pair<>(
           "sdl_key_event", [](const std::string &callback_name, const char *data,
                               send_callback_fn callback_fn) {
-
 ```
-
-
-
-
-
-
 
 typedef struct SDL_KeyboardEvent
 {
@@ -427,11 +296,7 @@ typedef struct SDL_Keysym
    Uint32 unicode;             /**< \deprecated use SDL_TextInputEvent instead */
 } SDL_Keysym;
 
-
-  
-
-```
-              auto code = atoi(data);
+```              auto code = atoi(data);
 
               SDL_Keysym keysym;
               keysym.scancode = (SDL_Scancode) code;
@@ -474,9 +339,6 @@ void Events::write_stdout(const char* data, size_t amount) {
 #endif
 }
 
-
 ```
-
-
 
 

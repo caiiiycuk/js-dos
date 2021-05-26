@@ -1,13 +1,5 @@
 
-
-
-
-
-
-  
-
-```
-import CacheDb from "./js-dos-cache-db";
+```import CacheDb from "./js-dos-cache-db";
 import CacheNoop from "./js-dos-cache-noop";
 import { DosModule } from "./js-dos-module";
 
@@ -26,9 +18,6 @@ export default function openCache(module: DosModule, onready: (cache: ICache) =>
     });
 }
 
-
 ```
-
-
 
 

@@ -70,6 +70,7 @@ export class DosFS {
 
     // ### extractAll
     public extractAll(sources: DosArchiveSource[]): Promise<void> {
+        // tslint:disable-next-line
         // download given [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-dosarchivesource)
         // and extract them to mountPoint's.
         //
@@ -203,6 +204,102 @@ export class DosFS {
         this.fs.createDataFile(path, filename, body, true, true, true);
     }
 
+    public writeFsToFile(filename: string, fsPattern: RegExp, mountName: string) {
+
+        this.fs.syncfs(false, (err: any) => {
+            if (!err) {
+                window.indexedDB.open(mountName).onsuccess = (e: any) => {
+
+                    const db = e.target.result;
+                    const content: any = {};
+
+                    db.transaction(["FILE_DATA"], "readonly")
+                        .objectStore("FILE_DATA")
+                        .openCursor().onsuccess = (e: any) => {
+
+                            const cursor = e.target.result;
+
+                            if (cursor) {
+
+                                if (!fsPattern || fsPattern.test(cursor.key)) {
+                                    const value = cursor.value;
+                                    value.contents = DosFS.toBase64(value.contents);
+                                    const key = cursor.key;
+                                    content[key] = value;
+                                }
+
+                                cursor.continue();
+                            } else {
+                                DosFS.saveToFile(
+                                    filename,
+                                    JSON.stringify(content));
+                            }
+                        };
+                };
+            }
+        });
+    }
+
+    public readFsFromFile(file: Blob) {
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+
+            if (!e.target) {
+                return;
+            }
+
+            const content: any = e.target.result;
+            const entries = JSON.parse(content);
+
+            for (const key of Object.keys(entries)) {
+                const value = entries[key];
+                const contents = DosFS.fromBase64(value.contents);
+
+                if (this.fs.analyzePath(key).exists) {
+                    this.fs.unlink(key);
+                }
+
+                this.createFile(key, contents);
+            }
+        };
+
+        reader.readAsText(file);
+    }
+
+    private static toBase64(bytes: Uint8Array): string {
+        let binary = "";
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[ i ]);
+        }
+        return window.btoa( binary );
+    }
+
+    private static fromBase64(base64: string): Uint8Array {
+        const binaryString =  window.atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array( len );
+        for (let i = 0; i < len; i++)        {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes;
+    }
+
+    private static saveToFile(filename: string, data: string) {
+        const blob = new Blob([data], {type: "text/csv"});
+        const elem = window.document.createElement("a");
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
+    }
+
     private createPath(parts: string[], begin: number, end: number) {
         let path = "";
         for (let i = begin; i < end; ++i) {
@@ -224,6 +321,7 @@ export class DosFS {
         }
 
         this.syncingPromise = new Promise<void>((resolve, reject) => {
+            // @ts-ignore the unusued local for startedAt not being read
             const startedAt = Date.now();
             this.fs.syncfs(false, (err: any) => {
                 if (err) {

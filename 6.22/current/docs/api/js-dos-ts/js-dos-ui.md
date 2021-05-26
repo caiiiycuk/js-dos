@@ -1,17 +1,9 @@
-
-
-
-
 # JsDosUi
 Optional ui module for js-dos.
 This ui will be applied if client did not set `onprogress` in
 [DosOptions](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
 
-
-  
-
-```
-import * as DosDom from "./js-dos-dom";
+```import * as DosDom from "./js-dos-dom";
 import { DosModule } from "./js-dos-module";
 
 const maxStageLength = 32;
@@ -27,25 +19,14 @@ export class DosUi {
         this.dos = dos;
         this.canvas = dos.canvas;
 
-
 ```
-
-
-
-
-
-
 
 ### How it works
 This ui replace canvas element with div .dosbox-container,
 that contains original canvas and .dosbox-overlay as children
 You can change style of ui by editing css for this two classes
 
-
-  
-
 ```
-
         try {
             DosDom.applyCss("js-dos-ui-css", this.css);
 
@@ -146,22 +127,11 @@ You can change style of ui by editing css for this two classes
         return null;
     }
 
-
 ```
-
-
-
-
-
-
 
 ### Style
 
-
-  
-
-```
-    /* tslint:disable:member-ordering */
+```    /* tslint:disable:member-ordering */
     /* tslint:disable:max-line-length */
     private css: string = `
     .dosbox-container { position: relative; min-width: 320px; min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -177,22 +147,11 @@ You can change style of ui by editing css for this two classes
     .st-loader .equal { display: block; position: absolute; top: 50%; margin-top: -0.5em; left: 4.16667em; height: 1em; width: 1.66667em; border: 0.25em solid #fff; box-sizing: border-box; border-width: 0.25em 0; -moz-animation: loading 1.5s infinite ease-in-out; -webkit-animation: loading 1.5s infinite ease-in-out; animation: loading 1.5s infinite ease-in-out; background: #fff; }
     `;
 
-
 ```
-
-
-
-
-
-
 
 ### Template
 
-
-  
-
-```
-    /* tslint:disable:member-ordering */
+```    /* tslint:disable:member-ordering */
     /* tslint:disable:max-line-length */
     private overlayHtml: string = `
         <div class="dosbox-loader">
@@ -207,9 +166,6 @@ You can change style of ui by editing css for this two classes
     `;
 }
 
-
 ```
-
-
 
 

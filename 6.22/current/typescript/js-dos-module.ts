@@ -1,6 +1,7 @@
 // # DosModule
 // DosModule is [emscripten module object](https://kripken.github.io/emscripten-site/docs/api_reference/module.html),
 // with additional functionality
+// @ts-ignore the unusued local for Dos not being used
 import Dos, { DosRuntime } from "./js-dos";
 import { Build } from "./js-dos-build";
 import { DosCommandInterface } from "./js-dos-ci";
@@ -16,6 +17,7 @@ export class DosModule extends DosOptions {
     public onglobals?: (...args: any[]) => void;
     public ci: Promise<DosCommandInterface>;
 
+    // @ts-ignore the unusued local for instance not being read
     private instance: any;
     private fs: DosFS | null = null;
     private ui: DosUi | null = null;
@@ -26,7 +28,7 @@ export class DosModule extends DosOptions {
     private resumeListeners: Array< () => void > = [];
     private terminateListeners: Array< () => void > = [];
 
-    private ciResolveFn: (ci: DosCommandInterface) => void = () => {};
+    private ciResolveFn: (ci: DosCommandInterface) => void = () => {/**/};
 
     constructor(canvas: HTMLCanvasElement, onready: (runtime: DosRuntime) => void) {
         super();
@@ -41,6 +43,7 @@ export class DosModule extends DosOptions {
 
     private registerDefaultListeners() {
         let hidden: string;
+        // @ts-ignore the unusued local for visibilityChange not being read
         let visibilityChange: string;
 
         if (typeof document.hidden !== "undefined") {

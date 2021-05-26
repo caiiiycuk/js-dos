@@ -13,7 +13,7 @@ export class DosCommandInterface {
     private onready: (ci: DosCommandInterface) => void;
 
     private shellInputQueue: string[] = [];
-    private shellInputClients: Array<() => void> = [];
+    private shellInputClients: Array<(value?: unknown) => void> = [];
     private onstdout?: (data: string) => void = undefined;
     private keyEventConsumer: DosKeyEventConsumer = {
         onPress: (keyCode) => this.simulateKeyEvent(keyCode, true),
@@ -164,6 +164,7 @@ export class DosCommandInterface {
         Object.defineProperty(event, "charCode", getter);
 
         event.initKeyboardEvent
+            // tslint:disable-next-line
             ? event.initKeyboardEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, keyCode)
             : event.initKeyEvent(name, true, true, document.defaultView, false, false, false, false, keyCode, 0);
 

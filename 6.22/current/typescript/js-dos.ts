@@ -19,6 +19,7 @@ import { Host } from "./js-dos-host";
 import { DosModule } from "./js-dos-module";
 import { DosOptions } from "./js-dos-options";
 
+import Gamepad from "./controller/gamepad";
 import Move from "./controller/move";
 import Qwerty from "./controller/qwerty";
 
@@ -126,4 +127,5 @@ export interface DosReadyPromise extends Promise<DosRuntime> {
 (window as any).DosController = {
     Qwerty,
     Move,
+    Gamepad,
 };

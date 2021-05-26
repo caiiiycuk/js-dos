@@ -1,7 +1,3 @@
-
-
-
-
 #Simplified Code
 
 js-dos-cpp contains simplified code of dosbox, produced by applying unifdef with
@@ -24,8 +20,5 @@ unifdef -DGET_X86_FUNCTIONS \
 -kM .orig \
 file.cpp
 ```
-
-
-
 
 

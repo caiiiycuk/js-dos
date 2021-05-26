@@ -1,85 +1,30 @@
-
-
-
-
 # DosFS
 API for working with file system of dosbox
 
-
-  
-
 ```
-
 import CacheNoop from "./js-dos-cache-noop";
 import { DosModule } from "./js-dos-module";
 import { Xhr } from "./js-dos-xhr";
 
-
 ```
-
-
-
-
-
-
 
 ### DosArchiveSource
 
-
-  
-
+```export interface DosArchiveSource {
 ```
-export interface DosArchiveSource {
-
-```
-
-
-
-
-
-
 
 source (archive) to download and extract via `extractAll`
 
-
-
-
-
-
-
-
 **url** where archive is located
 
-
-  
-
-```
-    url: string;
-
+```    url: string;
 
 ```
-
-
-
-
-
-
 
 **mountPoint**
 
-
-  
-
+```    mountPoint: string;
 ```
-    mountPoint: string;
-
-```
-
-
-
-
-
-
 
 is a path to mount archive contents. There are two types of mountPoints:
 
@@ -96,38 +41,16 @@ content that need to be persisten.
 and extracted only once to avoid rewriting stored content! And you can't store different
 content (from different archives) into one path.
 
-
-
-
-
-
-
-
 **type** currently we support only zip archives
 
-
-  
-
-```
-    type?: "zip";
+```    type?: "zip";
 }
 
-
 ```
-
-
-
-
-
-
 
 ## DosFS
 
-
-  
-
-```
-export class DosFS {
+```export class DosFS {
     private dos: DosModule;
     private em: any; // typeof Module;
     private fs: any;
@@ -139,22 +62,11 @@ export class DosFS {
         this.em = dos as any;
         this.fs = (dos as any).FS;
 
-
 ```
-
-
-
-
-
-
 
 Sync fs to indexed db periodically
 
-
-  
-
-```
-        this.dos.registerTickListener(() => {
+```        this.dos.registerTickListener(() => {
             if (Date.now() - this.lastSyncTime < 5000) {
                 return;
             }
@@ -169,76 +81,33 @@ Sync fs to indexed db periodically
         this.fs.chdir(path);
     }
 
-
 ```
-
-
-
-
-
-
 
 ### extract
 
-
-  
-
+```    public extract(url: string, mountPoint: string = "/", type: "zip" = "zip"): Promise<void> {
 ```
-    public extract(url: string, mountPoint: string = "/", type: "zip" = "zip"): Promise<void> {
-
-```
-
-
-
-
-
-
 
 simplified version of extractAll, works only for one archive. It calls extractAll inside.
 
-
-  
-
-```
-        return this.extractAll([{ url, mountPoint, type }]);
+```        return this.extractAll([{ url, mountPoint, type }]);
     }
 
-
 ```
-
-
-
-
-
-
 
 ### extractAll
 
-
-  
-
-```
-    public extractAll(sources: DosArchiveSource[]): Promise<void> {
-
+```    public extractAll(sources: DosArchiveSource[]): Promise<void> {
 ```
 
-
-
-
-
-
-
+tslint:disable-next-line
 download given [`sources`](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-fs#dosfs-dosarchivesource)
 and extract them to mountPoint's.
 
 this method will return `Promise<void>`, that will be resolved
 on success with empty object or rejected
 
-
-  
-
-```
-        const extractArchiveInCwd = (url: string, path: string, type: "zip") => {
+```        const extractArchiveInCwd = (url: string, path: string, type: "zip") => {
             return new Promise<void>((resolve, reject) => {
                 if (type !== "zip") {
                     reject("Only ZIP archive is supported");
@@ -329,62 +198,29 @@ on success with empty object or rejected
         });
     }
 
-
 ```
-
-
-
-
-
-
 
 ### createFile
 
-
-  
-
+```    public createFile(file: string, body: ArrayBuffer | Uint8Array | string) {
 ```
-    public createFile(file: string, body: ArrayBuffer | Uint8Array | string) {
-
-```
-
-
-
-
-
-
 
 [synchronous] allow to create file in FS, you can pass absolute path.
 All directories will be created
 
 body can be string or ArrayBuffer or Uint8Array
 
-
-  
-
 ```
-
         if (body instanceof ArrayBuffer) {
             body = new Uint8Array(body);
         }
 
-
 ```
-
-
-
-
-
-
 
 windows style path are also valid, but **drive letter is ignored**
 if you pass only filename, then file will be writed in root "/" directory
 
-
-  
-
-```
-        file = file.replace(new RegExp("^[a-zA-z]+:"), "").replace(new RegExp("\\\\", "g"), "/");
+```        file = file.replace(new RegExp("^[a-zA-z]+:"), "").replace(new RegExp("\\\\", "g"), "/");
         const parts = file.split("/");
 
         if (parts.length === 0) {
@@ -408,6 +244,102 @@ if you pass only filename, then file will be writed in root "/" directory
         this.fs.createDataFile(path, filename, body, true, true, true);
     }
 
+    public writeFsToFile(filename: string, fsPattern: RegExp, mountName: string) {
+
+        this.fs.syncfs(false, (err: any) => {
+            if (!err) {
+                window.indexedDB.open(mountName).onsuccess = (e: any) => {
+
+                    const db = e.target.result;
+                    const content: any = {};
+
+                    db.transaction(["FILE_DATA"], "readonly")
+                        .objectStore("FILE_DATA")
+                        .openCursor().onsuccess = (e: any) => {
+
+                            const cursor = e.target.result;
+
+                            if (cursor) {
+
+                                if (!fsPattern || fsPattern.test(cursor.key)) {
+                                    const value = cursor.value;
+                                    value.contents = DosFS.toBase64(value.contents);
+                                    const key = cursor.key;
+                                    content[key] = value;
+                                }
+
+                                cursor.continue();
+                            } else {
+                                DosFS.saveToFile(
+                                    filename,
+                                    JSON.stringify(content));
+                            }
+                        };
+                };
+            }
+        });
+    }
+
+    public readFsFromFile(file: Blob) {
+        if (!file) {
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+
+            if (!e.target) {
+                return;
+            }
+
+            const content: any = e.target.result;
+            const entries = JSON.parse(content);
+
+            for (const key of Object.keys(entries)) {
+                const value = entries[key];
+                const contents = DosFS.fromBase64(value.contents);
+
+                if (this.fs.analyzePath(key).exists) {
+                    this.fs.unlink(key);
+                }
+
+                this.createFile(key, contents);
+            }
+        };
+
+        reader.readAsText(file);
+    }
+
+    private static toBase64(bytes: Uint8Array): string {
+        let binary = "";
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[ i ]);
+        }
+        return window.btoa( binary );
+    }
+
+    private static fromBase64(base64: string): Uint8Array {
+        const binaryString =  window.atob(base64);
+        const len = binaryString.length;
+        const bytes = new Uint8Array( len );
+        for (let i = 0; i < len; i++)        {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+        return bytes;
+    }
+
+    private static saveToFile(filename: string, data: string) {
+        const blob = new Blob([data], {type: "text/csv"});
+        const elem = window.document.createElement("a");
+        elem.href = window.URL.createObjectURL(blob);
+        elem.download = filename;
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
+    }
+
     private createPath(parts: string[], begin: number, end: number) {
         let path = "";
         for (let i = begin; i < end; ++i) {
@@ -429,7 +361,11 @@ if you pass only filename, then file will be writed in root "/" directory
         }
 
         this.syncingPromise = new Promise<void>((resolve, reject) => {
-            const startedAt = Date.now();
+```
+
+@ts-ignore the unusued local for startedAt not being read
+
+```            const startedAt = Date.now();
             this.fs.syncfs(false, (err: any) => {
                 if (err) {
                     this.dos.error("Can't sync FS to indexed db, cause: " + err);
@@ -471,9 +407,6 @@ if you pass only filename, then file will be writed in root "/" directory
 
 }
 
-
 ```
-
-
 
 

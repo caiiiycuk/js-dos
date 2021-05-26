@@ -1,40 +1,14 @@
 
-
-
-
-
-
-  
+```import { DosBoxConfig, DosBoxConfigDefaults } from "./js-dos-options";
 
 ```
-import { DosBoxConfig, DosBoxConfigDefaults } from "./js-dos-options";
-
-
-```
-
-
-
-
-
-
 
 # js-dos default config
 This is default config for dosbox that applies for all runs.
 
-
-
-
-
-
-
-
 It's configurable through [options](https://js-dos.com/6.22/docs/api/generate.html?page=js-dos-options)
 
-
-  
-
-```
-export default function getJsDosConfig(config: DosBoxConfig): string {
+```export default function getJsDosConfig(config: DosBoxConfig): string {
     let conf = jsdosconf;
     function update(placeholder: string) {
         conf = conf.replace("%" + placeholder + "%",
@@ -301,13 +275,10 @@ ipx=false
 # ▀▀▀ ▀ ▀ █▄█ ▀█▄▄█▀▀▀█▀▀
 # █▀▀▀▀▀█ ▄▄▄ ▄ ▄ █ ▀ █▄▄▄▄
 # █ ███ █ ▀█▀▀▄▀▀▄████▀▀█▄█
-# █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█ 
+# █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█
 # ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
 `;
 
-
 ```
-
-
 
 
