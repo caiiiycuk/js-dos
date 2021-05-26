@@ -1,6 +1,5 @@
 import { Notyf } from "notyf";
 export interface LayersOptions {
-    scale: number;
 }
 export declare function layers(root: HTMLDivElement, options?: LayersOptions): Layers;
 export declare class Layers {
@@ -11,6 +10,7 @@ export declare class Layers {
     mouseOverlay: HTMLDivElement;
     width: number;
     height: number;
+    fullscreen: boolean;
     notyf: Notyf;
     toggleKeyboard: () => boolean;
     private clickToStart;
@@ -20,13 +20,12 @@ export declare class Layers {
     private onKeyUp;
     private onKeyPress;
     private onSave;
-    private fullscreen;
     private onFullscreenChanged;
-    private scale;
     constructor(root: HTMLDivElement, options: LayersOptions);
     private initKeyEvents;
     preventContextMenu(): void;
-    setOnResize(handler: (width: number, height: number) => void): void;
+    addOnResize(handler: (width: number, height: number) => void): void;
+    removeOnResize(handler: (width: number, height: number) => void): void;
     setOnKeyDown(handler: (keyCode: number) => void): void;
     fireKeyDown(keyCode: number): void;
     setOnKeyUp(handler: (keyCode: number) => void): void;
@@ -42,5 +41,4 @@ export declare class Layers {
     setLoadingMessage(message: string): void;
     switchToVideo(): void;
     showClickToStart(): void;
-    getScale(): number;
 }

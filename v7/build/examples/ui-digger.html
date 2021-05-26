@@ -33,7 +33,7 @@
              layers.showLoadingLayer();
 
              const implName = document.getElementById("impl-select").value;
-             const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos";
+             const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos";
              const bundle = await emulatorsUi.network.resolveBundle(bundleUrl);
 
              if (implName === "dos-worker") {
@@ -72,7 +72,6 @@
                  emulatorsUi.controls.keyboard(layers, ci, mapper);
                  emulatorsUi.controls.button(layers, ci, buttons);
                  emulatorsUi.controls.nipple(layers, ci, mapping);
-                 emulatorsUi.controls.options(layers, ci, [], () => {/**/});
                  layers.hideLoadingLayer();
              });
          }

@@ -157,6 +157,7 @@
 }
 
 .emulator-button {
+    position: absolute;
     background-color: rgba(128, 128, 128, 0.5);
     background-size: 50%;
     background-repeat: no-repeat;
@@ -168,6 +169,8 @@
     box-shadow: 0px 0px 0px 1px rgb(0, 0, 0);
 }
 
+.emulator-button-text {
+}
 
 .emulator-control-select:hover,
 .emulator-button-touch-zone:hover {

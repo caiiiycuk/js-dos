@@ -4,8 +4,7 @@ export interface WasmModule {
 }
 export interface IWasmModules {
     libzip: () => Promise<WasmModule>;
-    dosDirect: () => Promise<WasmModule>;
-    dosWorker: () => Promise<WasmModule>;
+    dosbox: () => Promise<WasmModule>;
 }
 interface Globals {
     exports: {
@@ -25,13 +24,11 @@ export declare class WasmModulesImpl implements IWasmModules {
     private pathPrefix;
     private cache;
     private libzipPromise?;
-    private dosDirectPromise?;
-    private dosWorkerPromise?;
+    private dosboxPromise?;
     wasmSupported: boolean;
     constructor(pathPrefix: string, cache: Cache);
     libzip(): Promise<WasmModule>;
-    dosDirect(): Promise<WasmModule>;
-    dosWorker(): Promise<WasmModule>;
+    dosbox(): Promise<WasmModule>;
     private loadModule;
 }
 export declare function loadWasmModule(url: string, moduleName: string, cache: Cache, onprogress: (stage: string, total: number, loaded: number) => void): Promise<WasmModule>;

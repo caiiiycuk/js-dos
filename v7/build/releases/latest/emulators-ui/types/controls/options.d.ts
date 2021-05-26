@@ -1,3 +1,2 @@
-import { CommandInterface } from "emulators";
 import { Layers } from "../dom/layers";
-export declare function options(layers: Layers, ci: CommandInterface, layersNames: string[], onLayerChange: (layer: string) => void): void;
+export declare function options(layers: Layers, layersNames: string[], onLayerChange: (layer: string) => void, size: number, top: number, right: number): () => void;

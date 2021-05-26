@@ -65,13 +65,16 @@
 
              const bundle = await emulatorsUi.network.resolveBundle("https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos");
              const ciPromise = emulators.dosWorker(bundle);
+             const rgba = new Uint8ClampedArray(320 * 200 * 4);
              ciPromise.then((ci) => {
                  emulatorsUi.sound.audioNode(ci);
 
-                 ci.events().onFrame((rgba) => {
-                     rgba = new Uint8ClampedArray(rgba.buffer);
-                     for (let next = 3; next < rgba.byteLength; next = next + 4) {
-                         rgba[next] = 255;
+                 ci.events().onFrame((rgb) => {
+                     for (let next = 0; next < 320 * 200; ++next) {
+                         rgba[next * 4 + 0] = rgb[next * 3 + 0];
+                         rgba[next * 4 + 1] = rgb[next * 3 + 1];
+                         rgba[next * 4 + 2] = rgb[next * 3 + 2];
+                         rgba[next * 4 + 3] = 255;
                      }
 
                      ctx?.putImageData(new ImageData(rgba, 320, 200), 0, 0);
