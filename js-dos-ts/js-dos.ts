@@ -19,9 +19,9 @@ import { Host } from "./js-dos-host";
 import { DosModule } from "./js-dos-module";
 import { DosOptions } from "./js-dos-options";
 
+import Gamepad from "./controller/gamepad";
 import Move from "./controller/move";
 import Qwerty from "./controller/qwerty";
-import Gamepad from "./controller/gamepad"
 
 // When you call `Dos(canvas, options)` js-dos behind the scene will download
 // dosbox and prepare it to start. This function will return `Promise<DosReadyPromise>`
@@ -127,5 +127,5 @@ export interface DosReadyPromise extends Promise<DosRuntime> {
 (window as any).DosController = {
     Qwerty,
     Move,
-    Gamepad
+    Gamepad,
 };
