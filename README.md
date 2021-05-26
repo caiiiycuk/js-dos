@@ -222,10 +222,53 @@ You can change button style through options object.
         });
     });
 ```
-
 With qwerty controller you can send special characters in Qwerty controller using <Char> notation.
 List of supported [<Char> names](https://github.com/caiiiycuk/js-dos/pull/92).
+  
+### GamepadController
+allows games to be played via gamepad. It maps gamepad buttons to key strokes.
 
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        main([...]).then((ci) => {
+            DosController.Gamepad(ci, {
+                gamepads: [
+                    {
+                        keymap: {
+                            a: 13,
+                            b: 27
+                        },
+                        mapArrows: true,     // auto map arrows and sticks
+                        stickThreshold: 0.6  // stick trigger threshold                         
+                    }
+                ],
+                scanEvery: 200,         // scan input via timer
+                scanOnTick: true,       // scan input on tick               
+            });             
+        });
+    });
+```
+
+#### Change gamepad layout
+Default gamepad layout is for XBox360 gamepad, it can be changed via buttons
+parameter:
+
+```javascript
+
+    DosController.Gamepad(ci, {
+        gamepads: [
+            {
+                buttons: [
+                    "a", "b", "x", "y",                 // 0, 1, 2, 3
+                    "lb", "rb", "lt", "rt",             // 4, 5, 6, 7
+                    "back", "start", "N/A", "N/A",      // 8, 9, 10, 11
+                    "up", "down", "left", "right"       // 12, 13, 14, 15
+                ],                
+            }
+        ],	    
+    });             
+
+```
 
 ## FAQ
 
@@ -465,6 +508,52 @@ In other words to store game progress just extract game archive into some folder
 
 **NOTE 3: ** Because content of folder is stored in indexed db original archive is downloaded and extracted only once to avoid rewriting stored content! This means that you can't update it from archive, and of course you can't store different content (from different archives) into one path.
 
+#### Exporting/Importing stored state to/from a file
+
+Save game files are stored inside a browser's indexed db database. If you wish to transfer 
+these files to another machine (or make a backup) you must first store them in 
+a normal file on a file system.
+
+Here is an example how you can achieve that. When you click an 'export' button 
+these will write all the files in dos file system matched by reg-ex /SAVEGAME/ 
+to a file on local file system. This file can then be copied to another machine, 
+where it can be imported via 'import' button.
+
+```javascript
+    Dos(canvas).ready((fs, main) => {
+        fs.extract("game.zip", "/game").then(() => {
+            main(["-c", "cd game", "-c", "game.exe"]).then((ci) => {
+            
+                function exportState() {                
+                    let filename = "game_" + new Date().getTime() + ".state";
+                    fs.writeFsToFile(filename, /SAVEGAME/, "/game");            
+                }
+                
+                function importState() {
+                                            
+                    if (confirm("This will overwrite your current state. Are you sure?")) {
+                        let importInput = document.getElementById('importStateInput');                                          
+                        if (!importInput.oninput) {
+                            importInput.oninput =  function (e) {                           
+                                fs.readFsFromFile(e.target.files[0]);
+                                alert("State was imported successfully!");
+                            };                          
+                        }                                   
+                        importInput.click();
+                    }                           
+                }
+                
+                let exportButton = document.getElementById("exportState");
+                exportButton.addEventListener("click", exportState);
+            
+                let importButton = document.getElementById("importState");
+                importButton.addEventListener("click", importState);
+            
+            }
+        });
+    });
+```
+
 ### Using multiple archives at once
 
 This section requires that you read section above. Sometimes need to have multiple persistent folders to run single game.
@@ -593,7 +682,16 @@ Building process have two steps:
 ### Dosbox
 
 Project uses dosbox as emulation layer for running dos programs. You should build it before building javascript API. To do this you should have emscripten installed in your system and CMake. Build process should be easy if you familar with cmake, just run this commands:
+
 ```
+// install emscripten
+git clone https://github.com/emscripten-core/emsdk.git
+cd emskd
+./emsdk install 1.39.4
+./emsdk activate 1.39.4
+source ./emsdk_env.sh
+emcc --clear-cache
+
 // set to llvm backend
 mkdir build
 cd build
@@ -611,6 +709,10 @@ make wdosbox-emterp dosbox-emterp
 
 You can build javascript API with gulp, just type gulp.
 ```
+// requires node 11.8.0
+// install gulp 
+npm install
+npm install gulp@3.9.1
 gulp
 ```
 
