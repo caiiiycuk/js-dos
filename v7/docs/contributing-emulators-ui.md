@@ -23,19 +23,20 @@ const ci = await Dos(/*element*/).run(/*bundle url*/);
 const config = await ci.config();
 ```
 
-Let's understand how gestures are implemented in js-dos. 
-First of all, gestures have special configuration that stored in `jsdos.jsdos` file, it's looks
+Let's understand how [layers](mobile-support.md) are implemented in js-dos. 
+First of all, layers have special configuration that stored in `jsdos.json` file, it's looks
 like: 
 
 ```json
 {
 // ...
-  "gestures": [
+  "layers": [
     {
-      "joystickId": 0,
-      "event": "dir:up",
-      "mapTo": 265
-    },
+      "grid": "honeycomb",
+      "title": "Layer#0",
+      "controls": [
+        {
+          "row": 0,
 //...
 ```
 
@@ -50,7 +51,7 @@ async run(bundleUrl: string): Promise<CommandInterface> {
         const config = await ci.config();
 
         // ...
-        emulatorsUi.controls.nippleArrows(this.layers, ci, (config as any).gestures);
+        // (config as any).layers
         // ...
 }
 ```

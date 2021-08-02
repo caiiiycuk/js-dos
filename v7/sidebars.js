@@ -1,9 +1,9 @@
 module.exports = {
     someSidebar: {
-        "js-dos": ["overview", "releases", "jsdos-bundle", "backward-compability", "command-interface", "mobile-support",
-                   "save-load", "contributing-jsdos", "need-help"],
-        "getting started": ["create-dosbox", "iframe", "browser", "node", "react", "threejs"],
-        "emulators-ui": ["ui-components", "threejs", "multiple-layers", "contributing-emulators-ui"],
+        "getting started": ["overview", "create-dosbox", "iframe", "browser", "node", "react", "threejs"],
+        "js-dos": ["releases", "jsdos-bundle", "backward-compability", "command-interface", "mobile-support",
+                   "mouse-locking", "save-load", "contributing-jsdos", "need-help"],
+        "emulators-ui": ["ui-components", "threejs", "mobile-support", "contributing-emulators-ui"],
         "emulators": ["dosbox-direct", "dosbox-worker", "dosbox-sokol", "janus", "estimating-performance", "contributing-emulators"],
         "dos.zone": ["doszone"],
     },
