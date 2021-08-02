@@ -1,4 +1,5 @@
 export declare const pointer: {
+    canLock: boolean;
     starters: string[];
     changers: string[];
     enders: string[];
@@ -8,6 +9,8 @@ export declare const pointer: {
 export interface PointerState {
     x: number;
     y: number;
+    mX: number;
+    mY: number;
     button?: number;
 }
 export declare function getPointerState(e: Event, el: HTMLElement): PointerState;

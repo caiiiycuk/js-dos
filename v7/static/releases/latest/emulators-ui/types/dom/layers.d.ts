@@ -11,6 +11,8 @@ export declare class Layers {
     width: number;
     height: number;
     fullscreen: boolean;
+    pointerLock: boolean;
+    pointerButton: 0 | 1;
     notyf: Notyf;
     toggleKeyboard: () => boolean;
     private clickToStart;
@@ -21,6 +23,7 @@ export declare class Layers {
     private onKeyPress;
     private onSave;
     private onFullscreenChanged;
+    private onKeyboardChanged;
     constructor(root: HTMLDivElement, options: LayersOptions);
     private initKeyEvents;
     preventContextMenu(): void;
@@ -34,6 +37,8 @@ export declare class Layers {
     fireKeyPress(keyCode: number): void;
     toggleFullscreen(): void;
     setOnFullscreen(onFullscreenChanged: (fullscreen: boolean) => void): void;
+    setOnKeyboardVisibility(onKeyboardChanged: (visible: boolean) => void): void;
+    removeOnKeyboardVisibility(onKeyboardChanged: (visible: boolean) => void): void;
     save(): Promise<void>;
     setOnSave(handler: () => Promise<void>): void;
     hideLoadingLayer(): void;
@@ -41,4 +46,5 @@ export declare class Layers {
     setLoadingMessage(message: string): void;
     switchToVideo(): void;
     showClickToStart(): void;
+    private initKeyboard;
 }

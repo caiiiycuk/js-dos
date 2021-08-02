@@ -24,8 +24,8 @@ $ yarn build
 
 This command generates static content into the `build` directory and can be served using any static contents hosting service.
 
-### Deploing to github
+### Preparing for github
 
 ```
-yarn build && cp build/index.html ../index.html
+./scripts/build.sh
 ```

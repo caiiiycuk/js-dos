@@ -2,7 +2,7 @@ import { Button } from "./button";
 import { EventMapping } from "./nipple";
 import { Mapper } from "./keyboard";
 import { GridType } from "./grid";
-export declare type LayerControlType = "Options" | "Key";
+export declare type LayerControlType = "Options" | "Key" | "Keyboard" | "Switch" | "ScreenMove" | "PointerButton";
 export interface LayerPosition {
     column: number;
     row: number;
@@ -13,6 +13,24 @@ export interface LayerControl extends LayerPosition {
 }
 export interface LayerKeyControl extends LayerControl {
     mapTo: number;
+}
+export interface LayerSwitchControl extends LayerControl {
+    layerName: string;
+}
+export interface LayerScreenMoveControl extends LayerControl {
+    direction: "up" | "down" | "left" | "right" | "up-left" | "up-right" | "down-left" | "down-right";
+}
+export interface LayerPointerButtonControl extends LayerControl {
+    button: 0 | 1;
+    click: boolean;
+}
+export interface LayerNippleActivatorControl extends LayerControl {
+}
+export interface LayerPointerResetControl extends LayerControl {
+}
+export interface LayerPointerMoveControl extends LayerControl {
+    x: number;
+    y: number;
 }
 export interface LayerConfig {
     grid: GridType;

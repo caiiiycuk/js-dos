@@ -1,7 +1,7 @@
 import { DosConfig } from "../dos/bundle/dos-conf";
 import { CommandInterface } from "../emulators";
 import { CommandInterfaceEventsImpl } from "../impl/ci-impl";
-export declare type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" | "wc-add-key" | "wc-mouse-move" | "wc-mouse-button" | "wc-exit" | "wc-sync-sleep";
+export declare type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" | "wc-add-key" | "wc-mouse-move" | "wc-mouse-button" | "wc-mouse-sync" | "wc-exit" | "wc-sync-sleep" | "wc-pause" | "wc-resume" | "wc-mute" | "wc-unmute";
 export declare type ServerMessage = "ws-ready" | "ws-server-ready" | "ws-frame-set-size" | "ws-update-lines" | "ws-log" | "ws-warn" | "ws-err" | "ws-stdout" | "ws-exit" | "ws-persist" | "ws-sound-init" | "ws-sound-push" | "ws-config" | "ws-sync-sleep";
 export declare type MessageHandler = (name: ServerMessage, props: {
     [key: string]: any;
@@ -57,9 +57,15 @@ export declare class CommandInterfaceOverTransportLayer implements CommandInterf
     sendKeyEvent(keyCode: number, pressed: boolean): void;
     addKey(keyCode: number, pressed: boolean, timeMs: number): void;
     sendMouseMotion(x: number, y: number): void;
+    sendMouseRelativeMotion(x: number, y: number): void;
     sendMouseButton(button: number, pressed: boolean): void;
+    sendMouseSync(): void;
     persist(): Promise<Uint8Array>;
     private onPersist;
+    pause(): void;
+    resume(): void;
+    mute(): void;
+    unmute(): void;
     exit(): Promise<void>;
     private onExit;
     events(): CommandInterfaceEventsImpl;

@@ -5,6 +5,7 @@ import { Layers, LayersOptions } from "./dom/layers";
 import { LegacyLayersConfig, LayersConfig } from "./controls/layers-config";
 export declare type EmulatorFunction = "dosboxWorker" | "dosboxDirect" | "dosboxNode" | "janus" | "backend";
 export interface DosOptions {
+    noWebGL?: boolean;
     emulatorFunction?: EmulatorFunction;
     clickToStart?: boolean;
     layersOptions?: LayersOptions;
@@ -18,13 +19,15 @@ export declare class DosInstance {
     layers: Layers;
     layersConfig: LayersConfig | LegacyLayersConfig | null;
     ciPromise?: Promise<CommandInterface>;
+    options: DosOptions;
     private clickToStart;
     private unbindControls;
     private storedLayersConfig;
     constructor(root: HTMLDivElement, emulatorsUi: EmulatorsUi, options: DosOptions);
     run(bundleUrl: string, optionalChangesUrl?: string): Promise<CommandInterface>;
     stop(): Promise<void>;
-    setLayersConfig(config: LayersConfig | LegacyLayersConfig | null): Promise<void>;
+    setLayersConfig(config: LayersConfig | LegacyLayersConfig | null, layerName?: string): Promise<void>;
+    getLayersConfig(): LayersConfig | LegacyLayersConfig | null;
     enableMobileControls(): void;
     disableMobileControls(): void;
     private runBundle;

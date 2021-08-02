@@ -4189,15 +4189,15 @@ emoticon@^3.2.0:
   resolved "https://registry.yarnpkg.com/emoticon/-/emoticon-3.2.0.tgz#c008ca7d7620fac742fe1bf4af8ff8fed154ae7f"
   integrity sha512-SNujglcLTTg+lDAcApPNgEdudaqQFiAbJCqzjNxJkvN9vAwCGi0uu8IUVvx+f16h+V44KCY6Y2yboroc9pilHg==
 
-emulators-ui@^0.0.62:
-  version "0.0.62"
-  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.0.62.tgz#1ff6198c4aa0d1cbad71ca447814648e4c54edf0"
-  integrity sha512-RlLl7HcxjKhHsJ7SOJORHy7WjXQROSgcdggZoAdoOOpd1s1EegHlcGhRVg+RTU0W4tTLqPn8S2INiNiLkU10Ow==
+emulators-ui@^0.67.0:
+  version "0.67.0"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.67.0.tgz#3f2e6faae40ef1ead56747dc894322e16fbe672d"
+  integrity sha512-46JvoZN40JyLICi5UHPdrUz4YUreAtUbOUdTdbTUsKvkmKXRibWTjQgrQcO7aDs0zR1W8X2+it6Or5THB9EyNQ==
 
-emulators@^0.0.62:
-  version "0.0.62"
-  resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.0.62.tgz#3055734aa475baf023e1cb58f36bdc86df86f871"
-  integrity sha512-BXVADLBquNuFn0d0gRJBjx/kLJL5afhTOyE7aRtiLPgAWKIi3YHwJlShp5ZT/eNgs2jNQ4MqX5R2WDh9TLZEOQ==
+emulators@^0.67.0:
+  version "0.67.0"
+  resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.67.0.tgz#9daba2fd48cdb634d2c55b12c7116e61ffd2c6b6"
+  integrity sha512-VHpdttEVzGl/YgfwogKZZ1OEwhzjvd3gNKgl+RPWbAwF83sbuNiGH6b+fBahO91hEfOAl/qmC6mrlbDbN7b2Mw==
 
 encodeurl@~1.0.2:
   version "1.0.2"
@@ -5918,10 +5918,10 @@ joi@^17.3.0, joi@^17.4.0:
     "@sideway/formula" "^3.0.0"
     "@sideway/pinpoint" "^2.0.0"
 
-js-dos@^7.0.0-beta.r32:
-  version "7.0.0-beta.r32"
-  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.0.0-beta.r32.tgz#a4cd0f5c5a7fae5845e87d69f01a0721c9da531c"
-  integrity sha512-oKjYdHS6WbFo/4Gns+To5jRvUw5WtKRwZWoeF/+Sf2APWLywz/8XwfZgKVxTnJCEaHfCeEB0oXFxH3tCAXgX5w==
+js-dos@^7.0.0-beta.r34:
+  version "7.0.0-beta.r34"
+  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.0.0-beta.r34.tgz#fdf8345e260c208fc5fd803a95e6c6f36826732c"
+  integrity sha512-aERsNTaZ8eKH9ENhWuuzxhREzGx9nhmtJFts0RXbcnBNpQc0V4XFLc+Lqwj0WwZFUHcXreXESBFB2oDnEhGnhQ==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"

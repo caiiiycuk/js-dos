@@ -1,4 +1,5 @@
 import { layers } from "./dom/layers";
+import { lifecycle } from "./dom/lifecycle";
 import { resolveBundle } from "./network/xhr";
 import { _2d } from "./graphics/_2d";
 import { webGl } from "./graphics/webgl";
@@ -6,7 +7,6 @@ import { video } from "./graphics/video";
 import { keyboard } from "./controls/keyboard";
 import { mouse } from "./controls/mouse";
 import { nipple } from "./controls/nipple";
-import { button } from "./controls/button";
 import { options } from "./controls/options";
 import { domToKeyCode } from "./dom/keys";
 import { audioNode } from "./sound/audio-node";
@@ -17,6 +17,7 @@ import { DosFactoryType } from "./js-dos";
 export declare class EmulatorsUi {
     dom: {
         layers: typeof layers;
+        lifecycle: typeof lifecycle;
     };
     network: {
         resolveBundle: typeof resolveBundle;
@@ -48,7 +49,6 @@ export declare class EmulatorsUi {
         keyboard: typeof keyboard;
         mouse: typeof mouse;
         nipple: typeof nipple;
-        button: typeof button;
         options: typeof options;
     };
     notifications: {

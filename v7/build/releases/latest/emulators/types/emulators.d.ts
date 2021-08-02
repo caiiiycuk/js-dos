@@ -19,11 +19,17 @@ export interface CommandInterface {
     width: () => number;
     soundFrequency: () => number;
     screenshot: () => Promise<ImageData>;
+    pause: () => void;
+    resume: () => void;
+    mute: () => void;
+    unmute: () => void;
     exit: () => Promise<void>;
     simulateKeyPress: (...keyCodes: number[]) => void;
     sendKeyEvent: (keyCode: number, pressed: boolean) => void;
     sendMouseMotion: (x: number, y: number) => void;
+    sendMouseRelativeMotion: (x: number, y: number) => void;
     sendMouseButton: (button: number, pressed: boolean) => void;
+    sendMouseSync: () => void;
     persist(): Promise<Uint8Array>;
     events(): CommandInterfaceEvents;
 }
