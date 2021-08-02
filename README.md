@@ -1,9 +1,7 @@
 js-dos 7.xx
 ===========
 
-[Next](https://js-dos.com/v7/build/) version of js-dos. API is unstable and incomplete.
-
-**DO NOT USE IN PRODUCTION** use 6.22 instead.
+[Next](https://js-dos.com/v7/build/) version of js-dos.
 
 Subscribe our [twitter](https://twitter.com/doszone_db/) channel for updates. 
 
