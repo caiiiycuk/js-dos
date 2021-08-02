@@ -5,14 +5,6 @@ title: Overview
 sidebar_label: Overview 
 ---
 
-:::warning
-
-js-dos v7 is still under development and some features are not ready;
-for example you can't use a mouse yet. Please use [js-dos 6.22](https://js-dos.com) for production
-projects.
-
-:::
-
 js-dos was designed from the ground up to be easily installed and used to get your DOS program up and running in browser quickly.
 
 js-dos v7 includes:

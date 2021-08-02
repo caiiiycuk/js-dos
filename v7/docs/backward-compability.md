@@ -13,3 +13,7 @@ use them also with js-dos 6.22.
 ```html title="examples/dos-6.22.html"
 {}
 ```
+
+## Documentation
+
+[Documentation](https://js-dos.com/index_6.22.html) of js-dos 6.22.

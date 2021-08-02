@@ -146,7 +146,7 @@ function Home() {
                 styles.getStarted,
               )}
               to={useBaseUrl('docs/')}>
-              Get Started
+              Documentation
             </Link>
           </div>
         </div>

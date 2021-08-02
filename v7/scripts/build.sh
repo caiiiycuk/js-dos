@@ -1,5 +1,5 @@
 #!/bin/bash
 
-./scripts/update-emulators.sh
+#./scripts/update-emulators.sh
 yarn build
 ./scripts/copy.sh
