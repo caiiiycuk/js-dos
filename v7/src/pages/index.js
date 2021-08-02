@@ -49,8 +49,8 @@ const features = [
         description: (
             <>
               Community driven js-dos repository contains <br/>
-              <strong style={{background: "#8f398f", color: "white", padding: "2px 4px"}}>2000+ bundles are ready to run in browser</strong><br/>
-              <a href="https://talks.dos.zone/t/collections/44653" target="_blank">View repository</a>
+              <strong style={{background: "#8f398f", color: "white", padding: "2px 4px"}}>1900+ bundles are ready to run in browser</strong><br/>
+              <a href="https://dos.zone" target="_blank">View repository</a>
             </>
         ),
     },

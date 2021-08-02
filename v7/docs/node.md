@@ -83,11 +83,6 @@ to subscribe on frame updates and to send key/mouse events.
     });
 ```
 
-:::note
-
-Frame is in RGBA format, but alpha is always 0. To have normal image we should rewrite alpha channel to 255.
-
-:::
 
 If you execute `node digger.js` it will save digger screenshot to `./screenshot.png`.
 

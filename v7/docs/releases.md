@@ -3,11 +3,11 @@ id: releases
 title: Releases
 ---
 
-There are no stable releases of js-dos 7. However, latest version always available on [github](https://github.com/caiiiycuk/js-dos/releases) and npm repository: 
+Latest version always available on [github](https://github.com/caiiiycuk/js-dos/releases) and npm repository: 
 
-* emulators - [npm package](https://www.npmjs.com/package/emulators)
-* emulators-ui - [npm package](https://www.npmjs.com/package/emulators-ui)
-* js-dos - [npm package](https://www.npmjs.com/package/js-dos/v/beta)
+* **js-dos** - [npm package](https://www.npmjs.com/package/js-dos/v/beta)
+* **emulators** - [npm package](https://www.npmjs.com/package/emulators)
+* **emulators-ui** - [npm package](https://www.npmjs.com/package/emulators-ui)
 
 If you use npm or yarn, you can obtain the latest version by using `npm install` or `yarn add`.
 All files needed to run emulation are placed in the `dist` folder of packages.

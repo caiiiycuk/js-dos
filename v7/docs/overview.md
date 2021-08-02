@@ -8,10 +8,10 @@ sidebar_label: Overview
 js-dos was designed from the ground up to be easily installed and used to get your DOS program up and running in browser quickly.
 
 js-dos v7 includes:
-* js-dos bundle - universal package format that js-dos understands
-* emulators - [npm package](https://www.npmjs.com/package/emulators), that provide emulator backends which can work in different environments
-* emulators-ui - [npm package](https://www.npmjs.com/package/emulators-ui), a set of ui and sound components to render emulator output in browser
-* js-dos - [npm package](https://www.npmjs.com/package/js-dos/v/beta) that combines everything to run a DOS program in browser
+* **js-dos bundle** - universal package format that js-dos understands
+* **js-dos** - [npm package](https://www.npmjs.com/package/js-dos/v/beta) that combines everything to run a DOS program in browser
+* **emulators** (optional) - [npm package](https://www.npmjs.com/package/emulators), that provide emulator backends which can work in different environments
+* **emulators-ui** (optional) - [npm package](https://www.npmjs.com/package/emulators-ui), a set of ui and sound components to render emulator output in browser
 
 **To start DOS program you need to prepare js-dos bundle. 
 You can easily [create it](https://dos.zone/en/studio), or get one of already did by community.**
@@ -20,7 +20,7 @@ Download [digger.jsdos](https://cdn.dos.zone/original/2X/2/24b00b14f118580763440
 
 ## Bundles repository
 
-Visit our [repository](https://talks.dos.zone/t/collections/44653) that contains **1500+** already created bundles of dos games. You can [contribute](https://talks.dos.zone/t/read-first/44582) in it.
+Visit our [repository](https://dos.zone) that contains **1900+** already created bundles of dos games. You can [contribute](https://talks.dos.zone/t/read-first/44582) in it.
 
 ## Getting started
 

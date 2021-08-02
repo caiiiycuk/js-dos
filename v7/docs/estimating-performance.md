@@ -10,7 +10,7 @@ To measure performance we used a variant of Dhrystone 2 Test originally taken fr
 
 Basically this test produces a lot of int operations and measures the amount of operations (Dhrystones) produced per second. Output is a `VAX MIPS RATING` which is Drhystones per second divided by 1757 (is as DEC VAX 11/780 result).
 
-`js-dos bundle` with this test can be found on [Test](https://talks.dos.zone/t/dhrystone-2-test-jul-2020/37086) page.
+`js-dos bundle` with this test can be found on [Test](https://dos.zone/dhrystone-2-test-jul-2020/) page.
 
 ## Running the test
 
@@ -32,7 +32,7 @@ To run this test we should use `emulators.js` (from emulators) and use our `js-d
   emulators.pathPrefix = "/v7/build/releases/latest/emulators/";
 ```
 
-You can start test in [worker](dos-worker.md) or [direct](dos-direct.md) mode:
+You can start test in [worker](dosbox-worker.md) or [direct](dosbox-direct.md) mode:
 ```js
 // promise is resolved when emulator is started
 const ci = await (options.worker ?

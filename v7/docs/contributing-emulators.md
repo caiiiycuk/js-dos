@@ -36,7 +36,7 @@ The idea of new js-dos v7 is that all targets (native and web) have exactly
 same way to communicate between client (native UI, browser UI) and dosbox.
 
 
-```c title="https://raw.githubusercontent.com/js-dos/emulators/main/src/include/protocol.h"
+```c title="https://raw.githubusercontent.com/js-dos/emulators/main/src/protocol/protocol.h"
 {}
 ```
 

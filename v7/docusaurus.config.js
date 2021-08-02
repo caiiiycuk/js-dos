@@ -50,12 +50,16 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Bundles Repository',
-              href: 'https://talks.dos.zone/t/collections/44653',
-            },
-            {
               label: 'Dos.Zone',
               href: 'https://dos.zone',
+            },
+            {
+              label: 'Discord',
+              href: 'https://discord.com/invite/hMVYEbG',
+            },
+            {
+              label: 'Twitter',
+              href: 'https://twitter.com/doszone_db',
             },
           ],
         },
@@ -65,14 +69,6 @@ module.exports = {
             {
               label: 'GitHub',
               href: 'https://github.com/caiiiycuk/js-dos',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discord.com/invite/hMVYEbG',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/doszone_db',
             },
           ],
         },
