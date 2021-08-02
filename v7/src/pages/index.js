@@ -63,7 +63,7 @@ const features = [
               <a href="https://dos.zone" target="_blank">Live Demo</a><br/>
               <br/>
               <a href="https://play.google.com/store/apps/details?id=zone.dos.app" target="_blank">
-                <img style={{width: "40%"}} src="v7/build/img/gp.png"/>
+                <img style={{width: "40%"}} src="/v7/build/img/gp.png"/>
               </a>
             </>
         ),
