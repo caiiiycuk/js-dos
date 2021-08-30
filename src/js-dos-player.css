@@ -1,0 +1,67 @@
+.jsdos-player-root {
+	display: flex;
+	flex-direction: column;
+}
+
+.jsdos-navbar {
+	height: 50px;
+	flex-grow: 0;
+	flex-shrink: 0;
+
+	background-color: #fff;
+	color: rgb(24, 32, 38);
+	box-shadow: 0 0 0 1px rgba(16,22,26,.1),0 0 0 rgba(16,22,26,0),0 1px 1px rgba(16,22,26,.2);
+	height: 50px;
+	padding: 0 15px;
+
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.jsdos-player-dark .jsdos-navbar {
+    box-shadow: 0 0 0 1px rgba(16,22,26,.2),0 0 0 rgba(16,22,26,0),0 1px 1px rgba(16,22,26,.4);
+    background-color: #394b59;
+	color: rgb(245, 248, 250);
+}
+
+.jsdos-window {
+	flex-grow: 1;
+}
+
+.jsdos-player-spring {
+	flex-grow: 1;
+}
+
+.jsdos-player-icon {
+	fill: #5c7080;
+}
+
+.jsdos-player-dark .jsdos-player-icon {
+	fill: #a7b6c2;
+}
+
+.jsdos-player-icon svg {
+	display: block;
+}
+
+.jsdos-player-button {
+	cursor: pointer;
+	width: 30px;
+	height: 30px;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+}
+
+.jsdos-player-button:hover {
+	background: rgba(167,182,194,.3);
+	border-radius: 3px;
+}
+
+.jsdos-player-dark .jsdos-player-button:hover {
+	background: rgba(138,155,168,.15);
+}
