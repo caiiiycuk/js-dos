@@ -16,3 +16,74 @@ In theory the direct version is the fastest possible version of the emulator bac
 [DOSBOX Worker](dosbox-worker.md) is a more preferred version of the emulator backend, because it does not block the browser.
 
 :::
+
+### Accessing file system
+
+In direct mode you can easily access emscripten module:
+
+```js
+const ci = await emulators.dosboxDirect(bundle);
+ci.transport.module // <-- emscripten module
+```
+
+Emscripten module provide lowlevel api to change [file system](https://emscripten.org/docs/api_reference/Filesystem-API.html):
+
+```js
+const ci = await emulators.dosboxDirect(bundle);
+ci.transport.module.FS // <-- emscripten FS api
+```
+
+You can also rescan DOS devices:
+```js
+const ci = await emulators.dosboxDirect(bundle);
+ci.transport.module._rescanFilesystem();
+```
+
+### Accessing memory
+
+In direct mode you can dump whole memory of dos:
+
+```js
+const ci = await emulators.dosboxDirect(bundle);
+ci.transport.module._dumpMemory(copyDosMemory);
+ci.transport.module.memoryContents // <-- now you can access contents using this var
+```
+
+If you need to copy entire memory pass `true` as argument.
+The `memoryContents` contains following:
+
+
+```js
+{
+        "memBase": ...,
+        "ip": ...,
+        "flags": ...,
+        "registers": {
+            "ax": ...,
+            "cx": ...,
+            "dx": ...,
+            "sp": ...,
+            "bp": ...,
+            "si": ...,
+            "di": ...
+        },
+        "segments_values": {
+            "es": ...,
+            "cs": ...,
+            "ss": ...,
+            "ds": ...,
+            "fs": ...,
+            "gs": ...
+        },
+        "segments_physical": {
+            "es": ...,
+            "cs": ...,
+            "ss": ...,
+            "ds": ...,
+            "fs": ...,
+            "gs": ...
+        },
+        "numPages": ...,
+        "memoryCopy": ...
+}
+```
