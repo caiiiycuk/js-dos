@@ -1,9 +1,9 @@
 {
     "name": "js-dos",
-    "version": "7.0.2",
+    "version": "7.1.1",
     "description": "Easiest API to run dos programs in browser",
     "main": "dist/js-dos.js",
-    "types": "dist/types/js-dos.d.ts",
+    "types": "dist/types/js-dos-player.d.ts",
     "browserslist": "> 0.25%, not dead, ie >= 11",
     "repository": {
         "type": "git",
@@ -40,9 +40,10 @@
         "@typescript-eslint/parser": "^4.29.3",
         "babelify": "^10.0.0",
         "browserify": "^17.0.0",
+        "core-js": "^3.17.1",
         "del": "^5.1.0",
         "emulators": "^0.71.0",
-        "emulators-ui": "^0.69.0",
+        "emulators-ui": "^0.71.5",
         "eslint": "^7.32.0",
         "gulp": "^4.0.2",
         "gulp-concat": "^2.6.1",
