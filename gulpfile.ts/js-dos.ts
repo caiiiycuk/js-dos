@@ -1,4 +1,6 @@
 import { src, dest, series } from "gulp";
+import size from "gulp-size";
+import sourcemaps from "gulp-sourcemaps";
 
 import { playerJs as playerJs } from "./js-dos-player";
 
@@ -19,6 +21,7 @@ function concatCss() {
         "src/js-dos-player.css"
     ])
         .pipe(concat("js-dos.css"))
+        .pipe(size({ showFiles: true, showTotal: false }))
         .pipe(dest("dist"));
 }
 
@@ -27,7 +30,9 @@ function copyWasm() {
         "node_modules/emulators/dist/wdosbox.js",
         "node_modules/emulators/dist/wdosbox.js.symbols",
         "node_modules/emulators/dist/wdosbox.wasm",
-    ]).pipe(dest("dist"));
+    ])
+        .pipe(size({ showFiles: true, showTotal: false }))
+        .pipe(dest("dist"));
 }
 
 function concatJs() {
@@ -36,15 +41,17 @@ function concatJs() {
         "node_modules/emulators/dist/emulators.js",
         "dist/player.js"
     ])
+        .pipe(sourcemaps.init({ loadMaps: true }))
         .pipe(concat("js-dos.js"))
+        .pipe(size({ showFiles: true, showTotal: false }))
+        .pipe(sourcemaps.write())
         .pipe(dest("dist"));
 }
 
 function copyAssets() {
     return src([
         "node_modules/emulators-ui/dist/emulators-ui-loader.gif",
-        "node_modules/emulators-ui/dist/emulators-ui.js.map",
-        "node_modules/emulators/dist/emulators.js.map",
+        "src/logo.png",
     ])
         .pipe(dest("dist"));
 }
