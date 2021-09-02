@@ -3,13 +3,13 @@
 	flex-direction: column;
 }
 
-.jsdos-navbar {
+.jsdos-player-navbar {
 	height: 50px;
 	flex-grow: 0;
 	flex-shrink: 0;
 
 	background-color: #fff;
-	color: rgb(24, 32, 38);
+	color: #5c7080;
 	box-shadow: 0 0 0 1px rgba(16,22,26,.1),0 0 0 rgba(16,22,26,0),0 1px 1px rgba(16,22,26,.2);
 	height: 50px;
 	padding: 0 15px;
@@ -19,16 +19,17 @@
 	flex-direction: row;
 
 	font-size: 14px;
-	font-weight: 400;
+	font-weight: 800;
+	font-family: monospace;
 }
 
-.jsdos-player-dark .jsdos-navbar {
+.jsdos-player-dark .jsdos-player-navbar {
     box-shadow: 0 0 0 1px rgba(16,22,26,.2),0 0 0 rgba(16,22,26,0),0 1px 1px rgba(16,22,26,.4);
     background-color: #394b59;
-	color: rgb(245, 248, 250);
+	color: #a7b6c2;
 }
 
-.jsdos-window {
+.jsdos-player-window {
 	flex-grow: 1;
 }
 
@@ -64,4 +65,44 @@
 
 .jsdos-player-dark .jsdos-player-button:hover {
 	background: rgba(138,155,168,.15);
+}
+
+.jsdos-player-divider {
+	border-left: 1px solid rgba(16,22,26,.15);
+	height: 20px;
+	margin: 0 10px;
+}
+
+.jsdos-player-dark .jsdos-player-divider {
+	border-left-color: hsla(0,0%,100%,.15);
+}
+
+.jsdos-player-logo {
+	background: url(logo.png);
+	background-size: contain;
+	width: 30px;
+	height: 30px;
+	margin-right: 8px;
+}
+
+.jsdos-player-icon-play {
+	fill: rgb(61, 204, 145) !important;
+}
+
+.jsdos-player-button-primary .jsdos-player-icon, 
+.jsdos-player-icon-unmute {
+	fill: rgb(72, 175, 240) !important;
+}
+
+.jsdos-player-gone {
+	display: none;
+}
+
+.jsdos-player-button-disabled {
+	background: none !important;
+	cursor: not-allowed !important;
+}
+
+.jsdos-player-button-disabled .jsdos-player-icon {
+	fill: rgba(167,182,194,.6) !important;
 }
