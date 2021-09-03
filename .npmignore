@@ -24,3 +24,4 @@ dev.js
 /dist/test/ra.zip
 cmake-build-*
 gulpfile.ts
+*.zip

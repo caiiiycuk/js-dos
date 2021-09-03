@@ -1,6 +1,6 @@
 {
     "name": "js-dos",
-    "version": "7.1.1",
+    "version": "7.1.2",
     "description": "Easiest API to run dos programs in browser",
     "main": "dist/js-dos.js",
     "types": "dist/types/js-dos-player.d.ts",
@@ -39,6 +39,7 @@
         "@typescript-eslint/eslint-plugin": "^4.29.3",
         "@typescript-eslint/parser": "^4.29.3",
         "babelify": "^10.0.0",
+        "base64-js": "^1.5.1",
         "browserify": "^17.0.0",
         "core-js": "^3.17.1",
         "del": "^5.1.0",

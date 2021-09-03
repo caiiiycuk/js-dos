@@ -5,6 +5,8 @@ import sourcemaps from "gulp-sourcemaps";
 import { playerJs as playerJs } from "./js-dos-player";
 
 import del from "del";
+
+// eslint-disable-next-line
 const concat = require("gulp-concat");
 
 function clean() {

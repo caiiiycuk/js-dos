@@ -1,23 +1,31 @@
 <!doctype html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <style>
-         html, body, #jsdos {
-             width: 100%;
-             height: 100%;
-             margin: 0;
-             padding: 0;
-         }
-        </style>
-        <script src="/dist/js-dos.js"></script>
-        <link href="/dist/js-dos.css" rel="stylesheet">
-    </head>
-    <body>
-        <div id="jsdos" />
-        <script>
-         emulators.pathPrefix = "/dist/";
-         Dos(document.getElementById("jsdos"), { style: "dark", }).run("digger-v3.jsdos");
-        </script>
-    </body>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+        html,
+        body,
+        #jsdos {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script src="/dist/js-dos.js"></script>
+    <link href="/dist/js-dos.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="jsdos" />
+    <script>
+        emulators.pathPrefix = "/dist/";
+        Dos(document.getElementById("jsdos"), {
+            style: "dark",
+            realtime: window.realtime,
+        }).run("digger-v3.jsdos");
+    </script>
+</body>
+
 </html>
