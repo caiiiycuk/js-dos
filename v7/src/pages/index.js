@@ -91,7 +91,7 @@ const features = [
         ),
     },
     {
-        title: <>typescirpt support</>,
+        title: <>typescript support</>,
         imageUrl: 'img/ts.png',
         description: (
             <>
