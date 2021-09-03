@@ -3,7 +3,7 @@
 import { TransportLayer, ClientMessage, MessageHandler, ServerMessage } from "emulators/dist/types/protocol/protocol";
 import * as base64 from "base64-js";
 
-export interface Realtime {
+export interface Hardware {
 	readConfig(): string;
 	sendMessage(payload: string): void;
 	addKey(key: number, pressed: number, timeMs: number): void;
@@ -17,7 +17,7 @@ const textDecoder = new TextDecoder();
 
 class HardwareTransportLayer implements TransportLayer {
     sessionId: string = Date.now() + "";
-	realtime: Realtime;
+	hardware: Hardware;
 
 
     private alive = true;
@@ -26,12 +26,12 @@ class HardwareTransportLayer implements TransportLayer {
 
     private handler: MessageHandler = () => { /**/ };
 
-	constructor(realtime: Realtime) {
-		this.realtime = realtime;
+	constructor(realtime: Hardware) {
+		this.hardware = realtime;
 	}
 
     callMain() {
-        this.realtime.sendMessage("wc-install\n" + this.sessionId + "\n");
+        this.hardware.sendMessage("wc-install\n" + this.sessionId + "\n");
         requestAnimationFrame(this.update.bind(this));
     }
 
@@ -43,7 +43,7 @@ class HardwareTransportLayer implements TransportLayer {
 
         switch (name) {
             case "wc-run": {
-				let errorMessage = this.realtime.writeFile("bundle_0.zip", encode(props.bundles[0]));
+				let errorMessage = this.hardware.writeFile("bundle_0.zip", encode(props.bundles[0]));
 
                 if (errorMessage.length > 0) {
                     console.error(errorMessage);
@@ -51,7 +51,7 @@ class HardwareTransportLayer implements TransportLayer {
                 }
 
                 if (props.bundles[1] !== undefined) {
-					errorMessage = this.realtime.writeFile("bundle_1.zip", encode(props.bundles[0]));
+					errorMessage = this.hardware.writeFile("bundle_1.zip", encode(props.bundles[0]));
                     if (errorMessage.length > 0) {
                         console.error(errorMessage);
                         throw new Error(errorMessage);
@@ -59,35 +59,35 @@ class HardwareTransportLayer implements TransportLayer {
                 }
 
                 const payload = "wc-run\n";
-                this.realtime.sendMessage(payload);
+                this.hardware.sendMessage(payload);
             } break;
             case "wc-add-key": {
-                this.realtime.addKey(props.key, props.pressed ? 1 : 0, props.timeMs);
+                this.hardware.addKey(props.key, props.pressed ? 1 : 0, props.timeMs);
             } break;
             case "wc-pause": {
-                this.realtime.sendMessage("wc-pause\n" + this.sessionId + "\n");
+                this.hardware.sendMessage("wc-pause\n" + this.sessionId + "\n");
             } break;
             case "wc-resume": {
-                this.realtime.sendMessage("wc-resume\n" + this.sessionId + "\n");
+                this.hardware.sendMessage("wc-resume\n" + this.sessionId + "\n");
             } break;
             case "wc-mute": {
-                this.realtime.sendMessage("wc-mute\n" + this.sessionId + "\n");
+                this.hardware.sendMessage("wc-mute\n" + this.sessionId + "\n");
             } break;
             case "wc-unmute": {
-                this.realtime.sendMessage("wc-unmute\n" + this.sessionId + "\n");
+                this.hardware.sendMessage("wc-unmute\n" + this.sessionId + "\n");
             } break;
             case "wc-exit": {
                 this.alive = false;
-                this.realtime.sendMessage("wc-exit\n" + this.sessionId + "\n");
+                this.hardware.sendMessage("wc-exit\n" + this.sessionId + "\n");
             } break;
             case "wc-mouse-move": {
-                this.realtime.mouseMove(props.x, props.y, props.timeMs);
+                this.hardware.mouseMove(props.x, props.y, props.timeMs);
             } break;
             case "wc-mouse-button": {
-                this.realtime.mouseButton(props.button, props.pressed ? 1 : 0, props.timeMs);
+                this.hardware.mouseButton(props.button, props.pressed ? 1 : 0, props.timeMs);
             } break;
             case "wc-pack-fs-to-bundle": {
-                this.realtime.sendMessage("wc-pack-fs-to-bundle\n" + this.sessionId + "\n");
+                this.hardware.sendMessage("wc-pack-fs-to-bundle\n" + this.sessionId + "\n");
             } break;
             default: {
                 console.log("Unhandled client message (wc):", name, props);
@@ -108,7 +108,7 @@ class HardwareTransportLayer implements TransportLayer {
         const props = optProps || {};
         switch (name) {
             case "ws-server-ready": {
-				const config = this.realtime.readConfig();
+				const config = this.hardware.readConfig();
 				this.handler("ws-config", { sessionId: this.sessionId, content: config });
 				// delay ws-server-ready until ws-sound-init
             } break;
@@ -156,7 +156,7 @@ class HardwareTransportLayer implements TransportLayer {
             return;
         }
 
-        const framePayload = this.realtime.getFramePayload();
+        const framePayload = this.hardware.getFramePayload();
         if (framePayload.length === 0) {
             return;
         }
@@ -219,7 +219,7 @@ export class HardwareTransportLayerFactory {
 		};
 	}
 
-	createTransportLayer = (realtime: Realtime): TransportLayer => {
+	createTransportLayer = (realtime: Hardware): TransportLayer => {
 		const transport = new HardwareTransportLayer(realtime);
 		this.serverMessageHandler = transport.onServerMessage.bind(transport);
 		transport.callMain();
