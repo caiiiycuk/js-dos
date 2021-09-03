@@ -25,3 +25,4 @@ dev.js
 cmake-build-*
 gulpfile.ts
 *.zip
+src/

@@ -1,7 +1,7 @@
 import { DosInstance, DosFactoryType, DosOptions } from "emulators-ui/dist/types/js-dos";
 import { Navbar } from "./js-dos-navbar";
 import { createDiv } from "./dom";
-import { Realtime, hardwareTransportLayerFactory } from "./hardware-transport-layer";
+import { Hardware, hardwareTransportLayerFactory } from "./hardware-transport-layer";
 
 declare const Dos: DosFactoryType;
 
@@ -10,7 +10,7 @@ const dosImpl = Dos;
 export interface DosPlayerOptions extends DosOptions {
 	title?: string;
 	style?: "default" | "dark" | "none";
-	realtime?: Realtime;
+	hardware?: Hardware;
 }
 
 export interface DosPlayer extends DosInstance {
@@ -45,10 +45,10 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 	options.layersOptions.keyboardDiv = keyboard;
 	options.layersOptions.fullscreenElement = root;
 
-	const realtime = options.realtime;
-	if (realtime !== undefined && realtime !== null) {
+	const hardware = options.hardware;
+	if (hardware !== undefined && hardware !== null) {
 		options.createTransportLayer = () => {
-			return hardwareTransportLayerFactory.createTransportLayer(realtime);
+			return hardwareTransportLayerFactory.createTransportLayer(hardware);
 		};
 		options.emulatorFunction = "backend";
 	}
