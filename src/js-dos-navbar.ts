@@ -1,17 +1,15 @@
-import { DosInstance } from "emulators-ui/dist/types/js-dos";
-import { click, createDiv } from "./dom";
-import { DosPlayerOptions } from "./js-dos-player";
-
-const goneClass = "jsdos-player-gone";
-const disabledClass = "jsdos-player-button-disabled";
-const primaryClass ="jsdos-player-button-primary";
+import { activeClass, click, createDiv, disabledClass, goneClass, primaryClass } from "./dom";
+import { DosPlayer, DosPlayerOptions } from "./js-dos-player";
 
 export class Navbar {
 
 	root: HTMLDivElement;
-	dos: DosInstance;
+	dos: DosPlayer;
 
-	constructor(root: HTMLDivElement, dos: DosInstance, options: DosPlayerOptions) {
+	private warnButtonDiv: HTMLDivElement;
+	private settingsButtonDiv: HTMLDivElement;
+
+	constructor(root: HTMLDivElement, dos: DosPlayer, options: DosPlayerOptions) {
 		this.root = root;
 		this.dos = dos;
 		const title = options.title || "JS-DOS";
@@ -28,10 +26,14 @@ export class Navbar {
 		const playButtonDiv = this.createPlayButton();
 		const mobileButtonDiv = this.createMobileButton();
 		const dividerDiv = createDiv("jsdos-player-divider");
+		const warnButtonDiv = this.createWarnButton();
+		const settingsButtonDiv = this.createSettingsButton();
 
 		this.root.appendChild(logoDiv);
 		this.root.appendChild(titleDiv);
 		this.root.appendChild(springDiv);
+		this.root.appendChild(warnButtonDiv);
+		this.root.appendChild(settingsButtonDiv);
 		this.root.appendChild(dividerDiv);
 		this.root.appendChild(mobileButtonDiv);
 		this.root.appendChild(playButtonDiv);
@@ -50,6 +52,8 @@ export class Navbar {
 		click(stopButtonDiv, (el) => this.onStop(el, playButtonDiv));
 		click(playButtonDiv, (el) => this.onPlay(el, stopButtonDiv));
 		click(mobileButtonDiv, this.onMobileControls);
+		click(warnButtonDiv, () => this.onToggleSettings(warnButtonDiv, settingsButtonDiv));
+		click(settingsButtonDiv, () => this.onToggleSettings(warnButtonDiv, settingsButtonDiv));
 
 		this.dos.layers.setOnSaveStarted(() => {
 			saveButtonDiv.classList.add(disabledClass);
@@ -84,8 +88,12 @@ export class Navbar {
 				mobileButtonDiv.classList.remove(primaryClass);
 			}
 		};
+
 		this.dos.setOnMobileControlsChanged(onMobileControlsChanged);
 		onMobileControlsChanged(this.dos.mobileControls);
+
+		this.warnButtonDiv = warnButtonDiv;
+		this.settingsButtonDiv = settingsButtonDiv;
 	}
 
 	onFullscreen = (): void => {
@@ -138,6 +146,28 @@ export class Navbar {
 		} else {
 			this.dos.enableMobileControls();
 		}
+	}
+
+	onToggleSettings = (warnButton: HTMLDivElement, settingsButton: HTMLDivElement): void => {
+		if (settingsButton.classList.contains(activeClass)) {
+			warnButton.classList.remove(activeClass);
+			settingsButton.classList.remove(activeClass);
+			this.dos.settings.hide();
+		} else {
+			warnButton.classList.add(activeClass);
+			settingsButton.classList.add(activeClass);
+			this.dos.settings.show();
+		}
+	}
+
+	showWarn(): void {
+		this.warnButtonDiv.classList.remove(goneClass);
+		this.settingsButtonDiv.classList.add(goneClass);
+	}
+
+	hideWarn(): void {
+		this.warnButtonDiv.classList.add(goneClass);
+		this.settingsButtonDiv.classList.remove(goneClass);
 	}
 
 	private createTitle(title: string): HTMLDivElement {
@@ -236,6 +266,38 @@ export class Navbar {
 					<desc>mobile</desc>
 					<path d="M12 0H4c-.55 0-1 .45-1 1v14c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V1c0-.55-.45-1-1-1zM8 15c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm3-3H5V3h6v9z" fill-rule="evenodd">
 					</path>
+				</svg>
+			</span>
+		`)
+	}
+
+	private createWarnButton(): HTMLDivElement {
+		return createDiv(["jsdos-player-button", goneClass], `
+			<span icon="warn" class="jsdos-player-icon jsdos-player-icon-warn">
+				<svg data-icon="warn" width="16" height="16" viewBox="0 0 16 16">
+					<desc>warn</desc>
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M15.84,13.5l0.01-0.01l-7-12L8.84,1.5c-0.17-0.3-0.48-0.5-0.85-0.5
+						S7.32,1.2,7.14,1.5c0,0-0.01-0.01-0.01-0.01l-7,12l0.01,0.01c-0.09,0.15-0.15,0.31-0.15,0.5c0,0.55,0.45,1,1,1h14
+						c0.55,0,1-0.45,1-1C15.99,13.81,15.93,13.65,15.84,13.5z M8.99,12.99h-2v-2h2V12.99z M8.99,9.99h-2v-5h2V9.99z"/>
+				</svg>
+			</span>
+		`)
+	}
+
+	private createSettingsButton(): HTMLDivElement {
+		return createDiv("jsdos-player-button", `
+			<span icon="settings" class="jsdos-player-icon jsdos-player-icon-settings">
+				<svg data-icon="settings" width="16" height="16" viewBox="0 0 16 16">
+					<desc>settings</desc>
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M15.19,6.39h-1.85c-0.11-0.37-0.27-0.71-0.45-1.04l1.36-1.36
+						c0.31-0.31,0.31-0.82,0-1.13l-1.13-1.13c-0.31-0.31-0.82-0.31-1.13,0l-1.36,1.36C10.3,2.92,9.96,2.76,9.59,2.65V0.79
+						c0-0.44-0.36-0.8-0.8-0.8h-1.6c-0.44,0-0.8,0.36-0.8,0.8v1.86c-0.39,0.12-0.75,0.28-1.1,0.47l-1.3-1.3c-0.3-0.3-0.79-0.3-1.09,0
+						L1.82,2.91c-0.3,0.3-0.3,0.79,0,1.09l1.3,1.3C2.92,5.64,2.76,6,2.64,6.39H0.79c-0.44,0-0.8,0.36-0.8,0.8v1.6
+						c0,0.44,0.36,0.8,0.8,0.8h1.85c0.11,0.37,0.27,0.71,0.45,1.04l-1.36,1.36c-0.31,0.31-0.31,0.82,0,1.13l1.13,1.13
+						c0.31,0.31,0.82,0.31,1.13,0l1.36-1.36c0.33,0.18,0.67,0.33,1.04,0.44v1.86c0,0.44,0.36,0.8,0.8,0.8h1.6c0.44,0,0.8-0.36,0.8-0.8
+						v-1.86c0.39-0.12,0.75-0.28,1.1-0.47l1.3,1.3c0.3,0.3,0.79,0.3,1.09,0l1.09-1.09c0.3-0.3,0.3-0.79,0-1.09l-1.3-1.3
+						c0.19-0.35,0.36-0.71,0.48-1.1h1.85c0.44,0,0.8-0.36,0.8-0.8v-1.6C15.99,6.75,15.63,6.39,15.19,6.39z M7.99,10.99
+						c-1.66,0-3-1.34-3-3s1.34-3,3-3s3,1.34,3,3S9.65,10.99,7.99,10.99z"/>
 				</svg>
 			</span>
 		`)

@@ -1,0 +1,54 @@
+org: caiiiycuk
+app: jsdos-backend
+service: jsdos-backend
+
+package:
+  exclude:
+    - 'node_modules/**'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-central-1
+  memorySize: 256
+  versionFunctions: false
+  environment:
+    PUT_CURL: "jjs-putCurl"
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:ListBucket
+      Resource:
+        - "arn:aws:s3:::doszone-uploads"
+    - Effect: Allow
+      Action:
+        - s3:Get*
+        - s3:Put*
+      Resource:
+        - "arn:aws:s3:::doszone-uploads/*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource:
+        - "arn:aws:lambda:${opt:region, self:provider.region}:*:function:${self:provider.environment.PUT_CURL}"
+
+functions:
+  personalPut:
+    handler: src/personal-put.personalPut
+    name: jsdos-personalPut
+    events:
+      - http:
+          path: /personal/put
+          method: post
+          cors: true
+  personalAcl:
+    handler: src/personal-acl.personalAcl
+    name: jsdos-personalAcl
+    events:
+      - http:
+          path: /personal/acl
+          method: post
+          cors: true
+
+plugins:
+  - serverless-plugin-typescript
