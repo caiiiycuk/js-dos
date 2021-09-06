@@ -24,7 +24,17 @@
         Dos(document.getElementById("jsdos"), {
             style: "dark",
             hardware: window.hardware,
-        }).run("digger-v3.jsdos");
+            clientId: (userGesture) => {
+                if (!userGesture) {
+                    return Promise.resolve(null);
+                }
+
+                return Promise.resolve({
+                    namespace: "test",
+                    id: "client",
+                })
+            }
+        }).run("https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos");
     </script>
 </body>
 

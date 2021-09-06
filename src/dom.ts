@@ -1,5 +1,10 @@
 import { EmulatorsUi } from "emulators-ui";
 
+export const goneClass = "jsdos-player-gone";
+export const disabledClass = "jsdos-player-button-disabled";
+export const primaryClass ="jsdos-player-button-primary";
+export const activeClass = "jsdos-player-button-active";
+
 declare const emulatorsUi: EmulatorsUi;
 
 export function createDiv(className: string | string[], innerHtml?: string): HTMLDivElement {
