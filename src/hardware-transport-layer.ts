@@ -51,7 +51,7 @@ class HardwareTransportLayer implements TransportLayer {
                 }
 
                 if (props.bundles[1] !== undefined) {
-					errorMessage = this.hardware.writeFile("bundle_1.zip", encode(props.bundles[0]));
+					errorMessage = this.hardware.writeFile("bundle_1.zip", encode(props.bundles[1]));
                     if (errorMessage.length > 0) {
                         console.error(errorMessage);
                         throw new Error(errorMessage);
@@ -124,7 +124,7 @@ class HardwareTransportLayer implements TransportLayer {
             case "ws-sound-push":
             case "ws-update-lines": {
                 console.error(name, "should not be called");
-            } break
+            } break;
             case "ws-persist": {
                 props.bundle = decode(props.bundle);
                 this.handler(name, props);
