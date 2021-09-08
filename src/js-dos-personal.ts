@@ -1,7 +1,7 @@
 import { getPersonalBundleUrl as impl } from "../sls/src/personal";
 import { SEND, POST_OBJECT } from "./xhr";
 
-const endpointBase = "https://jhrxt8xk0g.execute-api.eu-central-1.amazonaws.com/dev";
+const endpointBase = "https://kdhkdsv558.execute-api.eu-central-1.amazonaws.com/dev";
 const perosnalPut = endpointBase + "/personal/put";
 const personalAcl = endpointBase + "/personal/acl";
 

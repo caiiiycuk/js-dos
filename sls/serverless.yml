@@ -1,6 +1,6 @@
 org: caiiiycuk
 app: jsdos-backend
-service: jsdos-backend
+service: jsdos-v7
 
 package:
   exclude:
