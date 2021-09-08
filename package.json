@@ -1,9 +1,9 @@
 {
     "name": "js-dos",
-    "version": "7.1.5",
+    "version": "7.1.6",
     "description": "Easiest API to run dos programs in browser",
     "main": "dist/js-dos.js",
-    "types": "dist/types/js-dos-player.d.ts",
+    "types": "dist/types/src/js-dos-player.d.ts",
     "browserslist": "> 0.25%, not dead, ie >= 11",
     "repository": {
         "type": "git",

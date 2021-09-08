@@ -26,3 +26,4 @@ cmake-build-*
 gulpfile.ts
 *.zip
 src/
+sls/
