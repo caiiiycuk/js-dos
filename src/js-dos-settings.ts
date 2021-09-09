@@ -34,12 +34,15 @@ export class Settings {
 
 		clientIdRow.appendChild(clientIdLogin);
 		clientIdRow.appendChild(clientIdText);
-		clientIdRow.appendChild(download);
-		clientIdRow.appendChild(divider);
-		clientIdRow.appendChild(uploadRow);
+		
+		if (options.hardware === undefined) {
+			clientIdRow.appendChild(download);
+			clientIdRow.appendChild(divider);
+			clientIdRow.appendChild(uploadRow);
 
-		uploadRow.appendChild(upload);
-		uploadRow.appendChild(uploadInput);
+			uploadRow.appendChild(upload);
+			uploadRow.appendChild(uploadInput);
+		}
 
 		click(clientIdLogin, this.onClientIdLogin);
 		click(clientIdText, this.onClientIdLogin);
