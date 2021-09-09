@@ -25,9 +25,9 @@
             style: "dark",
             hardware: window.hardware,
             clientId: (userGesture) => {
-                if (!userGesture) {
-                    return Promise.resolve(null);
-                }
+                // if (!userGesture) {
+                    // return Promise.resolve(null);
+                // }
 
                 return Promise.resolve({
                     namespace: "test",

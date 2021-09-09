@@ -27,3 +27,4 @@ gulpfile.ts
 *.zip
 src/
 sls/
+zip.js/

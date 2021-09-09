@@ -31,3 +31,23 @@ export function click(el: HTMLElement, callbackFn: (el: HTMLElement) => void): v
         });
     }
 }
+
+let downloadFileUrl: string | null = null;
+export function downloadFile(data: Uint8Array, fileName: string, mimeType: string): void {
+  const blob = new Blob([data], {
+    type: mimeType
+  });
+
+  if (downloadFileUrl !== null) {
+    window.URL.revokeObjectURL(downloadFileUrl);
+  }
+  downloadFileUrl = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = downloadFileUrl;
+  a.download = fileName;
+  a.style.display = "none";
+
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}

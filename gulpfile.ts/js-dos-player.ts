@@ -29,7 +29,8 @@ export function playerJs() {
                 "useBuiltIns": "usage",
                 "corejs": 3,
             }]],
-            extensions: [".ts"]
+            extensions: [".ts"],
+            sourceMaps: true,
         })
         .bundle()
         .pipe(source("player.js"))

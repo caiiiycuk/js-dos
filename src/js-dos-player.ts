@@ -27,6 +27,7 @@ export interface DosPlayer extends DosInstance {
 	navbar: Navbar;
 	settings: Settings;
 	requestClientId(userGesture: boolean): Promise<ClientId | null>;
+	bundleUrl: string | null;
 }
 
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;
@@ -68,6 +69,7 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 	}
 
 	const player = dosImpl(window, options) as DosPlayer;
+	player.bundleUrl = null;
 	player.navbar = new Navbar(navbar, player, options);
 	player.settings = new Settings(settings, player, options);
 	player.requestClientId = async (userGesture: boolean) => {
@@ -89,6 +91,7 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 		}
 
 		const ci = await runFn.call(player, bundleUrl, optionalChangesUrl, optionalPersistKey);
+		player.bundleUrl = bundleUrl;
 
 		const saveFn = player.layers.getOnSave();
 		player.layers.setOnSave(async () => {
@@ -103,6 +106,12 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 
 		return ci;
 	};
+
+	const stopFn = player.stop;
+	player.stop = () => {
+		player.bundleUrl = null;
+		return stopFn.call(player);
+	}
 
 	player.requestClientId(false);
 
