@@ -150,9 +150,18 @@
     display: flex;
     align-items: center;
     padding-bottom: 10px;
+	flex-wrap: wrap;
+}
+
+.jsdos-player-upload-row {
+	display: flex;
+	align-items: center;
+	overflow: hidden;
 }
 
 .jsdos-player-client-id {
+	cursor: pointer;
+	padding-left: 5px;
 	padding-right: 5px;
 }
 
