@@ -11,7 +11,9 @@
 }
 
 .emulator-canvas, .emulator-video {
-    image-rendering: "crisp-edges";
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -183,6 +185,7 @@
     z-index: 999;
 }
 
+.emulator-button-highlight,
 .emulator-button-control:hover {
     filter: opacity(1.0) hue-rotate(-70deg) saturate(5) sepia(1) !important;
 }

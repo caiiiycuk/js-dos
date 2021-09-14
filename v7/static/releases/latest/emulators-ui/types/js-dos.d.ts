@@ -20,16 +20,19 @@ export declare class DosInstance {
     layersConfig: LayersConfig | LegacyLayersConfig | null;
     ciPromise?: Promise<CommandInterface>;
     options: DosOptions;
+    mobileControls: boolean;
     private clickToStart;
     private unbindControls;
     private storedLayersConfig;
+    private onMobileControlsChanged;
     constructor(root: HTMLDivElement, emulatorsUi: EmulatorsUi, options: DosOptions);
-    run(bundleUrl: string, optionalChangesUrl?: string): Promise<CommandInterface>;
+    run(bundleUrl: string, optionalChangesUrl?: string, optionalPersistKey?: string): Promise<CommandInterface>;
     stop(): Promise<void>;
     setLayersConfig(config: LayersConfig | LegacyLayersConfig | null, layerName?: string): Promise<void>;
     getLayersConfig(): LayersConfig | LegacyLayersConfig | null;
     enableMobileControls(): void;
     disableMobileControls(): void;
+    setOnMobileControlsChanged(handler: (visible: boolean) => void): void;
     private runBundle;
 }
 export declare type DosFactoryType = (root: HTMLDivElement, options?: DosOptions) => DosInstance;

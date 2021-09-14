@@ -35,7 +35,7 @@ export declare class CommandInterfaceOverTransportLayer implements CommandInterf
     private keyMatrix;
     private configPromise;
     private configResolve;
-    private startupErrorLog;
+    private panicMessages;
     constructor(bundles: Uint8Array[], transport: TransportLayer, ready: (err: Error | null) => void);
     private sendClientMessage;
     private onServerMessage;
