@@ -1,8 +1,12 @@
 import { Notyf } from "notyf";
 export interface LayersOptions {
+    optionControls?: string[];
+    keyboardDiv?: HTMLDivElement;
+    fullscreenElement?: HTMLElement;
 }
 export declare function layers(root: HTMLDivElement, options?: LayersOptions): Layers;
 export declare class Layers {
+    options: LayersOptions;
     root: HTMLDivElement;
     loading: HTMLDivElement;
     canvas: HTMLCanvasElement;
@@ -11,17 +15,23 @@ export declare class Layers {
     width: number;
     height: number;
     fullscreen: boolean;
+    keyboardVisible: boolean;
     pointerLock: boolean;
+    pointerDisabled: boolean;
     pointerButton: 0 | 1;
     notyf: Notyf;
     toggleKeyboard: () => boolean;
+    private fullscreenElement;
     private clickToStart;
     private loaderText;
     private onResize;
     private onKeyDown;
     private onKeyUp;
     private onKeyPress;
+    private onKeysPress;
     private onSave;
+    private onSaveStarted;
+    private onSaveEnded;
     private onFullscreenChanged;
     private onKeyboardChanged;
     constructor(root: HTMLDivElement, options: LayersOptions);
@@ -35,12 +45,18 @@ export declare class Layers {
     fireKeyUp(keyCode: number): void;
     setOnKeyPress(handler: (keyCode: number) => void): void;
     fireKeyPress(keyCode: number): void;
+    setOnKeysPress(handler: (keyCodes: number[]) => void): void;
+    fireKeysPress(keyCodes: number[]): void;
     toggleFullscreen(): void;
     setOnFullscreen(onFullscreenChanged: (fullscreen: boolean) => void): void;
+    removeOnFullscreen(onFullscreenChanged: (visible: boolean) => void): void;
     setOnKeyboardVisibility(onKeyboardChanged: (visible: boolean) => void): void;
     removeOnKeyboardVisibility(onKeyboardChanged: (visible: boolean) => void): void;
     save(): Promise<void>;
     setOnSave(handler: () => Promise<void>): void;
+    getOnSave(): () => Promise<void>;
+    setOnSaveStarted(callback: () => void): void;
+    setOnSaveEnded(callback: () => void): void;
     hideLoadingLayer(): void;
     showLoadingLayer(): void;
     setLoadingMessage(message: string): void;

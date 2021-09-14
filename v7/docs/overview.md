@@ -4,19 +4,22 @@ slug: /
 title: Overview 
 sidebar_label: Overview 
 ---
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 js-dos was designed from the ground up to be easily installed and used to get your DOS program up and running in browser quickly.
 
 js-dos v7 includes:
+<img alt="Result" width="400px" align="right" src={useBaseUrl('img/jsdos-stack.png')} />
+
 * **js-dos bundle** - universal package format that js-dos understands
-* **js-dos** - [npm package](https://www.npmjs.com/package/js-dos/v/beta) that combines everything to run a DOS program in browser
-* **emulators** (optional) - [npm package](https://www.npmjs.com/package/emulators), that provide emulator backends which can work in different environments
-* **emulators-ui** (optional) - [npm package](https://www.npmjs.com/package/emulators-ui), a set of ui and sound components to render emulator output in browser
+* **js-dos** (top layer) - [npm package](https://www.npmjs.com/package/js-dos/v/beta) that combines everything to run a DOS program in browser. js-dos provide additional services like storing saves on backend.
+* **emulators-ui** (middle layer) - [npm package](https://www.npmjs.com/package/emulators-ui), a set of virtual controls and sound components to render emulator output in browser. 
+* **emulators** (bottom layer) - [npm package](https://www.npmjs.com/package/emulators), that provide emulator backends which can work in different environments.
 
-**To start DOS program you need to prepare js-dos bundle. 
-You can easily [create it](https://dos.zone/en/studio), or get one of already did by community.**
-
-Download [digger.jsdos](https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos) if you want to start quickly.
+You can use this three layers separetely. For example:
+* you can use only `emulators` package to run [DOS on node](node.md)
+* or you can use `emulators-ui` package to build custom [DOS player on three.js](threejs.md). Moreover js-dos package is built using `emulators` + `emulators-ui` packages
+* **in most cases using `js-dos` package is simplest way to run [DOS in browser](create-dosbox.md)**
 
 ## Bundles repository
 

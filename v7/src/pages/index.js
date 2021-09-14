@@ -44,24 +44,23 @@ const features = [
     ),
   },
     {
-        title: <>bundles repository</>,
-        imageUrl: 'img/repository.png',
+        title: <>DOS.Zone Repository</>,
+        imageUrl: 'img/dz.png',
         description: (
             <>
               Community driven js-dos repository contains <br/>
-              <strong style={{background: "#8f398f", color: "white", padding: "2px 4px"}}>1900+ bundles are ready to run in browser</strong><br/>
+              <strong style={{background: "#8f398f", color: "white", padding: "2px 4px"}}>1900+ bundles are ready to run and play in browser</strong><br/>
               <a href="https://dos.zone" target="_blank">View repository</a>
             </>
         ),
     },
     {
-        title: <>dos.zone</>,
-        imageUrl: 'img/dz.png',
+        title: <>DOS.Zone Browser</>,
+        imageUrl: 'img/dz-android.jpg',
         description: (
             <>
-              DOS.Zone is a kitchen sink application that demonstrate all features of js-dos v7<br/>
-              <a href="https://dos.zone" target="_blank">Live Demo</a><br/>
-              <br/>
+              DOS.Zone Browser is an Android application that enables hardware acceleration on DOS.Zone web site.
+              You can use it to run any dos program on your device with much more performance as in regular browser.  <br/>
               <a href="https://play.google.com/store/apps/details?id=zone.dos.app" target="_blank">
                 <img style={{width: "40%"}} src="/v7/build/img/gp.png"/>
               </a>
@@ -69,13 +68,13 @@ const features = [
         ),
     },
     {
-        title: <>turbo mode</>,
-        imageUrl: 'img/turbo.png',
+        title: <>DOS.Zone Studio</>,
+        imageUrl: 'img/dz-studio.png',
         description: (
             <>
-              js-dos can communicate with Web-RTC backend to play DOS games in the cloud. No matter which hardware you use all dos games will work smoothly.
-              <br/>
-              <a href="https://talks.dos.zone/t/dos-cloud-gaming-aka-turbo/44592" target="_blank">Read more</a>
+              DOS.Zone Studio it's a full featured bundles creator for js-dos.
+              You can use it to add mobile controls to any DOS game<br/>
+              <a href="https://js-dos.com/v7/build/docs/mobile-support" target="_blank">Read more</a>
             </>
         ),
     },
@@ -108,6 +107,17 @@ const features = [
             <>
               js-dos can be easily wrapped as react component.<br/>
               <a href="docs/react">Creating React component</a>
+            </>
+        ),
+    },
+    {
+        title: <>turbo mode</>,
+        imageUrl: 'img/turbo.png',
+        description: (
+            <>
+              js-dos can communicate with Web-RTC backend to play DOS games in the cloud. No matter which hardware you use all dos games will work smoothly.
+              <br/>
+              <a href="https://talks.dos.zone/t/dos-cloud-gaming-aka-turbo/44592" target="_blank">Read more</a>
             </>
         ),
     },

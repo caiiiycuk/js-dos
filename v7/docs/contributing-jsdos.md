@@ -3,9 +3,8 @@ id: contributing-jsdos
 title: Contributing
 ---
 
-As explained in [overview](overview.md) js-dos package is an only wrapper script. It does not contain any valuable code.
-
 Your help is very appreciated:
-* [emulators-ui](contributing-emulators-ui.md)
-* [emulators](contributing-emulators.md)
-* [dos.zone.app](doszone.md#contributing)
+* [emulators](contributing-emulators.md) - if you want to improve DOS emulation
+* [emulators-ui](contributing-emulators-ui.md) - if you want to add move virtual controls or UI components
+* [js-dos](https://github.com/caiiiycuk/js-dos) - if you want to improve js-dos services
+* [dos.zone](doszone.md#contributing) - if you want to improve repository related things

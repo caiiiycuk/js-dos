@@ -18,6 +18,18 @@ export declare class EmulatorsUi {
     dom: {
         layers: typeof layers;
         lifecycle: typeof lifecycle;
+        pointers: {
+            bind: {
+                mobile: boolean;
+                canLock: boolean;
+                starters: string[];
+                changers: string[];
+                enders: string[];
+                prevents: string[];
+                leavers: string[];
+            };
+            getPointerState: typeof import("./dom/pointer").getPointerState;
+        };
     };
     network: {
         resolveBundle: typeof resolveBundle;

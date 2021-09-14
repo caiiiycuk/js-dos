@@ -1,0 +1,30 @@
+import { DosPlayer, DosPlayerOptions } from "./js-dos-player";
+export declare class Navbar {
+    root: HTMLDivElement;
+    dos: DosPlayer;
+    private warnButtonDiv;
+    private settingsButtonDiv;
+    constructor(root: HTMLDivElement, dos: DosPlayer, options: DosPlayerOptions);
+    onFullscreen: () => void;
+    onSave: () => void;
+    onKeyboard: () => void;
+    onMute: (el: HTMLElement, unmute: HTMLElement) => void;
+    onUnmute: (el: HTMLElement, mute: HTMLElement) => void;
+    onPlay: (el: HTMLElement, stop: HTMLElement) => void;
+    onStop: (el: HTMLElement, play: HTMLElement) => void;
+    onMobileControls: () => void;
+    onToggleSettings: (warnButton: HTMLDivElement, settingsButton: HTMLDivElement) => void;
+    showWarn(): void;
+    hideWarn(): void;
+    private createTitle;
+    private createFullScreenButton;
+    private createSaveButton;
+    private createKeyboardButton;
+    private createMuteButton;
+    private createUnmuteButton;
+    private createStopButton;
+    private createPlayButton;
+    private createMobileButton;
+    private createWarnButton;
+    private createSettingsButton;
+}

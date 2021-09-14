@@ -58,6 +58,10 @@ module.exports = {
               href: 'https://discord.com/invite/hMVYEbG',
             },
             {
+              label: 'Telegram',
+              href: 'https://t.me/doszone',
+            },
+            {
               label: 'Twitter',
               href: 'https://twitter.com/doszone_db',
             },

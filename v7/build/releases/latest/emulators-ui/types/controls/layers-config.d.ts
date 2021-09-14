@@ -28,6 +28,8 @@ export interface LayerNippleActivatorControl extends LayerControl {
 }
 export interface LayerPointerResetControl extends LayerControl {
 }
+export interface LayerPointerToggleControl extends LayerControl {
+}
 export interface LayerPointerMoveControl extends LayerControl {
     x: number;
     y: number;

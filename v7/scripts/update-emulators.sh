@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yarn add emulators emulators-ui js-dos@beta
+yarn add emulators emulators-ui js-dos
 rm -rf static/releases/latest
 mkdir static/releases/latest
 mkdir static/releases/latest/emulators

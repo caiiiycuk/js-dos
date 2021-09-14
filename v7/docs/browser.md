@@ -41,16 +41,12 @@ emulators.pathPrefix = "<some-path>/";
 :::
 
 
-###  2. Using emulators-ui
+###  2. Using emulators-ui (without js-dos services)
 
-From v7 js-dos npm package is **only a wrapper script** that combines *emulators* and *emulators-ui* packages. It didn't contains
-code itself. It's useful if you don't want to make customizations in UI or custom integration. **js-dos package is single
-file solution to run DOS programs.**
+js-dos v7 is based `emulators` and `emulators-ui` packages. It provide additinal services over this two packages, if you don't need them, then
+you can you need to use `emulators` and  `emulators-ui` packages instead.
 
-If you want to make customizations or something special then you need to use *emulators* and  *emulators-ui* package in combination.
-They provide absolutely same functions as *js-dos* package and lot more (see [threejs](threejs) integration).
-
-To change code above to use `emulators-ui` just change scripts imports to:
+To change code above to use `emulators` and `emulators-ui` just change scripts imports to:
 ```html
 <script src="emulators/emulators.js"></script>
 <script src="emulators-ui/emulators-ui.js"></script>
@@ -64,8 +60,6 @@ Complete example:
 {}
 ```
 
-You can build [custom DOS player](ui-digger) reusing `emulators-ui` components.
-
 ###  3. Using emulators
 
-In case you don't want to use the browser API of js-dos project, you can use just the `emulators` package. Read the [guide](estimating-performance.md) to how we use *emulators* to estimate js-dos performance.
+In case you don't want to use the browser API of js-dos project, you can use just the `emulators` package. Read the [guide](estimating-performance.md) to how we use `emulators` to estimate js-dos performance.
