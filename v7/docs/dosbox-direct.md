@@ -87,3 +87,21 @@ The `memoryContents` contains following:
         "memoryCopy": ...
 }
 ```
+
+### Pausing execution
+
+In direct mode, you can pause the Dosbox execution loop without pausing the
+emscripten loop.  This lets you pause and inspect the current memory, for
+instance.
+
+```js
+const ci = await emulators.dosboxDirect(bundle);
+ci.transport.module._pauseExecution(true);
+```
+
+The `_pauseExecution` function takes as its argument whether it should be
+paused or should resume.  To resume once you have completed:
+
+```js
+ci.transport.module._pauseExecution(false);
+```
