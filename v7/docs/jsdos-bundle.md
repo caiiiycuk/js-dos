@@ -38,7 +38,7 @@ File `.jsdos/dosbox.conf` is required. js-dos would not start if this file does 
 
 :::
 
-You can generate a `js-dos bundle` programmatically. But, we recommend you use our [bundle generator](https://dos.zone/en/studio)
+You can generate a `js-dos bundle` programmatically. But, we recommend you use our [bundle generator](https://dos.zone/studio)
 Moreover you can search [our database](https://dos.zone) to see if someone already uploaded a `js-dos bundle` for a program.
 
 ## Game Studio

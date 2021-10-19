@@ -10,7 +10,7 @@ The core concept of mobile support is a layer abstraction. Layer is a combinatio
 
 You can put on top as many layers as you want. However, only one layer can be active at the same time.
 
-Using [game-studio](https://dos.zone/en/studio) can help to visually create this controls for game.
+Using [game-studio](https://dos.zone/studio) can help to visually create this controls for game.
 
 Take a look how it works in real game:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/I19hllmQWgk?start=20" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
