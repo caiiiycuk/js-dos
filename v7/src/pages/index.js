@@ -17,7 +17,7 @@ const features = [
         <code>
           Dos(element).run("game.jsdos")
         </code><br/>
-        <a href="docs">Read more</a>
+        <a href="/v7/build/docs">Read more</a>
       </>
     ),
   },
@@ -28,7 +28,7 @@ const features = [
       <>
         emulators-ui is a default set of components that used to build js-dos player ui.
         You can reuse them to build your custom DOS player.<br/>
-        <a href="docs/threejs">Creating three.js player</a>
+        <a href="v7/build/docs/threejs">Creating three.js player</a>
       </>
     ),
   },
@@ -39,7 +39,7 @@ const features = [
       <>
         emulators is a core of js-dos, it has standardized api and can run emulation in different
         environments. Perfect solution for custom embedding. <br/>
-        <a href="docs/estimating-performance">Estimating performance</a>
+        <a href="v7/build/docs/estimating-performance">Estimating performance</a>
       </>
     ),
   },
@@ -74,7 +74,7 @@ const features = [
             <>
               DOS.Zone Studio it's a full featured bundles creator for js-dos.
               You can use it to add mobile controls to any DOS game<br/>
-              <a href="https://js-dos.com/v7/build/docs/mobile-support" target="_blank">Read more</a>
+              <a href="/v7/build/docs/mobile-support" target="_blank">Read more</a>
             </>
         ),
     },
@@ -85,7 +85,7 @@ const features = [
             <>
               Emulators package supports execution in node.js environment.
               It means that you can start dos program in node.js without hacks.<br/>
-              <a href="docs/node">Read more</a>
+              <a href="/v7/build/docs/node">Read more</a>
             </>
         ),
     },
@@ -96,7 +96,7 @@ const features = [
             <>
               All source code of js-dos is written in TypeScript. So, you can use
               type checking when you use js-dos.<br/>
-              <a href="docs/react">Read more</a>
+              <a href="/v7/build/docs/react">Read more</a>
             </>
         ),
     },
@@ -106,7 +106,7 @@ const features = [
         description: (
             <>
               js-dos can be easily wrapped as react component.<br/>
-              <a href="docs/react">Creating React component</a>
+              <a href="/v7/build/docs/react">Creating React component</a>
             </>
         ),
     },
@@ -155,7 +155,7 @@ function Home() {
                 'button button--outline button--secondary button--lg',
                 styles.getStarted,
               )}
-              to={useBaseUrl('docs/')}>
+              to="/v7/build/docs/">
               Documentation
             </Link>
           </div>
