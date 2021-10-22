@@ -13,7 +13,7 @@ const tsify = require("tsify");
 export function playerJs() {
     return browserify({
         debug: true,
-        entries: ["src/js-dos-player.ts"],
+        entries: ["src/player.ts"],
         cache: {},
         packageCache: {},
     })
