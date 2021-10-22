@@ -1,8 +1,12 @@
 import { EmulatorsUi } from "emulators-ui";
+import { h } from "preact";
+import htm from "htm";
+
+export const html = htm.bind(h);
 
 export const goneClass = "jsdos-player-gone";
 export const disabledClass = "jsdos-player-button-disabled";
-export const primaryClass ="jsdos-player-button-primary";
+export const primaryClass = "jsdos-player-button-primary";
 export const activeClass = "jsdos-player-button-active";
 
 declare const emulatorsUi: EmulatorsUi;

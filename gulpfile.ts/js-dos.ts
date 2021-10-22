@@ -1,10 +1,12 @@
-import { src, dest, series } from "gulp";
+import { src, dest, series, parallel } from "gulp";
 import size from "gulp-size";
 import sourcemaps from "gulp-sourcemaps";
 
 import { playerJs as playerJs } from "./js-dos-player";
 
 import del from "del";
+
+import { execute } from "./execute";
 
 // eslint-disable-next-line
 const concat = require("gulp-concat");
@@ -17,10 +19,17 @@ function finalize() {
     return del(["dist/player.js"]);
 }
 
+function playerCss() {
+    return execute("yarn", "run",
+        "tailwindcss",
+        "-i", "src/player.css",
+        "-o", "build/player.css");
+}
+
 function concatCss() {
     return src([
         "node_modules/emulators-ui/dist/emulators-ui.css",
-        "src/js-dos-player.css",
+        "build/player.css",
     ])
         .pipe(concat("js-dos.css"))
         .pipe(size({ showFiles: true, showTotal: false }))
@@ -59,4 +68,9 @@ function copyAssets() {
         .pipe(dest("dist"));
 }
 
-export const jsdos = series(clean, playerJs, concatJs, concatCss, copyWasm, copyAssets, finalize);
+export const js = series(playerJs, concatJs, finalize);
+export const css = series(playerCss, concatCss);
+
+export const jsdos = series(clean,
+    parallel(playerJs, playerCss),
+    concatJs, concatCss, copyWasm, copyAssets, finalize);
