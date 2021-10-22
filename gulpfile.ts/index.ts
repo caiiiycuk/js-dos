@@ -1,7 +1,10 @@
 import { parallel } from "gulp";
-import { jsdos } from "./js-dos";
+import { css, js, jsdos } from "./js-dos";
 import { emitTypes } from "./types";
 
 exports.default = parallel(jsdos, emitTypes);
+exports.jsdos = jsdos;
+exports.js = js;
+exports.css = css;
 
 

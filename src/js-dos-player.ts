@@ -5,6 +5,8 @@ import { Hardware, hardwareTransportLayerFactory } from "./hardware-transport-la
 import { Settings } from "./js-dos-settings";
 import { getPersonalBundleUrl, putPersonalBundle } from "./js-dos-personal";
 
+import { createPlayerApp } from "./player-app";
+
 declare const Dos: DosFactoryType;
 
 const dosImpl = Dos;
@@ -45,7 +47,12 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
     }
 
     root.classList.add("jsdos-player-root");
+    const appRoot = createDiv("jsdos-player-app-root");
+    createPlayerApp(appRoot);
+    root.appendChild(appRoot);
 
+    return undefined as any;// dosImpl(root, options || {}) as DosPlayer;
+/*
     const navbar = createDiv("jsdos-player-navbar");
     const window = createDiv("jsdos-player-window");
     const settings = createDiv("jsdos-player-settings");
@@ -116,6 +123,7 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
     player.requestClientId(false);
 
     return player;
+    */
 }
 
 // eslint-disable-next-line
