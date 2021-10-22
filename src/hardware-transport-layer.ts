@@ -4,38 +4,38 @@ import { TransportLayer, ClientMessage, MessageHandler, ServerMessage } from "em
 import * as base64 from "base64-js";
 
 export interface Hardware {
-	readConfig(): string;
-	sendMessage(payload: string): void;
-	addKey(key: number, pressed: number, timeMs: number): void;
-	mouseMove(x: number, y: number, timeMs: number): void;
-	mouseButton(button: number, pressed: number, timeMs: number): void;
-	getFramePayload(): string;
-	writeFile(path: string, blob: string): string;
+    readConfig(): string;
+    sendMessage(payload: string): void;
+    addKey(key: number, pressed: number, timeMs: number): void;
+    mouseMove(x: number, y: number, timeMs: number): void;
+    mouseButton(button: number, pressed: number, timeMs: number): void;
+    getFramePayload(): string;
+    writeFile(path: string, blob: string): string;
 }
 
 const textDecoder = new TextDecoder();
 
 class HardwareTransportLayer implements TransportLayer {
     sessionId: string = Date.now() + "";
-	hardware: Hardware;
+    hardware: Hardware;
 
 
     private alive = true;
     private frameWidth = 0;
     private frameHeight = 0;
 
-    private handler: MessageHandler = () => { /**/ };
+    private handler: MessageHandler = () => {/**/};
 
-	constructor(realtime: Hardware) {
-		this.hardware = realtime;
-	}
+    constructor(realtime: Hardware) {
+        this.hardware = realtime;
+    }
 
     callMain() {
         this.hardware.sendMessage("wc-install\n" + this.sessionId + "\n");
         requestAnimationFrame(this.update.bind(this));
     }
 
-	// eslint-disable-next-line
+    // eslint-disable-next-line
     async sendMessageToServer(name: ClientMessage, props?: { [key: string]: any; }) {
         if (props === undefined || props?.sessionId !== this.sessionId) {
             return;
@@ -43,7 +43,7 @@ class HardwareTransportLayer implements TransportLayer {
 
         switch (name) {
             case "wc-run": {
-				let errorMessage = this.hardware.writeFile("bundle_0.zip", encode(props.bundles[0]));
+                let errorMessage = this.hardware.writeFile("bundle_0.zip", encode(props.bundles[0]));
 
                 if (errorMessage.length > 0) {
                     console.error(errorMessage);
@@ -51,7 +51,7 @@ class HardwareTransportLayer implements TransportLayer {
                 }
 
                 if (props.bundles[1] !== undefined) {
-					errorMessage = this.hardware.writeFile("bundle_1.zip", encode(props.bundles[1]));
+                    errorMessage = this.hardware.writeFile("bundle_1.zip", encode(props.bundles[1]));
                     if (errorMessage.length > 0) {
                         console.error(errorMessage);
                         throw new Error(errorMessage);
@@ -103,14 +103,14 @@ class HardwareTransportLayer implements TransportLayer {
         this.alive = false;
     }
 
-	// eslint-disable-next-line
+    // eslint-disable-next-line
     async onServerMessage(name: string, optProps?: { [key: string]: any }) {
         const props = optProps || {};
         switch (name) {
             case "ws-server-ready": {
-				const config = this.hardware.readConfig();
-				this.handler("ws-config", { sessionId: this.sessionId, content: config });
-				// delay ws-server-ready until ws-sound-init
+                const config = this.hardware.readConfig();
+                this.handler("ws-config", { sessionId: this.sessionId, content: config });
+                // delay ws-server-ready until ws-sound-init
             } break;
             case "ws-sound-init": {
                 this.handler(name, props);
@@ -129,9 +129,9 @@ class HardwareTransportLayer implements TransportLayer {
                 props.bundle = decode(props.bundle);
                 this.handler(name, props);
             } break;
-			case "ws-log":
-			case "ws-warn":
-			case "ws-err":
+            case "ws-log":
+            case "ws-warn":
+            case "ws-err":
             case "ws-stdout": {
                 if (props.message !== undefined && props.message !== null && props.message.length > 0) {
                     props.message = textDecoder.decode(decode(props.message));
@@ -178,7 +178,7 @@ class HardwareTransportLayer implements TransportLayer {
             const lastLine = line === this.frameHeight - 1;
 
 
-            if (framePayloadU8[line] === 1 && upBorder === -1){
+            if (framePayloadU8[line] === 1 && upBorder === -1) {
                 upBorder = line;
             } else if ((lastLine || framePayloadU8[line] === 0) && upBorder !== -1) {
                 const downBorder = framePayloadU8[line] === 1 ? line : line - 1;
@@ -201,30 +201,32 @@ class HardwareTransportLayer implements TransportLayer {
 }
 
 export class HardwareTransportLayerFactory {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	private serverMessageHandler: (name: string, props?: { [key: string]: any }) => void = () => { /**/ };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private serverMessageHandler: (name: string, props?: { [key: string]: any }) => void = () => {/**/};
 
-	constructor() {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(window as any).serverMessage = (encoded: string) => {
-			const json = textDecoder.decode(decode(encoded));
+    constructor() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (window as any).serverMessage = (encoded: string) => {
+            const json = textDecoder.decode(decode(encoded));
 
-			try {
-				const data = JSON.parse("{" + json.slice(0, -1) + "}");
-				this.serverMessageHandler(data.name, data);
-			} catch (e) {
-				console.error("Can't parse", json, e);
-				throw e;
-			}
-		};
-	}
+            try {
+                const data = JSON.parse("{" + json.slice(0, -1) + "}");
+                this.serverMessageHandler(data.name, data);
+            } catch (e) {
+                console.error("Can't parse", json, e);
+                throw e;
+            }
+        };
 
-	createTransportLayer = (realtime: Hardware): TransportLayer => {
-		const transport = new HardwareTransportLayer(realtime);
-		this.serverMessageHandler = transport.onServerMessage.bind(transport);
-		transport.callMain();
-		return transport;
-	}
+        this.createTransportLayer = this.createTransportLayer.bind(this);
+    }
+
+    createTransportLayer(realtime: Hardware): TransportLayer {
+        const transport = new HardwareTransportLayer(realtime);
+        this.serverMessageHandler = transport.onServerMessage.bind(transport);
+        transport.callMain();
+        return transport;
+    }
 }
 
 export const hardwareTransportLayerFactory = new HardwareTransportLayerFactory();
@@ -234,5 +236,5 @@ function decode(input: string): Uint8Array {
 }
 
 function encode(input: Uint8Array): string {
-	return base64.fromByteArray(input);
+    return base64.fromByteArray(input);
 }

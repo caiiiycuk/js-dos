@@ -1,181 +1,184 @@
+/* eslint-disable no-invalid-this */
+/* eslint-disable no-tabs */
+/* eslint-disable max-len */
+
 import { activeClass, click, createDiv, disabledClass, goneClass, primaryClass } from "./dom";
 import { DosPlayer, DosPlayerOptions } from "./js-dos-player";
 
 export class Navbar {
+    root: HTMLDivElement;
+    dos: DosPlayer;
 
-	root: HTMLDivElement;
-	dos: DosPlayer;
+    private warnButtonDiv: HTMLDivElement;
+    private settingsButtonDiv: HTMLDivElement;
 
-	private warnButtonDiv: HTMLDivElement;
-	private settingsButtonDiv: HTMLDivElement;
+    constructor(root: HTMLDivElement, dos: DosPlayer, options: DosPlayerOptions) {
+        this.root = root;
+        this.dos = dos;
+        const title = options.title || "JS-DOS";
 
-	constructor(root: HTMLDivElement, dos: DosPlayer, options: DosPlayerOptions) {
-		this.root = root;
-		this.dos = dos;
-		const title = options.title || "JS-DOS";
+        const logoDiv = createDiv("jsdos-player-logo");
+        const titleDiv = this.createTitle(title);
+        const springDiv = createDiv("jsdos-player-spring");
+        const fullscreenButtonDiv = this.createFullScreenButton();
+        const saveButtonDiv = this.createSaveButton();
+        const keyboardButtonDiv = this.createKeyboardButton();
+        const muteButtonDiv = this.createMuteButton();
+        const unmuteButtonDiv = this.createUnmuteButton();
+        const stopButtonDiv = this.createStopButton();
+        const playButtonDiv = this.createPlayButton();
+        const mobileButtonDiv = this.createMobileButton();
+        const dividerDiv = createDiv("jsdos-player-divider");
+        const warnButtonDiv = this.createWarnButton();
+        const settingsButtonDiv = this.createSettingsButton();
 
-		const logoDiv = createDiv("jsdos-player-logo");
-		const titleDiv = this.createTitle(title);
-		const springDiv = createDiv("jsdos-player-spring");
-		const fullscreenButtonDiv = this.createFullScreenButton();
-		const saveButtonDiv = this.createSaveButton();
-		const keyboardButtonDiv = this.createKeyboardButton();
-		const muteButtonDiv = this.createMuteButton();
-		const unmuteButtonDiv = this.createUnmuteButton();
-		const stopButtonDiv = this.createStopButton();
-		const playButtonDiv = this.createPlayButton();
-		const mobileButtonDiv = this.createMobileButton();
-		const dividerDiv = createDiv("jsdos-player-divider");
-		const warnButtonDiv = this.createWarnButton();
-		const settingsButtonDiv = this.createSettingsButton();
+        this.root.appendChild(logoDiv);
+        this.root.appendChild(titleDiv);
+        this.root.appendChild(springDiv);
+        this.root.appendChild(warnButtonDiv);
+        this.root.appendChild(settingsButtonDiv);
+        this.root.appendChild(dividerDiv);
+        this.root.appendChild(mobileButtonDiv);
+        this.root.appendChild(playButtonDiv);
+        this.root.appendChild(stopButtonDiv);
+        this.root.appendChild(unmuteButtonDiv);
+        this.root.appendChild(muteButtonDiv);
+        this.root.appendChild(keyboardButtonDiv);
+        this.root.appendChild(saveButtonDiv);
+        this.root.appendChild(fullscreenButtonDiv);
 
-		this.root.appendChild(logoDiv);
-		this.root.appendChild(titleDiv);
-		this.root.appendChild(springDiv);
-		this.root.appendChild(warnButtonDiv);
-		this.root.appendChild(settingsButtonDiv);
-		this.root.appendChild(dividerDiv);
-		this.root.appendChild(mobileButtonDiv);
-		this.root.appendChild(playButtonDiv);
-		this.root.appendChild(stopButtonDiv);
-		this.root.appendChild(unmuteButtonDiv);
-		this.root.appendChild(muteButtonDiv);
-		this.root.appendChild(keyboardButtonDiv);
-		this.root.appendChild(saveButtonDiv);
-		this.root.appendChild(fullscreenButtonDiv);
+        click(fullscreenButtonDiv, this.onFullscreen);
+        click(saveButtonDiv, this.onSave);
+        click(keyboardButtonDiv, this.onKeyboard);
+        click(muteButtonDiv, (el) => this.onMute(el, unmuteButtonDiv));
+        click(unmuteButtonDiv, (el) => this.onUnmute(el, muteButtonDiv));
+        click(stopButtonDiv, (el) => this.onStop(el, playButtonDiv));
+        click(playButtonDiv, (el) => this.onPlay(el, stopButtonDiv));
+        click(mobileButtonDiv, this.onMobileControls);
+        click(warnButtonDiv, () => this.onToggleSettings(warnButtonDiv, settingsButtonDiv));
+        click(settingsButtonDiv, () => this.onToggleSettings(warnButtonDiv, settingsButtonDiv));
 
-		click(fullscreenButtonDiv, this.onFullscreen);
-		click(saveButtonDiv, this.onSave);
-		click(keyboardButtonDiv, this.onKeyboard);
-		click(muteButtonDiv, (el) => this.onMute(el, unmuteButtonDiv));
-		click(unmuteButtonDiv, (el) => this.onUnmute(el, muteButtonDiv));
-		click(stopButtonDiv, (el) => this.onStop(el, playButtonDiv));
-		click(playButtonDiv, (el) => this.onPlay(el, stopButtonDiv));
-		click(mobileButtonDiv, this.onMobileControls);
-		click(warnButtonDiv, () => this.onToggleSettings(warnButtonDiv, settingsButtonDiv));
-		click(settingsButtonDiv, () => this.onToggleSettings(warnButtonDiv, settingsButtonDiv));
+        this.dos.layers.setOnSaveStarted(() => {
+            saveButtonDiv.classList.add(disabledClass);
+            titleDiv.innerText = "Saving...";
+        });
 
-		this.dos.layers.setOnSaveStarted(() => {
-			saveButtonDiv.classList.add(disabledClass);
-			titleDiv.innerText = "Saving...";
-		});
+        this.dos.layers.setOnSaveEnded(() => {
+            saveButtonDiv.classList.remove(disabledClass);
+            titleDiv.innerText = title;
+        });
 
-		this.dos.layers.setOnSaveEnded(() => {
-			saveButtonDiv.classList.remove(disabledClass);
-			titleDiv.innerText = title;
-		});
+        this.dos.layers.setOnKeyboardVisibility((visible) => {
+            if (visible) {
+                keyboardButtonDiv.classList.add(primaryClass);
+            } else {
+                keyboardButtonDiv.classList.remove(primaryClass);
+            }
+        });
 
-		this.dos.layers.setOnKeyboardVisibility((visible) => {
-			if (visible) {
-				keyboardButtonDiv.classList.add(primaryClass);
-			} else {
-				keyboardButtonDiv.classList.remove(primaryClass);
-			}
-		});
+        this.dos.layers.setOnFullscreen((fullscreen) => {
+            if (fullscreen) {
+                this.root.classList.add(goneClass);
+            } else {
+                this.root.classList.remove(goneClass);
+            }
+        });
 
-		this.dos.layers.setOnFullscreen((fullscreen) => {
-			if (fullscreen) {
-				this.root.classList.add(goneClass);
-			} else {
-				this.root.classList.remove(goneClass);
-			}
-		});
+        const onMobileControlsChanged = (visible: boolean) => {
+            if (visible) {
+                mobileButtonDiv.classList.add(primaryClass);
+            } else {
+                mobileButtonDiv.classList.remove(primaryClass);
+            }
+        };
 
-		const onMobileControlsChanged = (visible: boolean) => {
-			if (visible) {
-				mobileButtonDiv.classList.add(primaryClass);
-			} else {
-				mobileButtonDiv.classList.remove(primaryClass);
-			}
-		};
+        this.dos.setOnMobileControlsChanged(onMobileControlsChanged);
+        onMobileControlsChanged(this.dos.mobileControls);
 
-		this.dos.setOnMobileControlsChanged(onMobileControlsChanged);
-		onMobileControlsChanged(this.dos.mobileControls);
+        this.warnButtonDiv = warnButtonDiv;
+        this.settingsButtonDiv = settingsButtonDiv;
+    }
 
-		this.warnButtonDiv = warnButtonDiv;
-		this.settingsButtonDiv = settingsButtonDiv;
-	}
+    onFullscreen = (): void => {
+        this.dos.layers.toggleFullscreen();
+    };
 
-	onFullscreen = (): void => {
-		this.dos.layers.toggleFullscreen();
-	};
+    onSave = (): void => {
+        this.dos.layers.save();
+    };
 
-	onSave = (): void => {
-		this.dos.layers.save();
-	};
+    onKeyboard = (): void => {
+        this.dos.layers.toggleKeyboard();
+    }
 
-	onKeyboard = (): void => {
-		this.dos.layers.toggleKeyboard();
-	}
+    onMute = (el: HTMLElement, unmute: HTMLElement): void => {
+        this.dos.ciPromise?.then((ci) => {
+            el.classList.add(goneClass);
+            unmute.classList.remove(goneClass);
+            ci.mute();
+        });
+    }
 
-	onMute = (el: HTMLElement, unmute: HTMLElement): void => {
-		this.dos.ciPromise?.then((ci) => {
-			el.classList.add(goneClass);
-			unmute.classList.remove(goneClass);
-			ci.mute();
-		});
-	}
+    onUnmute = (el: HTMLElement, mute: HTMLElement): void => {
+        this.dos.ciPromise?.then((ci) => {
+            el.classList.add(goneClass);
+            mute.classList.remove(goneClass);
+            ci.unmute();
+        });
+    }
 
-	onUnmute = (el: HTMLElement, mute: HTMLElement): void => {
-		this.dos.ciPromise?.then((ci) => {
-			el.classList.add(goneClass);
-			mute.classList.remove(goneClass);
-			ci.unmute();
-		});
-	}
+    onPlay = (el: HTMLElement, stop: HTMLElement): void => {
+        this.dos.ciPromise?.then((ci) => {
+            el.classList.add(goneClass);
+            stop.classList.remove(goneClass);
+            ci.resume();
+        });
+    }
 
-	onPlay = (el: HTMLElement, stop: HTMLElement): void => {
-		this.dos.ciPromise?.then((ci) => {
-			el.classList.add(goneClass);
-			stop.classList.remove(goneClass);
-			ci.resume();
-		});
-	}
+    onStop = (el: HTMLElement, play: HTMLElement): void => {
+        this.dos.ciPromise?.then((ci) => {
+            el.classList.add(goneClass);
+            play.classList.remove(goneClass);
+            ci.pause();
+        });
+    }
 
-	onStop = (el: HTMLElement, play: HTMLElement): void => {
-		this.dos.ciPromise?.then((ci) => {
-			el.classList.add(goneClass);
-			play.classList.remove(goneClass);
-			ci.pause();
-		});
-	}
+    onMobileControls = (): void => {
+        if (this.dos.mobileControls) {
+            this.dos.disableMobileControls();
+        } else {
+            this.dos.enableMobileControls();
+        }
+    }
 
-	onMobileControls = (): void => {
-		if (this.dos.mobileControls) {
-			this.dos.disableMobileControls();
-		} else {
-			this.dos.enableMobileControls();
-		}
-	}
+    onToggleSettings = (warnButton: HTMLDivElement, settingsButton: HTMLDivElement): void => {
+        if (settingsButton.classList.contains(activeClass)) {
+            warnButton.classList.remove(activeClass);
+            settingsButton.classList.remove(activeClass);
+            this.dos.settings.hide();
+        } else {
+            warnButton.classList.add(activeClass);
+            settingsButton.classList.add(activeClass);
+            this.dos.settings.show();
+        }
+    }
 
-	onToggleSettings = (warnButton: HTMLDivElement, settingsButton: HTMLDivElement): void => {
-		if (settingsButton.classList.contains(activeClass)) {
-			warnButton.classList.remove(activeClass);
-			settingsButton.classList.remove(activeClass);
-			this.dos.settings.hide();
-		} else {
-			warnButton.classList.add(activeClass);
-			settingsButton.classList.add(activeClass);
-			this.dos.settings.show();
-		}
-	}
+    showWarn(): void {
+        this.warnButtonDiv.classList.remove(goneClass);
+        this.settingsButtonDiv.classList.add(goneClass);
+    }
 
-	showWarn(): void {
-		this.warnButtonDiv.classList.remove(goneClass);
-		this.settingsButtonDiv.classList.add(goneClass);
-	}
+    hideWarn(): void {
+        this.warnButtonDiv.classList.add(goneClass);
+        this.settingsButtonDiv.classList.remove(goneClass);
+    }
 
-	hideWarn(): void {
-		this.warnButtonDiv.classList.add(goneClass);
-		this.settingsButtonDiv.classList.remove(goneClass);
-	}
+    private createTitle(title: string): HTMLDivElement {
+        return createDiv("jsdos-player-title", title);
+    }
 
-	private createTitle(title: string): HTMLDivElement {
-		return createDiv("jsdos-player-title", title);
-	}
-	
-	private createFullScreenButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+    private createFullScreenButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="maximize" class="jsdos-player-icon jsdos-player-icon-maximize">
 				<svg data-icon="maximize" width="16" height="16" viewBox="0 0 16 16">
 					<desc>maximize</desc>
@@ -183,11 +186,11 @@ export class Navbar {
 					</path>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createSaveButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+    private createSaveButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="save" class="jsdos-player-icon jsdos-player-icon-save">
 				<svg data-icon="save" width="16" height="16" viewBox="0 0 16 16">
 					<desc>save</desc>
@@ -195,11 +198,11 @@ export class Navbar {
 					</path>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createKeyboardButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+    private createKeyboardButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="keyboard" class="jsdos-player-icon jsdos-player-icon-keyboard">
 				<svg data-icon="keyboard" width="16" height="16" viewBox="0 0 16 16">
 					<desc>keyboard</desc>
@@ -207,11 +210,11 @@ export class Navbar {
 					</path>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createMuteButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+    private createMuteButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="mute" class="jsdos-player-icon jsdos-player-icon-mute">
 				<svg data-icon="mute" width="16" height="16" viewBox="0 0 16 16">
 					<desc>mute</desc>
@@ -219,11 +222,11 @@ export class Navbar {
 					</path>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createUnmuteButton(): HTMLDivElement {
-		return createDiv(["jsdos-player-button", goneClass], `
+    private createUnmuteButton(): HTMLDivElement {
+        return createDiv(["jsdos-player-button", goneClass], `
 			<span icon="unmute" class="jsdos-player-icon jsdos-player-icon-unmute">
 				<svg data-icon="unmute" width="16" height="16" viewBox="0 0 16 16">
 					<desc>unmute</desc>
@@ -231,11 +234,11 @@ export class Navbar {
 					</path>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createStopButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+    private createStopButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="stop" class="jsdos-player-icon jsdos-player-icon-stop">
 				<svg data-icon="stop" width="16" height="16" viewBox="0 0 16 16">
 					<desc>stop</desc>
@@ -243,11 +246,11 @@ export class Navbar {
 					</path>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createPlayButton(): HTMLDivElement {
-		return createDiv(["jsdos-player-button", goneClass], `
+    private createPlayButton(): HTMLDivElement {
+        return createDiv(["jsdos-player-button", goneClass], `
 			<span icon="play" class="jsdos-player-icon jsdos-player-icon-play">
 				<svg data-icon="play" width="16" height="16" viewBox="0 0 16 16">
 					<desc>play</desc>
@@ -255,12 +258,12 @@ export class Navbar {
 					</path>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
 
-	private createMobileButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+    private createMobileButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="mobile" class="jsdos-player-icon jsdos-player-icon-mobile">
 				<svg data-icon="mobile" width="16" height="16" viewBox="0 0 16 16">
 					<desc>mobile</desc>
@@ -268,11 +271,11 @@ export class Navbar {
 					</path>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createWarnButton(): HTMLDivElement {
-		return createDiv(["jsdos-player-button", goneClass], `
+    private createWarnButton(): HTMLDivElement {
+        return createDiv(["jsdos-player-button", goneClass], `
 			<span icon="warn" class="jsdos-player-icon jsdos-player-icon-warn">
 				<svg data-icon="warn" width="16" height="16" viewBox="0 0 16 16">
 					<desc>warn</desc>
@@ -281,11 +284,11 @@ export class Navbar {
 						c0.55,0,1-0.45,1-1C15.99,13.81,15.93,13.65,15.84,13.5z M8.99,12.99h-2v-2h2V12.99z M8.99,9.99h-2v-5h2V9.99z"/>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createSettingsButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+    private createSettingsButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="settings" class="jsdos-player-icon jsdos-player-icon-settings">
 				<svg data-icon="settings" width="16" height="16" viewBox="0 0 16 16">
 					<desc>settings</desc>
@@ -300,7 +303,6 @@ export class Navbar {
 						c-1.66,0-3-1.34-3-3s1.34-3,3-3s3,1.34,3,3S9.65,10.99,7.99,10.99z"/>
 				</svg>
 			</span>
-		`)
-	}
-
+		`);
+    }
 }

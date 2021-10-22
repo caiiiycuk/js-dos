@@ -38,5 +38,6 @@
             "error",
             120
         ]
-    }
+    },
+    "ignorePatterns": ["dist/**/*"]
 }

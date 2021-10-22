@@ -20,7 +20,7 @@ function finalize() {
 function concatCss() {
     return src([
         "node_modules/emulators-ui/dist/emulators-ui.css",
-        "src/js-dos-player.css"
+        "src/js-dos-player.css",
     ])
         .pipe(concat("js-dos.css"))
         .pipe(size({ showFiles: true, showTotal: false }))
@@ -42,7 +42,7 @@ function concatJs() {
         "node_modules/emulators-ui/dist/emulators-ui.js",
         "node_modules/emulators/dist/emulators.js",
         "zip.js/zip-no-worker-inflate.min.js",
-        "dist/player.js"
+        "dist/player.js",
     ])
         .pipe(sourcemaps.init({ loadMaps: true }))
         .pipe(concat("js-dos.js"))
