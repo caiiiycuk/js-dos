@@ -2,7 +2,7 @@ module.exports = {
     purge: [
         "src/**/*.ts",
     ],
-    darkMode: "class",
+    darkMode: false,
     theme: {
         extend: {},
     },
