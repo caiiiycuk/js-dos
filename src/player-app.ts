@@ -5,6 +5,7 @@ import { useState } from "preact/hooks";
 import { html } from "./dom";
 
 import { ActionButton } from "./components/action-button";
+import { SideBar } from "./components/sidebar";
 
 export interface Props {
     sideBar: boolean;
@@ -14,7 +15,7 @@ export interface Props {
 }
 
 export function PlayerApp(_: {}) {
-    const [sideBar, setSideBar] = useState<boolean>(false);
+    const [sideBar, setSideBar] = useState<boolean>(true);
 
     const props: Props = {
         sideBar,
@@ -25,6 +26,7 @@ export function PlayerApp(_: {}) {
     return html`
     <div class="jsdos-player-app-root absolute left-0 bottom-0 right-0 top-0">
         <${ActionButton} ...${props} />
+        <${SideBar} ...${props} />
     </div>
     `;
 }
