@@ -1,9 +1,7 @@
 import { DosInstance, DosFactoryType, DosOptions } from "emulators-ui/dist/types/js-dos";
-import { Navbar } from "./js-dos-navbar";
 import { createDiv } from "./dom";
 import { Hardware, hardwareTransportLayerFactory } from "./hardware-transport-layer";
-import { Settings } from "./js-dos-settings";
-import { getPersonalBundleUrl, putPersonalBundle } from "./js-dos-personal";
+import { getPersonalBundleUrl, putPersonalBundle } from "./personal";
 
 import { createPlayerApp } from "./player-app";
 
@@ -18,18 +16,15 @@ export interface ClientId {
 
 export type ClientIdSupplier = (userGesture: boolean) => Promise<ClientId | null>;
 
-export interface DosPlayerOptions extends DosOptions {
-    title?: string;
-    style?: "default" | "dark" | "none";
-    hardware?: Hardware;
-    clientId?: ClientIdSupplier;
+export interface DosPlayer extends DosInstance {
+    bundleUrl: string | null;
 }
 
-export interface DosPlayer extends DosInstance {
-    navbar: Navbar;
-    settings: Settings;
-    requestClientId(userGesture: boolean): Promise<ClientId | null>;
-    bundleUrl: string | null;
+export interface DosPlayerOptions extends DosOptions {
+    title?: string;
+    style?: "default" | "none";
+    hardware?: Hardware;
+    clientId?: ClientIdSupplier;
 }
 
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;
@@ -38,29 +33,22 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
     options = options || {};
 
     if (options.style === "none") {
-        console.warn("If you don't need the jsdos topbar, please use emulatros + emulators-ui instead");
+        console.warn("If you don't need the jsdos services, please use emulatros + emulators-ui instead");
         return dosImpl(root, options || {}) as DosPlayer;
     }
 
-    if (options.style === "dark") {
-        root.classList.add("jsdos-player-dark");
-    }
+    root.classList.add("flex");
+    root.classList.add("flex-col");
 
-    root.classList.add("jsdos-player-root");
-    const appRoot = createDiv("jsdos-player-app-root");
-    createPlayerApp(appRoot);
-    root.appendChild(appRoot);
+    const row = createDiv(["relative", "flex", "flex-grow", "overflow-hidden"]);
+    const window = createDiv("flex-grow");
+    const appRoot = createDiv("flex-grow-0");
+    const keyboard = createDiv("flex-grow-0");
 
-    return undefined as any;// dosImpl(root, options || {}) as DosPlayer;
-/*
-    const navbar = createDiv("jsdos-player-navbar");
-    const window = createDiv("jsdos-player-window");
-    const settings = createDiv("jsdos-player-settings");
-    const keyboard = createDiv("jsdos-player-keyboard");
+    row.appendChild(window);
+    row.appendChild(appRoot);
 
-    root.appendChild(navbar);
-    root.appendChild(window);
-    root.appendChild(settings);
+    root.appendChild(row);
     root.appendChild(keyboard);
 
     options.layersOptions = options.layersOptions || {};
@@ -75,24 +63,16 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
         options.emulatorFunction = "backend";
     }
 
-    const player = dosImpl(window, options) as DosPlayer;
-    player.bundleUrl = null;
-    player.navbar = new Navbar(navbar, player, options);
-    player.settings = new Settings(settings, player, options);
-    player.requestClientId = async (userGesture: boolean) => {
-        if (options?.clientId === undefined) {
-            return null;
-        }
 
-        const clientId = await options.clientId(userGesture);
-        clientId === null ? player.navbar.showWarn() : player.navbar.hideWarn();
-        player.settings.updateClientId(clientId);
-        return clientId;
-    };
+    const player = dosImpl(window, options) as DosPlayer;
+    createPlayerApp(appRoot, player, options);
+
+    player.bundleUrl = null;
 
     const runFn = player.run;
     player.run = async (bundleUrl: string, optionalChangesUrl?: string, optionalPersistKey?: string) => {
-        const clientId = await player.requestClientId(false);
+        const getClientId = () => options?.clientId !== undefined ? options.clientId(false) : null;
+        const clientId = await getClientId();
         if (optionalChangesUrl === undefined && optionalPersistKey === undefined && clientId !== null) {
             optionalChangesUrl = getPersonalBundleUrl(clientId.namespace, clientId.id, bundleUrl) + "?dt=" + Date.now();
         }
@@ -102,7 +82,7 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 
         const saveFn = player.layers.getOnSave();
         player.layers.setOnSave(async () => {
-            const clientId = await player.requestClientId(false);
+            const clientId = await getClientId();
             if (clientId !== null) {
                 const data = await ci.persist();
                 return putPersonalBundle(clientId.namespace, clientId.id, bundleUrl, data);
@@ -119,11 +99,8 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
         player.bundleUrl = null;
         return stopFn.call(player);
     };
-
-    player.requestClientId(false);
-
+    
     return player;
-    */
 }
 
 // eslint-disable-next-line

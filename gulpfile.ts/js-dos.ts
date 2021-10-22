@@ -2,7 +2,7 @@ import { src, dest, series, parallel } from "gulp";
 import size from "gulp-size";
 import sourcemaps from "gulp-sourcemaps";
 
-import { playerJs as playerJs } from "./js-dos-player";
+import { playerJs as playerJs } from "./player";
 
 import del from "del";
 

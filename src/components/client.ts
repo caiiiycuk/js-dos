@@ -1,8 +1,6 @@
 import { html } from "../dom";
 import { Icons } from "../icons";
 
-import { Props } from "../player-app";
-
 export function Client(props: { class?: string }) {
     return html`
     <div class="flex flex-row justify-center ${props.class}">
