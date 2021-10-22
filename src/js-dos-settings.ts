@@ -1,134 +1,141 @@
+/* eslint-disable max-len */
+/* eslint-disable no-tabs */
+
 import { click, createDiv, disabledClass, downloadFile, goneClass } from "./dom";
 import { putPersonalBundle } from "./js-dos-personal";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./js-dos-player";
 
 export class Settings {
-	root: HTMLDivElement;
-	dos: DosPlayer;
-	updateClientId: (clientId: ClientId | null) => void;
+    root: HTMLDivElement;
+    dos: DosPlayer;
+    updateClientId: (clientId: ClientId | null) => void;
 
-	constructor(root: HTMLDivElement, dos: DosPlayer, options: DosPlayerOptions) {
-		this.root = root;
-		this.dos = dos;
-		this.root.classList.add(goneClass);
+    constructor(root: HTMLDivElement, dos: DosPlayer, options: DosPlayerOptions) {
+        this.root = root;
+        this.dos = dos;
+        this.root.classList.add(goneClass);
 
-		const clientIdHeader = document.createElement("h2");
-		clientIdHeader.innerText = "ClientId";
+        const clientIdHeader = document.createElement("h2");
+        clientIdHeader.innerText = "ClientId";
 
-		const clientIdRow = createDiv("jsdos-player-client-id-row");
-		const clientIdInfo = createDiv("jsdos-player-client-id-info", `
+        const clientIdRow = createDiv("jsdos-player-client-id-row");
+        const clientIdInfo = createDiv("jsdos-player-client-id-info", `
 			By default js-dos store your game progress in indexed db. This data can be suddenly wiped. Please log-in to store progress on backend, and
 			activate all other features.
 		`);
-		const clientIdLogin = this.createLoginButton();
-		const clientIdText = createDiv("jsdos-player-client-id");
-		const download = this.createDownloadButton();
-		const divider = createDiv("jsdos-player-divider");
-		const uploadRow = createDiv("jsdos-player-upload-row");
-		const upload = this.createUploadButton();
-		const uploadInput = this.createUploadInput();
+        const clientIdLogin = this.createLoginButton();
+        const clientIdText = createDiv("jsdos-player-client-id");
+        const download = this.createDownloadButton();
+        const divider = createDiv("jsdos-player-divider");
+        const uploadRow = createDiv("jsdos-player-upload-row");
+        const upload = this.createUploadButton();
+        const uploadInput = this.createUploadInput();
 
-		this.root.appendChild(clientIdHeader);
-		this.root.appendChild(clientIdRow);
-		this.root.appendChild(clientIdInfo);
+        this.root.appendChild(clientIdHeader);
+        this.root.appendChild(clientIdRow);
+        this.root.appendChild(clientIdInfo);
 
-		clientIdRow.appendChild(clientIdLogin);
-		clientIdRow.appendChild(clientIdText);
-		
-		if (options.hardware === undefined) {
-			clientIdRow.appendChild(download);
-			clientIdRow.appendChild(divider);
-			clientIdRow.appendChild(uploadRow);
+        clientIdRow.appendChild(clientIdLogin);
+        clientIdRow.appendChild(clientIdText);
 
-			uploadRow.appendChild(upload);
-			uploadRow.appendChild(uploadInput);
-		}
+        if (options.hardware === undefined) {
+            clientIdRow.appendChild(download);
+            clientIdRow.appendChild(divider);
+            clientIdRow.appendChild(uploadRow);
 
-		click(clientIdLogin, this.onClientIdLogin);
-		click(clientIdText, this.onClientIdLogin);
-		click(download, this.onDownload);
-		click(upload, () => this.onUpload(upload, uploadInput));
+            uploadRow.appendChild(upload);
+            uploadRow.appendChild(uploadInput);
+        }
 
-		this.updateClientId = (clientId) => {
-			if (clientId === null) {
-				clientIdLogin.classList.remove(goneClass);
-				clientIdLogin.classList.add("jsdos-player-color-warn");
-				clientIdText.classList.add("jsdos-player-color-warn");
-				clientIdText.innerText = "Log in";
-				download.classList.add(goneClass);
-				divider.classList.add(goneClass);
-				upload.classList.add(goneClass);
-				uploadInput.classList.add(goneClass);
-			} else {
-				clientIdLogin.classList.add(goneClass);
-				clientIdText.classList.remove("jsdos-player-color-warn");
-				clientIdText.innerText = clientId.id + "@" + clientId.namespace;
-				download.classList.remove(goneClass);
-				divider.classList.remove(goneClass);
-				upload.classList.remove(goneClass);
-				uploadInput.classList.remove(goneClass);
-			}
-		}
-	}
+        click(clientIdLogin, this.onClientIdLogin);
+        click(clientIdText, this.onClientIdLogin);
+        click(download, this.onDownload);
+        click(upload, () => this.onUpload(upload, uploadInput));
 
-	onClientIdLogin = (): void => {
-		this.dos.requestClientId(true);
-	}
+        this.updateClientId = (clientId) => {
+            if (clientId === null) {
+                clientIdLogin.classList.remove(goneClass);
+                clientIdLogin.classList.add("jsdos-player-color-warn");
+                clientIdText.classList.add("jsdos-player-color-warn");
+                clientIdText.innerText = "Log in";
+                download.classList.add(goneClass);
+                divider.classList.add(goneClass);
+                upload.classList.add(goneClass);
+                uploadInput.classList.add(goneClass);
+            } else {
+                clientIdLogin.classList.add(goneClass);
+                clientIdText.classList.remove("jsdos-player-color-warn");
+                clientIdText.innerText = clientId.id + "@" + clientId.namespace;
+                download.classList.remove(goneClass);
+                divider.classList.remove(goneClass);
+                upload.classList.remove(goneClass);
+                uploadInput.classList.remove(goneClass);
+            }
+        };
 
-	show(): void {
-		this.root.classList.remove(goneClass);
-	}
+        this.onClientIdLogin = this.onClientIdLogin.bind(this);
+        this.onDownload = this.onDownload.bind(this);
+        this.onUpload = this.onUpload.bind(this);
+    }
 
-	hide(): void {
-		this.root.classList.add(goneClass);
-	}
+    onClientIdLogin(): void {
+        this.dos.requestClientId(true);
+    }
 
-	onDownload = async (el: HTMLElement): Promise<void> => {
-		if (!this.dos.ciPromise) {
-			return;
-		}
+    show(): void {
+        this.root.classList.remove(goneClass);
+    }
 
-		el.classList.add(disabledClass);
-		try {
-			const ci = await this.dos.ciPromise;
-			const changes = await ci.persist();
-			downloadFile(changes, "saves.zip", "application/zip");
-		} finally {
-			el.classList.remove(disabledClass);
-		}
-	}
+    hide(): void {
+        this.root.classList.add(goneClass);
+    }
 
-	onUpload = async (el: HTMLDivElement, input: HTMLInputElement): Promise<void> => {
-		const bundleUrl = this.dos.bundleUrl;
-		const files = input.files;
-		if (bundleUrl === null || files === null || files.length !== 1) {
-			return;
-		}
+    async onDownload(el: HTMLElement): Promise<void> {
+        if (!this.dos.ciPromise) {
+            return;
+        }
 
-		const file = files[0];
+        el.classList.add(disabledClass);
+        try {
+            const ci = await this.dos.ciPromise;
+            const changes = await ci.persist();
+            downloadFile(changes, "saves.zip", "application/zip");
+        } finally {
+            el.classList.remove(disabledClass);
+        }
+    }
 
-		el.classList.add(disabledClass);
-		try {
-			const data = new Uint8Array(await file.arrayBuffer());
-			const clientId = await this.dos.requestClientId(false);
-			if (clientId === null) {
-				return;
-			}
+    async onUpload(el: HTMLDivElement, input: HTMLInputElement): Promise<void> {
+        const bundleUrl = this.dos.bundleUrl;
+        const files = input.files;
+        if (bundleUrl === null || files === null || files.length !== 1) {
+            return;
+        }
 
-			if (data.length > 5 * 1024 * 1024) {
-				alert("File is too big");
-				return;
-			}
+        const file = files[0];
 
-			await putPersonalBundle(clientId.namespace, clientId.id, bundleUrl, data);
-			alert("Uploaded");
-		} finally {
-			el.classList.remove(disabledClass);
-		}
-	}
+        el.classList.add(disabledClass);
+        try {
+            const data = new Uint8Array(await file.arrayBuffer());
+            const clientId = await this.dos.requestClientId(false);
+            if (clientId === null) {
+                return;
+            }
 
-	private createLoginButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+            if (data.length > 5 * 1024 * 1024) {
+                alert("File is too big");
+                return;
+            }
+
+            await putPersonalBundle(clientId.namespace, clientId.id, bundleUrl, data);
+            alert("Uploaded");
+        } finally {
+            el.classList.remove(disabledClass);
+        }
+    }
+
+    private createLoginButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="login" class="jsdos-player-icon jsdos-player-icon-login jsdos-player-icon-warn">
 				<svg data-icon="settings" width="16" height="16" viewBox="0 0 16 16">
 					<desc>login</desc>
@@ -138,11 +145,11 @@ export class Settings {
 						c-0.55,0-1,0.45-1,1c0,0.55,0.45,1,1,1h6c0.55,0,1-0.45,1-1V1C16,0.45,15.55,0,15,0z"/>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createDownloadButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+    private createDownloadButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="download" class="jsdos-player-icon jsdos-player-icon-download">
 				<svg data-icon="download" width="16" height="16" viewBox="0 0 16 16">
 					<desc>download</desc>
@@ -154,11 +161,11 @@ export class Settings {
 						C10.87,9.02,10.94,9,11,9c1.48,0,2.7,1.07,2.95,2.47C15.17,10.79,16,9.5,16,8C16,5.79,14.21,4,12,4z"/>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createUploadButton(): HTMLDivElement {
-		return createDiv("jsdos-player-button", `
+    private createUploadButton(): HTMLDivElement {
+        return createDiv("jsdos-player-button", `
 			<span icon="upload" class="jsdos-player-icon jsdos-player-icon-upload">
 				<svg data-icon="upload" width="16" height="16" viewBox="0 0 16 16">
 					<desc>upload</desc>
@@ -170,13 +177,13 @@ export class Settings {
 						C13.66,9.42,14,10.17,14,11c0,0.16-0.02,0.32-0.05,0.47C15.17,10.78,16,9.5,16,8C16,5.79,14.21,4,12,4z"/>
 				</svg>
 			</span>
-		`)
-	}
+		`);
+    }
 
-	private createUploadInput(): HTMLInputElement {
-		const input = document.createElement("input");
-		input.classList.add("jsdos-upload-file");
-		input.type = "file";
-		return input;
-	}
+    private createUploadInput(): HTMLInputElement {
+        const input = document.createElement("input");
+        input.classList.add("jsdos-upload-file");
+        input.type = "file";
+        return input;
+    }
 }

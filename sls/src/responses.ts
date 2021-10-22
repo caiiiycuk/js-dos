@@ -23,6 +23,6 @@ function response200(body: any, success: boolean) {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Credentials": true,
         },
-        body: JSON.stringify(body, null, 2)
+        body: JSON.stringify(body, null, 2),
     };
 }

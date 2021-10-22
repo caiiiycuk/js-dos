@@ -32,4 +32,4 @@ export const personalPut: Handler = async (event: any) => {
     }).promise();
 
     return success({ payload: result.Payload });
-}
+};

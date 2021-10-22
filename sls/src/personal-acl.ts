@@ -30,4 +30,4 @@ export const personalAcl: Handler = async (event: any) => {
     }).promise();
 
     return success({});
-}
+};

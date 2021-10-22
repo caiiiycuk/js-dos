@@ -1,6 +1,4 @@
-import * as fs from "fs";
-
-import { src, dest, series } from "gulp";
+import { dest } from "gulp";
 
 import sourcemaps from "gulp-sourcemaps";
 import terser from "gulp-terser";
@@ -17,7 +15,7 @@ export function playerJs() {
         debug: true,
         entries: ["src/js-dos-player.ts"],
         cache: {},
-        packageCache: {}
+        packageCache: {},
     })
         .plugin(tsify, {
             "target": "esnext",
