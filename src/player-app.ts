@@ -5,18 +5,35 @@ import { useEffect, useState } from "preact/hooks";
 import { html } from "./dom";
 
 import { ActionButton } from "./components/action-button";
+import { ActionBar } from "./components/action-bar";
 import { SideBar } from "./components/sidebar";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 
 export interface Props {
+    portrait: boolean;
     player: () => DosPlayer;
     options: () => DosPlayerOptions;
 
     clientId: ClientId | null,
     setClientId: (clientId: ClientId | null) => void,
 
+    mobileControls: boolean;
+    setMobileControls: (controls: boolean) => void;
+
     keyboard: boolean;
     toggleKeyboard: () => void;
+
+    fullscreen: boolean;
+    toggleFullscreen: () => void;
+
+    pause: boolean;
+    setPause: (pause: boolean) => void;
+
+    mute: boolean;
+    setMute: (mute: boolean) => void;
+
+    actionBar: boolean;
+    setActionBar: (actionBar: boolean) => void
 
     sideBar: boolean;
     openSideBar: () => void;
@@ -27,22 +44,78 @@ export function PlayerApp(playerProps: {
     player: () => DosPlayer,
     options: () => DosPlayerOptions,
 }) {
+    const [portrait, setPortrait] = useState<boolean>(isPortrait());
     const [clientId, setClientId] = useState<ClientId | null>(null);
-    const [sideBar, setSideBar] = useState<boolean>(true);
+    const [sideBar, setSideBar] = useState<boolean>(false);
+    const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
     const [keyboard, setKeyboard] = useState<boolean>(playerProps.player().layers.keyboardVisible);
+    const [pause, setPause] = useState<boolean>(false);
+    const [mute, setMute] = useState<boolean>(false);
+    const [fullscreen, setFullscreen] = useState<boolean>(playerProps.player().layers.fullscreen);
+    const [actionBar, setActionBar] = useState<boolean>(true);
+
+    useEffect(() => {
+        const listener = () => {
+            const newValue = isPortrait();
+            if (newValue !== portrait) {
+                setPortrait(newValue);
+            }
+        };
+
+        window.addEventListener("resize", listener);
+        return () => window.removeEventListener("resize", listener);
+    }, [portrait, setPortrait]);
 
     const props: Props = {
+        portrait,
         player: playerProps.player,
         options: playerProps.options,
 
         clientId,
         setClientId,
 
+        mobileControls,
+        setMobileControls: (controls: boolean) => {
+            controls ?
+                playerProps.player().enableMobileControls() :
+                playerProps.player().disableMobileControls();
+            setMobileControls(controls);
+        },
+
         keyboard,
         toggleKeyboard: () => {
+            setKeyboard(!playerProps.player().layers.keyboardVisible);
             playerProps.player().layers.toggleKeyboard();
-            setKeyboard(playerProps.player().layers.keyboardVisible);
         },
+
+        fullscreen,
+        toggleFullscreen: () => {
+            const newFullscreen = !playerProps.player().layers.fullscreen;
+            setFullscreen(newFullscreen);
+            if (!actionBar && !newFullscreen) {
+                setActionBar(true);
+            }
+            playerProps.player().layers.toggleFullscreen();
+        },
+
+        pause,
+        setPause: (pause: boolean) => {
+            playerProps.player().ciPromise?.then((ci) => {
+                pause ? ci.pause() : ci.resume();
+                setPause(pause);
+            }).catch(console.error);
+        },
+
+        mute,
+        setMute: (mute: boolean) => {
+            playerProps.player().ciPromise?.then((ci) => {
+                mute ? ci.mute() : ci.unmute();
+                setMute(mute);
+            }).catch(console.error);
+        },
+
+        actionBar,
+        setActionBar,
 
         sideBar,
         openSideBar: () => setSideBar(true),
@@ -50,9 +123,10 @@ export function PlayerApp(playerProps: {
     };
 
     return html`
-    <div>
+    <div class="h-full">
         <${ActionButton} ...${props} />
         <${SideBar} ...${props} />
+        <${ActionBar} ...${props} />
     </div>
     `;
 }
@@ -60,5 +134,10 @@ export function PlayerApp(playerProps: {
 export function createPlayerApp(root: HTMLDivElement,
                                 player: DosPlayer,
                                 options: DosPlayerOptions) {
-    render(html`<${PlayerApp} player=${() => player} options=${() => options} />`, root);
+    render(html`<${PlayerApp} player=${()=> player} options=${() => options} />`, root);
+}
+
+
+function isPortrait() {
+    return window.innerWidth / window.innerHeight < 1.6;
 }

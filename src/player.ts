@@ -45,8 +45,8 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
     const appRoot = createDiv("flex-grow-0");
     const keyboard = createDiv("flex-grow-0");
 
-    row.appendChild(window);
     row.appendChild(appRoot);
+    row.appendChild(window);
 
     root.appendChild(row);
     root.appendChild(keyboard);
@@ -99,7 +99,7 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
         player.bundleUrl = null;
         return stopFn.call(player);
     };
-    
+
     return player;
 }
 

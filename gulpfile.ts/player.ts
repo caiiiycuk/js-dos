@@ -14,8 +14,6 @@ export function playerJs() {
     return browserify({
         debug: true,
         entries: ["src/player.ts"],
-        cache: {},
-        packageCache: {},
     })
         .plugin(tsify, {
             "target": "esnext",
