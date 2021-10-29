@@ -28,3 +28,4 @@ gulpfile.ts
 src/
 sls/
 zip.js/
+tailwind.config.js
