@@ -20,8 +20,12 @@ export function ActionButton(props: Props) {
         return null;
     }
 
+    if (!props.portrait && props.actionBar) {
+        return null;
+    }
+
     return html`
-    <div class="filter transition-opacity duration-1000 absolute 
+    <div class="filter transition-opacity duration-1000 absolute z-50 
                     ${ active ? "opacity-80" : "opacity-20" } hover:opacity-100
                     bg-no-repeat bg-cover 
                     w-12 h-12 top-4 right-4 

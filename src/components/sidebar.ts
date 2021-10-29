@@ -16,7 +16,7 @@ export function SideBar(props: Props) {
     };
 
     return html`
-    <div class="flex flex-col filter absolute top-0 bottom-0 right-0 px-8 pt-6 pb-4
+    <div class="flex flex-col filter absolute z-50 top-0 bottom-0 right-0 px-8 pt-6 pb-4
         w-full sm:w-80 rounded-l-lg drop-shadow-lg bg-white">
         <div class="transform absolute text-gray-400 hover:text-gray-800
                      h-8 w-8 top-1 left-1 cursor-pointer hover:scale-125" onClick=${onClose}>
