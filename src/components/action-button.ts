@@ -31,9 +31,9 @@ export function ActionButton(props: Props) {
 
     return html`
     <div class="filter transition-opacity duration-1000 absolute z-50 
-                    ${ active ? "opacity-80" : "opacity-20" } hover:opacity-100
+                    ${ active ? "opacity-60" : "opacity-30" } hover:opacity-100
                     bg-no-repeat bg-cover 
-                    w-12 h-12 top-4 right-4 
+                    w-10 h-10 top-4 right-4 
                      hover:bg-blue-400 bg-blend-luminosity
                     rounded-full ring-2 ring-gray-200
                     drop-shadow cursor-pointer" 

@@ -51,7 +51,7 @@ export function PlayerApp(playerProps: {
         undefined;
     const [portrait, setPortrait] = useState<boolean>(isPortrait());
     const [clientId, setClientId] = useState<ClientId | null>(null);
-    const [sideBar, setSideBar] = useState<boolean>(true);
+    const [sideBar, setSideBar] = useState<boolean>(false);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
     const [keyboard, setKeyboard] = useState<boolean>(playerProps.player().layers.keyboardVisible);
     const [pause, setPause] = useState<boolean>(false);
@@ -106,8 +106,6 @@ export function PlayerApp(playerProps: {
             setFullscreen(newFullscreen);
             if (!newFullscreen) {
                 setActionBar(true);
-            } else if (!mobileControls) {
-                setActionBar(false);
             }
             playerProps.player().layers.toggleFullscreen();
         },
@@ -154,12 +152,4 @@ export function createPlayerApp(root: HTMLDivElement,
 
 function isPortrait() {
     return window.innerWidth / window.innerHeight < 1.6;
-}
-
-function requestClientId(options: DosPlayerOptions, userGesture: boolean) {
-    if (typeof options.clientId !== "function") {
-        return Promise.resolve(null);
-    }
-
-    return options.clientId(userGesture);
 }

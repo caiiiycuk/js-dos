@@ -16,7 +16,7 @@ export function Client(props: ClientProps) {
     }
 
     if (props.clientId === null) {
-        function requestLogin() {
+        const requestLogin = () => {
             if (props.requestClientId === undefined) {
                 return;
             }
