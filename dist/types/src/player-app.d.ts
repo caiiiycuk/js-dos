@@ -6,6 +6,7 @@ export interface Props {
     options: () => DosPlayerOptions;
     clientId: ClientId | null;
     setClientId: (clientId: ClientId | null) => void;
+    requestClientId?: (userGesture: boolean) => Promise<ClientId | null>;
     mobileControls: boolean;
     setMobileControls: (controls: boolean) => void;
     keyboard: boolean;

@@ -5,9 +5,6 @@ export declare const Icons: {
     UserCircle: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
-    Logout: (props: {
-        class: string;
-    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     Mobile: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
@@ -36,6 +33,12 @@ export declare const Icons: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     DotsHorizontal: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Download: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Upload: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
 };

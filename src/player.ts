@@ -54,6 +54,7 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
     options.layersOptions = options.layersOptions || {};
     options.layersOptions.keyboardDiv = keyboard;
     options.layersOptions.fullscreenElement = root;
+    options.layersOptions.optionControls = [];
 
     const hardware = options.hardware;
     if (hardware !== undefined && hardware !== null) {
