@@ -92,8 +92,10 @@ export function PlayerApp(playerProps: {
         toggleFullscreen: () => {
             const newFullscreen = !playerProps.player().layers.fullscreen;
             setFullscreen(newFullscreen);
-            if (!actionBar && !newFullscreen) {
+            if (!newFullscreen) {
                 setActionBar(true);
+            } else if (!mobileControls) {
+                setActionBar(false);
             }
             playerProps.player().layers.toggleFullscreen();
         },
@@ -132,8 +134,8 @@ export function PlayerApp(playerProps: {
 }
 
 export function createPlayerApp(root: HTMLDivElement,
-                                player: DosPlayer,
-                                options: DosPlayerOptions) {
+    player: DosPlayer,
+    options: DosPlayerOptions) {
     render(html`<${PlayerApp} player=${()=> player} options=${() => options} />`, root);
 }
 
