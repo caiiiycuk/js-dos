@@ -7,14 +7,16 @@ export function ActionButton(props: Props) {
     const [active, setActive] = useState<boolean>(true);
 
     useEffect(() => {
+        setActive(true);
+
         const id = setTimeout(() => {
             setActive(false);
-        }, 5000);
+        }, 2000);
 
         return () => {
             clearTimeout(id);
         };
-    }, [setActive]);
+    }, [props.sideBar, props.portrait, props.actionBar]);
 
     if (props.sideBar) {
         return null;
