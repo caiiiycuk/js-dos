@@ -23,7 +23,6 @@
     <script>
         emulators.pathPrefix = "/dist/";
         Dos(document.getElementById("jsdos"), {
-            style: "dark",
             hardware: window.hardware,
             clientId: (userGesture) => {
                 if (!userGesture) {
@@ -32,7 +31,7 @@
 
                 return Promise.resolve({
                     namespace: "test",
-                    id: "client",
+                    id: "aleksandr.guryanov@github.com",
                 })
             }
         }).run("https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos");

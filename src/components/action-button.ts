@@ -1,7 +1,10 @@
+import { Emulators } from "emulators";
 import { useEffect, useState } from "preact/hooks";
 import { html } from "../dom";
 
 import { Props } from "../player-app";
+
+declare const emulators: Emulators;
 
 export function ActionButton(props: Props) {
     const [active, setActive] = useState<boolean>(true);
@@ -34,7 +37,7 @@ export function ActionButton(props: Props) {
                      hover:bg-blue-400 bg-blend-luminosity
                     rounded-full ring-2 ring-gray-200
                     drop-shadow cursor-pointer" 
-                    style=${ "background-image: url(icon.png)" }
+                    style=${ "background-image: url(" + emulators.pathPrefix + "logo.png)" }
                     onClick=${props.openSideBar}>
     </div>
     `;

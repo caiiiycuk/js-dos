@@ -16,6 +16,7 @@ export interface Props {
 
     clientId: ClientId | null,
     setClientId: (clientId: ClientId | null) => void,
+    requestClientId?: (userGesture: boolean) => Promise<ClientId | null>,
 
     mobileControls: boolean;
     setMobileControls: (controls: boolean) => void;
@@ -44,15 +45,25 @@ export function PlayerApp(playerProps: {
     player: () => DosPlayer,
     options: () => DosPlayerOptions,
 }) {
+    const requestClientIdFn = playerProps.options().clientId;
+    const requestClientId = typeof requestClientIdFn === "function" ?
+        (userGesture: boolean) => requestClientIdFn(userGesture) :
+        undefined;
     const [portrait, setPortrait] = useState<boolean>(isPortrait());
     const [clientId, setClientId] = useState<ClientId | null>(null);
-    const [sideBar, setSideBar] = useState<boolean>(false);
+    const [sideBar, setSideBar] = useState<boolean>(true);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
     const [keyboard, setKeyboard] = useState<boolean>(playerProps.player().layers.keyboardVisible);
     const [pause, setPause] = useState<boolean>(false);
     const [mute, setMute] = useState<boolean>(false);
     const [fullscreen, setFullscreen] = useState<boolean>(playerProps.player().layers.fullscreen);
     const [actionBar, setActionBar] = useState<boolean>(true);
+
+    useEffect(() => {
+        if (typeof requestClientId !== "undefined") {
+            requestClientId(false).then(setClientId).catch(console.error);
+        }
+    }, [requestClientIdFn, setClientId]);
 
     useEffect(() => {
         const listener = () => {
@@ -73,6 +84,7 @@ export function PlayerApp(playerProps: {
 
         clientId,
         setClientId,
+        requestClientId,
 
         mobileControls,
         setMobileControls: (controls: boolean) => {
@@ -134,12 +146,20 @@ export function PlayerApp(playerProps: {
 }
 
 export function createPlayerApp(root: HTMLDivElement,
-    player: DosPlayer,
-    options: DosPlayerOptions) {
+                                player: DosPlayer,
+                                options: DosPlayerOptions) {
     render(html`<${PlayerApp} player=${()=> player} options=${() => options} />`, root);
 }
 
 
 function isPortrait() {
     return window.innerWidth / window.innerHeight < 1.6;
+}
+
+function requestClientId(options: DosPlayerOptions, userGesture: boolean) {
+    if (typeof options.clientId !== "function") {
+        return Promise.resolve(null);
+    }
+
+    return options.clientId(userGesture);
 }
