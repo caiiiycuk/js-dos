@@ -31,9 +31,15 @@ function SideBarControl(props: Props) {
         }
     }
 
+    let colorClass = "text-gray-600";
+    if (props.requestClientId !== undefined && props.clientId === null) {
+        colorClass = "text-red-800 animate-pulse";
+    } else if (props.sideBar) {
+        colorClass = "text-green-400";
+    }
+
     return html`
-    <div class="h-6 w-6 my-4 ${props.sideBar ? " text-green-400" : "text-gray-600" } cursor-pointer"
-        onClick=${toggleSideBar}>
+    <div class="h-6 w-6 my-4 ${colorClass} cursor-pointer" onClick=${toggleSideBar}>
         <${Icons.DotsHorizontal} class="h-6 w-6" />
     </div>
     `;
@@ -41,7 +47,7 @@ function SideBarControl(props: Props) {
 
 function HideControl(props: Props) {
     return html`
-    <div class="h-6 w-6 my-4 cursor-pointer" onClick=${() => props.setActionBar(false)}>
+    <div class="h-6 w-6 my-4 cursor-pointer" onClick=${()=> props.setActionBar(false)}>
         <${Icons.ChevronDoubleLeft} class="h-6 w-6" />
     </div>
     `;

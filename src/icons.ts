@@ -16,13 +16,6 @@ const UserCircle = (props: { class: string }) => html`
     </svg>
 `;
 
-const Logout = (props: { class: string }) => html`
-    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-    </svg>
-`;
-
 const Mobile = (props: { class: string }) => html`
     <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -81,6 +74,18 @@ const DotsHorizontal = (props: { class: string }) => html`
     </svg>
 `;
 
+const Download = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+    </svg>
+`;
+
+const Upload = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    </svg>
+`;
+
 const Fullscreen = (props: { class: string }) => html`
     <svg class=${props.class} fill="none" viewBox="-4 -4 24 24" stroke="currentColor">
         <path
@@ -93,16 +98,15 @@ const Fullscreen = (props: { class: string }) => html`
 const Minimize = (props: { class: string }) => html`
     <svg class=${props.class} fill="none" viewBox="-2 -4 24 24" stroke="currentColor">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M8,11H3c-0.55,0-1,0.45-1,1s0.45,1,1,1h2.59l-5.29,5.29C0.11,18.47,0,18.72,0,19
-             c0,0.55,0.45,1,1,1c0.28,0,0.53-0.11,0.71-0.29L7,14.41V17c0,0.55,0.45,1,1,1s1-0.45,1-1v-5C9,11.45,8.55,11,8,11z M20,1
-            c0-0.55-0.45-1-1-1c-0.28,0-0.53,0.11-0.71,0.29L13,5.59V3c0-0.55-0.45-1-1-1s-1,0.45-1,1v5c0,0.55,0.45,1,1,1h5
-            c0.55,0,1-0.45,1-1s-0.45-1-1-1h-2.59l5.29-5.29C19.89,1.53,20,1.28,20,1z" />
+                 c0,0.55,0.45,1,1,1c0.28,0,0.53-0.11,0.71-0.29L7,14.41V17c0,0.55,0.45,1,1,1s1-0.45,1-1v-5C9,11.45,8.55,11,8,11z M20,1
+                c0-0.55-0.45-1-1-1c-0.28,0-0.53,0.11-0.71,0.29L13,5.59V3c0-0.55-0.45-1-1-1s-1,0.45-1,1v5c0,0.55,0.45,1,1,1h5
+                c0.55,0,1-0.45,1-1s-0.45-1-1-1h-2.59l5.29-5.29C19.89,1.53,20,1.28,20,1z" />
     </svg>
 `;
 
 export const Icons = {
     XCircle,
     UserCircle,
-    Logout,
     Mobile,
     Pause,
     Play,
@@ -113,4 +117,6 @@ export const Icons = {
     Minimize,
     ChevronDoubleLeft,
     DotsHorizontal,
+    Download,
+    Upload,
 };
