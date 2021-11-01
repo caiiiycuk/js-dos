@@ -38,18 +38,20 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
     }
 
     root.classList.add("flex");
-    root.classList.add("flex-col");
+    root.classList.add("flex-row");
+    root.classList.add("relative");
+    root.classList.add("overflow-hidden");
 
-    const row = createDiv(["relative", "flex", "flex-grow", "overflow-hidden"]);
+    const col = createDiv(["flex", "flex-col", "flex-grow", "overflow-hidden"]);
     const window = createDiv("flex-grow");
     const appRoot = createDiv("flex-grow-0");
     const keyboard = createDiv("flex-grow-0");
 
-    row.appendChild(appRoot);
-    row.appendChild(window);
+    col.appendChild(window);
+    col.appendChild(keyboard);
 
-    root.appendChild(row);
-    root.appendChild(keyboard);
+    root.appendChild(appRoot);
+    root.appendChild(col);
 
     options.layersOptions = options.layersOptions || {};
     options.layersOptions.keyboardDiv = keyboard;

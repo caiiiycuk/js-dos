@@ -4,13 +4,12 @@ import { render } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { html } from "./dom";
 
-import { ActionButton } from "./components/action-button";
+import { ActionHide } from "./components/action-hide";
 import { ActionBar } from "./components/action-bar";
 import { SideBar } from "./components/sidebar";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 
 export interface Props {
-    portrait: boolean;
     player: () => DosPlayer;
     options: () => DosPlayerOptions;
 
@@ -49,7 +48,6 @@ export function PlayerApp(playerProps: {
     const requestClientId = typeof requestClientIdFn === "function" ?
         (userGesture: boolean) => requestClientIdFn(userGesture) :
         undefined;
-    const [portrait, setPortrait] = useState<boolean>(isPortrait());
     const [clientId, setClientId] = useState<ClientId | null>(null);
     const [sideBar, setSideBar] = useState<boolean>(false);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
@@ -67,18 +65,21 @@ export function PlayerApp(playerProps: {
 
     useEffect(() => {
         const listener = () => {
-            const newValue = isPortrait();
-            if (newValue !== portrait) {
-                setPortrait(newValue);
+            const newFullscreen = document.fullscreenElement !== null;
+            setFullscreen(newFullscreen);
+            if (!newFullscreen) {
+                setActionBar(true);
             }
         };
 
-        window.addEventListener("resize", listener);
-        return () => window.removeEventListener("resize", listener);
-    }, [portrait, setPortrait]);
+        document.addEventListener("fullscreenchange", listener);
+
+        return () => {
+            document.removeEventListener("fullscreenchange", listener);
+        };
+    }, [fullscreen, setFullscreen]);
 
     const props: Props = {
-        portrait,
         player: playerProps.player,
         options: playerProps.options,
 
@@ -102,11 +103,6 @@ export function PlayerApp(playerProps: {
 
         fullscreen,
         toggleFullscreen: () => {
-            const newFullscreen = !playerProps.player().layers.fullscreen;
-            setFullscreen(newFullscreen);
-            if (!newFullscreen) {
-                setActionBar(true);
-            }
             playerProps.player().layers.toggleFullscreen();
         },
 
@@ -136,7 +132,7 @@ export function PlayerApp(playerProps: {
 
     return html`
     <div class="h-full">
-        <${ActionButton} ...${props} />
+        <${ActionHide} ...${props} />
         <${SideBar} ...${props} />
         <${ActionBar} ...${props} />
     </div>
@@ -147,9 +143,4 @@ export function createPlayerApp(root: HTMLDivElement,
                                 player: DosPlayer,
                                 options: DosPlayerOptions) {
     render(html`<${PlayerApp} player=${()=> player} options=${() => options} />`, root);
-}
-
-
-function isPortrait() {
-    return window.innerWidth / window.innerHeight < 1.6;
 }

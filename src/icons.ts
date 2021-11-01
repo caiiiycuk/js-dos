@@ -61,9 +61,15 @@ const PencilAlt = (props: { class: string }) => html`
     </svg>
 `;
 
-const ChevronDoubleLeft = (props: { class: string }) => html`
+const ChevronLeft = (props: { class: string }) => html`
     <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+`;
+
+const ChevronRight = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
     </svg>
 `;
 
@@ -115,7 +121,8 @@ export const Icons = {
     PencilAlt,
     Fullscreen,
     Minimize,
-    ChevronDoubleLeft,
+    ChevronLeft,
+    ChevronRight,
     DotsHorizontal,
     Download,
     Upload,
