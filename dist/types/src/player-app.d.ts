@@ -1,7 +1,6 @@
 import "preact/debug";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 export interface Props {
-    portrait: boolean;
     player: () => DosPlayer;
     options: () => DosPlayerOptions;
     clientId: ClientId | null;

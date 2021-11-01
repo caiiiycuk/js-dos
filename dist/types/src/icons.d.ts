@@ -29,7 +29,10 @@ export declare const Icons: {
     Minimize: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
-    ChevronDoubleLeft: (props: {
+    ChevronLeft: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    ChevronRight: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     DotsHorizontal: (props: {
