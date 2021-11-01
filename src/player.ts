@@ -25,6 +25,7 @@ export interface DosPlayerOptions extends DosOptions {
     style?: "default" | "none";
     hardware?: Hardware;
     clientId?: ClientIdSupplier;
+    onExit?: () => void;
 }
 
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;

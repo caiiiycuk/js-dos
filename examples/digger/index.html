@@ -21,18 +21,21 @@
 <body>
     <div id="jsdos" />
     <script>
+        let clientId = null;
         emulators.pathPrefix = "/dist/";
         Dos(document.getElementById("jsdos"), {
             hardware: window.hardware,
             clientId: (userGesture) => {
                 if (!userGesture) {
-                    return Promise.resolve(null);
+                    return Promise.resolve(clientId);
                 }
 
-                return Promise.resolve({
+                clientId = {
                     namespace: "test",
                     id: "aleksandr.guryanov@github.com",
-                })
+                };
+                
+                return Promise.resolve(clientId);
             }
         }).run("https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos");
     </script>

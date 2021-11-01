@@ -6,6 +6,7 @@ import { html } from "./dom";
 
 import { ActionHide } from "./components/action-hide";
 import { ActionBar } from "./components/action-bar";
+import { ActionExit } from "./components/action-exit";
 import { SideBar } from "./components/sidebar";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 
@@ -135,12 +136,13 @@ export function PlayerApp(playerProps: {
         <${ActionHide} ...${props} />
         <${SideBar} ...${props} />
         <${ActionBar} ...${props} />
+        <${ActionExit} ...${props} />
     </div>
     `;
 }
 
 export function createPlayerApp(root: HTMLDivElement,
-                                player: DosPlayer,
-                                options: DosPlayerOptions) {
-    render(html`<${PlayerApp} player=${()=> player} options=${() => options} />`, root);
+    player: DosPlayer,
+    options: DosPlayerOptions) {
+    render(html`<${PlayerApp} player=${() => player} options=${() => options} />`, root);
 }
