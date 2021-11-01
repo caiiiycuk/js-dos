@@ -14,6 +14,10 @@ export function ActionExit(props: Props) {
         }
 
         function onBeforeUnload(event: BeforeUnloadEvent) {
+            if (props.player().ciPromise === undefined) {
+                return;
+            }
+
             const message = "Please use close button to save progress!";
 
             setTimeout(() => {
@@ -54,6 +58,8 @@ export function ActionExit(props: Props) {
         if (onExit !== undefined) {
             onExit();
         }
+
+        setClosing(false);
     }
 
     if (closing) {
