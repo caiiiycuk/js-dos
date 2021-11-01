@@ -44,12 +44,10 @@ export function ActionExit(props: Props) {
             return;
         }
 
-        if (dos.ciPromise !== undefined) {
-            try {
-                await (await dos.ciPromise).exit();
-            } catch (e) {
-                console.error(e);
-            }
+        try {
+            await dos.stop();
+        } catch (e) {
+            console.error(e);
         }
 
         const onExit = props.options().onExit;
@@ -64,8 +62,8 @@ export function ActionExit(props: Props) {
 
     return html`
     <div class="filter transition-opacity duration-1000 absolute z-50 
-                                bg-gray-200 opacity-80 ${pulse ? " text-red-500 animate-pulse" : ""} w-6 h-6 top-0
-        ${props.actionBar ? "left-10" : "left-0"} rounded-br-md cursor-pointer" onClick=${doClose}>
+                                    bg-gray-200 opacity-80 ${pulse ? " text-red-500 animate-pulse" : "" } w-6 h-6 top-0
+        ${props.actionBar ? "left-10" : "left-0" } rounded-br-md cursor-pointer" onClick=${doClose}>
         <div class="h-4 w-4 mt-1 ml-1">
             <${Icons.XCircle} class="h-4 w-4" />
         </div>
