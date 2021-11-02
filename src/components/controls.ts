@@ -9,8 +9,15 @@ interface ControlsProps extends Props {
 };
 
 export function Controls(props: ControlsProps) {
-    function toggleMobileControls() {
-        props.setMobileControls(!props.mobileControls);
+    function toggleMobileAndMirroredControls() {
+        if (props.mirroredControls) {
+            props.setMirroredControls(false);
+            props.setMobileControls(false);
+        } else if (props.mobileControls) {
+            props.setMirroredControls(true);
+        } else {
+            props.setMobileControls(true);
+        }
         props.closeSideBar();
     }
 
@@ -36,9 +43,10 @@ export function Controls(props: ControlsProps) {
 
     return html`
     <div class="flex ${props.column ? " flex-col" : "flex-row" } justify-evenly ${props.class}">
-        <div class="h-6 w-6 ${props.mobileControls ? " text-green-400" : "" } cursor-pointer"
-            onClick=${toggleMobileControls}>
-            <${Icons.Mobile} class="h-6 w-6" />
+        <div class="h-6 w-6 cursor-pointer"
+            onClick=${toggleMobileAndMirroredControls}>
+            <${props.mirroredControls ? Icons.SwithcHorizontal :
+        (props.mobileControls ? Icons.Mobile : Icons.DesktopComputer)} class="h-6 w-6" />
         </div>
         <div class="h-6 w-6 ${props.pause ? " text-red-400 animate-pulse" : "font-bold" } cursor-pointer"
             onClick=${togglePause}>

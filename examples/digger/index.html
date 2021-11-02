@@ -21,6 +21,10 @@
 <body>
     <div id="jsdos" />
     <script>
+        let bundleUrl = "https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos"; // digger
+            // bundleUrl = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos"; // dagnerous dave 2
+            // bundleUrl = "https://cdn.dos.zone/original/2X/1/1b063b2520052ebb504184667ac95e72423331de.jsdos"; // lost vikings
+            // bundleUrl = "bundle.jsdos";
         let clientId = null;
         emulators.pathPrefix = "/dist/";
         Dos(document.getElementById("jsdos"), {
@@ -37,7 +41,7 @@
                 
                 return Promise.resolve(clientId);
             }
-        }).run("https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos");
+        }).run(bundleUrl);
     </script>
 </body>
 

@@ -8,6 +8,8 @@ export interface Props {
     requestClientId?: (userGesture: boolean) => Promise<ClientId | null>;
     mobileControls: boolean;
     setMobileControls: (controls: boolean) => void;
+    mirroredControls: boolean;
+    setMirroredControls: (mirrored: boolean) => void;
     keyboard: boolean;
     toggleKeyboard: () => void;
     fullscreen: boolean;

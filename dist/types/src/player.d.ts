@@ -9,11 +9,11 @@ export interface DosPlayer extends DosInstance {
     bundleUrl: string | null;
 }
 export interface DosPlayerOptions extends DosOptions {
-    title?: string;
     style?: "default" | "none";
     hardware?: Hardware;
     clientId?: ClientIdSupplier;
     onExit?: () => void;
+    noSideBar?: boolean;
 }
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;
 export declare function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): DosPlayer;

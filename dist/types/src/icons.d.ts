@@ -8,6 +8,12 @@ export declare const Icons: {
     Mobile: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    SwithcHorizontal: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    DesktopComputer: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     Pause: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
