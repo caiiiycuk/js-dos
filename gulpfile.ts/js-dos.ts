@@ -1,6 +1,7 @@
 import { src, dest, series, parallel } from "gulp";
 import size from "gulp-size";
 import sourcemaps from "gulp-sourcemaps";
+import terser from "gulp-terser";
 
 import { playerJs as playerJs } from "./player";
 
@@ -55,8 +56,9 @@ function concatJs() {
     ])
         .pipe(sourcemaps.init({ loadMaps: true }))
         .pipe(concat("js-dos.js"))
+        .pipe(terser())
+        .pipe(sourcemaps.write("./"))
         .pipe(size({ showFiles: true, showTotal: false }))
-        .pipe(sourcemaps.write())
         .pipe(dest("dist"));
 }
 

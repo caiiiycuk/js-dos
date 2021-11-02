@@ -5,11 +5,12 @@ import { Icons } from "../icons";
 import { Props } from "../player-app";
 
 export function ActionExit(props: Props) {
+    const onExit = props.options().onExit;
     const [pulse, setPulse] = useState<boolean>(false);
     const [closing, setClosing] = useState<boolean>(false);
 
     useEffect(() => {
-        if (closing) {
+        if (closing || typeof onExit !== "function") {
             return;
         }
 
@@ -34,7 +35,7 @@ export function ActionExit(props: Props) {
         return () => {
             window.removeEventListener("beforeunload", onBeforeUnload);
         };
-    }, [setPulse, props.player, closing]);
+    }, [setPulse, props.player, closing, onExit]);
 
     async function doClose() {
         setPulse(false);
@@ -62,7 +63,7 @@ export function ActionExit(props: Props) {
         setClosing(false);
     }
 
-    if (closing) {
+    if (closing || typeof onExit !== "function") {
         return null;
     }
 

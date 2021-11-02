@@ -1,7 +1,5 @@
 import { dest } from "gulp";
 
-import sourcemaps from "gulp-sourcemaps";
-import terser from "gulp-terser";
 import size from "gulp-size";
 import browserify from "browserify";
 import buffer from "vinyl-buffer";
@@ -29,9 +27,6 @@ export function playerJs() {
         .bundle()
         .pipe(source("player.js"))
         .pipe(buffer())
-        .pipe(sourcemaps.init({ loadMaps: true }))
-        .pipe(terser())
-        .pipe(sourcemaps.write("./"))
         .pipe(size({ showFiles: true, showTotal: false }))
         .pipe(dest("dist"));
 }

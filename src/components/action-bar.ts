@@ -13,12 +13,17 @@ export function ActionBar(props: Props) {
     return html`
     <div class="bg-gray-200 shadow w-10 h-full overflow-hidden flex flex-col items-center">
         <${SideBarControl} ...${props} />
-        <${Controls} column="true" class="flex-grow border-t-2 border-gray-400" ...${props} />
+        <${Controls} column="true" class="flex-grow 
+            ${props.options().noSideBar === true ? "" : " border-t-2 border-gray-400"}" ...${props} />
     </div>
     `;
 }
 
 function SideBarControl(props: Props) {
+    if (props.options().noSideBar === true) {
+        return null;
+    }
+
     function toggleSideBar() {
         if (props.sideBar) {
             props.closeSideBar();

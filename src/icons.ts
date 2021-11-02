@@ -23,6 +23,18 @@ const Mobile = (props: { class: string }) => html`
     </svg>
 `;
 
+const SwithcHorizontal = (props: { class: string }) => html`
+    <svg class="h-6 w-6" fill=${props.class} viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+    </svg>
+`;
+
+const DesktopComputer = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    </svg>
+`;
+
 const Pause = (props: { class: string }) => html`
     <svg className=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -114,6 +126,8 @@ export const Icons = {
     XCircle,
     UserCircle,
     Mobile,
+    SwithcHorizontal,
+    DesktopComputer,
     Pause,
     Play,
     VolumeUp,

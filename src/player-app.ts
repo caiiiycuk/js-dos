@@ -21,6 +21,9 @@ export interface Props {
     mobileControls: boolean;
     setMobileControls: (controls: boolean) => void;
 
+    mirroredControls: boolean;
+    setMirroredControls: (mirrored: boolean) => void;
+
     keyboard: boolean;
     toggleKeyboard: () => void;
 
@@ -52,6 +55,7 @@ export function PlayerApp(playerProps: {
     const [clientId, setClientId] = useState<ClientId | null>(null);
     const [sideBar, setSideBar] = useState<boolean>(false);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
+    const [mirroredControls, setMirroredControls] = useState<boolean>(playerProps.player().mirroredControls);
     const [keyboard, setKeyboard] = useState<boolean>(playerProps.player().layers.keyboardVisible);
     const [pause, setPause] = useState<boolean>(false);
     const [mute, setMute] = useState<boolean>(false);
@@ -94,6 +98,12 @@ export function PlayerApp(playerProps: {
                 playerProps.player().enableMobileControls() :
                 playerProps.player().disableMobileControls();
             setMobileControls(controls);
+        },
+
+        mirroredControls,
+        setMirroredControls: (mirrored: boolean) => {
+            props.player().setMirroredControls(mirrored);
+            setMirroredControls(mirrored);
         },
 
         keyboard,
@@ -142,7 +152,7 @@ export function PlayerApp(playerProps: {
 }
 
 export function createPlayerApp(root: HTMLDivElement,
-    player: DosPlayer,
-    options: DosPlayerOptions) {
+                                player: DosPlayer,
+                                options: DosPlayerOptions) {
     render(html`<${PlayerApp} player=${() => player} options=${() => options} />`, root);
 }
