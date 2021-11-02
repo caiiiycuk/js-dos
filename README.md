@@ -1,5 +1,5 @@
 # js-dos 7.xx
-
+[![Build](https://github.com/caiiiycuk/js-dos/actions/workflows/yarn-gulp.yml/badge.svg)](https://github.com/caiiiycuk/js-dos/actions/workflows/yarn-gulp.yml)
 
 js-dos is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox.
 
