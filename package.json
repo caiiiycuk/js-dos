@@ -21,7 +21,7 @@
         "dosbox"
     ],
     "author": "Alexander Guryanov (aka caiiiycuk)",
-    "license": "ISC",
+    "license": "GPL2",
     "bugs": {
         "url": "https://github.com/caiiiycuk/js-dos/issues"
     },
