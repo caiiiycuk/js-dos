@@ -19,10 +19,10 @@ export interface Props {
     requestClientId?: (userGesture: boolean) => Promise<ClientId | null>,
 
     mobileControls: boolean;
-    setMobileControls: (controls: boolean) => void;
+    setMobileControls: (controls: boolean) => Promise<void>;
 
     mirroredControls: boolean;
-    setMirroredControls: (mirrored: boolean) => void;
+    setMirroredControls: (mirrored: boolean) => Promise<void>;
 
     keyboard: boolean;
     toggleKeyboard: () => void;
@@ -93,7 +93,7 @@ export function PlayerApp(playerProps: {
         requestClientId,
 
         mobileControls,
-        setMobileControls: (controls: boolean) => {
+        setMobileControls: async (controls: boolean) => {
             controls ?
                 playerProps.player().enableMobileControls() :
                 playerProps.player().disableMobileControls();
@@ -101,7 +101,7 @@ export function PlayerApp(playerProps: {
         },
 
         mirroredControls,
-        setMirroredControls: (mirrored: boolean) => {
+        setMirroredControls: async (mirrored: boolean) => {
             props.player().setMirroredControls(mirrored);
             setMirroredControls(mirrored);
         },

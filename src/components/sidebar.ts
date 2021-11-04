@@ -23,7 +23,7 @@ export function SideBar(props: Props) {
             <${Icons.XCircle} class="h-8 w-8" />
         </div>
         <${Client} class="mt-2 mb-2 pb-2 border-b-2 border-green-200" ...${props} />
-        <${Controls} class="mt-2" ...${props} />
+        <${Controls} class="mt-2" portal=${false} ...${props} />
     </div>
     `;
 }

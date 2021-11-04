@@ -2477,10 +2477,10 @@ emoji-regex@^8.0.0:
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
   integrity sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==
 
-emulators-ui@^0.72.1:
-  version "0.72.1"
-  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.72.1.tgz#cf6d8ad7bc461fef7be6b983bbc458fcba371e1c"
-  integrity sha512-oRu4lwICtP0B8mmTFfhyMWThbeRQ3WwDLu1xq9JkyHylM8POzIi3cfBOgGeFHziFSoH3iI264S1lOLCPyDs7zw==
+emulators-ui@^0.72.2:
+  version "0.72.2"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.72.2.tgz#4d6b951bc1f4e152348a15094aa137465d3a18c6"
+  integrity sha512-fCCIAwm0Az0EYO+sTK/9wg20GbwsScNWXKur5zeegB5y1M/VEPrvz9kZtvHwGhAtCYbgXz25B9dy8J7ZLLlf2A==
 
 emulators@^0.72.0:
   version "0.72.0"

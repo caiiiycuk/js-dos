@@ -7,9 +7,9 @@ export interface Props {
     setClientId: (clientId: ClientId | null) => void;
     requestClientId?: (userGesture: boolean) => Promise<ClientId | null>;
     mobileControls: boolean;
-    setMobileControls: (controls: boolean) => void;
+    setMobileControls: (controls: boolean) => Promise<void>;
     mirroredControls: boolean;
-    setMirroredControls: (mirrored: boolean) => void;
+    setMirroredControls: (mirrored: boolean) => Promise<void>;
     keyboard: boolean;
     toggleKeyboard: () => void;
     fullscreen: boolean;
