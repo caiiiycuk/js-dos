@@ -14,7 +14,8 @@ export function ActionBar(props: Props) {
     <div class="bg-gray-200 shadow w-10 h-full overflow-hidden flex flex-col items-center">
         <${SideBarControl} ...${props} />
         <${Controls} column="true" class="flex-grow 
-            ${props.options().noSideBar === true ? "" : " border-t-2 border-gray-400"}" ...${props} />
+            ${props.options().noSideBar === true ? "" : " border-t-2 border-gray-400"}" 
+            portal=${true} ...${props} />
     </div>
     `;
 }

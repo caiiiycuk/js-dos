@@ -29,9 +29,9 @@ const SwithcHorizontal = (props: { class: string }) => html`
     </svg>
 `;
 
-const DesktopComputer = (props: { class: string }) => html`
+const EyeOff = (props: { class: string }) => html`
     <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
     </svg>
 `;
 
@@ -104,21 +104,15 @@ const Upload = (props: { class: string }) => html`
     </svg>
 `;
 
-const Fullscreen = (props: { class: string }) => html`
-    <svg class=${props.class} fill="none" viewBox="-4 -4 24 24" stroke="currentColor">
-        <path
-            d="M5.99 8.99c-.28 0-.53.11-.71.29l-3.29 3.29v-1.59c0-.55-.45-1-1-1s-1 .45-1 1v4c0 .55.45 1 1 1h4c.55 0 1-.45 1-1s-.45-1-1-1H3.41L6.7 10.7a1.003 1.003 0 00-.71-1.71zm9-9h-4c-.55 0-1 .45-1 1s.45 1 1 1h1.59l-3.3 3.3a.99.99 0 00-.29.7 1.003 1.003 0 001.71.71l3.29-3.29V5c0 .55.45 1 1 1s1-.45 1-1V1c0-.56-.45-1.01-1-1.01z"
-            fill-rule="evenodd">
-        </path>
+const ArrowsExpand = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
     </svg>
 `;
 
-const Minimize = (props: { class: string }) => html`
-    <svg class=${props.class} fill="none" viewBox="-2 -4 24 24" stroke="currentColor">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M8,11H3c-0.55,0-1,0.45-1,1s0.45,1,1,1h2.59l-5.29,5.29C0.11,18.47,0,18.72,0,19
-                 c0,0.55,0.45,1,1,1c0.28,0,0.53-0.11,0.71-0.29L7,14.41V17c0,0.55,0.45,1,1,1s1-0.45,1-1v-5C9,11.45,8.55,11,8,11z M20,1
-                c0-0.55-0.45-1-1-1c-0.28,0-0.53,0.11-0.71,0.29L13,5.59V3c0-0.55-0.45-1-1-1s-1,0.45-1,1v5c0,0.55,0.45,1,1,1h5
-                c0.55,0,1-0.45,1-1s-0.45-1-1-1h-2.59l5.29-5.29C19.89,1.53,20,1.28,20,1z" />
+const Plus = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
     </svg>
 `;
 
@@ -127,17 +121,17 @@ export const Icons = {
     UserCircle,
     Mobile,
     SwithcHorizontal,
-    DesktopComputer,
+    EyeOff,
     Pause,
     Play,
     VolumeUp,
     VolumeOff,
     PencilAlt,
-    Fullscreen,
-    Minimize,
+    ArrowsExpand,
     ChevronLeft,
     ChevronRight,
     DotsHorizontal,
     Download,
     Upload,
+    Plus,
 };

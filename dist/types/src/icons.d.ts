@@ -11,7 +11,7 @@ export declare const Icons: {
     SwithcHorizontal: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
-    DesktopComputer: (props: {
+    EyeOff: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     Pause: (props: {
@@ -29,10 +29,7 @@ export declare const Icons: {
     PencilAlt: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
-    Fullscreen: (props: {
-        class: string;
-    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
-    Minimize: (props: {
+    ArrowsExpand: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     ChevronLeft: (props: {
@@ -48,6 +45,9 @@ export declare const Icons: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     Upload: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Plus: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
 };
