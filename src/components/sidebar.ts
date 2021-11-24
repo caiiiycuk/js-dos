@@ -15,6 +15,10 @@ export function SideBar(props: Props) {
         props.closeSideBar();
     };
 
+    function openDonatePage() {
+        window.open("https://dos.zone/donate/", "_blank");
+    }
+
     return html`
     <div class="flex flex-col filter absolute z-50 top-0 bottom-0 right-0 px-8 pt-6 pb-4
         w-full sm:w-80 rounded-l-lg drop-shadow-lg bg-white">
@@ -24,6 +28,9 @@ export function SideBar(props: Props) {
         </div>
         <${Client} class="mt-2 mb-2 pb-2 border-b-2 border-green-200" ...${props} />
         <${Controls} class="mt-2" portal=${false} ...${props} />
+        <div class="${props.options().donate ? "" : "hidden"} 
+            absolute bottom-2 self-center uppercase
+            cursor-pointer underline text-blue-400 font-mono" onClick=${openDonatePage} >Donate</div>
     </div>
     `;
 }

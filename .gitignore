@@ -48,3 +48,5 @@ build
 cmake-build-debug
 build
 build-emterp
+
+examples/digger/*.jsdos

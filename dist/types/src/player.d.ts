@@ -15,6 +15,7 @@ export interface DosPlayerOptions extends DosOptions {
     onExit?: () => void;
     noSideBar?: boolean;
     noFullscreen?: boolean;
+    donate?: boolean;
 }
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;
 export declare function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): DosPlayer;

@@ -1,4 +1,3 @@
-import "preact/debug";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 export interface Props {
     player: () => DosPlayer;
@@ -10,6 +9,8 @@ export interface Props {
     setMobileControls: (controls: boolean) => Promise<void>;
     mirroredControls: boolean;
     setMirroredControls: (mirrored: boolean) => Promise<void>;
+    autolock: boolean;
+    setAutolock: (autolock: boolean) => Promise<void>;
     keyboard: boolean;
     toggleKeyboard: () => void;
     fullscreen: boolean;
@@ -27,5 +28,6 @@ export interface Props {
 export declare function PlayerApp(playerProps: {
     player: () => DosPlayer;
     options: () => DosPlayerOptions;
+    setOnRun: (onRun: () => void) => void;
 }): import("preact").VNode<any> | import("preact").VNode<any>[];
-export declare function createPlayerApp(root: HTMLDivElement, player: DosPlayer, options: DosPlayerOptions): void;
+export declare function createPlayerApp(root: HTMLDivElement, player: DosPlayer, options: DosPlayerOptions, setOnRun: (onRun: () => void) => void): void;

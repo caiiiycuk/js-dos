@@ -27,12 +27,14 @@ export interface DosPlayerOptions extends DosOptions {
     onExit?: () => void;
     noSideBar?: boolean;
     noFullscreen?: boolean;
+    donate?: boolean;
 }
 
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;
 
 export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): DosPlayer {
     options = options || {};
+    options.donate = options.donate === false ? false : true;
 
     if (options.style === "none") {
         console.warn("If you don't need the jsdos services, please use emulatros + emulators-ui instead");
@@ -70,7 +72,9 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 
 
     const player = dosImpl(window, options) as DosPlayer;
-    createPlayerApp(appRoot, player, options);
+    let onRun = () => {};
+    const setOnRun = (newOnRun: () => void) => onRun = newOnRun;
+    createPlayerApp(appRoot, player, options, setOnRun);
 
     player.bundleUrl = null;
 
@@ -96,6 +100,7 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
             }
         });
 
+        onRun();
         return ci;
     };
 
