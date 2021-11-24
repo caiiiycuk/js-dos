@@ -50,4 +50,16 @@ export declare const Icons: {
     Plus: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    CursorClick: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Cursor: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Refresh: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    CurrencyDollar: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
 };

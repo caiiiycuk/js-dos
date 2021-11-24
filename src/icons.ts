@@ -116,6 +116,32 @@ const Plus = (props: { class: string }) => html`
     </svg>
 `;
 
+const CursorClick = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+    </svg>
+`;
+
+const Cursor = (props: { class: string }) => html`
+    <svg class=${props.class} fill="currentColor"  viewBox="0 0 24 24">    
+        <path d="M 7 2 L 7 18.5 L 11.09375 14.605469 L 14.300781 22 L 16.5 21 L 13.195312 13.701172 L 13.199219 13.699219 L 19 13.199219 L 7 2 z M 9 6.6015625 L 14.347656 11.59375 L 13.029297 11.707031 L 12.708984 11.734375 L 12.412109 11.861328 L 10.3125 12.761719 L 9.9824219 12.904297 L 9.7226562 13.152344 L 9 13.837891 L 9 6.6015625 z"/>
+    </svg>
+`;
+
+
+const Refresh = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+    </svg>
+`;
+
+
+const CurrencyDollar = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+`;
+
 export const Icons = {
     XCircle,
     UserCircle,
@@ -134,4 +160,8 @@ export const Icons = {
     Download,
     Upload,
     Plus,
+    CursorClick,
+    Cursor,
+    Refresh,
+    CurrencyDollar,
 };

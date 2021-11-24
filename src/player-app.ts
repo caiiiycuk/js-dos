@@ -1,5 +1,4 @@
 
-import "preact/debug";
 import { render } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { html } from "./dom";
@@ -24,6 +23,9 @@ export interface Props {
     mirroredControls: boolean;
     setMirroredControls: (mirrored: boolean) => Promise<void>;
 
+    autolock: boolean;
+    setAutolock: (autolock: boolean) => Promise<void>;
+
     keyboard: boolean;
     toggleKeyboard: () => void;
 
@@ -47,6 +49,7 @@ export interface Props {
 export function PlayerApp(playerProps: {
     player: () => DosPlayer,
     options: () => DosPlayerOptions,
+    setOnRun: (onRun: () => void) => void,
 }) {
     const requestClientIdFn = playerProps.options().clientId;
     const requestClientId = typeof requestClientIdFn === "function" ?
@@ -56,6 +59,7 @@ export function PlayerApp(playerProps: {
     const [sideBar, setSideBar] = useState<boolean>(false);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
     const [mirroredControls, setMirroredControls] = useState<boolean>(playerProps.player().mirroredControls);
+    const [autolock, setAutolock] = useState<boolean>(playerProps.player().autolock);
     const [keyboard, setKeyboard] = useState<boolean>(playerProps.player().layers.keyboardVisible);
     const [pause, setPause] = useState<boolean>(false);
     const [mute, setMute] = useState<boolean>(false);
@@ -67,6 +71,14 @@ export function PlayerApp(playerProps: {
             requestClientId(false).then(setClientId).catch(console.error);
         }
     }, [requestClientIdFn, setClientId]);
+
+    useEffect(() => {
+        playerProps.setOnRun(() => {
+            setAutolock(playerProps.player().autolock);
+        });
+
+        return () => playerProps.setOnRun(() => {});
+    }, [playerProps.setOnRun]);
 
     useEffect(() => {
         const listener = () => {
@@ -104,6 +116,12 @@ export function PlayerApp(playerProps: {
         setMirroredControls: async (mirrored: boolean) => {
             props.player().setMirroredControls(mirrored);
             setMirroredControls(mirrored);
+        },
+
+        autolock,
+        setAutolock: async (autolock: boolean) => {
+            props.player().setAutolock(autolock);
+            setAutolock(autolock);
         },
 
         keyboard,
@@ -153,6 +171,7 @@ export function PlayerApp(playerProps: {
 
 export function createPlayerApp(root: HTMLDivElement,
                                 player: DosPlayer,
-                                options: DosPlayerOptions) {
-    render(html`<${PlayerApp} player=${() => player} options=${() => options} />`, root);
+                                options: DosPlayerOptions,
+                                setOnRun: (onRun: () => void) => void) {
+    render(html`<${PlayerApp} player=${() => player} options=${() => options} setOnRun=${setOnRun} />`, root);
 }
