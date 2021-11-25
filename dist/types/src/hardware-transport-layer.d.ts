@@ -3,7 +3,7 @@ export interface Hardware {
     readConfig(): string;
     sendMessage(payload: string): void;
     addKey(key: number, pressed: number, timeMs: number): void;
-    mouseMove(x: number, y: number, timeMs: number): void;
+    mouseMove(x: number, y: number, relative: boolean, timeMs: number): void;
     mouseButton(button: number, pressed: number, timeMs: number): void;
     getFramePayload(): string;
     writeFile(path: string, blob: string): string;

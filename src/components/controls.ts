@@ -15,7 +15,6 @@ const scaleStep = 0.1;
 
 const maxSensitivy = 2;
 const minSensitivy = 0.1;
-const sensitivyStep = 0.1;
 
 export function Controls(props: ControlsProps) {
     function toggleKeyboard() {

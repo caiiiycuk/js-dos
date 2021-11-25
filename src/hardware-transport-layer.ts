@@ -7,7 +7,7 @@ export interface Hardware {
     readConfig(): string;
     sendMessage(payload: string): void;
     addKey(key: number, pressed: number, timeMs: number): void;
-    mouseMove(x: number, y: number, timeMs: number): void;
+    mouseMove(x: number, y: number, relative: boolean, timeMs: number): void;
     mouseButton(button: number, pressed: number, timeMs: number): void;
     getFramePayload(): string;
     writeFile(path: string, blob: string): string;
@@ -81,7 +81,7 @@ class HardwareTransportLayer implements TransportLayer {
                 this.hardware.sendMessage("wc-exit\n" + this.sessionId + "\n");
             } break;
             case "wc-mouse-move": {
-                this.hardware.mouseMove(props.x, props.y, props.timeMs);
+                this.hardware.mouseMove(props.x, props.y, props.relative, props.timeMs);
             } break;
             case "wc-mouse-button": {
                 this.hardware.mouseButton(props.button, props.pressed ? 1 : 0, props.timeMs);
