@@ -1,5 +1,5 @@
 #!/bin/bash
 
 #./scripts/update-emulators.sh
-yarn build
+NODE_ENV=production yarn build
 ./scripts/copy.sh
