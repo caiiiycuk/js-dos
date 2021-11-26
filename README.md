@@ -1,8 +1,11 @@
 js-dos 7.xx
 ===========
 
-js-dos is a javascript library that allows you to run DOS programs in browser. js-dos provides nice and easy to use javascript api over dosbox.
+js-dos is a javascript library that allows you to run DOS programs in browser. It was designed from the ground up to be easily installed and used to get your DOS program up and running in browser quickly.
 
+```js
+    Dos(element).run("game.jsdos")
+```
 [Documentation](https://js-dos.com/).
 
 Subscribe our [twitter](https://twitter.com/doszone_db/) channel for updates. 

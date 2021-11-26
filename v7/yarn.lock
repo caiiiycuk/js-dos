@@ -3817,10 +3817,10 @@ emoticon@^3.2.0:
   resolved "https://registry.yarnpkg.com/emoticon/-/emoticon-3.2.0.tgz#c008ca7d7620fac742fe1bf4af8ff8fed154ae7f"
   integrity sha512-SNujglcLTTg+lDAcApPNgEdudaqQFiAbJCqzjNxJkvN9vAwCGi0uu8IUVvx+f16h+V44KCY6Y2yboroc9pilHg==
 
-emulators-ui@^0.71.7:
-  version "0.71.7"
-  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.71.7.tgz#cfa425a9edfdb3168e19a1a267a050d9e9b4667c"
-  integrity sha512-evlq8lOEtEPjclj4ejRzn7zt0StH09OwH4ZaX62vePCluBgCcA87f9+1obpqXzx2nG7fuB4cWVbVgOAdc0vI9Q==
+emulators-ui@^0.72.4:
+  version "0.72.4"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.72.4.tgz#beaeb1244b7f82308f1cc7fdfc6c178f4bb4afcd"
+  integrity sha512-ZJv5HqZvb79PfDw3SpR49ZwNuHoA+5AcRCPLGfTNyyfJUnCE1VU1gW4a/ItetSSE0GjDtXuRr631s1XNvIWSvg==
 
 emulators@^0.72.0:
   version "0.72.0"
@@ -5469,10 +5469,10 @@ joi@^17.3.0, joi@^17.4.0:
     "@sideway/formula" "^3.0.0"
     "@sideway/pinpoint" "^2.0.0"
 
-js-dos@^7.1.12:
-  version "7.1.12"
-  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.1.12.tgz#ee60981299b7b6dde07dd5ecf69f665dfddfdb9c"
-  integrity sha512-C+Qzw4xCXOoaVXvuGqpCPy1eCVJyvYVW6IxnYpNIyTAC7+xRFwrgkV0budi18ZON5z5ubN/xpluwBfeCsEL6kg==
+js-dos@^7.2.4:
+  version "7.2.4"
+  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.2.4.tgz#a3775c9fd9a52d9c05a9baac73d680d97acd6330"
+  integrity sha512-s87Bpp8zuFpMAxNKCu8M8e8CQwb+N6Jo4lUvL4EmMmU5m3Va0Hust2q9FJyPCzvD3PSmgNMdNEHxY/0jhsp+/g==
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"

@@ -43,8 +43,7 @@ emulators.pathPrefix = "<some-path>/";
 
 ###  2. Using emulators-ui (without js-dos services)
 
-js-dos v7 is based `emulators` and `emulators-ui` packages. It provide additinal services over this two packages, if you don't need them, then
-you can you need to use `emulators` and  `emulators-ui` packages instead.
+js-dos v7 is based `emulators` and `emulators-ui` packages. It provide additinal services over this two packages, if you don't need them, then you can use `emulators` and  `emulators-ui` packages directly.
 
 To change code above to use `emulators` and `emulators-ui` just change scripts imports to:
 ```html

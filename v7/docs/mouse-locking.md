@@ -8,9 +8,9 @@ Some DOS games do not respect the mouse cursor position, they take into account 
 
 When the mouse is locked DOS game recive only relative movement of mouse and cursor can't leave game screen. This often used inf FPS games like DOOM to look around.
 
-:::warning
+:::info
 
-Mouse lock feature is incompatible with mobile devices. Changing the `autolock` property does not have any effect on mobiles.
+Mouse lock feature is compatible with mobile devices. In locked mode finger swipe will be sent as relative movement of game cursor.
 
 :::
 

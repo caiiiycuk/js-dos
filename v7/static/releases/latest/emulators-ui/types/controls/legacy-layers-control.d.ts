@@ -1,4 +1,5 @@
 import { LegacyLayersConfig } from "./layers-config";
 import { Layers } from "../dom/layers";
 import { CommandInterface } from "emulators";
-export declare function initLegacyLayersControl(layers: Layers, layersConfig: LegacyLayersConfig, ci: CommandInterface): () => void;
+import { DosInstance } from "../js-dos";
+export declare function initLegacyLayersControl(dosInstance: DosInstance, layers: Layers, layersConfig: LegacyLayersConfig, ci: CommandInterface): () => void;

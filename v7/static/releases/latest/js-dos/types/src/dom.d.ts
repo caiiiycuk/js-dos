@@ -1,3 +1,4 @@
+export declare const html: (strings: TemplateStringsArray, ...values: any[]) => import("preact").VNode<any> | import("preact").VNode<any>[];
 export declare const goneClass = "jsdos-player-gone";
 export declare const disabledClass = "jsdos-player-button-disabled";
 export declare const primaryClass = "jsdos-player-button-primary";

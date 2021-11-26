@@ -14,6 +14,6 @@ export interface GridConfiguration {
     height: number;
 }
 export interface Grid {
-    getConfiguration(width: number, height: number): GridConfiguration;
+    getConfiguration(width: number, height: number, scale?: number): GridConfiguration;
 }
 export declare function getGrid(gridType: GridType): Grid;

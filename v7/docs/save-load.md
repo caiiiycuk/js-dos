@@ -3,10 +3,10 @@ id: save-load
 title: Save/Load
 ---
 
-js-dos supports saving and restoring game progress. You can play in game from time to time
+js-dos supports saving and restoring game progress. You can play game from time to time
 without losing progress. It's working automatically while you don't change bundle url.
 
-This feature works by dumping changes in file system into second `bundle` and use it to override original file system
+This feature works by dumping changes of file system into second `bundle` and use it to override original file system
 on next load. This feature is backed by [CommandInterface](command-interface.md) `persist` function.
 
 You can implement your own save/load feature like this:

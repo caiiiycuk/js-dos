@@ -18,34 +18,39 @@ Next we need to download Digger [jsdos bundle](jsdos-bundle) into `public` direc
 curl https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos -o public/digger.jsdos
 ```
 
-To run DOS program we need to install `emulators` and `emulators-ui` packages, and copy their `dist` folders
-to `public` directory.
+To run DOS program we need to install `js-dos` package, and copy contents of `dist` folders
+to `public/js-dos` directory.
 ```sh
-yarn add emulators emulators-ui
-cp -r node_modules/emulators/dist public/emulators
-cp -r node_modules/emulators-ui/dist public/emulators-ui
+yarn add js-dos
+cp -r node_modules/js-dos/dist public/js-dos
 ```
 
 Resulting folder structure should be:
 ```sh
 public/digger.jsdos    - digger js-dos bundle
-public/emulators/*     - emulators package contents
-public/emulators-ui/*  - emulators-ui package contents
+public/js-dos/*        - js-dos package contents
+```
+
+js-dos package is built on top of emulators-ui package, because of that to have correct types in TypeScript you also need install emulators-ui package (it will be used only for type checking).
+
+```sh
+yarn add emulators-ui
 ```
 
 Next we need to modify `public/index.html` of react app to add js-dos scripts and styles.
 ```html
   <head>
     <!-- ... -->
-    <script src="%PUBLIC_URL%/emulators/emulators.js"></script>
-    <script src="%PUBLIC_URL%/emulators-ui/emulators-ui.js"></script>
-    <link rel="stylesheet" href="%PUBLIC_URL%/emulators-ui/emulators-ui.css">
+    <script src="%PUBLIC_URL%/js-dos/js-dos.js"></script>
+    <link rel="stylesheet" href="%PUBLIC_URL%/js-dos/js-dos.css">
     <script>
-       emulators.pathPrefix = "%PUBLIC_URL%/emulators/";
+       emulators.pathPrefix = "%PUBLIC_URL%/js-dos/";
     </script>
 ```
 
-:::note
+<br/>
+
+:::info
 
 Currently js-dos v7 packages provides only types information, you can't import actual implementation as 
 js module.
@@ -57,14 +62,14 @@ react component.
 
 ## Creating DOS component
 
-Now we can implement a React component that can play DOS program. Let's edit file `src/dos-player.tsx`.
+Let's implement a React component that can run a DOS program. Create file `src/dos-player.tsx`.
 
-Importing type information and emulators in component module:
+Import type information and declare emulators in component module:
 
 ```tsx
-import { DosFactoryType, DosInstance } from "emulators-ui/dist/types/js-dos";
+import { DosPlayer as Instance, DosPlayerFactoryType } from "js-dos";
 
-declare const Dos: DosFactoryType;
+declare const Dos: DosPlayerFactoryType;
 ```
 
 Props of the component will have only url to `js-dos bundle`. To embed js-dos we need to create root div
@@ -85,7 +90,7 @@ export default function DosPlayer(props: PlayerProps) {
 
 When root div will be ready we will create a `DosInstance` in it:
 ```tsx
-    const [dos, setDos] = useState<DosInstance | null>(null);
+    const [dos, setDos] = useState<Instance | null>(null);
 
     useEffect(() => {
         if (rootRef === null || rootRef.current === null) {
@@ -93,10 +98,7 @@ When root div will be ready we will create a `DosInstance` in it:
         }
 
         const root = rootRef.current as HTMLDivElement;
-
-        const instance = Dos(root, {
-            emulatorFunction: "dosWorker",
-        });
+        const instance = Dos(root);
 
         setDos(instance);
 
@@ -106,7 +108,7 @@ When root div will be ready we will create a `DosInstance` in it:
     }, [rootRef]);
 ```
 
-:::note
+:::info
 
 Do not forget to free resources by calling instance.stop at the end.
 
@@ -124,11 +126,11 @@ Finally we should run our program when dos is set:
 
 Full component code:
 ```tsx
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { DosFactoryType, DosInstance } from "emulators-ui/dist/types/js-dos";
+import { DosPlayer as Instance, DosPlayerFactoryType } from "js-dos";
 
-declare const Dos: DosFactoryType;
+declare const Dos: DosPlayerFactoryType;
 
 interface PlayerProps {
     bundleUrl: string;
@@ -136,7 +138,8 @@ interface PlayerProps {
 
 export default function DosPlayer(props: PlayerProps) {
     const rootRef = useRef<HTMLDivElement>(null);
-    const [dos, setDos] = useState<DosInstance | null>(null);
+
+    const [dos, setDos] = useState<Instance | null>(null);
 
     useEffect(() => {
         if (rootRef === null || rootRef.current === null) {
@@ -144,10 +147,7 @@ export default function DosPlayer(props: PlayerProps) {
         }
 
         const root = rootRef.current as HTMLDivElement;
-
-        const instance = Dos(root, {
-            emulatorFunction: "dosWorker",
-        });
+        const instance = Dos(root);
 
         setDos(instance);
 

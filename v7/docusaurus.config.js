@@ -74,6 +74,10 @@ module.exports = {
               label: 'GitHub',
               href: 'https://github.com/caiiiycuk/js-dos',
             },
+            {
+              label: 'Donate',
+              href: 'https://dos.zone/donate/',
+            },
           ],
         },
       ],

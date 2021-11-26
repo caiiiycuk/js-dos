@@ -1,35 +1,28 @@
 {
-  "name": "js-dos",
-  "version": "7.0.0",
-  "private": true,
-  "scripts": {
-    "start": "docusaurus start",
-    "build": "docusaurus build",
-    "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy"
-  },
-  "dependencies": {
-    "@docusaurus/core": "^2.0.0-beta.6",
-    "@docusaurus/plugin-google-analytics": "^2.0.0-beta.6",
-    "@docusaurus/preset-classic": "^2.0.0-beta.6",
-    "clsx": "^1.1.1",
-    "emulators": "^0.72.0",
-    "emulators-ui": "^0.71.7",
-    "js-dos": "^7.1.12",
-    "react": "^16.8.4",
-    "react-dom": "^16.8.4",
-    "three": "^0.118.3"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+    "name": "gh-pages",
+    "version": "7.xx",
+    "private": false,
+    "scripts": {
+        "start": "docusaurus start",
+        "build": "docusaurus build",
+        "swizzle": "docusaurus swizzle",
+        "deploy": "docusaurus deploy"
+    },
+    "dependencies": {
+        "@docusaurus/core": "^2.0.0-beta.6",
+        "@docusaurus/plugin-google-analytics": "^2.0.0-beta.6",
+        "@docusaurus/preset-classic": "^2.0.0-beta.6",
+        "clsx": "^1.1.1",
+        "emulators": "^0.72.0",
+        "emulators-ui": "^0.72.4",
+        "js-dos": "^7.2.4",
+        "react": "^16.8.4",
+        "react-dom": "^16.8.4",
+        "three": "^0.118.3"
+    },
+    "browserslist": [
+        "defaults",
+        "not ie 11",
+        "not op_mini all"
     ]
-  }
 }

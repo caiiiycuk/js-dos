@@ -21,6 +21,11 @@ export declare class DosInstance {
     ciPromise?: Promise<CommandInterface>;
     options: DosOptions;
     mobileControls: boolean;
+    mirroredControls: boolean;
+    scaleControls: number;
+    autolock: boolean;
+    sensitivity: number;
+    storage: Storage;
     private clickToStart;
     private unbindControls;
     private storedLayersConfig;
@@ -30,8 +35,12 @@ export declare class DosInstance {
     stop(): Promise<void>;
     setLayersConfig(config: LayersConfig | LegacyLayersConfig | null, layerName?: string): Promise<void>;
     getLayersConfig(): LayersConfig | LegacyLayersConfig | null;
-    enableMobileControls(): void;
-    disableMobileControls(): void;
+    enableMobileControls(): Promise<void>;
+    disableMobileControls(): Promise<void>;
+    setMirroredControls(mirrored: boolean): Promise<void>;
+    setScaleControls(scale: number): Promise<void>;
+    setSensitivity(sensitivity: number): Promise<void>;
+    setAutolock(autolock: boolean): Promise<void>;
     setOnMobileControlsChanged(handler: (visible: boolean) => void): void;
     private runBundle;
 }

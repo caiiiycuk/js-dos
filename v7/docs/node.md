@@ -35,7 +35,7 @@ const emulators = global.emulators;
 emulators.pathPrefix = "./";
 ```
 
-:::note
+:::info
 
 emulators package is made for browser, it didn't export anything. It inject itself into global object.
 In node `pathPrefix` is relative to `require`
