@@ -9,6 +9,12 @@ import { ActionExit } from "./components/action-exit";
 import { SideBar } from "./components/sidebar";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 
+import { getAutoRegion } from "./backend/jj/latency";
+
+import { EmulatorsUi } from "emulators-ui";
+
+declare const emulatorsUi: EmulatorsUi;
+
 export interface Props {
     player: () => DosPlayer;
     options: () => DosPlayerOptions;
@@ -44,6 +50,10 @@ export interface Props {
     sideBar: boolean;
     openSideBar: () => void;
     closeSideBar: () => void;
+
+    region: string | null;
+    estimatingRegion: string | null;
+    setRegion: (region: string | null) => void;
 }
 
 export function PlayerApp(playerProps: {
@@ -51,6 +61,7 @@ export function PlayerApp(playerProps: {
     options: () => DosPlayerOptions,
     setOnRun: (onRun: () => void) => void,
 }) {
+    const storage = emulatorsUi.dom.storage;
     const requestClientIdFn = playerProps.options().clientId;
     const requestClientId = typeof requestClientIdFn === "function" ?
         (userGesture: boolean) => requestClientIdFn(userGesture) :
@@ -65,6 +76,20 @@ export function PlayerApp(playerProps: {
     const [mute, setMute] = useState<boolean>(false);
     const [fullscreen, setFullscreen] = useState<boolean>(playerProps.player().layers.fullscreen);
     const [actionBar, setActionBar] = useState<boolean>(true);
+    const [region, _setRegion] = useState<string | null>(storage.getItem("jj.region"));
+    const [estimatingRegion, setEstimatingRegion] = useState<string | null>(null);
+
+    function setRegion(newRegion: string | null) {
+        if (newRegion === region) {
+            return;
+        }
+
+        if (newRegion !== null) {
+            storage.setItem("jj.region", newRegion);
+        }
+        _setRegion(newRegion);
+        setEstimatingRegion(null);
+    }
 
     useEffect(() => {
         if (typeof requestClientId !== "undefined") {
@@ -79,6 +104,16 @@ export function PlayerApp(playerProps: {
 
         return () => playerProps.setOnRun(() => {});
     }, [playerProps.setOnRun]);
+
+    useEffect(() => {
+        if (region !== null) {
+            return;
+        }
+
+        getAutoRegion(setEstimatingRegion)
+            .then(setRegion)
+            .catch(console.error);
+    }, [region]);
 
     useEffect(() => {
         const listener = () => {
@@ -157,6 +192,10 @@ export function PlayerApp(playerProps: {
         sideBar,
         openSideBar: () => setSideBar(true),
         closeSideBar: () => setSideBar(false),
+
+        region: region,
+        estimatingRegion,
+        setRegion,
     };
 
     return html`

@@ -24,6 +24,9 @@ export interface Props {
     sideBar: boolean;
     openSideBar: () => void;
     closeSideBar: () => void;
+    region: string | null;
+    estimatingRegion: string | null;
+    setRegion: (region: string | null) => void;
 }
 export declare function PlayerApp(playerProps: {
     player: () => DosPlayer;

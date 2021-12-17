@@ -64,7 +64,7 @@ function concatJs() {
 
 function copyAssets() {
     return src([
-        "node_modules/emulators-ui/dist/emulators-ui-loader.gif",
+        "node_modules/emulators-ui/dist/emulators-ui-loader.png",
     ])
         .pipe(dest("dist"));
 }
