@@ -7,6 +7,7 @@ import { ActionHide } from "./components/action-hide";
 import { ActionBar } from "./components/action-bar";
 import { ActionExit } from "./components/action-exit";
 import { SideBar } from "./components/sidebar";
+import { Tips } from "./components/tip";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 
 import { getAutoRegion } from "./backend/jj/latency";
@@ -54,6 +55,9 @@ export interface Props {
     region: string | null;
     estimatingRegion: string | null;
     setRegion: (region: string | null) => void;
+
+    showTips: boolean;
+    setShowTips: (showTips: boolean) => void;
 }
 
 export function PlayerApp(playerProps: {
@@ -78,6 +82,7 @@ export function PlayerApp(playerProps: {
     const [actionBar, setActionBar] = useState<boolean>(true);
     const [region, _setRegion] = useState<string | null>(storage.getItem("jj.region"));
     const [estimatingRegion, setEstimatingRegion] = useState<string | null>(null);
+    const [showTips, setShowTips] = useState<boolean>(storage.getItem("showTips") !== "false");
 
     function setRegion(newRegion: string | null) {
         if (newRegion === region) {
@@ -196,6 +201,12 @@ export function PlayerApp(playerProps: {
         region: region,
         estimatingRegion,
         setRegion,
+
+        showTips,
+        setShowTips: (newShowTips: boolean) => {
+            storage.setItem("showTips", newShowTips + "");
+            setShowTips(newShowTips);
+        },
     };
 
     return html`
@@ -204,6 +215,7 @@ export function PlayerApp(playerProps: {
         <${SideBar} ...${props} />
         <${ActionBar} ...${props} />
         <${ActionExit} ...${props} />
+        <${Tips} ...${props} />
     </div>
     `;
 }
