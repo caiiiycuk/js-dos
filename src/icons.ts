@@ -24,7 +24,7 @@ const Mobile = (props: { class: string }) => html`
 `;
 
 const SwithcHorizontal = (props: { class: string }) => html`
-    <svg class="h-6 w-6" fill=${props.class} viewBox="0 0 24 24" stroke="currentColor">
+    <svg class="${props.class}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
     </svg>
 `;
@@ -110,6 +110,12 @@ const ArrowsExpand = (props: { class: string }) => html`
     </svg>
 `;
 
+const ArrowsCircleRight = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 9l3 3m0 0l-3 3m3-3H8m13 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+`;
+
 const Plus = (props: { class: string }) => html`
     <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -142,6 +148,12 @@ const CurrencyDollar = (props: { class: string }) => html`
     </svg>
 `;
 
+const QuestionMarkCircle = (props: { class: string }) => html`
+    <svg class=${props.class} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+`;
+
 export const Icons = {
     XCircle,
     UserCircle,
@@ -154,6 +166,7 @@ export const Icons = {
     VolumeOff,
     PencilAlt,
     ArrowsExpand,
+    ArrowsCircleRight,
     ChevronLeft,
     ChevronRight,
     DotsHorizontal,
@@ -164,4 +177,5 @@ export const Icons = {
     Cursor,
     Refresh,
     CurrencyDollar,
+    QuestionMarkCircle,
 };

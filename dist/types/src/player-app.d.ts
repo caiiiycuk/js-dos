@@ -27,6 +27,8 @@ export interface Props {
     region: string | null;
     estimatingRegion: string | null;
     setRegion: (region: string | null) => void;
+    showTips: boolean;
+    setShowTips: (showTips: boolean) => void;
 }
 export declare function PlayerApp(playerProps: {
     player: () => DosPlayer;

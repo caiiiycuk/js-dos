@@ -32,6 +32,9 @@ export declare const Icons: {
     ArrowsExpand: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    ArrowsCircleRight: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     ChevronLeft: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
@@ -60,6 +63,9 @@ export declare const Icons: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     CurrencyDollar: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    QuestionMarkCircle: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
 };
