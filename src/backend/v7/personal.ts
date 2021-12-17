@@ -1,11 +1,9 @@
-import { getPersonalBundleUrl as impl } from "../sls/src/personal";
-import { send, postObject } from "./xhr";
+import { getPersonalBundleUrl as impl } from "../../../sls/src/personal";
+import { send, postObject } from "../../xhr";
+
+import { personalAcl, personalPut } from "./v7-config";
 
 declare const zip: any;
-
-const endpointBase = "https://kdhkdsv558.execute-api.eu-central-1.amazonaws.com/dev";
-const perosnalPut = endpointBase + "/personal/put";
-const personalAcl = endpointBase + "/personal/acl";
 
 export function getPersonalBundleUrl(namespace: string, id: string, bundleUrl: string): string {
     return impl(namespace, id, bundleUrl);
@@ -21,7 +19,7 @@ export async function putPersonalBundle(namespace: string,
         return;
     }
 
-    const result = await postObject(perosnalPut + "?namespace=" + namespace + "&id=" + id +
+    const result = await postObject(personalPut + "?namespace=" + namespace + "&id=" + id +
         "&bundleUrl=" + encodeURIComponent(bundleUrl));
 
     if (!result.success) {

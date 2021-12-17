@@ -1,7 +1,7 @@
 import { DosInstance, DosFactoryType, DosOptions } from "emulators-ui/dist/types/js-dos";
 import { createDiv } from "./dom";
 import { Hardware, hardwareTransportLayerFactory } from "./hardware-transport-layer";
-import { getPersonalBundleUrl, putPersonalBundle } from "./personal";
+import { getPersonalBundleUrl, putPersonalBundle } from "./backend/v7/personal";
 
 import { createPlayerApp } from "./player-app";
 

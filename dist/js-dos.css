@@ -68,7 +68,7 @@
 }
 
 .emulator-loader {
-    background: url(emulators-ui-loader.gif) no-repeat;
+    background: url(emulators-ui-loader.png) no-repeat;
     background-size: cover;
     width: 50px;
     height: 50px;
@@ -155,7 +155,7 @@
     border-color: rgba(255, 255, 255, 0.5);
 
     border-style: solid;
-    box-shadow: 0 0 2px 2px rgb(255 255 255 / 50%), inset 0 0 2px 2px rgb(255 255 255 / 50%);
+    box-shadow: 0 0 2px 2px rgba(255, 255, 255, 0.5), inset 0 0 2px 2px rgba(255, 255, 255, 0.5);
 }
 
 .emulator-button {
@@ -209,7 +209,7 @@
 }
 
 .emulator-options {
-    justify-content: end;
+    justify-content: flex-end;
     flex-wrap: wrap-reverse;
     display: flex;
     flex-direction: row;
@@ -863,6 +863,10 @@ video {
   margin-top: 0.5rem;
 }
 
+.mt-8 {
+  margin-top: 2rem;
+}
+
 .-mt-6 {
   margin-top: -1.5rem;
 }
@@ -1037,6 +1041,11 @@ video {
   }
 }
 
+.animate-spin {
+  -webkit-animation: spin 1s linear infinite;
+          animation: spin 1s linear infinite;
+}
+
 .animate-pulse {
   -webkit-animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
           animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -1062,6 +1071,10 @@ video {
   justify-content: center;
 }
 
+.justify-between {
+  justify-content: space-between;
+}
+
 .justify-evenly {
   justify-content: space-evenly;
 }
@@ -1076,6 +1089,10 @@ video {
 
 .overflow-ellipsis {
   text-overflow: ellipsis;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
 }
 
 .rounded {
@@ -1170,6 +1187,10 @@ video {
 
 .pl-2 {
   padding-left: 0.5rem;
+}
+
+.text-center {
+  text-align: center;
 }
 
 .font-mono {
