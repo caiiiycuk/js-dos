@@ -17,7 +17,7 @@ yarn
 NODE_ENV=production yarn run gulp
 ```
 
-Also you can build js and css separately:
+Also, you can build js and css separately:
 
 ```
 yarn run gulp js
@@ -26,7 +26,7 @@ yarn run gulp css
 
 ## Example
 
-To run builtin example do:
+To run built-in example do:
 
 ```
 hs .
