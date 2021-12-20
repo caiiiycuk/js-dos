@@ -1,4 +1,4 @@
-import { getPersonalBundleUrl as impl } from "../../../sls/src/personal";
+import { getPersonalBundleUrl as impl } from "../../../v7-services/src/personal";
 import { send, postObject } from "../../xhr";
 
 import { personalAcl, personalPut } from "./v7-config";

@@ -1,0 +1,24 @@
+service: jsdos-ok
+
+package:
+  exclude:
+    - 'node_modules/**'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  memorySize: 128
+  versionFunctions: false
+
+functions:
+  ok:
+    handler: src/ok.ok
+    name: jsdos-ok
+    events:
+      - http:
+          path: /ok
+          method: get
+          cors: true
+
+plugins:
+  - serverless-plugin-typescript

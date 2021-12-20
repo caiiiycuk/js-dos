@@ -10,7 +10,7 @@ import { SideBar } from "./components/sidebar";
 import { Tips } from "./components/tip";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 
-import { getAutoRegion } from "./backend/jj/latency";
+import { getAutoRegion, LatencyInfo } from "./backend/jj/latency";
 
 import { EmulatorsUi } from "emulators-ui";
 
@@ -56,6 +56,9 @@ export interface Props {
     estimatingRegion: string | null;
     setRegion: (region: string | null) => void;
 
+    latencyInfo: LatencyInfo | null,
+    setLatencyInfo: (latencyInfo: LatencyInfo) => void;
+
     showTips: boolean;
     setShowTips: (showTips: boolean) => void;
 }
@@ -83,6 +86,7 @@ export function PlayerApp(playerProps: {
     const [region, _setRegion] = useState<string | null>(storage.getItem("jj.region"));
     const [estimatingRegion, setEstimatingRegion] = useState<string | null>(null);
     const [showTips, setShowTips] = useState<boolean>(storage.getItem("showTips") !== "false");
+    const [latencyInfo, setLatencyInfo] = useState<LatencyInfo | null>(null);
 
     function setRegion(newRegion: string | null) {
         if (newRegion === region) {
@@ -116,7 +120,10 @@ export function PlayerApp(playerProps: {
         }
 
         getAutoRegion(setEstimatingRegion)
-            .then(setRegion)
+            .then((latencyInfo) => {
+                setLatencyInfo(latencyInfo);
+                setRegion(latencyInfo.region);
+            })
             .catch(console.error);
     }, [region]);
 
@@ -207,6 +214,9 @@ export function PlayerApp(playerProps: {
             storage.setItem("showTips", newShowTips + "");
             setShowTips(newShowTips);
         },
+
+        latencyInfo,
+        setLatencyInfo,
     };
 
     return html`
