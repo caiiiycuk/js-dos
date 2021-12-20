@@ -1,4 +1,6 @@
-export declare const awsRegions: {
+export interface AwsRegion {
     label: string;
-    value: string;
-}[];
+    name: string;
+    ok: string;
+}
+export declare const awsRegions: AwsRegion[];

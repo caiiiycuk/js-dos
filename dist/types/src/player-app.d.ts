@@ -1,4 +1,5 @@
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
+import { LatencyInfo } from "./backend/jj/latency";
 export interface Props {
     player: () => DosPlayer;
     options: () => DosPlayerOptions;
@@ -27,6 +28,8 @@ export interface Props {
     region: string | null;
     estimatingRegion: string | null;
     setRegion: (region: string | null) => void;
+    latencyInfo: LatencyInfo | null;
+    setLatencyInfo: (latencyInfo: LatencyInfo) => void;
     showTips: boolean;
     setShowTips: (showTips: boolean) => void;
 }
