@@ -63,7 +63,7 @@ export function ActionExit(props: Props) {
         setClosing(false);
     }
 
-    if (closing || typeof onExit !== "function") {
+    if (closing || typeof onExit !== "function" || props.sideBar) {
         return null;
     }
 
