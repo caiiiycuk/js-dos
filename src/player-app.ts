@@ -16,6 +16,8 @@ import { EmulatorsUi } from "emulators-ui";
 
 declare const emulatorsUi: EmulatorsUi;
 
+export type SidebarPage = "main" | "latency-info";
+
 export interface Props {
     player: () => DosPlayer;
     options: () => DosPlayerOptions;
@@ -61,6 +63,9 @@ export interface Props {
 
     showTips: boolean;
     setShowTips: (showTips: boolean) => void;
+
+    sideBarPage: SidebarPage;
+    setSideBarPage: (page: SidebarPage) => void;
 }
 
 export function PlayerApp(playerProps: {
@@ -74,7 +79,7 @@ export function PlayerApp(playerProps: {
         (userGesture: boolean) => requestClientIdFn(userGesture) :
         undefined;
     const [clientId, setClientId] = useState<ClientId | null>(null);
-    const [sideBar, setSideBar] = useState<boolean>(false);
+    const [sideBar, setSideBar] = useState<boolean>(true);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
     const [mirroredControls, setMirroredControls] = useState<boolean>(playerProps.player().mirroredControls);
     const [autolock, setAutolock] = useState<boolean>(playerProps.player().autolock);
@@ -87,6 +92,7 @@ export function PlayerApp(playerProps: {
     const [estimatingRegion, setEstimatingRegion] = useState<string | null>(null);
     const [showTips, setShowTips] = useState<boolean>(storage.getItem("showTips") !== "false");
     const [latencyInfo, setLatencyInfo] = useState<LatencyInfo | null>(null);
+    const [sideBarPage, setSideBarPage] = useState<SidebarPage>("main");
 
     function setRegion(newRegion: string | null) {
         if (newRegion === region) {
@@ -217,6 +223,9 @@ export function PlayerApp(playerProps: {
 
         latencyInfo,
         setLatencyInfo,
+
+        sideBarPage, 
+        setSideBarPage,
     };
 
     return html`
