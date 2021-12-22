@@ -1,30 +1,32 @@
-import { html } from "../dom";
-import { Props } from "../player-app";
-import { useState } from "preact/hooks";
+import { html } from "../../dom";
+import { Props } from "../../player-app";
 
 interface LatencyInfoProps extends Props {
     class?: string,
+    asButton?: boolean,
 }
 
 export function LatencyInfo(props: LatencyInfoProps) {
-    const [showInfo, setShowInfo] = useState<boolean>(false);
-
-    const toggleShowInfo = (e: Event) => {
-        setShowInfo(!showInfo);
-        e.stopPropagation();
-        e.preventDefault();
-    };
-
     if (props.latencyInfo === null) {
         return null;
     }
 
-    if (showInfo === false) {
+    const showLatencyInfoPage = (e: Event) => {
+        props.setSideBarPage("latency-info");
+        e.stopPropagation();
+        e.preventDefault();
+    };
+
+    if (props.asButton === true && props.sideBarPage === "main") {
         return html`
-            <div class="text-gray-400 text-xs underline cursor-pointer self-center" onClick=${toggleShowInfo}>
+            <div class="text-gray-400 text-xs underline cursor-pointer self-center" onClick=${showLatencyInfoPage}>
                 show latency info
             </div>
         `;
+    }
+
+    if (props.sideBarPage !== "latency-info") {
+        return null;
     }
 
     const rows = [];
@@ -42,11 +44,9 @@ export function LatencyInfo(props: LatencyInfoProps) {
     }
 
     return html`
-            <div class="text-gray-400 text-xs underline cursor-pointer self-center mb-2" onClick=${toggleShowInfo}>
-                hide latency info
-            </div>
-            <div class="flex flex-col">
-                ${rows}
-            </div>
+        <div class="sidebar-header">Latency</div>
+        <div class="flex flex-col">
+            ${rows}
+        </div>
     `;
 }
