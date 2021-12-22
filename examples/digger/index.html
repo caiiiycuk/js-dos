@@ -32,6 +32,7 @@
         emulators.pathPrefix = "/dist/";
         Dos(document.getElementById("jsdos"), {
             hardware: window.hardware,
+            onExit: () => {},
             clientId: (userGesture) => {
                 if (!userGesture) {
                     return Promise.resolve(clientId);

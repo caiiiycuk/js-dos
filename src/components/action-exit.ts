@@ -69,10 +69,10 @@ export function ActionExit(props: Props) {
 
     return html`
     <div class="filter transition-opacity duration-1000 absolute z-50 
-                                    bg-gray-200 opacity-80 ${pulse ? " text-red-500 animate-pulse" : "" } w-6 h-6 top-0
+                                    bg-gray-200 ${pulse ? " text-red-500 animate-pulse" : "" } w-8 h-8 top-0
         ${props.actionBar ? "left-10" : "left-0" } rounded-br-md cursor-pointer" onClick=${doClose}>
-        <div class="h-4 w-4 mt-1 ml-1">
-            <${Icons.XCircle} class="h-4 w-4" />
+        <div class="h-6 w-6 mt-1 ml-1">
+            <${Icons.XCircle} class="h-6 w-6" />
         </div>
     </div>
     `;

@@ -6,7 +6,9 @@ export interface Hardware {
     mouseMove(x: number, y: number, relative: boolean, timeMs: number): void;
     mouseButton(button: number, pressed: number, timeMs: number): void;
     getFramePayload(): string;
-    writeFile(path: string, blob: string): string;
+    createFile(path: string): string;
+    appendFile(blob: string): string;
+    closeFile(): string;
 }
 export declare class HardwareTransportLayerFactory {
     private serverMessageHandler;
