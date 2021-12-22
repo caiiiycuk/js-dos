@@ -10,7 +10,10 @@ export interface Hardware {
     mouseMove(x: number, y: number, relative: boolean, timeMs: number): void;
     mouseButton(button: number, pressed: number, timeMs: number): void;
     getFramePayload(): string;
-    writeFile(path: string, blob: string): string;
+
+    createFile(path: string): string;
+    appendFile(blob: string): string;
+    closeFile(): string;
 }
 
 const textDecoder = new TextDecoder();
@@ -43,7 +46,7 @@ class HardwareTransportLayer implements TransportLayer {
 
         switch (name) {
             case "wc-run": {
-                let errorMessage = this.hardware.writeFile("bundle_0.zip", encode(props.bundles[0]));
+                let errorMessage = writeFile(this.hardware, "bundle_0.zip", props.bundles[0]);
 
                 if (errorMessage.length > 0) {
                     console.error(errorMessage);
@@ -51,7 +54,7 @@ class HardwareTransportLayer implements TransportLayer {
                 }
 
                 if (props.bundles[1] !== undefined) {
-                    errorMessage = this.hardware.writeFile("bundle_1.zip", encode(props.bundles[1]));
+                    errorMessage = writeFile(this.hardware, "bundle_1.zip", props.bundles[1]);
                     if (errorMessage.length > 0) {
                         console.error(errorMessage);
                         throw new Error(errorMessage);
@@ -230,6 +233,33 @@ export class HardwareTransportLayerFactory {
 }
 
 export const hardwareTransportLayerFactory = new HardwareTransportLayerFactory();
+
+function writeFile(hardware: Hardware, path: string, payload: Uint8Array): string {
+    if ((hardware as any).writeFile !== undefined) {
+        return (hardware as any).writeFile(path, encode(payload));
+    }
+
+    const bufferSize = 4 * 1024 * 1024; // 4 mb
+
+    let error = hardware.createFile(path);
+    if (error.length > 0) {
+        return error;
+    }
+
+    let cursor = 0;
+    while (cursor < payload.length) {
+        const size = Math.min(bufferSize, payload.length - cursor);
+        const chunk = payload.subarray(cursor, cursor + size);
+        error = hardware.appendFile(encode(chunk));
+        if (error.length > 0) {
+            return error;
+        }
+        cursor += size;
+    }
+
+    error = hardware.closeFile();
+    return error;
+}
 
 function decode(input: string): Uint8Array {
     return base64.toByteArray(input);
