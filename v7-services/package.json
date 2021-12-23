@@ -1,15 +1,17 @@
 {
-  "name": "aws-node-rest-api-typescript",
+  "name": "js-dos-v7-services",
   "description": "",
   "version": "0.1.0",
-  "dependencies": {},
+  "license": "GPL-2.0",
+  "dependencies": {
+    "nanoid": "^3.1.30"
+  },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.61",
+    "@types/aws-lambda": "^8.10.88",
     "@types/node": "^14.6.4",
-    "aws-sdk": "^2.746.0",
-    "serverless": "^1.78.1",
-    "serverless-offline": "^6.5.0",
-    "serverless-plugin-typescript": "^1.1.9",
-    "typescript": "^4.4.4"
+    "aws-sdk": "^2.1048.0",
+    "serverless": "^2.69.1",
+    "serverless-plugin-typescript": "^2.1.0",
+    "typescript": "^4.5.4"
   }
 }

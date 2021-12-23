@@ -1,11 +1,13 @@
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 import { LatencyInfo } from "./backend/jj/latency";
+export declare type SidebarPage = "main" | "latency-info" | "networking";
 export interface Props {
     player: () => DosPlayer;
     options: () => DosPlayerOptions;
     clientId: ClientId | null;
     setClientId: (clientId: ClientId | null) => void;
     requestClientId?: (userGesture: boolean) => Promise<ClientId | null>;
+    anonymousClientId: ClientId;
     mobileControls: boolean;
     setMobileControls: (controls: boolean) => Promise<void>;
     mirroredControls: boolean;
@@ -32,6 +34,8 @@ export interface Props {
     setLatencyInfo: (latencyInfo: LatencyInfo) => void;
     showTips: boolean;
     setShowTips: (showTips: boolean) => void;
+    sideBarPage: SidebarPage;
+    setSideBarPage: (page: SidebarPage) => void;
 }
 export declare function PlayerApp(playerProps: {
     player: () => DosPlayer;

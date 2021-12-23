@@ -14,9 +14,18 @@ import { getAutoRegion, LatencyInfo } from "./backend/jj/latency";
 
 import { EmulatorsUi } from "emulators-ui";
 
+import { nanoid } from "nanoid/non-secure";
+
 declare const emulatorsUi: EmulatorsUi;
 
-export type SidebarPage = "main" | "latency-info";
+export type SidebarPage = "main" | "latency-info" | "networking";
+
+const storageKeys = {
+    localId: "client.id",
+    networkToken: "network.token",
+    networkRegion: "network.region",
+    uiTips: "ui.tips",
+};
 
 export interface Props {
     player: () => DosPlayer;
@@ -25,6 +34,11 @@ export interface Props {
     clientId: ClientId | null,
     setClientId: (clientId: ClientId | null) => void,
     requestClientId?: (userGesture: boolean) => Promise<ClientId | null>,
+
+    anonymousClientId: ClientId,
+
+    networkToken: string | null,
+    setNetworkToken: (token: string | null) => void,
 
     mobileControls: boolean;
     setMobileControls: (controls: boolean) => Promise<void>;
@@ -66,6 +80,9 @@ export interface Props {
 
     sideBarPage: SidebarPage;
     setSideBarPage: (page: SidebarPage) => void;
+
+    showNewInstance: boolean;
+    setShowNewInstance: (showNewInstance: boolean) => void;
 }
 
 export function PlayerApp(playerProps: {
@@ -88,11 +105,25 @@ export function PlayerApp(playerProps: {
     const [mute, setMute] = useState<boolean>(false);
     const [fullscreen, setFullscreen] = useState<boolean>(playerProps.player().layers.fullscreen);
     const [actionBar, setActionBar] = useState<boolean>(true);
-    const [region, _setRegion] = useState<string | null>(storage.getItem("jj.region"));
+    const [region, _setRegion] = useState<string | null>(storage.getItem(storageKeys.networkRegion));
     const [estimatingRegion, setEstimatingRegion] = useState<string | null>(null);
-    const [showTips, setShowTips] = useState<boolean>(storage.getItem("showTips") !== "false");
+    const [showTips, setShowTips] = useState<boolean>(storage.getItem(storageKeys.uiTips) !== "false");
     const [latencyInfo, setLatencyInfo] = useState<LatencyInfo | null>(null);
-    const [sideBarPage, setSideBarPage] = useState<SidebarPage>("main");
+    const [sideBarPage, setSideBarPage] = useState<SidebarPage>("networking");
+    const [anonymousClientId] = useState<ClientId>(() => {
+        const storedId = storage.getItem(storageKeys.localId);
+        const localId = storedId ?? nanoid();
+        if (storedId === null) {
+            storage.setItem(storageKeys.localId, localId);
+        }
+
+        return {
+            namespace: encodeURIComponent("local (" + location.href + ")"),
+            id: localId,
+        };
+    });
+    const [networkToken, setNetworkToken] = useState<string | null>(storage.getItem(storageKeys.networkToken));
+    const [showNewInstance, setShowNewInstance] = useState<boolean>(false);
 
     function setRegion(newRegion: string | null) {
         if (newRegion === region) {
@@ -100,7 +131,7 @@ export function PlayerApp(playerProps: {
         }
 
         if (newRegion !== null) {
-            storage.setItem("jj.region", newRegion);
+            storage.setItem(storageKeys.networkRegion, newRegion);
         }
         _setRegion(newRegion);
         setEstimatingRegion(null);
@@ -156,6 +187,16 @@ export function PlayerApp(playerProps: {
         clientId,
         setClientId,
         requestClientId,
+
+        anonymousClientId,
+
+        networkToken,
+        setNetworkToken: (token: string | null) => {
+            token === null ?
+                storage.removeItem(storageKeys.networkToken) :
+                storage.setItem(storageKeys.networkToken, token);
+            setNetworkToken(token);
+        },
 
         mobileControls,
         setMobileControls: async (controls: boolean) => {
@@ -217,15 +258,18 @@ export function PlayerApp(playerProps: {
 
         showTips,
         setShowTips: (newShowTips: boolean) => {
-            storage.setItem("showTips", newShowTips + "");
+            storage.setItem(storageKeys.uiTips, newShowTips + "");
             setShowTips(newShowTips);
         },
 
         latencyInfo,
         setLatencyInfo,
 
-        sideBarPage, 
+        sideBarPage,
         setSideBarPage,
+
+        showNewInstance,
+        setShowNewInstance,
     };
 
     return html`

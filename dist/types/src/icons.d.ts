@@ -32,6 +32,9 @@ export declare const Icons: {
     ArrowsExpand: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    ArrowsCircleLeft: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     ArrowsCircleRight: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];

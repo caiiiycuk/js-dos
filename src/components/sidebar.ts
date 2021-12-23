@@ -1,10 +1,11 @@
 import { html } from "../dom";
 
 import { Props } from "../player-app";
-import { Main } from "./sidebar/main";
-
 import { Icons } from "../icons";
+
+import { Main } from "./sidebar/main";
 import { LatencyInfo } from "./sidebar/latency-info";
+import { Networking } from "./sidebar/networking";
 
 export function SideBar(props: Props) {
     if (!props.sideBar) {
@@ -43,6 +44,8 @@ export function SideBar(props: Props) {
     
         <${Main} ...${props} />
         <${LatencyInfo} ...${props} />
+        <${Networking} ...${props} />
+
         <div class="flex-grow"></div>
     
         <div class="${props.options().donate ? "" : " hidden"} self-center uppercase mt-4 cursor-pointer underline

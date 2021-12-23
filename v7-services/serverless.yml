@@ -2,10 +2,6 @@ org: caiiiycuk
 app: jsdos-backend
 service: jsdos-v7
 
-package:
-  exclude:
-    - 'node_modules/**'
-
 provider:
   name: aws
   runtime: nodejs14.x
@@ -13,6 +9,7 @@ provider:
   memorySize: 256
   versionFunctions: false
   environment:
+    NETWORKING_TABLE: "v2_r1_dznetworking"
     PUT_CURL: "jjs-putCurl"
   iamRoleStatements:
     - Effect: Allow
@@ -31,8 +28,42 @@ provider:
         - lambda:InvokeFunction
       Resource:
         - "arn:aws:lambda:${opt:region, self:provider.region}:*:function:${self:provider.environment.PUT_CURL}"
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.NETWORKING_TABLE}"
 
 functions:
+  getTokenCost: 
+    handler: src/networking/get-token-cost.getTokenCost
+    name: jsdos-getTokenCost
+    events:
+      - http:
+          path: /token/cost/get
+          method: get
+          cors: true
+  getFreeToken:
+    handler: src/networking/get-free-token.getFreeToken
+    name: jsdos-getFreeToken
+    events:
+      - http:
+          path: /token/free/get
+          method: get
+          cors: true
+  getTokenInfo:
+    handler: src/networking/get-token-info.getTokenInfo
+    name: jsdos-getTokenInfo
+    events:
+      - http:
+          path: /token/info/get
+          method: get
+          cors: true
   personalPut:
     handler: src/personal-put.personalPut
     name: jsdos-personalPut
@@ -49,6 +80,35 @@ functions:
           path: /personal/acl
           method: post
           cors: true
+
+resources:
+  Resources:
+    dznetworking:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: key
+            AttributeType: S
+          -
+            AttributeName: day
+            AttributeType: N
+        KeySchema:
+          -
+            AttributeName: key
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          -
+            IndexName: day
+            KeySchema:
+            -
+              AttributeName: day
+              KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        TableName: ${self:provider.environment.NETWORKING_TABLE}
+        BillingMode: PAY_PER_REQUEST
 
 plugins:
   - serverless-plugin-typescript

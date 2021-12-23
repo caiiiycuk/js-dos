@@ -48,11 +48,30 @@ export function send(method: "get" | "post" | "head" | "put",
 
 export async function postObject(url: string, data?: string | ArrayBuffer): Promise<any> {
     const response = JSON.parse(await (post(url, "text", data) as Promise<string>));
+
     if (response.success) {
         return response;
     }
 
-    throw new Error("POST Request failed:\n Payload:\n" + JSON.stringify(response.body, null, 2));
+    if (response.errorCode !== undefined) {
+        throw new Error(response.errorCode);
+    }
+
+    throw new Error("POST Object request failed:\n Payload:\n" + JSON.stringify(response.body, null, 2));
+}
+
+export async function getObject(url: string): Promise<any> {
+    const response = JSON.parse(await (send("get", url, "text") as Promise<string>));
+
+    if (response.success) {
+        return response;
+    }
+
+    if (response.errorCode !== undefined) {
+        throw new Error(response.errorCode);
+    }
+
+    throw new Error("GET Object request failed:\n Payload:\n" + JSON.stringify(response, null, 2));
 }
 
 export function post(url: string,
