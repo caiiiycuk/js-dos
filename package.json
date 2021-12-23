@@ -66,5 +66,8 @@
         "typescript": "^4.4.4",
         "vinyl-buffer": "^1.0.1",
         "vinyl-source-stream": "^2.0.0"
+    },
+    "dependencies": {
+        "nanoid": "^3.1.30"
     }
 }
