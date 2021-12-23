@@ -4,7 +4,18 @@ import { customAlphabet } from "nanoid/async";
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 const NETWORKING_TABLE = process.env.NETWORKING_TABLE as string;
+
+const lambda = new AWS.Lambda();
+const RunInstanceLambda = process.env.RUN_INSTANCE as string;
+
 const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 6);
+
+interface Token {
+    day: number,
+    region: string,
+    endTime: number,
+    ttlSec: number,
+}
 
 export async function getFreeTierSoftCount(namespace: string, id: string, day: number): Promise<number> {
     const freeTierSoftKey = getFreeTierSoftKey(namespace, id, day);
@@ -78,13 +89,13 @@ export async function createFreeToken(namespace: string, id: string, day: number
     return createToken(namespace, id, day, region, freeTierSec);
 }
 
-export async function getToken(token: string) {
+export async function getToken(token: string): Promise<Token> {
     const item = (await dynamoDb.get({
         TableName: NETWORKING_TABLE,
         Key: {
-            key: "token " + token,
+            key: getTokenKey(token),
         },
-    }).promise()).Item;
+    }).promise()).Item as Token | undefined;
 
     if (item === undefined) {
         throw new Error("not-found");
@@ -104,7 +115,7 @@ export async function createToken(namespace: string, id: string, day: number,
         const createParams: AWS.DynamoDB.DocumentClient.PutItemInput = {
             TableName: NETWORKING_TABLE,
             Item: {
-                "key": "token " + token,
+                "key": getTokenKey(token),
                 namespace,
                 id,
                 day,
@@ -130,10 +141,50 @@ export async function createToken(namespace: string, id: string, day: number,
     return token;
 }
 
+export async function tokenNewTask(tokenId: string, task: "ipx-server") {
+    const token = await getToken(tokenId);
+
+    if (token.ttlSec < 60) { // 1min to start container
+        throw new Error("ended");
+    }
+
+    const result = await lambda.invoke({
+        FunctionName: RunInstanceLambda,
+        Payload: JSON.stringify({
+            token: tokenId,
+            region: token.region,
+            task,
+        }),
+    }).promise();
+
+    if (!result.Payload) {
+        throw new Error("unable-to-start-task");
+    }
+
+    const arn = JSON.parse(JSON.parse(result.Payload as string).body).arn;
+
+    const updateParams: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+        TableName: NETWORKING_TABLE,
+        Key: {
+            key: getTokenKey(tokenId),
+        },
+        UpdateExpression: "SET ipxArn = :arn",
+        ExpressionAttributeValues: {
+            ":arn": arn,
+        },
+    };
+
+    await dynamoDb.update(updateParams).promise();
+}
+
 function getFreeTierSoftKey(namespace: string, id: string, day: number) {
     return "free-soft " + day + " " + id + "@" + namespace;
 }
 
 function getFreeTierHardKey(day: number) {
     return "free-hard " + day;
+}
+
+function getTokenKey(token: string) {
+    return "token " + token;
 }

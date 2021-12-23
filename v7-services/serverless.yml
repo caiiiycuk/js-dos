@@ -11,6 +11,7 @@ provider:
   environment:
     NETWORKING_TABLE: "v2_r1_dznetworking"
     PUT_CURL: "jjs-putCurl"
+    RUN_INSTANCE: "jjs-runInstanceV2"
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -28,6 +29,7 @@ provider:
         - lambda:InvokeFunction
       Resource:
         - "arn:aws:lambda:${opt:region, self:provider.region}:*:function:${self:provider.environment.PUT_CURL}"
+        - "arn:aws:lambda:${opt:region, self:provider.region}:*:function:${self:provider.environment.RUN_INSTANCE}"
     - Effect: Allow
       Action:
         - dynamodb:Query
@@ -62,6 +64,14 @@ functions:
     events:
       - http:
           path: /token/info/get
+          method: get
+          cors: true
+  getNewIpx:
+    handler: src/networking/get-new-ipx.getNewIpx
+    name: jsdos-getNewIpx
+    events:
+      - http:
+          path: /token/new/ipx/get
           method: get
           cors: true
   personalPut:
