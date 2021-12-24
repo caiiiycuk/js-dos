@@ -1,48 +1,59 @@
 import { useEffect, useState } from "preact/hooks";
-import { tokeInfoGet, tokenNewIpxGet } from "../../backend/v7/v7-config";
+import { tokeInfoGet, startIpx, stopIox as stopIpx } from "../../backend/v7/v7-config";
 import { html } from "../../dom";
 import { Icons } from "../../icons";
 import { Props } from "../../player-app";
-import { getObject } from "../../xhr";
+import { getObject, postObject } from "../../xhr";
 
-const initialCountDown = 60;
+const initialWaitCountDown = 30;
 
 interface Token {
     region: string,
     ttlSec: number,
-    ipxArn?: string,
+    ipxArn?: string | null,
+    ipxIp?: string | null,
 }
 
-interface TokenProps extends Props {
+interface IpxProps {
+    ipxArn: string | null,
+    setIpxArn: (ipxArn: string | null) => void,
+
     ipxIp: string | null,
     setIpxIp: (ipxIp: string | null) => void,
 
-    awaitingIpx: boolean,
-    setAwaitingIpx: (waitingIpx: boolean) => void,
+    awaitingIpxIp: boolean,
+    setAwaitingIpxIp: (waitingIpx: boolean) => void,
+}
+interface TokenProps extends Props {
+    ipx: IpxProps,
 
-    ipxCountDown: number,
-    setIpxCountDown: (ipxCountDown: number) => void,
+    update: () => void,
 }
 
 export function ActiveToken(props: Props) {
     const [token, setToken] = useState<Token | null>(null);
     const [awaiting, setAwaiting] = useState<boolean>(true);
+    const [endTime, setEndTime] = useState<number>(Date.now());
 
+    const [ipxArn, setIpxArn] = useState<string | null>(null);
     const [ipxIp, setIpxIp] = useState<string | null>(null);
-    const [awaitingIpx, setAwaitingIpx] = useState<boolean>(false);
-    const [ipxCountDown, setIpxCountDown] = useState<number>(initialCountDown);
+    const [awaitingIpxIp, setAwaitingIpxIp] = useState<boolean>(false);
 
-    const tokenProps: TokenProps = {
-        ...props,
+    const ipxProps: IpxProps = {
+        ipxArn,
+        setIpxArn,
 
         ipxIp,
         setIpxIp,
 
-        awaitingIpx,
-        setAwaitingIpx,
+        awaitingIpxIp,
+        setAwaitingIpxIp,
+    };
 
-        ipxCountDown,
-        setIpxCountDown,
+    const tokenProps: TokenProps = {
+        ...props,
+        ipx: ipxProps,
+        update,
     };
 
     useEffect(() => {
@@ -50,38 +61,58 @@ export function ActiveToken(props: Props) {
     }, [props.networkToken]);
 
     useEffect(() => {
-        let runCount = 0;
+        if (props.networkToken === null || endTime < Date.now()) {
+            return;
+        }
 
         const id = setInterval(() => {
-            if (awaitingIpx && ipxCountDown > 0) {
-                setIpxCountDown(ipxCountDown - 1);
-            }
+            getObject(tokeInfoGet + `?token=${props.networkToken}`).then((token: Token) => {
+                token.ipxArn ||= null;
+                token.ipxIp ||= null;
 
-            ++runCount;
-        }, 1000);
+                // desync
+                if (ipxArn !== token.ipxArn) {
+                    update();
+                    return;
+                }
+
+                if (token.ipxIp !== ipxIp) {
+                    setIpxIp(token.ipxIp);
+                    setAwaitingIpxIp(false);
+                }
+            });
+        }, 5000);
 
         return () => {
             clearInterval(id);
         };
-    }, [ipxIp, setIpxIp, awaitingIpx, setAwaitingIpx, ipxCountDown, setIpxCountDown]);
+    }, [props.networkToken, endTime, ipxArn, ipxIp]);
 
     async function update() {
+        setIpxArn(null);
         setIpxIp(null);
-        setAwaitingIpx(false);
-        setIpxCountDown(initialCountDown);
+        setAwaitingIpxIp(false);
+        setAwaiting(true);
 
         if (props.networkToken === null) {
             setToken(null);
+            setAwaiting(false);
             return;
         }
 
-        setAwaiting(true);
         getObject(tokeInfoGet + `?token=${props.networkToken}`).then((token: Token) => {
             setToken(token);
             setAwaiting(false);
+            setEndTime(Date.now() + token.ttlSec * 1000);
 
             if (token.ipxArn !== undefined) {
-                setAwaitingIpx(true);
+                setIpxArn(token.ipxArn);
+            }
+
+            if (token.ipxIp !== undefined) {
+                setIpxIp(token.ipxIp);
+            } else if (token.ipxArn !== undefined) {
+                setAwaitingIpxIp(true);
             }
         }).catch((e) => {
             console.error("Can't get a token", props.networkToken, e);
@@ -109,7 +140,7 @@ export function ActiveToken(props: Props) {
         `;
     }
 
-    if (token.ttlSec < 0) {
+    if (endTime < Date.now()) {
         return html`
             <div class="sidebar-header">Active</div>
             <div class="grid grid-cols-2 gap-4">
@@ -125,12 +156,40 @@ export function ActiveToken(props: Props) {
         <div class="sidebar-header">Active</div>
         <div class="grid grid-cols-2 gap-4">
             <${TokenSelect} ...${props} />
-            <div class="font-bold">TTL:</div>
-            <div class="text-gray-400 underline" onClick=${update}>${toMin(token.ttlSec)} Min</div>
             <div class="font-bold">Region:</div>
             <div class="text-gray-400">${token.region}</div>
+            <${TokenTtlCountDown} endTime=${endTime} update=${update} />
             <${IPX} ...${tokenProps} />
             <${NewInstance} ...${props} class="bg-gray-200" />
+        </div>
+    `;
+}
+
+function TokenTtlCountDown(props: { endTime: number, update: () => void }) {
+    const [ttlMs, setTtlMs] = useState<number>(props.endTime - Date.now());
+
+    useEffect(() => {
+        if (ttlMs <= 0) {
+            return;
+        }
+
+        const id = setInterval(() => {
+            const ttlMs = Math.max(0, props.endTime - Date.now());
+            if (ttlMs === 0) {
+                props.update();
+                clearInterval(id);
+            }
+
+            setTtlMs(ttlMs);
+        }, 10000);
+        return () => clearInterval(id);
+    }, [props.endTime]);
+
+    return html`
+        <div class="font-bold">TTL:</div>
+        <div class="${ ttlMs < 300 * 1000 ? "text-red-400" :"text-gray-400" } cursor-pointer underline" 
+            onClick=${props.update}>
+            ${toMin(ttlMs / 1000)} Min
         </div>
     `;
 }
@@ -141,15 +200,30 @@ function IPX(props: TokenProps) {
 
     function start() {
         setAwaiting(true);
-        getObject(tokenNewIpxGet + `?token=${props.networkToken}`)
-            .then(() => {
+        getObject(startIpx + `?token=${props.networkToken}`)
+            .then((response) => {
                 setAwaiting(false);
-                props.setIpxIp(null);
-                props.setAwaitingIpx(true);
-                props.setIpxCountDown(initialCountDown);
+                props.ipx.setIpxArn(response.arn);
+                props.ipx.setAwaitingIpxIp(true);
             })
             .catch((e) => {
-                setError(e);
+                console.error("Can't start ipx", e);
+                setError(e.errorCode ?? e.message);
+                setAwaiting(false);
+            });
+    }
+
+    function stop() {
+        setAwaiting(true);
+        postObject(stopIpx + `?token=${props.networkToken}&arn=${props.ipx.ipxArn}`)
+            .then(() => {
+                setAwaiting(false);
+                props.ipx.setIpxIp(null);
+                props.ipx.setAwaitingIpxIp(false);
+            })
+            .catch((e) => {
+                console.error("Can't stop ipx", e);
+                setError(e.errorCode ?? e.message);
                 setAwaiting(false);
             });
     }
@@ -166,20 +240,21 @@ function IPX(props: TokenProps) {
         `;
     }
 
-    if (props.ipxIp !== null) {
+    if (props.ipx.ipxIp !== null) {
         return html`
             <div class="font-bold">IPX:</div>
-            <div class="text-gray-400">${props.ipxIp}</div>
+            <div class="font-bold text-green-400">${props.ipx.ipxIp}</div>
+            <div class=""></div>
+            <div class="bg-gray-200 cursor-pointer rounded uppercase text-center px-4 py-1" onClick=${stop}>Stop</div>
         `;
     }
 
-    if (props.awaitingIpx) {
+    if (props.ipx.awaitingIpxIp) {
         return html`
             <div class="font-bold">IPX:</div>
-            <div class="text-gray-400 flex flex-row">
-                <${Icons.Refresh} class="w-6 h-6 animate-spin mr-2" />
-                ${props.ipxCountDown > 0 ? props.ipxCountDown + " sec" : ""}
-            </div>
+            <${TaskWaitCountDown} />
+            <div class=""></div>
+            <div class="bg-gray-200 cursor-pointer rounded uppercase text-center px-4 py-1" onClick=${stop}>Stop</div>
         `;
     }
 
@@ -189,7 +264,29 @@ function IPX(props: TokenProps) {
     `;
 }
 
-function TokenSelect(props: Props) {
+function TaskWaitCountDown() {
+    const [countDown, setCountDown] = useState<number>(initialWaitCountDown);
+
+    useEffect(() => {
+        if (countDown === 0) {
+            return;
+        }
+
+        const id = setTimeout(() => {
+            setCountDown(countDown - 1);
+        }, 1000);
+        return () => clearTimeout(id);
+    }, [countDown]);
+
+    return html`
+        <div class="text-gray-400 flex flex-row">
+            <${Icons.Refresh} class="w-6 h-6 animate-spin mr-2" />
+            ${countDown > 0 ? countDown + " sec" : ""}
+        </div>
+    `;
+}
+
+function TokenSelect(props: TokenProps) {
     function changeToken() {
         const newToken = prompt("Set token", props.networkToken || "");
         if (newToken !== null) {
@@ -212,8 +309,8 @@ function NewInstance(props: Props & { class?: string }) {
 
     return html`
         <div class="cursor-pointer col-span-2 rounded uppercase text-center px-4 py-1 
-                                            ${props.class ? props.class : " bg-green-200"}" onClick=${() =>
-            props.setShowNewInstance(true)}>
+                                                    ${props.class ? props.class : " bg-green-200"}" 
+                                                    onClick=${()=>props.setShowNewInstance(true)}>
             New Instance
         </div>
     `;

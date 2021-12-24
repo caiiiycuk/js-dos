@@ -66,13 +66,29 @@ functions:
           path: /token/info/get
           method: get
           cors: true
-  getNewIpx:
-    handler: src/networking/get-new-ipx.getNewIpx
-    name: jsdos-getNewIpx
+  startIpx:
+    handler: src/networking/ipx/start-ipx.startIpx
+    name: jsdos-startIpx
     events:
       - http:
-          path: /token/new/ipx/get
+          path: /token/ipx/start
           method: get
+          cors: true
+  putIpxIp:
+    handler: src/networking/ipx/put-ipx-ip.putIpxIp
+    name: jsdos-putIpxIp
+    events:
+      - http:
+          path: /token/ipx/ip/put
+          method: put
+          cors: true
+  stopIpx:
+    handler: src/networking/ipx/stop-ipx.stopIpx
+    name: jsdos-stopIpx
+    events:
+      - http:
+          path: /token/ipx/stop
+          method: post
           cors: true
   personalPut:
     handler: src/personal-put.personalPut
