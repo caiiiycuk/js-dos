@@ -6,6 +6,7 @@ import { Props } from "../../player-app";
 import { getObject, postObject } from "../../xhr";
 
 const initialWaitCountDown = 30;
+const NETWORK_DOSBOX_IPX = 0;
 
 interface Token {
     region: string,
@@ -187,7 +188,7 @@ function TokenTtlCountDown(props: { endTime: number, update: () => void }) {
 
     return html`
         <div class="font-bold">TTL:</div>
-        <div class="${ ttlMs < 300 * 1000 ? "text-red-400" :"text-gray-400" } cursor-pointer underline" 
+        <div class="${ttlMs < 300 * 1000 ? " text-red-400" : "text-gray-400"} cursor-pointer underline"
             onClick=${props.update}>
             ${toMin(ttlMs / 1000)} Min
         </div>
@@ -210,6 +211,35 @@ function IPX(props: TokenProps) {
                 console.error("Can't start ipx", e);
                 setError(e.errorCode ?? e.message);
                 setAwaiting(false);
+            });
+    }
+
+    function toggleConnected() {
+        const newConnected = !props.ipxConnected;
+        const ip = props.ipx.ipxIp;
+        const port = 1901;
+
+        if (!ip) {
+            return;
+        }
+
+        props.player().ciPromise?.then((ci) => {
+            if (newConnected) {
+                return ci.networkConnect(NETWORK_DOSBOX_IPX, ip, port);
+            }
+
+            return ci.networkDisconnect(NETWORK_DOSBOX_IPX);
+        })
+            .then(() => {
+                props.setIpxConnected(newConnected);
+                if (newConnected) {
+                    props.player().layers.notyf.success("Connected");
+                    props.closeSideBar();
+                }
+            })
+            .catch((e) => {
+                console.error(e);
+                setError(e.message);
             });
     }
 
@@ -245,7 +275,13 @@ function IPX(props: TokenProps) {
             <div class="font-bold">IPX:</div>
             <div class="font-bold text-green-400">${props.ipx.ipxIp}</div>
             <div class=""></div>
-            <div class="bg-gray-200 cursor-pointer rounded uppercase text-center px-4 py-1" onClick=${stop}>Stop</div>
+            <div class="${props.ipxConnected ? " bg-red-200" : "bg-green-200"}
+                cursor-pointer rounded uppercase text-center px-2 py-1"
+                onClick=${toggleConnected}>${props.ipxConnected ? "Disconnect" : "Connect"}</div>
+            <div class="${props.ipxConnected ? "hidden" : ""}"></div>
+            <div class="${props.ipxConnected ? "hidden" : "none"}
+                bg-gray-200 cursor-pointer rounded uppercase text-center px-4 py-1"
+                onClick=${stop}>Stop</div>
         `;
     }
 
@@ -309,8 +345,8 @@ function NewInstance(props: Props & { class?: string }) {
 
     return html`
         <div class="cursor-pointer col-span-2 rounded uppercase text-center px-4 py-1 
-                                                    ${props.class ? props.class : " bg-green-200"}" 
-                                                    onClick=${()=>props.setShowNewInstance(true)}>
+                ${props.class ? props.class : " bg-green-200"}" 
+                onClick=${() => props.setShowNewInstance(true)}>
             New Instance
         </div>
     `;
