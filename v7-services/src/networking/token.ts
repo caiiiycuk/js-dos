@@ -17,6 +17,8 @@ interface Token {
     ttlSec: number,
 }
 
+export type TaskType = "ipx";
+
 export async function getFreeTierSoftCount(namespace: string, id: string, day: number): Promise<number> {
     const freeTierSoftKey = getFreeTierSoftKey(namespace, id, day);
     const response = await dynamoDb.get({
@@ -141,7 +143,7 @@ export async function createToken(namespace: string, id: string, day: number,
     return token;
 }
 
-export async function tokenNewTask(tokenId: string, task: "ipx-server") {
+export async function newTask(tokenId: string, task: TaskType) {
     const token = await getToken(tokenId);
 
     if (token.ttlSec < 60) { // 1min to start container
@@ -161,14 +163,59 @@ export async function tokenNewTask(tokenId: string, task: "ipx-server") {
         throw new Error("unable-to-start-task");
     }
 
-    const arn = JSON.parse(JSON.parse(result.Payload as string).body).arn;
+    const payload = JSON.parse(JSON.parse(result.Payload as string).body);
+
+    if (payload.success === false) {
+        throw new Error(payload.errorCode);
+    }
+
+    const arn = payload.arn;
+
+    if (arn === undefined) {
+        throw new Error("ARN missed in runInstanceV2 response");
+    }
 
     const updateParams: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
         TableName: NETWORKING_TABLE,
         Key: {
             key: getTokenKey(tokenId),
         },
-        UpdateExpression: "SET ipxArn = :arn",
+        UpdateExpression: `SET ${task}Arn = :arn`,
+        ExpressionAttributeValues: {
+            ":arn": arn,
+        },
+    };
+
+    await dynamoDb.update(updateParams).promise();
+
+    return arn;
+}
+
+export async function putIp(token: string, arn: string, ip: string, task: TaskType) {
+    const updateParams: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+        TableName: NETWORKING_TABLE,
+        Key: {
+            key: getTokenKey(token),
+        },
+        UpdateExpression: `SET ${task}Ip = :ip`,
+        ConditionExpression: `${task}Arn = :arn`,
+        ExpressionAttributeValues: {
+            ":arn": arn,
+            ":ip": ip,
+        },
+    };
+
+    await dynamoDb.update(updateParams).promise();
+}
+
+export async function stopTask(token: string, arn: string, task: TaskType) {
+    const updateParams: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+        TableName: NETWORKING_TABLE,
+        Key: {
+            key: getTokenKey(token),
+        },
+        UpdateExpression: `REMOVE ${task}Arn, ${task}Ip`,
+        ConditionExpression: `${task}Arn = :arn`,
         ExpressionAttributeValues: {
             ":arn": arn,
         },
@@ -176,6 +223,7 @@ export async function tokenNewTask(tokenId: string, task: "ipx-server") {
 
     await dynamoDb.update(updateParams).promise();
 }
+
 
 function getFreeTierSoftKey(namespace: string, id: string, day: number) {
     return "free-soft " + day + " " + id + "@" + namespace;
