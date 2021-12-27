@@ -27,4 +27,4 @@ Visit our [repository](https://dos.zone) that contains **1900+** already created
 
 ## Getting started
 
-Once you have a `jsdos bundle` you can easily run it. To do this follow on site getting started menu.
+Once you have a `jsdos bundle` you can easily run it. To do this follow-on site getting started menu.

@@ -27,7 +27,7 @@ emulatorsUi.sound.audioNode(<command-interface>);
 
 ## emulatorsUi.controls.domToKeyCode
 
-This function transfrom DOM keyCode to jsdos keyCode.
+This function transform DOM keyCode to jsdos keyCode.
 ```js
 const jsdosKeyCode = emulatorsUi.controls.domToKeyCode(<dom-keycode>);
 ```

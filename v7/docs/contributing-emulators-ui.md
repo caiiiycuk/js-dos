@@ -24,7 +24,7 @@ const config = await ci.config();
 ```
 
 Let's understand how [layers](mobile-support.md) are implemented in js-dos. 
-First of all, layers have special configuration that stored in `jsdos.json` file, it's looks
+First, layers have special configuration that stored in `jsdos.json` file, it's looks
 like: 
 
 ```json

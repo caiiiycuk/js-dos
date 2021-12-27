@@ -31,7 +31,7 @@ public/digger.jsdos    - digger js-dos bundle
 public/js-dos/*        - js-dos package contents
 ```
 
-js-dos package is built on top of emulators-ui package, because of that to have correct types in TypeScript you also need install emulators-ui package (it will be used only for type checking).
+js-dos package is built on top of emulators-ui package, because of that to have correct types in TypeScript you also need to install emulators-ui package (it will be used only for type checking).
 
 ```sh
 yarn add emulators-ui
@@ -52,7 +52,7 @@ Next we need to modify `public/index.html` of react app to add js-dos scripts an
 
 :::info
 
-Currently js-dos v7 packages provides only types information, you can't import actual implementation as 
+Currently, js-dos v7 packages provides only types information, you can't import actual implementation as 
 js module.
 
 You need to set `emulators.pathPrefix` to point actual path to emulators, you can do this in `index.html` or in 
@@ -114,7 +114,7 @@ Do not forget to free resources by calling instance.stop at the end.
 
 :::
 
-Finally we should run our program when dos is set:
+Finally, we should run our program when dos are set:
 
 ```tsx
     useEffect(() => {

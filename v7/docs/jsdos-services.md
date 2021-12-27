@@ -104,7 +104,7 @@ export interface DosPlayerOptions extends DosOptions {
 ```
 
 * `Style` - if you set it to "none" then control bar will not be added
-* `onExit` - if set then exit button will be added and you will be notified when user clicks it
+* `onExit` - if set then exit button will be added, and you will be notified when user clicks it
 * `noSideBar` - if true - removes `...` button
-* `noFullscreen` - if true - removes fullscreen button
-* `donate` - if true - shows donate button insetad of `...` button
+* `noFullscreen` - if true - removes full screen button
+* `donate` - if true - shows donate button instead of `...` button

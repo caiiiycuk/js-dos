@@ -16,7 +16,7 @@ To contribute to the `emulators` package do the following:
 4. Now you can build everything with `gulp` command
 
 Native part of emulators is plain cmake project, you can open it
-in your favorite editor. Project have following targets:
+in your favorite editor. Project have the following targets:
 
 1. **`sokol`** - js-dos v7 native version: dosbox + UI based on [sokol](https://github.com/floooh/sokol).
 This version is exactly the same as the web version. **You should use this target
@@ -42,7 +42,7 @@ same way to communicate between client (native UI, browser UI) and dosbox.
 
 ## Server
 
-For simplicity you can think that the server is a dosbox.
+For simplicity, you can think that the server is a dosbox.
 In the future servers can be implemented with different emulators. Now we support
 only **dosbox implementation** (look at `jsdos.cmake`).
 
@@ -50,7 +50,7 @@ only **dosbox implementation** (look at `jsdos.cmake`).
 
 Client should run this function when it's ready to start dosbox. This 
 function will start the emulator. Client should prepare file system for dosbox **it 
-expect that `cwd` contains `.jsdos/dosbox.conf` file**. 
+expects that `cwd` contains `.jsdos/dosbox.conf` file**. 
 
 So you need to extract [js-dos bundle](overview.md#js-dos-bundle) in some directory and start sokol binary
 in this directory, and it will act exactly in the same way as direct/worker dosbox.
@@ -252,7 +252,7 @@ all tests should pass.
 
 As said above, you need to compile a `sokol` target with your favorite C++ toolkit. It will generate `sokol`
 executable. Next, you need to download some [js-dos bundle](overview.md#js-dos-bundle) for example
-[digger](https://talks.dos.zone/t/digger-may-06-1999/1922).
+[digger](https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos).
 
 `js-dos bundle` is a plain zip archive, you need to extract it in some folder. After that you
 should run `sokol` executable from that folder (cwd must be the root of the extracted bundle). 
@@ -280,7 +280,7 @@ Open `http://localhost:8080` in browser, all tests should pass
 
 ### Development
 
-Run inside the project dir:
+Run inside the project directory:
 
 ```
     docker run -v `pwd`/src:/app/src -v `pwd`/test:/app/test -v `pwd`/dist:/app/dist -ti emulators bash

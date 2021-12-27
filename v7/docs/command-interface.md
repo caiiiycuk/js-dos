@@ -4,7 +4,7 @@ title: Command Interface (CI)
 ---
 
 The `Command Interface` is only one object that allows you to communicate with js-dos instance.
-Once you run some [js-dos bundle](overview.md#js-dos-bundle) you will recive `Command Interface` instance.
+Once you run some [js-dos bundle](overview.md#js-dos-bundle) you will receive `Command Interface` instance.
 
 ```js
 const ci = await Dos(/*element*/).run(/*bundle url*/);

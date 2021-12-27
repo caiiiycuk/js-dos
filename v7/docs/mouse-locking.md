@@ -6,7 +6,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Some DOS games do not respect the mouse cursor position, they take into account only relative movement of the mouse cursor. This type of game requires a mouse locking feature.
 
-When the mouse is locked DOS game recive only relative movement of mouse and cursor can't leave game screen. This often used inf FPS games like DOOM to look around.
+When the mouse is locked DOS game receive only relative movement of mouse and cursor can't leave game screen. This often used inf FPS games like DOOM to look around.
 
 :::info
 

@@ -40,6 +40,6 @@ Mobile support:
 
 :::warning
 
-Iframe integration didn't support a fullscreen button yet, if you need it look forward.
+Iframe integration didn't support a full screen button yet, if you need it look forward.
 
 :::

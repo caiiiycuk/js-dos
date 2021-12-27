@@ -11,4 +11,4 @@ You can create it like this:
 const ci = await emulators.dosboxWorker(bundle);
 ```
 
-Read [Estimating perfomrance](estimating-performance.md) if you want to compare performances of Direct and Worker versions.
+Read [Estimating performance](estimating-performance.md) if you want to compare performances of Direct and Worker versions.

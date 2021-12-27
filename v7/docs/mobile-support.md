@@ -35,7 +35,7 @@ You can't customize `Options` control yet.
 
 ## Key Control
 
-`Key` is a virutal button, that map hold and realease into keyboard press and release event.
+`Key` is a virtual button, that map touches into keyboard press and release event.
 
 <img alt="key control" src={useBaseUrl('img/key.jpg')} />
 

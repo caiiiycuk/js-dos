@@ -15,7 +15,7 @@ Dos(document.getElementById("jsdos")).run("some.jsdos");
 just use its method `run` specifying the url of `jsdos bundle`.
 
 To use js-dos you need to add `js-dos.js` script, and `js-dos.css` style ([releases](releases)).
-Also you need to specify path prefix of js-dos installation:
+Also, you need to specify path prefix of js-dos installation:
 
 ```html
 <script src="<path>/js-dos.js"></script>

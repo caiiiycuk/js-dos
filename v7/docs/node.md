@@ -11,7 +11,7 @@ Let's start with creating empty project:
 npm init
 ```
 
-In node environment you can use only [emulators](https://www.npmjs.com/package/emulators) package, becuse `emulators-ui` is made for browser integraions. For creating screenshot we will use `jimp` library. So let's install them.
+In node environment you can use only [emulators](https://www.npmjs.com/package/emulators) package, because `emulators-ui` is made for browser integrations. For creating screenshot we will use `jimp` library. So let's install them.
 
 ```sh
 npm install --save emulators jimp
@@ -37,7 +37,7 @@ emulators.pathPrefix = "./";
 
 :::info
 
-emulators package is made for browser, it didn't export anything. It inject itself into global object.
+emulators package is made for browser, it didn't export anything. It injects itself into global object.
 In node `pathPrefix` is relative to `require`
 
 :::
@@ -53,7 +53,7 @@ emulators
     });
 ```
 
-When dos emulation starts, we will recive [Command Interface](command-interface), we can use it
+When dos emulation starts, we will receive [Command Interface](command-interface), we can use it
 to subscribe on frame updates and to send key/mouse events.
 
 ```js
