@@ -8,6 +8,8 @@ export interface Props {
     setClientId: (clientId: ClientId | null) => void;
     requestClientId?: (userGesture: boolean) => Promise<ClientId | null>;
     anonymousClientId: ClientId;
+    networkToken: string | null;
+    setNetworkToken: (token: string | null) => void;
     mobileControls: boolean;
     setMobileControls: (controls: boolean) => Promise<void>;
     mirroredControls: boolean;
@@ -36,6 +38,10 @@ export interface Props {
     setShowTips: (showTips: boolean) => void;
     sideBarPage: SidebarPage;
     setSideBarPage: (page: SidebarPage) => void;
+    showNewInstance: boolean;
+    setShowNewInstance: (showNewInstance: boolean) => void;
+    ipxConnected: boolean;
+    setIpxConnected: (ipxConnected: boolean) => void;
 }
 export declare function PlayerApp(playerProps: {
     player: () => DosPlayer;

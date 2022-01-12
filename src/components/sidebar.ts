@@ -25,10 +25,6 @@ export function SideBar(props: Props) {
         props.closeSideBar();
     };
 
-    function openDonatePage() {
-        window.open("https://dos.zone/donate/", "_blank");
-    }
-
     return html`
     <div class="flex flex-col filter absolute z-50 top-0 bottom-0 right-0 px-8 pt-6
             w-full sm:w-80 rounded-l-lg drop-shadow-lg bg-white overflow-y-auto overflow-x-hidden pb-4">
@@ -48,8 +44,46 @@ export function SideBar(props: Props) {
 
         <div class="flex-grow"></div>
     
-        <div class="${props.options().donate ? "" : " hidden"} self-center uppercase mt-4 cursor-pointer underline
-            text-blue-400 font-mono" onClick=${openDonatePage}>Donate</div>
+        <${SocialIcons} ...${props} />
     </div>
+    `;
+}
+
+function SocialIcons(props: Props) {
+    if (props.options().noSocialLinks === true) {
+        return null;
+    }
+
+    function openDiscrodPage() {
+        window.open("https://discord.com/invite/hMVYEbG", "_blank");
+    }
+
+    function openTelegramPage() {
+        window.open("https://t.me/doszone", "_blank");
+    }
+
+    function openTwitterPage() {
+        window.open("https://twitter.com/intent/user?screen_name=doszone_db", "_blank");
+    }
+
+    function openDonatePage() {
+        window.open("https://dos.zone/donate/", "_blank");
+    }
+
+    return html`
+        <div class="flex flex-row justify-around">
+            <div class="h-8 w-8 -mt-1 text-gray-600 cursor-pointer" onClick=${openDiscrodPage}>
+                <${Icons.Discord} class="h-8 w-8" />
+            </div>
+            <div class="h-6 w-6 text-gray-600 cursor-pointer" onClick=${openTelegramPage}>
+                <${Icons.Telegram} class="h-6 w-6" />
+            </div>
+            <div class="h-6 w-6 text-gray-600 cursor-pointer" onClick=${openTwitterPage}>
+                <${Icons.Twitter} class="h-6 w-6" />
+            </div>
+            <div class="h-8 w-8 -mt-1 text-gray-600 cursor-pointer" onClick=${openDonatePage}>
+                <${Icons.CurrencyDollar} class="h-8 w-8" />
+            </div>
+        </div>
     `;
 }

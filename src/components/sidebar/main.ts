@@ -23,6 +23,10 @@ export function Main(props: Props) {
 }
 
 function ConfigureNetworking(props: Props & { class?: string }) {
+    if (props.options().withExperimentalApi !== true) {
+        return null;
+    }
+
     return html`
         <div class="flex flex-row justify-between items-center cursor-pointer ${props.class}"
                 onClick=${() => props.setSideBarPage("networking")}>
