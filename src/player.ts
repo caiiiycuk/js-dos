@@ -27,14 +27,14 @@ export interface DosPlayerOptions extends DosOptions {
     onExit?: () => void;
     noSideBar?: boolean;
     noFullscreen?: boolean;
-    donate?: boolean;
+    noSocialLinks?: boolean;
+    withExperimentalApi?: boolean;
 }
 
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;
 
 export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): DosPlayer {
     options = options || {};
-    options.donate = options.donate === false ? false : true;
 
     if (options.style === "none") {
         console.warn("If you don't need the jsdos services, please use emulatros + emulators-ui instead");

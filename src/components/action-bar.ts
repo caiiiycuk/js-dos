@@ -10,11 +10,11 @@ export function ActionBar(props: Props) {
         return null;
     }
 
-    const addBorder = props.options().noSideBar === true && props.options().donate !== true;
+    const addBorder = props.options().noSideBar === true && props.options().noSocialLinks === true;
     return html`
     <div class="bg-gray-200 shadow w-10 h-full overflow-hidden flex flex-col items-center">
         <${SideBarControl} ...${props} />
-        <${Donate} ...${props} />
+        <${Discord} ...${props} />
         <${Controls} column="true" class="flex-grow 
             ${addBorder ? "" : " border-t-2 border-gray-400"}" 
             portal=${true} ...${props} />
@@ -22,19 +22,19 @@ export function ActionBar(props: Props) {
     `;
 }
 
-function Donate(props: Props) {
-    if (props.options().donate !== true || props.options().noSideBar !== true) {
+function Discord(props: Props) {
+    if (props.options().noSocialLinks === true || props.options().noSideBar !== true) {
         return null;
     }
 
-    function openDonatePage() {
-        window.open("https://dos.zone/donate/", "_blank");
+    function openDiscrodPage() {
+        window.open("https://discord.com/invite/hMVYEbG", "_blank");
     }
 
     return html`
-    <div class="h-6 w-6 my-4 text-gray-600 cursor-pointer" onClick=${openDonatePage}>
-        <${Icons.CurrencyDollar} class="h-6 w-6" />
-    </div>
+        <div class="h-6 w-6 my-4 text-gray-600 cursor-pointer" onClick=${openDiscrodPage}>
+            <${Icons.Discord} class="h-6 w-6" />
+        </div>
     `;
 }
 

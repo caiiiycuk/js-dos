@@ -71,4 +71,13 @@ export declare const Icons: {
     QuestionMarkCircle: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Discord: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Telegram: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Twitter: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
 };
