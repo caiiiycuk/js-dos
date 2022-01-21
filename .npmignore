@@ -26,7 +26,8 @@ cmake-build-*
 gulpfile.ts
 *.zip
 src/
-sls/
+v7-services/
 zip.js/
 tailwind.config.js
 examples/digger/*.jsdos
+.github
