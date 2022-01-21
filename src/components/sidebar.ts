@@ -72,17 +72,17 @@ function SocialIcons(props: Props) {
 
     return html`
         <div class="flex flex-row justify-around">
-            <div class="h-8 w-8 -mt-1 text-gray-600 cursor-pointer" onClick=${openDiscrodPage}>
-                <${Icons.Discord} class="h-8 w-8" />
+            <div class="h-6 w-6 -mt-1 text-gray-600 cursor-pointer" onClick=${openDiscrodPage}>
+                <${Icons.Discord} class="h-6 w-6" />
             </div>
-            <div class="h-6 w-6 text-gray-600 cursor-pointer" onClick=${openTelegramPage}>
-                <${Icons.Telegram} class="h-6 w-6" />
+            <div class="h-4 w-4 text-gray-600 cursor-pointer" onClick=${openTelegramPage}>
+                <${Icons.Telegram} class="h-4 w-4" />
             </div>
-            <div class="h-6 w-6 text-gray-600 cursor-pointer" onClick=${openTwitterPage}>
-                <${Icons.Twitter} class="h-6 w-6" />
+            <div class="h-4 w-4 text-gray-600 cursor-pointer" onClick=${openTwitterPage}>
+                <${Icons.Twitter} class="h-4 w-4" />
             </div>
-            <div class="h-8 w-8 -mt-1 text-gray-600 cursor-pointer" onClick=${openDonatePage}>
-                <${Icons.CurrencyDollar} class="h-8 w-8" />
+            <div class="h-6 w-6 -mt-1 text-gray-600 cursor-pointer" onClick=${openDonatePage}>
+                <${Icons.CurrencyDollar} class="h-6 w-6" />
             </div>
         </div>
     `;

@@ -5,9 +5,11 @@ js-dos is a javascript library that allows you to run DOS programs in browser. j
 
 [Documentation](https://js-dos.com/).
 
-Subscribe our [twitter](https://twitter.com/doszone_db/) channel for updates. 
+Ask a technical question in [Q&A](https://talks.dos.zone/c/questions-answers/).
 
-Join our [discord](https://discord.com/invite/hMVYEbG) community.
+Join our [discord](https://discord.com/invite/hMVYEbG), [telegram](https://t.me/doszone) community.
+
+Subscribe our [twitter](https://twitter.com/doszone_db/) channel for updates. 
 
 ## Building
 
@@ -32,7 +34,6 @@ To run built-in example do:
 hs .
 firefox examples/digger/index.html
 ```
-
 
 # Legacy js-dos
 

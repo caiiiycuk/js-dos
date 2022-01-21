@@ -22,13 +22,13 @@
     <div id="jsdos" />
     <script>
         let bundleUrl = "https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos"; // digger
-            // bundleUrl = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos"; // dagnerous dave 2
-            // bundleUrl = "https://cdn.dos.zone/original/2X/1/1b063b2520052ebb504184667ac95e72423331de.jsdos"; // lost vikings
-            // bundleUrl = "doom.jsdos";
-            // bundleUrl = "wolf.jsdos";
-            // bundleUrl = "heroes2.jsdos";
-            // bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/6/60b165c86771eadf24cb2f81aef4656b85d167a6.jsdos";
-            // bundleUrl = "doom_coop.jsdos";
+        // bundleUrl = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos"; // dagnerous dave 2
+        // bundleUrl = "https://cdn.dos.zone/original/2X/1/1b063b2520052ebb504184667ac95e72423331de.jsdos"; // lost vikings
+        // bundleUrl = "https://cdn.dos.zone/custom/dos/doom.jsdos"; // doom
+        // bundleUrl = "https://cdn.dos.zone/original/2X/a/ac888d1660aa253f0ed53bd6c962c894125aaa19.jsdos"; // wolf 3d
+        // bundleUrl = "https://cdn.dos.zone/custom/dos/homm_2.jsdos"; // heroes of might and magic 2
+        // bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/6/60b165c86771eadf24cb2f81aef4656b85d167a6.jsdos"; // transport tycoon deluxe
+        // bundleUrl = "doom_coop.jsdos";
         let clientId = null;
         emulators.pathPrefix = "/dist/";
         Dos(document.getElementById("jsdos"), {
@@ -42,7 +42,7 @@
                     namespace: "test",
                     id: "aleksandr.guryanov@github.com",
                 };
-                
+
                 return Promise.resolve(clientId);
             }
         }).run(bundleUrl);
