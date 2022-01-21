@@ -14,7 +14,7 @@ export function ActionBar(props: Props) {
     return html`
     <div class="bg-gray-200 shadow w-10 h-full overflow-hidden flex flex-col items-center">
         <${SideBarControl} ...${props} />
-        <${Discord} ...${props} />
+        <${More} ...${props} />
         <${Controls} column="true" class="flex-grow 
             ${addBorder ? "" : " border-t-2 border-gray-400"}" 
             portal=${true} ...${props} />
@@ -22,18 +22,18 @@ export function ActionBar(props: Props) {
     `;
 }
 
-function Discord(props: Props) {
+function More(props: Props) {
     if (props.options().noSocialLinks === true || props.options().noSideBar !== true) {
         return null;
     }
 
-    function openDiscrodPage() {
-        window.open("https://discord.com/invite/hMVYEbG", "_blank");
+    function openMore() {
+        window.open("https://dos.zone/", "_blank");
     }
 
     return html`
-        <div class="h-6 w-6 my-4 text-gray-600 cursor-pointer" onClick=${openDiscrodPage}>
-            <${Icons.Discord} class="h-6 w-6" />
+        <div class="h-5 w-5 my-4 text-pink-400 cursor-pointer" onClick=${openMore}>
+            <${Icons.Plus} class="h-5 w-5" />
         </div>
     `;
 }
