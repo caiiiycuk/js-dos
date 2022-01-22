@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "license": "GPL-2.0",
   "dependencies": {
-    "nanoid": "^3.1.30"
+    "nanoid": "^3.1.31"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.88",
