@@ -1,8 +1,8 @@
-import { badRequest, error, success } from "../responses";
+import { badRequest, error, success } from "../responses-lambda";
 import { getToken } from "./token";
 
 export const getTokenInfo = async (event: any) => {
-    const token = event.queryStringParameters?.token;
+    const token = event.query.token;
 
     if (!token) {
         return badRequest();

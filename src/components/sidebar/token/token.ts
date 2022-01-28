@@ -1,9 +1,13 @@
 import { useEffect, useState } from "preact/hooks";
-import { tokeInfoGet, startIpx, stopIox as stopIpx } from "../../backend/v7/v7-config";
-import { html } from "../../dom";
-import { Icons } from "../../icons";
-import { Props } from "../../player-app";
-import { getObject, postObject } from "../../xhr";
+import { tokeInfoGetEndpoint, startIpx, stopIox as stopIpx } from "../../../backend/v7/v7-config";
+import { html } from "../../../dom";
+import { Icons } from "../../../icons";
+import { Props } from "../../../player-app";
+import { getObject, postObject } from "../../../xhr";
+import { request } from "../../../request";
+
+import { TokenSelect } from "./token-select";
+import { TokenAddTime } from "./token-add-time";
 
 const initialWaitCountDown = 30;
 const NETWORK_DOSBOX_IPX = 0;
@@ -25,13 +29,12 @@ interface IpxProps {
     awaitingIpxIp: boolean,
     setAwaitingIpxIp: (waitingIpx: boolean) => void,
 }
-interface TokenProps extends Props {
+export interface TokenProps extends Props {
     ipx: IpxProps,
-
     update: () => void,
 }
 
-export function ActiveToken(props: Props) {
+export function TokenConfiguration(props: Props) {
     const [token, setToken] = useState<Token | null>(null);
     const [awaiting, setAwaiting] = useState<boolean>(true);
     const [endTime, setEndTime] = useState<number>(Date.now());
@@ -67,7 +70,7 @@ export function ActiveToken(props: Props) {
         }
 
         const id = setInterval(() => {
-            getObject(tokeInfoGet + `?token=${props.networkToken}`).then((token: Token) => {
+            request(tokeInfoGetEndpoint + `?token=${props.networkToken}`).then((token: Token) => {
                 token.ipxArn ||= null;
                 token.ipxIp ||= null;
 
@@ -101,7 +104,7 @@ export function ActiveToken(props: Props) {
             return;
         }
 
-        getObject(tokeInfoGet + `?token=${props.networkToken}`).then((token: Token) => {
+        request(tokeInfoGetEndpoint + `?token=${props.networkToken}`).then((token: Token) => {
             setToken(token);
             setAwaiting(false);
             setEndTime(Date.now() + token.ttlSec * 1000);
@@ -115,7 +118,7 @@ export function ActiveToken(props: Props) {
             } else if (token.ipxArn !== undefined) {
                 setAwaitingIpxIp(true);
             }
-        }).catch((e) => {
+        }).catch((e: any) => {
             console.error("Can't get a token", props.networkToken, e);
             setToken(null);
             setAwaiting(false);
@@ -124,7 +127,7 @@ export function ActiveToken(props: Props) {
 
     if (awaiting) {
         return html`
-            <div class="sidebar-header">Active</div>
+            <div class="sidebar-header">Configuration</div>
             <div class="grid grid-cols-2 gap-4">
                 <${Icons.Refresh} class="w-6 h-6 animate-spin" />
             </div>
@@ -133,35 +136,34 @@ export function ActiveToken(props: Props) {
 
     if (token === null) {
         return html`
-            <div class="sidebar-header">Active</div>
+            <div class="sidebar-header">Configuration</div>
             <div class="grid grid-cols-2 gap-4">
                 <${TokenSelect} ...${props} networkToken=${null} />
-                <${NewInstance} ...${props} />
             </div>
         `;
     }
 
     if (endTime < Date.now()) {
         return html`
-            <div class="sidebar-header">Active</div>
+            <div class="sidebar-header">Configuration</div>
             <div class="grid grid-cols-2 gap-4">
                 <${TokenSelect} ...${props} />
                 <div class="font-bold">TTL:</div>
-                <div class="text-red-400">ended</div>
-                <${NewInstance} ...${props} />
+                <div class="text-red-400">0 Min</div>
+                <${TokenAddTime} ...${tokenProps} />
             </div>
         `;
     }
 
     return html`
-        <div class="sidebar-header">Active</div>
+        <div class="sidebar-header">Configuration</div>
         <div class="grid grid-cols-2 gap-4">
             <${TokenSelect} ...${props} />
             <div class="font-bold">Region:</div>
             <div class="text-gray-400">${token.region}</div>
             <${TokenTtlCountDown} endTime=${endTime} update=${update} />
+            <${TokenAddTime} ...${tokenProps} />
             <${IPX} ...${tokenProps} />
-            <${NewInstance} ...${props} class="bg-gray-200" />
         </div>
     `;
 }
@@ -322,35 +324,6 @@ function TaskWaitCountDown() {
     `;
 }
 
-function TokenSelect(props: TokenProps) {
-    function changeToken() {
-        const newToken = prompt("Set token", props.networkToken || "");
-        if (newToken !== null) {
-            props.setNetworkToken(newToken);
-        }
-    }
-
-    return html`
-        <div class="font-bold">Token:</div>
-        <div class="text-green-400 underline cursor-pointer" onClick=${changeToken}>
-            ${props.networkToken === null ? "NOT SET" : props.networkToken}
-        </div>
-    `;
-}
-
-function NewInstance(props: Props & { class?: string }) {
-    if (props.showNewInstance) {
-        return null;
-    }
-
-    return html`
-        <div class="cursor-pointer col-span-2 rounded uppercase text-center px-4 py-1 
-                ${props.class ? props.class : " bg-green-200"}" 
-                onClick=${() => props.setShowNewInstance(true)}>
-            New Instance
-        </div>
-    `;
-}
 
 function toMin(time: number) {
     return Math.round(time / 60 * 10) / 10;

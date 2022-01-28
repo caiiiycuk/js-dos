@@ -81,9 +81,6 @@ export interface Props {
     sideBarPage: SidebarPage;
     setSideBarPage: (page: SidebarPage) => void;
 
-    showNewInstance: boolean;
-    setShowNewInstance: (showNewInstance: boolean) => void;
-
     ipxConnected: boolean;
     setIpxConnected: (ipxConnected: boolean) => void;
 }
@@ -99,7 +96,7 @@ export function PlayerApp(playerProps: {
         (userGesture: boolean) => requestClientIdFn(userGesture) :
         undefined;
     const [clientId, setClientId] = useState<ClientId | null>(null);
-    const [sideBar, setSideBar] = useState<boolean>(false);
+    const [sideBar, setSideBar] = useState<boolean>(true);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
     const [mirroredControls, setMirroredControls] = useState<boolean>(playerProps.player().mirroredControls);
     const [autolock, setAutolock] = useState<boolean>(playerProps.player().autolock);
@@ -112,7 +109,7 @@ export function PlayerApp(playerProps: {
     const [estimatingRegion, setEstimatingRegion] = useState<string | null>(null);
     const [showTips, setShowTips] = useState<boolean>(storage.getItem(storageKeys.uiTips) !== "false");
     const [latencyInfo, setLatencyInfo] = useState<LatencyInfo | null>(null);
-    const [sideBarPage, setSideBarPage] = useState<SidebarPage>("main");
+    const [sideBarPage, setSideBarPage] = useState<SidebarPage>("networking");
     const [anonymousClientId] = useState<ClientId>(() => {
         const storedId = storage.getItem(storageKeys.localId);
         const localId = storedId ?? nanoid();
@@ -126,7 +123,6 @@ export function PlayerApp(playerProps: {
         };
     });
     const [networkToken, setNetworkToken] = useState<string | null>(storage.getItem(storageKeys.networkToken));
-    const [showNewInstance, setShowNewInstance] = useState<boolean>(false);
     const [ipxConnected, setIpxConnected] = useState<boolean>(false);
 
     function setRegion(newRegion: string | null) {
@@ -271,9 +267,6 @@ export function PlayerApp(playerProps: {
 
         sideBarPage,
         setSideBarPage,
-
-        showNewInstance,
-        setShowNewInstance,
 
         ipxConnected,
         setIpxConnected,

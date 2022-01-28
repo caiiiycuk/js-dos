@@ -1,4 +1,4 @@
-import { error, badRequest, success } from "../../responses";
+import { error, badRequest, success } from "../../responses-proxy";
 import { stopTask } from "../token";
 
 export const stopIpx = async (event: any) => {
