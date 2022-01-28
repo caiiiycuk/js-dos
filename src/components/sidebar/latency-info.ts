@@ -1,5 +1,6 @@
 import { html } from "../../dom";
 import { Props } from "../../player-app";
+import { Icons } from "../../icons";
 
 interface LatencyInfoProps extends Props {
     class?: string,
@@ -19,9 +20,15 @@ export function LatencyInfo(props: LatencyInfoProps) {
 
     if (props.asButton === true && props.sideBarPage === "main") {
         return html`
-            <div class="text-gray-400 text-xs underline cursor-pointer self-center" onClick=${showLatencyInfoPage}>
-                show latency info
+        <div class="flex flex-row justify-between items-center cursor-pointer ${props.class} my-2"
+            onClick=${showLatencyInfoPage}>
+            <div class="">
+                Show latency
             </div>
+            <div>
+                <${Icons.ArrowsCircleRight} class="text-green-400 h-6 -w-6" />
+            </div>
+        </div>
         `;
     }
 
