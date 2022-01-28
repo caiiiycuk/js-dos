@@ -10,7 +10,7 @@ import { SideBar } from "./components/sidebar";
 import { Tips } from "./components/tip";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
 
-import { getAutoRegion, LatencyInfo } from "./backend/jj/latency";
+import { getAutoRegion, LatencyInfo } from "./backend/v7/latency";
 
 import { EmulatorsUi } from "emulators-ui";
 

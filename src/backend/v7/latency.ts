@@ -1,4 +1,4 @@
-import { AwsRegion, awsRegions } from "./jj-config";
+import { AwsRegion, awsRegions } from "../v7/v7-config";
 
 export interface LatencyInfo {
     region: string,

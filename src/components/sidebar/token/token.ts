@@ -143,9 +143,18 @@ export function TokenConfiguration(props: Props) {
         `;
     }
 
+    const headerWithRefresh = html`
+        <div class="sidebar-header flex flex-row justify-center items-center">
+            Configuration
+            <div onClick=${update} >
+                <${Icons.Refresh} class="h-4 w-4 ml-2 cursor-pointer" />
+            </div>
+        </div>
+    `;
+
     if (endTime < Date.now()) {
         return html`
-            <div class="sidebar-header">Configuration</div>
+            ${headerWithRefresh}
             <div class="grid grid-cols-2 gap-4">
                 <${TokenSelect} ...${props} />
                 <div class="font-bold">TTL:</div>
@@ -156,7 +165,7 @@ export function TokenConfiguration(props: Props) {
     }
 
     return html`
-        <div class="sidebar-header">Configuration</div>
+        ${headerWithRefresh}
         <div class="grid grid-cols-2 gap-4">
             <${TokenSelect} ...${props} />
             <div class="font-bold">Region:</div>
