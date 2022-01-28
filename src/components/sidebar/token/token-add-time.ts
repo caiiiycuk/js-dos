@@ -1,20 +1,36 @@
 import { useState } from "preact/hooks";
-import { addFreeTimeTierEndpoint } from "../../../backend/v7/v7-config";
+import { addFreeTimeTierEndpoint, checkoutCreateTokenEndpoint, checkoutEndpoint } from "../../../backend/v7/v7-config";
 import { html } from "../../../dom";
 import { Icons } from "../../../icons";
 import { request } from "../../../request";
 import { TokenProps } from "./token";
 
+const freeTimeSec = 1800;
+
 export function TokenAddTime(props: TokenProps) {
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState<boolean>(false);
-    const [time, setTime] = useState<number>(1800);
+    const [time, setTime] = useState<number>(freeTimeSec);
+    const [accessToken, setAccessToken] = useState<string | null>(null);
+    const [needReload, setNeedReload] = useState<boolean>(false);
 
-    function onChange(e: any) {
-        setTime(Number.parseInt(e.currentTarget.value));
+    async function onChange(e: any) {
+        const newTime = Number.parseInt(e.currentTarget.value);
+        try {
+            setBusy(true);
+            setAccessToken(null);
+            setTime(newTime);
+            if (newTime !== freeTimeSec) {
+                setAccessToken(await createToken("t_" + newTime, props));
+            }
+        } finally {
+            setBusy(false);
+        }
     }
 
-    async function onAddTime() {
+    async function onAddTime(e: any) {
+        e.stopPropagation();
+
         if (busy) {
             return;
         }
@@ -23,12 +39,18 @@ export function TokenAddTime(props: TokenProps) {
         setBusy(true);
 
         try {
-            if (time === 1800) {
+            if (time === freeTimeSec) {
                 await request(addFreeTimeTierEndpoint, "POST", JSON.stringify({
                     token: props.networkToken,
                 }));
 
                 props.update();
+            } else {
+                if (accessToken === null) {
+                    throw new Error("accessToken is null");
+                }
+                setNeedReload(true);
+                purchase(accessToken);
             }
         } catch (e: any) {
             setError(describe(e.message));
@@ -37,22 +59,34 @@ export function TokenAddTime(props: TokenProps) {
         }
     }
 
+    const busyOrNoToken = busy || time !== freeTimeSec && accessToken === null;
+
     /* eslint-disable new-cap */
     return html`
         <div class="font-bold">Add time:</div>
-        <div class="flex flex-row">
-            <select class="w-14 flex-grow mr-2" name="select" onChange=${onChange}>
-                <option value="1800" selected>FREE</option>
-                <option value="432000">+5 Days</option>
-                <option value="2592000">+30 Days</option>
-            </select>
-            ${ busy ? Icons.Refresh({ class: "h-6 w-6 animate-spin" }) : html`
-                <div class="h-6 w-6 cursor-pointer text-green-400 hover:text-green-600"
-                    onClick=${onAddTime}>
-                    <${Icons.Plus} class="h-6 w-6" />
-                </div>
-            `}
-        </div>
+        ${needReload ?
+        html`
+            <div class="cursor-pointer underline text-green-600 font-bold" onClick=${props.update}>
+                check payment
+            </div> 
+        `:
+        html`
+            <div class="flex flex-row">
+                <select disabled=${busy} class="w-14 flex-grow mr-2 
+                    ${ busy ? "border-gray-400 disabled:bg-gray-200" : "" } "
+                    name="select" onChange=${onChange}>
+                    <option value=${freeTimeSec} selected>FREE</option>
+                    <option value="432000">+5 Days</option>
+                    <option value="2592000">+30 Days</option>
+                </select>
+                ${ busyOrNoToken ? Icons.Refresh({ class: "h-6 w-6 animate-spin" }) : html`
+                    <div class="h-6 w-6 cursor-pointer text-green-400 hover:text-green-600"
+                        onClick=${onAddTime}>
+                        <${Icons.Plus} class="h-6 w-6" />
+                    </div>
+                `}
+            </div>
+        `}
         
         ${error ?
         html`
@@ -76,3 +110,20 @@ function describe(message: string) {
 
     return message;
 }
+
+async function createToken(product: string, props: TokenProps) {
+    const clientId = props.clientId ?? props.anonymousClientId;
+
+    const token = (await request(checkoutCreateTokenEndpoint, "POST", JSON.stringify({
+        id: clientId.id,
+        namespace: clientId.namespace,
+        product,
+        token: props.networkToken,
+    }))).token;
+
+    return token;
+}
+
+function purchase(accessToken: string) {
+    window.open(checkoutEndpoint + "?token=" + accessToken, "_blank");
+};

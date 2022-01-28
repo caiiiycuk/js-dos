@@ -1,4 +1,4 @@
-import { Props } from "../../player-app";
+import { Props } from "../../../player-app";
 interface IpxProps {
     ipxArn: string | null;
     setIpxArn: (ipxArn: string | null) => void;
@@ -11,5 +11,5 @@ export interface TokenProps extends Props {
     ipx: IpxProps;
     update: () => void;
 }
-export declare function Token(props: Props): import("preact").VNode<any> | import("preact").VNode<any>[];
+export declare function TokenConfiguration(props: Props): import("preact").VNode<any> | import("preact").VNode<any>[];
 export {};

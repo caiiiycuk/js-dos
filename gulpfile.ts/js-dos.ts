@@ -51,7 +51,7 @@ function concatJs() {
     return src([
         "node_modules/emulators-ui/dist/emulators-ui.js",
         "node_modules/emulators/dist/emulators.js",
-        "zip.js/zip-no-worker-inflate.min.js",
+        "3rdparty/zip.js/zip-no-worker-inflate.min.js",
         "dist/player.js",
     ])
         .pipe(sourcemaps.init({ loadMaps: true }))

@@ -1,5 +1,5 @@
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
-import { LatencyInfo } from "./backend/jj/latency";
+import { LatencyInfo } from "./backend/v7/latency";
 export declare type SidebarPage = "main" | "latency-info" | "networking";
 export interface Props {
     player: () => DosPlayer;
