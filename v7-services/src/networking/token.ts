@@ -19,8 +19,8 @@ interface Token {
 
 export type TaskType = "ipx";
 
-export async function getFreeTierSoftCount(namespace: string, id: string, day: number): Promise<number> {
-    const freeTierSoftKey = getFreeTierSoftKey(namespace, id, day);
+export async function getFreeTierSoftCount(token: string, day: number): Promise<number> {
+    const freeTierSoftKey = getFreeTierSoftKey(token, day);
     const response = await dynamoDb.get({
         TableName: NETWORKING_TABLE,
         Key: {
@@ -43,8 +43,8 @@ export async function getFreeTierHardCount(day: number): Promise<number> {
     return response.Item?.count || 0;
 }
 
-export async function createFreeToken(namespace: string, id: string, day: number, region: string): Promise<string> {
-    const freeTierSoftKey = getFreeTierSoftKey(namespace, id, day);
+export async function addFreeTierTime(token: string, day: number) {
+    const freeTierSoftKey = getFreeTierSoftKey(token, day);
     const freeTierHardKey = getFreeTierHardKey(day);
 
     const inc = async (key: string, inc: number) => {
@@ -88,7 +88,37 @@ export async function createFreeToken(namespace: string, id: string, day: number
         throw e;
     }
 
-    return createToken(namespace, id, day, region, freeTierSec);
+    await addTime(token, freeTierSec);
+}
+
+async function addTime(tokenId: string, durationSec: number) {
+    const key = getTokenKey(tokenId);
+    const token = await getToken(tokenId);
+    const now = new Date().getTime();
+    const restTime = Math.max(token.endTime - now, 0);
+    const endTime = now + restTime + durationSec * 1000;
+
+
+    const updateParams: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
+        TableName: NETWORKING_TABLE,
+        Key: {
+            key,
+        },
+        UpdateExpression: "SET #endTime = :endTime",
+        ExpressionAttributeNames: {
+            "#endTime": "endTime",
+        },
+        ExpressionAttributeValues: {
+            ":endTime": endTime,
+        },
+    };
+
+    try {
+        await dynamoDb.update(updateParams).promise();
+    } catch (e: any) {
+        console.error("Unable to add time", e);
+        throw new Error("unexpected-error");
+    }
 }
 
 export async function getToken(token: string): Promise<Token> {
@@ -108,8 +138,7 @@ export async function getToken(token: string): Promise<Token> {
     return item;
 }
 
-export async function createToken(namespace: string, id: string, day: number,
-                                  region: string, durationSec: number): Promise<string> {
+export async function create(namespace: string, id: string, region: string): Promise<string> {
     let token: string | null = null;
     while (token === null) {
         token = await nanoid();
@@ -120,11 +149,9 @@ export async function createToken(namespace: string, id: string, day: number,
                 "key": getTokenKey(token),
                 namespace,
                 id,
-                day,
                 region,
-                durationSec,
                 "createdAt": new Date().getTime(),
-                "endTime": new Date().getTime() + durationSec * 1000,
+                "endTime": new Date().getTime(),
             },
             ConditionExpression: "attribute_not_exists(#key)",
             ExpressionAttributeNames: {
@@ -225,8 +252,8 @@ export async function stopTask(token: string, arn: string, task: TaskType) {
 }
 
 
-function getFreeTierSoftKey(namespace: string, id: string, day: number) {
-    return "free-soft " + day + " " + id + "@" + namespace;
+function getFreeTierSoftKey(token: string, day: number) {
+    return "free-soft " + day + " " + token;
 }
 
 function getFreeTierHardKey(day: number) {

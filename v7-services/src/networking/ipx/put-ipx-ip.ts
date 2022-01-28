@@ -1,4 +1,4 @@
-import { error, badRequest, success } from "../../responses";
+import { error, badRequest, success } from "../../responses-proxy";
 import { putIp } from "../token";
 
 export const putIpxIp = async (event: any) => {

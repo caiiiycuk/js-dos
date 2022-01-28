@@ -5,3 +5,11 @@
 .sidebar-header {
     @apply mt-8 mb-2 pb-2 border-b-2 border-green-200 text-gray-600 uppercase text-center;
 }
+
+input {
+    @apply focus:outline-none;
+}
+
+select {
+    @apply bg-white border border-green-200 rounded px-2 focus:outline-none;
+}

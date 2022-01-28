@@ -1,3 +1,3 @@
-export const freeTierSoftLimit = 24;
+export const freeTierSoftLimit = 2;
 export const freeTierHardLimit = 256;
-export const freeTierSec = 30 * 60; // 30 min
+export const freeTierSec = 15 * 60; // 30 min

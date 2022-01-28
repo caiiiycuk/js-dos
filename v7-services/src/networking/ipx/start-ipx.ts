@@ -1,4 +1,4 @@
-import { error, badRequest, success } from "../../responses";
+import { error, badRequest, success } from "../../responses-proxy";
 import { newTask } from "../token";
 
 export const startIpx = async (event: any) => {

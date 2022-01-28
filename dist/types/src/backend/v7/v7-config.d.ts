@@ -4,5 +4,6 @@ export declare const personalAcl: string;
 export declare const tokenCostGet: string;
 export declare const freeTokenGet: string;
 export declare const tokeInfoGet: string;
+export declare const createTokenEndpoint: string;
 export declare const startIpx: string;
 export declare const stopIox: string;

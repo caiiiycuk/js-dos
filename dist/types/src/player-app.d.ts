@@ -38,8 +38,6 @@ export interface Props {
     setShowTips: (showTips: boolean) => void;
     sideBarPage: SidebarPage;
     setSideBarPage: (page: SidebarPage) => void;
-    showNewInstance: boolean;
-    setShowNewInstance: (showNewInstance: boolean) => void;
     ipxConnected: boolean;
     setIpxConnected: (ipxConnected: boolean) => void;
 }

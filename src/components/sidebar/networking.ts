@@ -1,8 +1,7 @@
 import { html } from "../../dom";
 
 import { Props } from "../../player-app";
-import { ActiveToken } from "./active-token";
-import { CreateToken } from "./create-token";
+import { TokenConfiguration } from "./token/token";
 
 export function Networking(props: Props) {
     if (props.sideBarPage !== "networking") {
@@ -10,7 +9,6 @@ export function Networking(props: Props) {
     }
 
     return html`
-        <${ActiveToken} ...${props} />
-        ${props.showNewInstance ? html`<${CreateToken} ...${props} />` : null }
+        <${TokenConfiguration} ...${props} />
     `;
 }

@@ -42,22 +42,33 @@ provider:
         - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.NETWORKING_TABLE}"
 
 functions:
-  getTokenCost: 
-    handler: src/networking/get-token-cost.getTokenCost
-    name: jsdos-getTokenCost
+  createToken:
+    handler: src/networking/create-token.createToken
+    name: jsdos-createToken
+    description: Create NEW token 
     events:
       - http:
-          path: /token/cost/get
-          method: get
+          path: /token/create
+          method: POST
           cors: true
-  getFreeToken:
-    handler: src/networking/get-free-token.getFreeToken
-    name: jsdos-getFreeToken
+          integration: lambda
+          request:
+            passThrough: NEVER
+            schemas:
+              application/json: ${file(src/networking/create-token.schema.json)}
+  addTokenFreeTierTime:
+    handler: src/networking/add-token-free-tier-time.addTokenFreeTierTime
+    name: jsdos-addTokenFreeTierTime
     events:
       - http:
-          path: /token/free/get
-          method: get
+          path: /token/add/free
+          method: POST
           cors: true
+          integration: lambda
+          request:
+            passThrough: NEVER
+            schemas:
+              application/json: ${file(src/networking/add-token-free-tier-time.schema.json)}
   getTokenInfo:
     handler: src/networking/get-token-info.getTokenInfo
     name: jsdos-getTokenInfo
@@ -66,6 +77,12 @@ functions:
           path: /token/info/get
           method: get
           cors: true
+          integration: lambda
+          request:
+            passThrough: NEVER
+            parameters:
+              querystrings:
+                token: true
   startIpx:
     handler: src/networking/ipx/start-ipx.startIpx
     name: jsdos-startIpx
