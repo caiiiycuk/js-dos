@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>js-dos payment gateway</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="picnic.min.css">
+    <script src="src/checkout.js"></script>
+</head>
+
+<body style="width: 100%;">
+    <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+        <h1 style="text-align: center;"><span style="color: blueviolet;">js-dos</span> payment gateway</h1>
+        <div id="proceed" style="text-align: center;">
+            Please complete payment to add time to token
+        </div>
+        <div id="succeed" style="display: none; flex-direction: column; align-items: center; text-align: center;">
+            <h2>Payment <span style="color: green">SUCCESSFULLY</span> completed</h2>
+            <p>Transaction ID: <strong id="transaction">1231239123</strong></p>
+            <p>Please close this page and press <strong>"check_payment"</strong> in network configuration</p>
+        </div>
+        <div id="failed" style="display: none; flex-direction: column; align-items: center; text-align: center;">
+            <h2>Payment <span style="color: red">FAILED</span></h2>
+            Please close this page and try again...
+        </div>
+    </div>
+
+    <script>
+        async function doCheckout() {
+            const proceed = document.getElementById("proceed");
+            const succeed = document.getElementById("succeed");
+            const transaction = document.getElementById("transaction");
+            const failed = document.getElementById("failed");
+            const token = getQueryVariable("token");
+
+            if (token === undefined) {
+                proceed.style.display = "none";
+                failed.style.display = "flex";
+                return;
+            }
+
+            console.log("Using token", token);
+
+            try {
+                const invoice = await checkout(token, true);
+                transaction.innerHTML = invoice;
+                proceed.style.display = "none";
+                succeed.style.display = "flex";
+            } catch (e) {
+                proceed.style.display = "none";
+                failed.style.display = "flex";
+            }
+        };
+
+
+        const xsolla = document.createElement("script");
+        xsolla.src = "paystation-1.2.4/widget.min.js";
+        xsolla.onerror = function () {
+            proceed.style.display = "none";
+            failed.style.display = "flex";
+        };
+        xsolla.onload = doCheckout;
+        document.body.appendChild(xsolla);
+
+
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (decodeURIComponent(pair[0]) == variable) {
+                    return decodeURIComponent(pair[1]);
+                }
+            }
+            return undefined;
+        }
+    </script>
+</body>
+
+</html>
