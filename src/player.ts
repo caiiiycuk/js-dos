@@ -46,6 +46,13 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
     root.classList.add("relative");
     root.classList.add("overflow-hidden");
 
+    const modal = createDiv(["hidden", "flex-col", "absolute", "left-0", "top-0",
+        "bottom-0", "right-0", "items-center", "justify-center", "z-50",
+        "bg-gray-800", "opacity-95"]);
+    const modalText = createDiv(["text-2xl", "font-bold", "font-mono", "animate-pulse",
+        "text-green-600"]);
+    modal.appendChild(modalText);
+
     const col = createDiv(["flex", "flex-col", "flex-grow", "overflow-hidden"]);
     const window = createDiv("flex-grow");
     const appRoot = createDiv("flex-grow-0");
@@ -56,6 +63,18 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 
     root.appendChild(appRoot);
     root.appendChild(col);
+    root.appendChild(modal);
+
+    function showModal(text: string) {
+        modalText.innerHTML = text;
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    }
+
+    function hideModal() {
+        modal.classList.remove("flex");
+        modal.classList.add("hidden");
+    }
 
     options.layersOptions = options.layersOptions || {};
     options.layersOptions.keyboardDiv = keyboard;
@@ -72,7 +91,7 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 
 
     const player = dosImpl(window, options) as DosPlayer;
-    let onRun = () => {};
+    let onRun = () => { };
     const setOnRun = (newOnRun: () => void) => onRun = newOnRun;
     createPlayerApp(appRoot, player, options, setOnRun);
 
@@ -80,6 +99,8 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 
     const runFn = player.run;
     player.run = async (bundleUrl: string, optionalChangesUrl?: string, optionalPersistKey?: string) => {
+        hideModal();
+
         const getClientId = () => options?.clientId !== undefined ? options.clientId(false) : null;
         const clientId = await getClientId();
         if (optionalChangesUrl === undefined && optionalPersistKey === undefined && clientId !== null) {
@@ -91,12 +112,39 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
 
         const saveFn = player.layers.getOnSave();
         player.layers.setOnSave(async () => {
-            const clientId = await getClientId();
-            if (clientId !== null) {
-                const data = await ci.persist();
-                return putPersonalBundle(clientId.namespace, clientId.id, bundleUrl, data);
-            } else {
-                return saveFn.call(player.layers);
+            const closeOnSave = typeof options?.onExit === "function";
+            const showModals = closeOnSave;
+
+            if (closeOnSave) {
+                ci.mute();
+            }
+
+            try {
+                const clientId = await getClientId();
+
+                if (clientId !== null) {
+                    if (showModals) {
+                        showModal("Saving [1/2]: collecting changes");
+                    }
+
+                    const data = await ci.persist();
+
+                    if (showModals) {
+                        showModal("Saving [2/2]: sending to cloud");
+                    }
+
+                    return putPersonalBundle(clientId.namespace, clientId.id, bundleUrl, data);
+                } else {
+                    if (showModals) {
+                        showModal("Saving [1/1]: collecting changes");
+                    }
+
+                    return saveFn.call(player.layers);
+                }
+            } finally {
+                if (closeOnSave && showModals) {
+                    showModal("Saved. Now you can close the window");
+                }
             }
         });
 
