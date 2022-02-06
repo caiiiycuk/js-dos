@@ -5,7 +5,7 @@ import { html } from "./dom";
 
 import { ActionHide } from "./components/action-hide";
 import { ActionBar } from "./components/action-bar";
-import { ActionExit } from "./components/action-exit";
+import { ActionSaveOrExit } from "./components/action-save-or-exit";
 import { SideBar } from "./components/sidebar";
 import { Tips } from "./components/tip";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
@@ -277,7 +277,7 @@ export function PlayerApp(playerProps: {
         <${ActionHide} ...${props} />
         <${SideBar} ...${props} />
         <${ActionBar} ...${props} />
-        <${ActionExit} ...${props} />
+        <${ActionSaveOrExit} ...${props} />
         <${Tips} ...${props} />
     </div>
     `;
