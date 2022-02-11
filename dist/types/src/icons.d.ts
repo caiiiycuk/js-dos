@@ -80,4 +80,7 @@ export declare const Icons: {
     Twitter: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    FloppyDisk: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
 };

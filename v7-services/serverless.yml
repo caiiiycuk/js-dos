@@ -71,6 +71,9 @@ functions:
             passThrough: NEVER
             schemas:
               application/json: ${file(src/networking/add-token-free-tier-time.schema.json)}
+  addTokenTime:
+    handler: src/networking/add-token-time.addTokenTime
+    name: jsdos-addTokenTime
   getTokenInfo:
     handler: src/networking/get-token-info.getTokenInfo
     name: jsdos-getTokenInfo

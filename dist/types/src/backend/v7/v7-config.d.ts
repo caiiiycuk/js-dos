@@ -7,6 +7,7 @@ export declare const addFreeTimeTierEndpoint: string;
 export declare const startIpx: string;
 export declare const stopIox: string;
 export declare const checkoutCreateTokenEndpoint: string;
+export declare const checkoutEndpoint = "https://js-dos.com/checkout/index.html";
 export interface AwsRegion {
     label: string;
     name: string;
