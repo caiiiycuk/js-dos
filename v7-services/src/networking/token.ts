@@ -91,13 +91,12 @@ export async function addFreeTierTime(token: string, day: number) {
     await addTime(token, freeTierSec);
 }
 
-async function addTime(tokenId: string, durationSec: number) {
+export async function addTime(tokenId: string, durationSec: number) {
     const key = getTokenKey(tokenId);
     const token = await getToken(tokenId);
     const now = new Date().getTime();
     const restTime = Math.max(token.endTime - now, 0);
     const endTime = now + restTime + durationSec * 1000;
-
 
     const updateParams: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
         TableName: NETWORKING_TABLE,

@@ -49,8 +49,10 @@ export function TokenAddTime(props: TokenProps) {
                 if (accessToken === null) {
                     throw new Error("accessToken is null");
                 }
-                setNeedReload(true);
                 purchase(accessToken);
+                setTimeout(() => {
+                    setNeedReload(true);
+                }, 300);
             }
         } catch (e: any) {
             setError(describe(e.message));
@@ -76,7 +78,7 @@ export function TokenAddTime(props: TokenProps) {
                     ${ busy ? "border-gray-400 disabled:bg-gray-200" : "" } "
                     name="select" onChange=${onChange}>
                     <option value=${freeTimeSec} selected>FREE</option>
-                    <option value="432000">+5 Days</option>
+                    <option value="864000">+10 Days</option>
                     <option value="2592000">+30 Days</option>
                 </select>
                 ${ busyOrNoToken ? Icons.Refresh({ class: "h-6 w-6 animate-spin" }) : html`

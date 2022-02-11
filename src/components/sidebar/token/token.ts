@@ -201,7 +201,7 @@ function TokenTtlCountDown(props: { endTime: number, update: () => void }) {
         <div class="font-bold">TTL:</div>
         <div class="${ttlMs < 300 * 1000 ? " text-red-400" : "text-gray-400"} cursor-pointer underline"
             onClick=${props.update}>
-            ${toMin(ttlMs / 1000)} Min
+            ${humanizeTime(ttlMs / 1000)}
         </div>
     `;
 }
@@ -334,6 +334,17 @@ function TaskWaitCountDown() {
 }
 
 
-function toMin(time: number) {
-    return Math.round(time / 60 * 10) / 10;
+function humanizeTime(timeSec: number) {
+    if (timeSec > 24 * 60 * 60) {
+        const days = Math.round(timeSec / 24 / 60 / 60 * 10) / 10;
+        return days + (days === 1 ? " day" : " days");
+    }
+
+    if (timeSec > 60 * 60) {
+        const hours = Math.round(timeSec / 60 / 60 * 10) / 10;
+        return hours + (hours === 1 ? " hour" : " hrs");
+    }
+
+    const minutes = Math.round(timeSec / 60 * 10) / 10;
+    return minutes + " min";
 }
