@@ -21,7 +21,9 @@ function checkout(accessToken: string,
             });
             XPayStationWidget.on(XPayStationWidget.eventTypes.STATUS, function(event: any, data: any) {
                 const status = data.paymentInfo.status;
-                invoice = data.paymentInfo.invoice;
+                if (data.paymentInfo.invoice !== undefined) {
+                    invoice = data.paymentInfo.invoice + "";
+                }
                 console.log("on(STATUS) status: '" + status + "', invoice: '" + invoice + "'");
             });
 

@@ -18,7 +18,9 @@ function checkout(accessToken, sandbox = true) {
             });
             XPayStationWidget.on(XPayStationWidget.eventTypes.STATUS, function (event, data) {
                 const status = data.paymentInfo.status;
-                invoice = data.paymentInfo.invoice;
+                if (data.paymentInfo.invoice !== undefined) {
+                    invoice = data.paymentInfo.invoice + "";
+                }
                 console.log("on(STATUS) status: '" + status + "', invoice: '" + invoice + "'");
             });
             XPayStationWidget.open();
