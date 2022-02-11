@@ -43,7 +43,7 @@
             console.log("Using token", token);
 
             try {
-                const invoice = await checkout(token, true);
+                const invoice = await checkout(token, false);
                 transaction.innerHTML = invoice;
                 proceed.style.display = "none";
                 succeed.style.display = "flex";
