@@ -8,7 +8,7 @@ export const tokeInfoGetEndpoint = endpointBase + "/token/info/get";
 export const addFreeTimeTierEndpoint = endpointBase + "/token/add/free";
 
 export const startIpx = endpointBase + "/token/ipx/start";
-export const stopIox = endpointBase + "/token/ipx/stop";
+export const stopIpx = endpointBase + "/token/ipx/stop";
 
 export const checkoutCreateTokenEndpoint = endpointBase + "/checkout/token/create";
 export const checkoutEndpoint = "https://js-dos.com/checkout/index.html";

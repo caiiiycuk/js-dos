@@ -15,6 +15,8 @@ interface Token {
     region: string,
     endTime: number,
     ttlSec: number,
+    ipxArn?: string,
+    ipxAddress?: string,
 }
 
 export type TaskType = "ipx";
@@ -217,17 +219,17 @@ export async function newTask(tokenId: string, task: TaskType) {
     return arn;
 }
 
-export async function putIp(token: string, arn: string, ip: string, task: TaskType) {
+export async function putAddress(token: string, arn: string, address: string, task: TaskType) {
     const updateParams: AWS.DynamoDB.DocumentClient.UpdateItemInput = {
         TableName: NETWORKING_TABLE,
         Key: {
             key: getTokenKey(token),
         },
-        UpdateExpression: `SET ${task}Ip = :ip`,
+        UpdateExpression: `SET ${task}Address = :address`,
         ConditionExpression: `${task}Arn = :arn`,
         ExpressionAttributeValues: {
             ":arn": arn,
-            ":ip": ip,
+            ":address": address,
         },
     };
 
@@ -240,7 +242,7 @@ export async function stopTask(token: string, arn: string, task: TaskType) {
         Key: {
             key: getTokenKey(token),
         },
-        UpdateExpression: `REMOVE ${task}Arn, ${task}Ip`,
+        UpdateExpression: `REMOVE ${task}Arn, ${task}Address`,
         ConditionExpression: `${task}Arn = :arn`,
         ExpressionAttributeValues: {
             ":arn": arn,

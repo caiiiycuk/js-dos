@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { tokeInfoGetEndpoint, startIpx, stopIox as stopIpx } from "../../../backend/v7/v7-config";
+import { tokeInfoGetEndpoint, startIpx, stopIpx } from "../../../backend/v7/v7-config";
 import { html } from "../../../dom";
 import { Icons } from "../../../icons";
 import { Props } from "../../../player-app";
@@ -16,18 +16,18 @@ interface Token {
     region: string,
     ttlSec: number,
     ipxArn?: string | null,
-    ipxIp?: string | null,
+    ipxAddress?: string | null,
 }
 
 interface IpxProps {
     ipxArn: string | null,
     setIpxArn: (ipxArn: string | null) => void,
 
-    ipxIp: string | null,
-    setIpxIp: (ipxIp: string | null) => void,
+    ipxAddress: string | null,
+    setIpxAddress: (ipxAddress: string | null) => void,
 
-    awaitingIpxIp: boolean,
-    setAwaitingIpxIp: (waitingIpx: boolean) => void,
+    awaitingIpxAddress: boolean,
+    setAwaitingIpxAddress: (waitingIpx: boolean) => void,
 }
 export interface TokenProps extends Props {
     ipx: IpxProps,
@@ -40,18 +40,18 @@ export function TokenConfiguration(props: Props) {
     const [endTime, setEndTime] = useState<number>(Date.now());
 
     const [ipxArn, setIpxArn] = useState<string | null>(null);
-    const [ipxIp, setIpxIp] = useState<string | null>(null);
-    const [awaitingIpxIp, setAwaitingIpxIp] = useState<boolean>(false);
+    const [ipxAddress, setIpxAddress] = useState<string | null>(null);
+    const [awaitingIpxAddress, setAwaitingIpxAddress] = useState<boolean>(false);
 
     const ipxProps: IpxProps = {
         ipxArn,
         setIpxArn,
 
-        ipxIp,
-        setIpxIp,
+        ipxAddress,
+        setIpxAddress,
 
-        awaitingIpxIp,
-        setAwaitingIpxIp,
+        awaitingIpxAddress,
+        setAwaitingIpxAddress,
     };
 
     const tokenProps: TokenProps = {
@@ -72,7 +72,7 @@ export function TokenConfiguration(props: Props) {
         const id = setInterval(() => {
             request(tokeInfoGetEndpoint + `?token=${props.networkToken}`).then((token: Token) => {
                 token.ipxArn ||= null;
-                token.ipxIp ||= null;
+                token.ipxAddress ||= null;
 
                 // desync
                 if (ipxArn !== token.ipxArn) {
@@ -80,9 +80,9 @@ export function TokenConfiguration(props: Props) {
                     return;
                 }
 
-                if (token.ipxIp !== ipxIp) {
-                    setIpxIp(token.ipxIp);
-                    setAwaitingIpxIp(false);
+                if (token.ipxAddress !== ipxAddress) {
+                    setIpxAddress(token.ipxAddress);
+                    setAwaitingIpxAddress(false);
                 }
             });
         }, 5000);
@@ -90,12 +90,12 @@ export function TokenConfiguration(props: Props) {
         return () => {
             clearInterval(id);
         };
-    }, [props.networkToken, endTime, ipxArn, ipxIp]);
+    }, [props.networkToken, endTime, ipxArn, ipxAddress]);
 
     async function update() {
         setIpxArn(null);
-        setIpxIp(null);
-        setAwaitingIpxIp(false);
+        setIpxAddress(null);
+        setAwaitingIpxAddress(false);
         setAwaiting(true);
 
         if (props.networkToken === null) {
@@ -113,10 +113,10 @@ export function TokenConfiguration(props: Props) {
                 setIpxArn(token.ipxArn);
             }
 
-            if (token.ipxIp !== undefined) {
-                setIpxIp(token.ipxIp);
+            if (token.ipxAddress !== undefined) {
+                setIpxAddress(token.ipxAddress);
             } else if (token.ipxArn !== undefined) {
-                setAwaitingIpxIp(true);
+                setAwaitingIpxAddress(true);
             }
         }).catch((e: any) => {
             console.error("Can't get a token", props.networkToken, e);
@@ -157,6 +157,8 @@ export function TokenConfiguration(props: Props) {
             ${headerWithRefresh}
             <div class="grid grid-cols-2 gap-4">
                 <${TokenSelect} ...${props} />
+                <div class="font-bold">Region:</div>
+                <div class="text-gray-400">${token.region}</div>
                 <div class="font-bold">TTL:</div>
                 <div class="text-red-400">0 Min</div>
                 <${TokenAddTime} ...${tokenProps} />
@@ -216,7 +218,7 @@ function IPX(props: TokenProps) {
             .then((response) => {
                 setAwaiting(false);
                 props.ipx.setIpxArn(response.arn);
-                props.ipx.setAwaitingIpxIp(true);
+                props.ipx.setAwaitingIpxAddress(true);
             })
             .catch((e) => {
                 console.error("Can't start ipx", e);
@@ -227,16 +229,16 @@ function IPX(props: TokenProps) {
 
     function toggleConnected() {
         const newConnected = !props.ipxConnected;
-        const ip = props.ipx.ipxIp;
+        const address = props.ipx.ipxAddress;
         const port = 1901;
 
-        if (!ip) {
+        if (!address) {
             return;
         }
 
         props.player().ciPromise?.then((ci) => {
             if (newConnected) {
-                return ci.networkConnect(NETWORK_DOSBOX_IPX, ip, port);
+                return ci.networkConnect(NETWORK_DOSBOX_IPX, address, port);
             }
 
             return ci.networkDisconnect(NETWORK_DOSBOX_IPX);
@@ -259,8 +261,8 @@ function IPX(props: TokenProps) {
         postObject(stopIpx + `?token=${props.networkToken}&arn=${props.ipx.ipxArn}`)
             .then(() => {
                 setAwaiting(false);
-                props.ipx.setIpxIp(null);
-                props.ipx.setAwaitingIpxIp(false);
+                props.ipx.setIpxAddress(null);
+                props.ipx.setAwaitingIpxAddress(false);
             })
             .catch((e) => {
                 console.error("Can't stop ipx", e);
@@ -281,10 +283,10 @@ function IPX(props: TokenProps) {
         `;
     }
 
-    if (props.ipx.ipxIp !== null) {
+    if (props.ipx.ipxAddress !== null) {
         return html`
             <div class="font-bold">IPX:</div>
-            <div class="font-bold text-green-400">${props.ipx.ipxIp}</div>
+            <div class="font-bold text-green-400">${props.ipx.ipxAddress.replace(".jj.dos.zone", "")}</div>
             <div class=""></div>
             <div class="${props.ipxConnected ? " bg-red-200" : "bg-green-200"}
                 cursor-pointer rounded uppercase text-center px-2 py-1"
@@ -296,7 +298,7 @@ function IPX(props: TokenProps) {
         `;
     }
 
-    if (props.ipx.awaitingIpxIp) {
+    if (props.ipx.awaitingIpxAddress) {
         return html`
             <div class="font-bold">IPX:</div>
             <${TaskWaitCountDown} />
@@ -337,14 +339,14 @@ function TaskWaitCountDown() {
 function humanizeTime(timeSec: number) {
     if (timeSec > 24 * 60 * 60) {
         const days = Math.round(timeSec / 24 / 60 / 60 * 10) / 10;
-        return days + (days === 1 ? " day" : " days");
+        return days + (days === 1 ? " Day" : " Days");
     }
 
     if (timeSec > 60 * 60) {
         const hours = Math.round(timeSec / 60 / 60 * 10) / 10;
-        return hours + (hours === 1 ? " hour" : " hrs");
+        return hours + (hours === 1 ? " Hour" : " Hrs");
     }
 
     const minutes = Math.round(timeSec / 60 * 10) / 10;
-    return minutes + " min";
+    return minutes + " Min";
 }
