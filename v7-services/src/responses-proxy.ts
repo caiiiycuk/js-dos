@@ -1,24 +1,24 @@
 export function success(body: any) {
-    return response200(body, true);
+    return response(200, body, true);
 }
 
-export function error(errorCode: string) {
-    return response200({ errorCode }, false);
+export function error(errorCode: string, code: number = 200) {
+    return response(code, { errorCode }, false);
 }
 
-export function badRequest() {
-    return error("error_bad_request");
+export function badRequest(code: number = 200) {
+    return error("error_bad_request", code);
 }
 
-export function noSession() {
-    return error("error_no_session");
+export function noSession(code: number = 200) {
+    return error("error_no_session", code);
 }
 
-function response200(body: any, success: boolean) {
+function response(code: number, body: any, success: boolean) {
     body.success = success;
 
     return {
-        statusCode: 200,
+        statusCode: code,
         headers: {
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Credentials": true,

@@ -13,7 +13,7 @@ export const stopIpx = async (event: any) => {
         await stopTask(token, arn, "ipx");
         return success({});
     } catch (e) {
-        console.error("Can't update ipx ip", e);
+        console.error("Can't update ipx address", e);
         return error(e.message);
     }
 };

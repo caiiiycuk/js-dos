@@ -96,12 +96,12 @@ functions:
           path: /token/ipx/start
           method: get
           cors: true
-  putIpxIp:
-    handler: src/networking/ipx/put-ipx-ip.putIpxIp
-    name: jsdos-putIpxIp
+  putIpxAddress:
+    handler: src/networking/ipx/put-ipx-address.putIpxAddress
+    name: jsdos-putIpxAddress
     events:
       - http:
-          path: /token/ipx/ip/put
+          path: /token/ipx/address/put
           method: put
           cors: true
   stopIpx:
@@ -112,6 +112,21 @@ functions:
           path: /token/ipx/stop
           method: post
           cors: true
+  testIpx:
+    handler: src/networking/ipx/test-ipx.testIpx
+    name: jsdos-testIpx
+    events:
+      - http:
+          path: /token/ipx/test
+          method: get
+          cors: true
+          integration: lambda
+          request:
+            passThrough: NEVER
+            parameters:
+              querystrings:
+                token: true
+                arn: true
   personalPut:
     handler: src/personal-put.personalPut
     name: jsdos-personalPut

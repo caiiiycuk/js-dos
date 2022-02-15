@@ -16,12 +16,18 @@ export function TokenSelect(props: TokenProps) {
         setToken(e.currentTarget.value ?? "");
     }
 
+    function onKeyDown(e: any) {
+        e.stopPropagation();
+    }
+
     function onKeyUp(e: any) {
         onChange(e);
 
         if (e.key === "Enter") {
             changeToken();
         }
+
+        e.stopPropagation();
     }
 
     async function changeToken() {
@@ -104,7 +110,7 @@ export function TokenSelect(props: TokenProps) {
         <div class="flex flex-row">
             <input class="rounded border ${ token === "" ? "border-red-600" : "border-green-200"} 
                 px-2 w-14 flex-grow mr-2" type="text" value=${token} 
-                onChange=${onChange} onKeyUp=${onKeyUp} />
+                onChange=${onChange} onKeyUp=${onKeyUp} onKeyDown=${onKeyDown} />
             <div class="h-6 w-6 cursor-pointer ${generateNewToken ? "text-green-400 hover:text-green-600" : ""}" 
                 onClick=${changeToken}>
                 <${generateNewToken ? Icons.Plus : Icons.SwithcHorizontal} 
