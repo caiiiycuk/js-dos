@@ -31,3 +31,5 @@ zip.js/
 tailwind.config.js
 examples/digger/*.jsdos
 .github
+3rdparty
+yarn-error.log
