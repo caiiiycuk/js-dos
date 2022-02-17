@@ -9,8 +9,7 @@ import { ActionSaveOrExit } from "./components/action-save-or-exit";
 import { SideBar } from "./components/sidebar";
 import { Tips } from "./components/tip";
 import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
-
-import { getAutoRegion, LatencyInfo } from "./backend/v7/latency";
+import { LatencyInfo } from "./backend/v7/latency";
 
 import { EmulatorsUi } from "emulators-ui";
 
@@ -69,8 +68,10 @@ export interface Props {
     closeSideBar: () => void;
 
     region: string | null;
-    estimatingRegion: string | null;
     setRegion: (region: string | null) => void;
+
+    estimatingRegion: string | null;
+    setEstimatingRegion: (region: string | null) => void;
 
     latencyInfo: LatencyInfo | null,
     setLatencyInfo: (latencyInfo: LatencyInfo) => void;
@@ -96,7 +97,7 @@ export function PlayerApp(playerProps: {
         (userGesture: boolean) => requestClientIdFn(userGesture) :
         undefined;
     const [clientId, setClientId] = useState<ClientId | null>(null);
-    const [sideBar, setSideBar] = useState<boolean>(true);
+    const [sideBar, setSideBar] = useState<boolean>(false);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
     const [mirroredControls, setMirroredControls] = useState<boolean>(playerProps.player().mirroredControls);
     const [autolock, setAutolock] = useState<boolean>(playerProps.player().autolock);
@@ -109,7 +110,7 @@ export function PlayerApp(playerProps: {
     const [estimatingRegion, setEstimatingRegion] = useState<string | null>(null);
     const [showTips, setShowTips] = useState<boolean>(storage.getItem(storageKeys.uiTips) !== "false");
     const [latencyInfo, setLatencyInfo] = useState<LatencyInfo | null>(null);
-    const [sideBarPage, setSideBarPage] = useState<SidebarPage>("networking");
+    const [sideBarPage, setSideBarPage] = useState<SidebarPage>("main");
     const [anonymousClientId] = useState<ClientId>(() => {
         const storedId = storage.getItem(storageKeys.localId);
         const localId = storedId ?? nanoid();
@@ -150,19 +151,6 @@ export function PlayerApp(playerProps: {
 
         return () => playerProps.setOnRun(() => {});
     }, [playerProps.setOnRun]);
-
-    useEffect(() => {
-        if (region !== null) {
-            return;
-        }
-
-        getAutoRegion(setEstimatingRegion)
-            .then((latencyInfo) => {
-                setLatencyInfo(latencyInfo);
-                setRegion(latencyInfo.region);
-            })
-            .catch(console.error);
-    }, [region]);
 
     useEffect(() => {
         const listener = () => {
@@ -253,8 +241,10 @@ export function PlayerApp(playerProps: {
         closeSideBar: () => setSideBar(false),
 
         region: region,
-        estimatingRegion,
         setRegion,
+
+        estimatingRegion,
+        setEstimatingRegion,
 
         showTips,
         setShowTips: (newShowTips: boolean) => {

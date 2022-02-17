@@ -48,7 +48,7 @@
         "browserify": "^17.0.0",
         "core-js": "^3.17.1",
         "del": "^5.1.0",
-        "emulators": "^0.72.2",
+        "emulators": "^0.72.3",
         "emulators-ui": "^0.72.9",
         "eslint": "^7.32.0",
         "eslint-config-google": "^0.14.0",
