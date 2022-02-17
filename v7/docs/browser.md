@@ -11,11 +11,19 @@ To run `bundle` you just need a one line of code:
 Dos(document.getElementById("jsdos")).run("some.jsdos");
 ```
 
-`Dos` receives HTMLDivElement and uses it to create the player UI. To run `jsdos bundle`
-just use its method `run` specifying the url of `jsdos bundle`.
+`Dos` receives HTMLDivElement and use it to create the player UI. To run bundle
+just use its method `run` specifying the url of jsdos bundle.
 
-To use js-dos you need to add `js-dos.js` script, and `js-dos.css` style ([releases](releases)).
-Also, you need to specify path prefix of js-dos installation:
+To use js-dos you need to add `js-dos.js` script and `js-dos.css` files ([releases](releases)) to
+html page.
+
+:::info
+By default, js-dos will load wasm modules relatively from current path,
+you should specify variable `pathPrefix` if you want to load them from different place:
+```js
+emulators.pathPrefix = "<some-path>/";
+```
+:::
 
 ```html
 <script src="<path>/js-dos.js"></script>
@@ -31,15 +39,6 @@ Complete example:
 ```html title="examples/dos.html"
 {}
 ```
-
-:::info
-By default, js-dos will load wasm modules relatively from current path,
-you should specify variable `pathPrefix` if you want to load them from different place:
-```js
-emulators.pathPrefix = "<some-path>/";
-```
-:::
-
 
 ###  2. Using emulators-ui (without js-dos services)
 
