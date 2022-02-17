@@ -17,13 +17,13 @@ export function Main(props: Props) {
         <${Controls} class="mt-2" portal=${false} ...${props} />
         <div class="sidebar-header">Networking</div>
         <${Region} class="mt-2" ...${props} />
-        <${LatencyInfo} ...${props} asButton=${true} />
+        <${LatencyInfo} ...${props} class="mt-4" asButton=${true} />
         <${ConfigureNetworking} ...${props} class="mt-2" />
     `;
 }
 
 function ConfigureNetworking(props: Props & { class?: string }) {
-    if (props.options().withExperimentalApi !== true) {
+    if (props.options().withExperimentalApi !== true || props.region === null) {
         return null;
     }
 

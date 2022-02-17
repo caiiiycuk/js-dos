@@ -1,3 +1,4 @@
+import { useEffect } from "preact/hooks";
 import { html } from "../dom";
 
 import { Props } from "../player-app";
@@ -7,10 +8,25 @@ import { Main } from "./sidebar/main";
 import { LatencyInfo } from "./sidebar/latency-info";
 import { Networking } from "./sidebar/networking";
 
+import { getAutoRegion } from "../backend/v7/latency";
+
 export function SideBar(props: Props) {
     if (!props.sideBar) {
         return null;
     }
+
+    useEffect(() => {
+        if (props.region !== null) {
+            return;
+        }
+
+        getAutoRegion(props.setEstimatingRegion)
+            .then((latencyInfo) => {
+                props.setLatencyInfo(latencyInfo);
+                props.setRegion(latencyInfo.region);
+            })
+            .catch(console.error);
+    }, [props.region]);
 
     function onClose() {
         if (props.sideBarPage === "main") {
