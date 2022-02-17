@@ -119,32 +119,31 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
                 ci.mute();
             }
 
-            try {
-                const clientId = await getClientId();
+            const clientId = await getClientId();
 
-                if (clientId !== null) {
-                    if (showModals) {
-                        showModal("Saving [1/2]: collecting changes");
-                    }
-
-                    const data = await ci.persist();
-
-                    if (showModals) {
-                        showModal("Saving [2/2]: sending to cloud");
-                    }
-
-                    return putPersonalBundle(clientId.namespace, clientId.id, bundleUrl, data);
-                } else {
-                    if (showModals) {
-                        showModal("Saving [1/1]: collecting changes");
-                    }
-
-                    return saveFn.call(player.layers);
+            if (clientId !== null) {
+                if (showModals) {
+                    showModal("Saving [1/2]: collecting changes");
                 }
-            } finally {
-                if (closeOnSave && showModals) {
-                    showModal("Saved. Now you can close the window");
+
+                const data = await ci.persist();
+
+                if (showModals) {
+                    showModal("Saving [2/2]: sending to cloud");
                 }
+
+                return putPersonalBundle(clientId.namespace, clientId.id, bundleUrl, data)
+                    .then(() => {
+                        if (closeOnSave && showModals) {
+                            showModal("Saved. Now you can close the window");
+                        }
+                    });
+            } else {
+                if (showModals) {
+                    showModal("Saving [1/1]: collecting changes");
+                }
+
+                return saveFn.call(player.layers);
             }
         });
 
