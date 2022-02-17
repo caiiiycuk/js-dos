@@ -78,6 +78,7 @@ export function TokenAddTime(props: TokenProps) {
                     ${ busy ? "border-gray-400 disabled:bg-gray-200" : "" } "
                     name="select" onChange=${onChange}>
                     <option value=${freeTimeSec} selected>FREE</option>
+                    <option value="259200">+3 Days</option>
                     <option value="864000">+10 Days</option>
                     <option value="2592000">+30 Days</option>
                 </select>

@@ -50,3 +50,4 @@ build
 build-emterp
 
 examples/digger/*.jsdos
+dist
