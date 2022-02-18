@@ -92,6 +92,16 @@ class HardwareTransportLayer implements TransportLayer {
             case "wc-pack-fs-to-bundle": {
                 this.hardware.sendMessage("wc-pack-fs-to-bundle\n" + this.sessionId + "\n");
             } break;
+            case "wc-connect": {
+                this.hardware.sendMessage("wc-connect\n" + this.sessionId + "\n" +
+                    props.networkType + "\n" + 
+                    props.address.replace("ws://", "").replace("wss://", "") + "\n" +
+                    (props.port - 1) + "\n");
+            } break;
+            case "wc-disconnect": {
+                this.hardware.sendMessage("wc-disconnect\n" + this.sessionId + "\n" +
+                    props.networkType + "\n");
+            } break;
             default: {
                 console.log("Unhandled client message (wc):", name, props);
             } break;
