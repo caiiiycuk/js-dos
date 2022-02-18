@@ -286,7 +286,7 @@ function IPX(props: TokenProps) {
     if (props.ipx.ipxAddress !== null) {
         return html`
             <div class="font-bold">IPX:</div>
-            <div class="font-bold text-green-400">${props.ipx.ipxAddress.replace(".jj.dos.zone", "")}</div>
+            <div class="font-bold text-gray-400 text-xs break-all -mx-6 text-center">${props.ipx.ipxAddress}</div>
             <div class=""></div>
             <div class="${props.ipxConnected ? " bg-red-200" : "bg-green-200"}
                 cursor-pointer rounded uppercase text-center px-2 py-1"

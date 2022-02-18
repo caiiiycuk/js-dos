@@ -110,6 +110,12 @@ function describe(message: string) {
     if (message === "free-hard-limit") {
         return "All free time of today is used, please use paid time";
     }
+    if (message === "not-found") {
+        return "Token not found";
+    }
+    if (message === "too-early") {
+        return "You can add free time only if TTL less then 5 minutes";
+    }
 
     return message;
 }
