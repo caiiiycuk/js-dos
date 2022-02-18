@@ -1,7 +1,7 @@
 import { error, badRequest, success } from "../responses-lambda";
 import { getDayOrigin } from "./day";
-import { freeTierSoftLimit, freeTierHardLimit } from "./limits";
-import { addFreeTierTime, getFreeTierHardCount, getFreeTierSoftCount } from "./token";
+import { freeTierTtl, freeTierSoftLimit, freeTierHardLimit } from "./limits";
+import { addFreeTierTime, getFreeTierHardCount, getFreeTierSoftCount, getToken } from "./token";
 
 export const addTokenFreeTierTime = async (event: any) => {
     const { token } = event.body;
@@ -19,6 +19,11 @@ export const addTokenFreeTierTime = async (event: any) => {
     const hardCount = await getFreeTierHardCount(day);
     if (hardCount >= freeTierHardLimit) {
         return error("free-hard-limit");
+    }
+
+    const tokenInfo = await getToken(token);
+    if (tokenInfo.ttlSec > freeTierTtl) {
+        return error("too-early");
     }
 
     try {
