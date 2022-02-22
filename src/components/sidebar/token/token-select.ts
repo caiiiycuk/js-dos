@@ -13,7 +13,7 @@ export function TokenSelect(props: TokenProps) {
     const generateNewToken = token === props.networkToken || token === "";
 
     function onChange(e: any) {
-        setToken(e.currentTarget.value ?? "");
+        setToken((e.currentTarget.value as string ?? "").toLowerCase().trim());
     }
 
     function onKeyDown(e: any) {

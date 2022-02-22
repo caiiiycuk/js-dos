@@ -94,7 +94,7 @@ class HardwareTransportLayer implements TransportLayer {
             } break;
             case "wc-connect": {
                 this.hardware.sendMessage("wc-connect\n" + this.sessionId + "\n" +
-                    props.networkType + "\n" + 
+                    props.networkType + "\n" +
                     props.address.replace("ws://", "").replace("wss://", "") + "\n" +
                     (props.port - 1) + "\n");
             } break;

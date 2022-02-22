@@ -36,20 +36,27 @@ export function SideBar(props: Props) {
         }
     };
 
+    const networking = props.sideBarPage === "networking";
+
     function onHelp() {
+        if (networking) {
+            window.open("https://youtu.be/XffB8D7IkDk", "_blank");
+            return;
+        }
         props.setShowTips(true);
         props.closeSideBar();
     };
 
     return html`
     <div class="flex flex-col filter absolute z-50 top-0 bottom-0 right-0 px-8 pt-6
-            w-full sm:w-80 rounded-l-lg drop-shadow-lg bg-white overflow-y-auto overflow-x-hidden pb-4">
+                w-full sm:w-80 rounded-l-lg drop-shadow-lg bg-white overflow-y-auto overflow-x-hidden pb-4">
         <div class="transform absolute text-gray-400 hover:text-gray-800
-                         top-2 left-2 cursor-pointer hover:scale-125" onClick=${onClose}>
-            <${props.sideBarPage === "main" ? Icons.XCircle : Icons.ArrowsCircleLeft} class="h-6 w-6" />
+                            top-2 left-2 cursor-pointer hover:scale-125" onClick=${onClose}>
+            <${props.sideBarPage==="main" ? Icons.XCircle : Icons.ArrowsCircleLeft} class="h-6 w-6" />
         </div>
         <div class="transform absolute text-gray-400 hover:text-gray-800
-                         top-2 right-2 cursor-pointer hover:scale-125" onClick=${onHelp}>
+                             top-2 right-2 cursor-pointer hover:scale-125
+                             ${ networking ? "text-purple-400" : ""}" onClick=${onHelp}>
             <${Icons.QuestionMarkCircle} class="h-6 w-6" />
         </div>
     
@@ -70,12 +77,14 @@ function SocialIcons(props: Props) {
         return null;
     }
 
+    const matchmaking = props.sideBarPage === "networking";
+
     function openDiscrodPage() {
         window.open("https://discord.com/invite/hMVYEbG", "_blank");
     }
 
     function openTelegramPage() {
-        window.open("https://t.me/doszone", "_blank");
+        window.open("https://t.me/doszonechat", "_blank");
     }
 
     function openTwitterPage() {
@@ -84,6 +93,20 @@ function SocialIcons(props: Props) {
 
     function openDonatePage() {
         window.open("https://dos.zone/donate/", "_blank");
+    }
+
+    if (matchmaking === true) {
+        return html`
+        <div class="flex flex-row justify-around items-center">
+            <div class="font-bold text-purple-600">Matchmaking:</div>
+            <div class="h-6 w-6 text-gray-600 cursor-pointer" onClick=${openDiscrodPage}>
+                <${Icons.Discord} class="h-6 w-6" />
+            </div>
+            <div class="h-4 w-4 mt-0.5 text-gray-600 cursor-poiner" onClick=${openTelegramPage}>
+                <${Icons.Telegram} class="h-4 w-4" />
+            </div>
+        </div>
+    `;
     }
 
     return html`
