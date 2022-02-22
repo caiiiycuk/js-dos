@@ -15,7 +15,7 @@ export function Main(props: Props) {
     return html`
         <${Client} class="mt-2 mb-2 pb-2 border-b-2 border-green-200" ...${props} />
         <${Controls} class="mt-2" portal=${false} ...${props} />
-        <div class="sidebar-header">Networking</div>
+        <div class="sidebar-header mt-8">Networking</div>
         <${Region} class="mt-2" ...${props} />
         <${LatencyInfo} ...${props} class="mt-4" asButton=${true} />
         <${ConfigureNetworking} ...${props} class="mt-2" />

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .sidebar-header {
-    @apply mt-8 mb-2 pb-2 border-b-2 border-green-200 text-gray-600 uppercase text-center;
+    @apply mb-2 pb-2 border-b-2 border-green-200 text-gray-600 uppercase text-center;
 }
 
 input {
