@@ -40,7 +40,7 @@ export function SideBar(props: Props) {
 
     function onHelp() {
         if (networking) {
-            window.open("https://youtu.be/XffB8D7IkDk", "_blank");
+            window.open("https://youtu.be/XEoWLQmU168", "_blank");
             return;
         }
         props.setShowTips(true);
