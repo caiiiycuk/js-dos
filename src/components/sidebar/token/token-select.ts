@@ -36,7 +36,7 @@ export function TokenSelect(props: TokenProps) {
         try {
             if (generateNewToken) {
                 if (props.networkToken === null ||
-                    window.confirm("Are you shure want to create token?") === true) {
+                    window.confirm("Are you sure want to create token?") === true) {
                     await createToken();
                 }
 
@@ -51,8 +51,8 @@ export function TokenSelect(props: TokenProps) {
 
             if (window.confirm(
                 newToken === null ?
-                    "Are you shure want to reset?" :
-                    "Are you shure want to switch token?") === true) {
+                    "Are you sure want to reset?" :
+                    "Are you sure want to switch token?") === true) {
                 if (newToken !== null) {
                     await checkToken(newToken);
                 }
