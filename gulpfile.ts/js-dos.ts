@@ -42,6 +42,9 @@ function copyWasm() {
         "node_modules/emulators/dist/wdosbox.js",
         "node_modules/emulators/dist/wdosbox.js.symbols",
         "node_modules/emulators/dist/wdosbox.wasm",
+        "node_modules/emulators/dist/wdosbox.shared.js",
+        "node_modules/emulators/dist/wdosbox.shared.js.symbols",
+        "node_modules/emulators/dist/wdosbox.shared.wasm",
     ])
         .pipe(size({ showFiles: true, showTotal: false }))
         .pipe(dest("dist"));
