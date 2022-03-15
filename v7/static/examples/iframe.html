@@ -1,27 +1,39 @@
 <!doctype html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <style>
-         html, body, #jsdos {
-             width: 100%;
-             height: 100%;
-             padding: 0;
-             margin: 0;
-             border: none;
-             overflow: hidden;
-         }
-        </style>
-    </head>
-    <body>
-        <iframe
-            id="jsdos"
-            src="https://dos.zone/en/player/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2F2%2F24b00b14f118580763440ecaddcc948f8cb94f14.jsdos"></iframe>
 
-        <script>
-         window.onload = () => {
-             document.getElementById("jsdos").focus();
-         };
-        </script>
-    </body>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <style>
+        html,
+        body,
+        #jsdos {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            border: none;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <iframe id="jsdos" frameborder="0"
+        src="https://dos.zone/player/?bundleUrl=https%3A%2F%2Fcdn.dos.zone%2Foriginal%2F2X%2F2%2F24b00b14f118580763440ecaddcc948f8cb94f14.jsdos?anonymous=1"
+        allowfullscreen>
+    </iframe>
+    <script>
+        window.onload = () => {
+            document.getElementById("jsdos").focus();
+
+            window.addEventListener("message", (e) => {
+                if (e.data.message === "dz-player-exit") {
+                    document.getElementById("jsdos").style.display = "none";
+                    alert("js-dos exited");
+                }
+            });
+        };
+    </script>
+</body>
+
 </html>

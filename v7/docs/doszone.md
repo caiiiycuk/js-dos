@@ -12,11 +12,6 @@ DOS.Zone consist of:
 * [dos.zone](https://dos.zone) it's a default player for `js-dos bundles` based on js-dos api.
 * [game studio](https://dos.zone/studio) it's a full featured bundles creator for js-dos.
 
-## Database
-
-Our database if free for use, you can obtain it [here](https://github.com/js-dos/dos.zone.db).
-It's synced with *Talks* in both directions. You can find all links to bundles in it.
-
 ## Contributing
 
 You can contribute directly to [repository](https://github.com/js-dos/repository)

@@ -2,44 +2,76 @@
 id: iframe
 title: In iframe
 ---
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
-iframe integraion is a fastest way to embed a program on your page. To do this you can use player hosted on [dos.zone](doszone).
-You just need the url of a `jsdos bundle` (you can get it from our game database).
+iframe integraion is a fastest way to embed a game on your web page. Open [DOS Zone](https://dos.zone) repository 
+and search for game, for example '**Digger**'. Then you need to press on code `</>` button:
 
-```html
-<iframe
-  id="jsdos"
-  src="https://dos.zone/en/player/https%3A%2F%2Fdoszone-uploads.s3.dualstack.eu-central-1.amazonaws.com%2Foriginal%2F2X%2F2%2F24b00b14f118580763440ecaddcc948f8cb94f14.jsdos"
-/>
-```
+<img alt="Code button" src={useBaseUrl('img/code-button.jpg')} />
 
-The `src` can be composed like this:
+It will open a frame whith html5 code that **you need to paste on your website**:
 
+<img alt="Code frame" src={useBaseUrl('img/code-frame.jpg')} />
+
+
+<br/>
+<br/>
+<br/>
+
+:::info
+
+To receive input you should focus the iframe (by click or using js):
 ```js
-const src = "https://dos.zone/en/player/" + encodeURIComponent(bundleUrl);
+iframe.focus();
 ```
 
-To receive input you should focus the iframe:
-```js
-document.getElementById("jsdos").focus();
-```
+:::
 
-Complete example:
+## Iframe example 
+
+Example of web page that uses iframe integration:
 
 ```html title="examples/iframe.html"
 {}
 ```
 
-:::info
+## Client ID
 
-Mobile support:
-1. Swipe to change direction of digger.
-2. Open top menu to type records name on mobile.
+iframe intergation also support passing client id. To do this you need to 
+modify iframe src. Replace `anonymous=1` with `anonymous=0`. In that case
+you need handle auth client request in parent window, like this:
 
-:::
+```ts
+    const clientIdListener = async (e: any) => {
+        if (e.data.message !== "dz-client-id") {
+            return;
+        }
+        const gesture = e.data.gesture;
 
-:::warning
+        let user = getLoggedUser();
+        if (user === null && gesture) {
+            user = await login();
+        }
 
-Iframe integration didn't support a full screen button yet, if you need it look forward.
+        if (user === null) {
+            iframe.contentWindow?.postMessage({
+                message: "dz-client-id-response",
+            }, "*");
+        } else {
+            iframe.contentWindow?.postMessage({
+                message: "dz-client-id-response",
+                namespace: user.namespace,
+                id: user.id,
+            }, "*");
+        }
+    };
 
-:::
+    window.addEventListener("message", clientIdListener);
+```
+
+
+<br/>
+
+## DOS Zone
+
+Read more about [dos.zone](doszone).
