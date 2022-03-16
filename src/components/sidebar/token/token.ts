@@ -238,7 +238,16 @@ function IPX(props: TokenProps) {
 
         props.player().ciPromise?.then((ci) => {
             if (newConnected) {
-                return ci.networkConnect(NETWORK_DOSBOX_IPX, address, port);
+                if (location.protocol === "http:" &&
+                    props.options().hardware === undefined &&
+                    address.endsWith(".jj.dos.zone")) {
+                    // dns optimization trick
+                    return ci.networkConnect(NETWORK_DOSBOX_IPX,
+                        "ws://" + address.substring(0, address.length - ".jj.dos.zone".length).replace(/_/g, "."),
+                        port);
+                } else {
+                    return ci.networkConnect(NETWORK_DOSBOX_IPX, address, port);
+                }
             }
 
             return ci.networkDisconnect(NETWORK_DOSBOX_IPX);
