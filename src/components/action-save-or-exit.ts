@@ -57,6 +57,7 @@ export function ActionSaveOrExit(props: Props) {
 
             if (onExitDefined) {
                 try {
+                    await props.options().onBeforeExit?.();
                     await dos.stop();
                 } catch (e: any) {
                     console.error(e);

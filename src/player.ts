@@ -24,6 +24,7 @@ export interface DosPlayerOptions extends DosOptions {
     style?: "default" | "none";
     hardware?: Hardware;
     clientId?: ClientIdSupplier;
+    onBeforeExit?: () => Promise<void>;
     onExit?: () => void;
     noSideBar?: boolean;
     noFullscreen?: boolean;
@@ -132,18 +133,18 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
                     showModal("Saving [2/2]: sending to cloud");
                 }
 
-                return putPersonalBundle(clientId.namespace, clientId.id, bundleUrl, data)
-                    .then(() => {
-                        if (closeOnSave && showModals) {
-                            showModal("Saved. Now you can close the window");
-                        }
-                    });
+                await putPersonalBundle(clientId.namespace, clientId.id, bundleUrl, data);
             } else {
                 if (showModals) {
                     showModal("Saving [1/1]: collecting changes");
                 }
 
-                return saveFn.call(player.layers);
+                await saveFn.call(player.layers);
+            }
+
+            if (closeOnSave && showModals) {
+                showModal("Saved. Now you can close the window");
+                modalText.classList.remove("animate-pulse");
             }
         });
 
