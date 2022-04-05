@@ -20,14 +20,17 @@ interface Token {
 }
 
 interface IpxProps {
-    ipxArn: string | null,
-    setIpxArn: (ipxArn: string | null) => void,
+    arn: string | null,
+    setArn: (ipxArn: string | null) => void,
 
-    ipxAddress: string | null,
-    setIpxAddress: (ipxAddress: string | null) => void,
+    address: string | null,
+    setAddress: (ipxAddress: string | null) => void,
 
-    awaitingIpxAddress: boolean,
-    setAwaitingIpxAddress: (waitingIpx: boolean) => void,
+    awaitingAddress: boolean,
+    setAwaitingAddress: (waitingIpx: boolean) => void,
+
+    awaitingConnection: boolean,
+    setAwaitingConnection: (waitingIpx: boolean) => void,
 }
 export interface TokenProps extends Props {
     ipx: IpxProps,
@@ -42,16 +45,20 @@ export function TokenConfiguration(props: Props) {
     const [ipxArn, setIpxArn] = useState<string | null>(null);
     const [ipxAddress, setIpxAddress] = useState<string | null>(null);
     const [awaitingIpxAddress, setAwaitingIpxAddress] = useState<boolean>(false);
+    const [awaintngIpxConnection, setAwaitingIpxConnection] = useState<boolean>(false);
 
     const ipxProps: IpxProps = {
-        ipxArn,
-        setIpxArn,
+        arn: ipxArn,
+        setArn: setIpxArn,
 
-        ipxAddress,
-        setIpxAddress,
+        address: ipxAddress,
+        setAddress: setIpxAddress,
 
-        awaitingIpxAddress,
-        setAwaitingIpxAddress,
+        awaitingAddress: awaitingIpxAddress,
+        setAwaitingAddress: setAwaitingIpxAddress,
+
+        awaitingConnection: awaintngIpxConnection,
+        setAwaitingConnection: setAwaitingIpxConnection,
     };
 
     const tokenProps: TokenProps = {
@@ -217,8 +224,8 @@ function IPX(props: TokenProps) {
         getObject(startIpx + `?token=${props.networkToken}`)
             .then((response) => {
                 setAwaiting(false);
-                props.ipx.setIpxArn(response.arn);
-                props.ipx.setAwaitingIpxAddress(true);
+                props.ipx.setArn(response.arn);
+                props.ipx.setAwaitingAddress(true);
             })
             .catch((e) => {
                 console.error("Can't start ipx", e);
@@ -229,7 +236,7 @@ function IPX(props: TokenProps) {
 
     function toggleConnected() {
         const newConnected = !props.ipxConnected;
-        const address = props.ipx.ipxAddress;
+        const address = props.ipx.address;
         const port = 1901;
 
         if (!address) {
@@ -238,6 +245,8 @@ function IPX(props: TokenProps) {
 
         props.player().ciPromise?.then((ci) => {
             if (newConnected) {
+                props.ipx.setAwaitingConnection(true);
+
                 if (location.protocol === "http:" &&
                     props.options().hardware === undefined &&
                     address.endsWith(".jj.dos.zone")) {
@@ -253,6 +262,7 @@ function IPX(props: TokenProps) {
             return ci.networkDisconnect(NETWORK_DOSBOX_IPX);
         })
             .then(() => {
+                props.ipx.setAwaitingConnection(false);
                 props.setIpxConnected(newConnected);
                 if (newConnected) {
                     props.player().layers.notyf.success("Connected");
@@ -260,6 +270,7 @@ function IPX(props: TokenProps) {
                 }
             })
             .catch((e) => {
+                props.ipx.setAwaitingConnection(false);
                 console.error(e);
                 setError(e.message);
             });
@@ -267,11 +278,11 @@ function IPX(props: TokenProps) {
 
     function stop() {
         setAwaiting(true);
-        postObject(stopIpx + `?token=${props.networkToken}&arn=${props.ipx.ipxArn}`)
+        postObject(stopIpx + `?token=${props.networkToken}&arn=${props.ipx.arn}`)
             .then(() => {
                 setAwaiting(false);
-                props.ipx.setIpxAddress(null);
-                props.ipx.setAwaitingIpxAddress(false);
+                props.ipx.setAddress(null);
+                props.ipx.setAwaitingAddress(false);
             })
             .catch((e) => {
                 console.error("Can't stop ipx", e);
@@ -292,14 +303,26 @@ function IPX(props: TokenProps) {
         `;
     }
 
-    if (props.ipx.ipxAddress !== null) {
+    if (props.ipx.address !== null) {
+        const connectText =
+            props.ipxConnected ? "Disconnect" :
+                (props.ipx.awaitingConnection ? "Connecting..." : "Connect");
+
+        const onConnectClick = () => {
+            if (props.ipx.awaitingConnection) {
+                return;
+            }
+
+            toggleConnected();
+        };
+
         return html`
             <div class="font-bold">IPX:</div>
-            <div class="font-bold text-gray-400 text-xs break-all -mx-6 text-center">${props.ipx.ipxAddress}</div>
+            <div class="font-bold text-gray-400 text-xs break-all -mx-6 text-center">${props.ipx.address}</div>
             <div class=""></div>
             <div class="${props.ipxConnected ? " bg-red-200" : "bg-green-200"}
                 cursor-pointer rounded uppercase text-center px-2 py-1"
-                onClick=${toggleConnected}>${props.ipxConnected ? "Disconnect" : "Connect"}</div>
+                onClick=${onConnectClick}>${connectText}</div>
             <div class="${props.ipxConnected ? "hidden" : ""}"></div>
             <div class="${props.ipxConnected ? "hidden" : "none"}
                 bg-gray-200 cursor-pointer rounded uppercase text-center px-4 py-1"
@@ -307,7 +330,7 @@ function IPX(props: TokenProps) {
         `;
     }
 
-    if (props.ipx.awaitingIpxAddress) {
+    if (props.ipx.awaitingAddress) {
         return html`
             <div class="font-bold">IPX:</div>
             <${TaskWaitCountDown} />

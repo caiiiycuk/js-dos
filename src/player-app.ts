@@ -139,6 +139,20 @@ export function PlayerApp(playerProps: {
     }
 
     useEffect(() => {
+        const onTokenRequest = (e: any) => {
+            if (e.data.message == "jsdos-get-network-token") {
+                e.source?.postMessage({
+                    message: "jsdos-network-token",
+                    token: networkToken,
+                }, "*");
+            }
+        };
+
+        window.addEventListener("message", onTokenRequest);
+        return () => window.removeEventListener("message", onTokenRequest);
+    }, [networkToken]);
+
+    useEffect(() => {
         if (typeof requestClientId !== "undefined") {
             requestClientId(false).then(setClientId).catch(console.error);
         }
