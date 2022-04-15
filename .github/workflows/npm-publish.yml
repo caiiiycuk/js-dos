@@ -1,0 +1,33 @@
+name: Publish release
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: build & publish emulators-ui
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        registry-url: https://registry.npmjs.org/
+      env:
+        NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
+    - run: npm install -g yarn
+    - run: yarn
+    - run: yarn run eslint . --ext ts,tsx --max-warnings 0
+    - run: NODE_ENV=production yarn run gulp
+    - run: npm publish
+    - name: upload
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: 'dist'
+        path: 'dist'
