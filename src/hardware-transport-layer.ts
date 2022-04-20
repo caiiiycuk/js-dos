@@ -134,9 +134,11 @@ class HardwareTransportLayer implements TransportLayer {
                 this.frameHeight = props.height;
                 this.handler(name, props);
             } break;
-            case "ws-sound-push":
+            case "ws-sound-push": {
+                this.handler(name, props);
+            } break;
             case "ws-update-lines": {
-                console.error(name, "should not be called");
+                this.handler(name, props);
             } break;
             case "ws-persist": {
                 props.bundle = decode(props.bundle);
