@@ -221,15 +221,18 @@ export class HardwareTransportLayerFactory {
 
     constructor() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).serverMessage = (encoded: string) => {
-            const json = textDecoder.decode(decode(encoded));
-
-            try {
-                const data = JSON.parse("{" + json.slice(0, -1) + "}");
-                this.serverMessageHandler(data.name, data);
-            } catch (e) {
-                console.error("Can't parse", json, e);
-                throw e;
+        (window as any).serverMessage = (payload: string | { name: string }) => {
+            if (typeof payload === "string") {
+                const json = "{" + textDecoder.decode(decode(payload)).slice(0, -1) + "}";
+                try {
+                    const data = JSON.parse(json);
+                    this.serverMessageHandler(data.name, data);
+                } catch (e) {
+                    console.error("Can't parse", json, e);
+                    throw e;
+                }
+            } else {
+                this.serverMessageHandler(payload.name, payload);
             }
         };
 
