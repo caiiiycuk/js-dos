@@ -26,7 +26,8 @@ export function Region(props: RegionProps) {
             <div class="px-4 overflow-hidden overflow-ellipsis whitespace-nowrap flex-shrink">
                 ${regionAndLatency || props.estimatingRegion || "Connecting..."}
             </div>
-            <div class="h-6 w-6 ${props.region === null ? "animate-spin" : "cursor-pointer"}" onClick=${resetRegion}>
+            <div class="h-6 w-6 ${props.region === null ? "animate-reverse-spin" : "cursor-pointer"}" 
+                onClick=${resetRegion}>
                 <${Icons.Refresh} class="h-6 w-6" />
             </div>
         </div>

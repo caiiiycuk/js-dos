@@ -12,18 +12,20 @@ export function Main(props: Props) {
         return null;
     }
 
+    const withNetworkingApi = props.options().withNetworkingApi === true;
+
     return html`
         <${Client} class="mt-2 mb-2 pb-2 border-b-2 border-green-200" ...${props} />
         <${Controls} class="mt-2" portal=${false} ...${props} />
-        <div class="sidebar-header mt-8">Networking</div>
-        <${Region} class="mt-2" ...${props} />
-        <${LatencyInfo} ...${props} class="mt-4" asButton=${true} />
-        <${ConfigureNetworking} ...${props} class="mt-2" />
+        ${ withNetworkingApi && html`<div class="sidebar-header mt-8">Networking</div>` }
+        ${ withNetworkingApi && html`<${Region} class="mt-2" ...${props} />` }
+        ${ withNetworkingApi && html`<${LatencyInfo} ...${props} class="mt-4" asButton=${true} />` }
+        ${ withNetworkingApi && html`<${ConfigureNetworking} ...${props} class="mt-2" />` }
     `;
 }
 
 function ConfigureNetworking(props: Props & { class?: string }) {
-    if (props.options().withExperimentalApi !== true || props.region === null) {
+    if (props.region === null) {
         return null;
     }
 
@@ -31,7 +33,7 @@ function ConfigureNetworking(props: Props & { class?: string }) {
         <div class="flex flex-row justify-between items-center cursor-pointer ${props.class}"
                 onClick=${() => props.setSideBarPage("networking")}>
             <div class="">
-                Configure networks
+                ${ props.ipxConnected ? "IPX [Connected]" : "Configure networks" }
             </div>
             <div>
                 <${Icons.ArrowsCircleRight} class="text-green-400 h-6 -w-6" />

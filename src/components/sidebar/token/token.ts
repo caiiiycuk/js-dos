@@ -136,7 +136,7 @@ export function TokenConfiguration(props: Props) {
         return html`
             <div class="sidebar-header">Configuration</div>
             <div class="grid grid-cols-2 gap-4">
-                <${Icons.Refresh} class="w-6 h-6 animate-spin" />
+                <${Icons.Refresh} class="w-6 h-6 animate-reverse-spin" />
             </div>
     `;
     }
@@ -299,7 +299,7 @@ function IPX(props: TokenProps) {
 
     if (awaiting) {
         return html`
-            <${Icons.Refresh} class="w-6 h-6 col-span-2 animate-spin" />
+            <${Icons.Refresh} class="w-6 h-6 col-span-2 animate-reverse-spin" />
         `;
     }
 
@@ -361,7 +361,7 @@ function TaskWaitCountDown() {
 
     return html`
         <div class="text-gray-400 flex flex-row">
-            <${Icons.Refresh} class="w-6 h-6 animate-spin mr-2" />
+            <${Icons.Refresh} class="w-6 h-6 animate-reverse-spin mr-2" />
             ${countDown > 0 ? countDown + " sec" : ""}
         </div>
     `;

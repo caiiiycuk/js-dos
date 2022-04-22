@@ -23,7 +23,8 @@ const storageKeys = {
     localId: "client.id",
     networkToken: "network.token",
     networkRegion: "network.region",
-    uiTips: "ui.tips",
+    uiTips: "ui.tipsV2",
+    autolockTips: "ui.autolockTipsV2",
 };
 
 export interface Props {
@@ -108,7 +109,7 @@ export function PlayerApp(playerProps: {
     const [actionBar, setActionBar] = useState<boolean>(true);
     const [region, _setRegion] = useState<string | null>(storage.getItem(storageKeys.networkRegion));
     const [estimatingRegion, setEstimatingRegion] = useState<string | null>(null);
-    const [showTips, setShowTips] = useState<boolean>(storage.getItem(storageKeys.uiTips) !== "false");
+    const [showTips, setShowTips] = useState<boolean>(false);
     const [latencyInfo, setLatencyInfo] = useState<LatencyInfo | null>(null);
     const [sideBarPage, setSideBarPage] = useState<SidebarPage>("main");
     const [anonymousClientId] = useState<ClientId>(() => {
@@ -160,7 +161,13 @@ export function PlayerApp(playerProps: {
 
     useEffect(() => {
         playerProps.setOnRun(() => {
-            setAutolock(playerProps.player().autolock);
+            const autolock = playerProps.player().autolock;
+            const showTips = storage.getItem(storageKeys.uiTips) !== "false";
+            const showTipsAutolok = autolock && storage.getItem(storageKeys.autolockTips) !== "false";
+            if (showTips || showTipsAutolok) {
+                props.setShowTips(true);
+            }
+            setAutolock(autolock);
         });
 
         return () => playerProps.setOnRun(() => {});
@@ -181,6 +188,13 @@ export function PlayerApp(playerProps: {
             document.removeEventListener("fullscreenchange", listener);
         };
     }, [fullscreen, setFullscreen]);
+
+    const setDosPause = (pause: boolean) => {
+        playerProps.player().ciPromise?.then((ci) => {
+            pause ? ci.pause() : ci.resume();
+            setPause(pause);
+        }).catch(console.error);
+    };
 
     const props: Props = {
         player: playerProps.player,
@@ -232,12 +246,7 @@ export function PlayerApp(playerProps: {
         },
 
         pause,
-        setPause: (pause: boolean) => {
-            playerProps.player().ciPromise?.then((ci) => {
-                pause ? ci.pause() : ci.resume();
-                setPause(pause);
-            }).catch(console.error);
-        },
+        setPause: setDosPause,
 
         mute,
         setMute: (mute: boolean) => {
@@ -263,7 +272,13 @@ export function PlayerApp(playerProps: {
         showTips,
         setShowTips: (newShowTips: boolean) => {
             storage.setItem(storageKeys.uiTips, newShowTips + "");
-            setShowTips(newShowTips);
+            if (props.player().autolock) {
+                storage.setItem(storageKeys.autolockTips, newShowTips + "");
+            }
+            setTimeout(() => {
+                setDosPause(newShowTips);
+                setShowTips(newShowTips);
+            }, 500);
         },
 
         latencyInfo,

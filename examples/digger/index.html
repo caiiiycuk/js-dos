@@ -36,6 +36,7 @@
         emulators.pathPrefix = "/dist/";
         Dos(document.getElementById("jsdos"), {
             hardware: window.hardware,
+            withNetworkingApi: false,
             withExperimentalApi: true,
             clientId: (userGesture) => {
                 if (!userGesture) {

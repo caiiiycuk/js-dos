@@ -82,7 +82,7 @@ export function TokenAddTime(props: TokenProps) {
                     <option value="864000">+10 Days</option>
                     <option value="2592000">+30 Days</option>
                 </select>
-                ${ busyOrNoToken ? Icons.Refresh({ class: "h-6 w-6 animate-spin" }) : html`
+                ${ busyOrNoToken ? Icons.Refresh({ class: "h-6 w-6 animate-reverse-spin" }) : html`
                     <div class="h-6 w-6 cursor-pointer text-green-400 hover:text-green-600"
                         onClick=${onAddTime}>
                         <${Icons.Plus} class="h-6 w-6" />

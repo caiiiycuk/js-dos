@@ -16,7 +16,8 @@ export function SideBar(props: Props) {
     }
 
     useEffect(() => {
-        if (props.region !== null) {
+        if (!(props.options().withNetworkingApi) ||
+            props.region !== null) {
             return;
         }
 
