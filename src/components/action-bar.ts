@@ -51,16 +51,25 @@ function SideBarControl(props: Props) {
         }
     }
 
-    let colorClass = "text-gray-600";
-    if (props.requestClientId !== undefined && props.clientId === null) {
-        colorClass = "text-red-800 animate-pulse";
-    } else if (props.sideBar) {
-        colorClass = "text-green-400";
-    }
-
-    return html`
-    <div class="h-6 w-6 my-4 ${colorClass} cursor-pointer" onClick=${toggleSideBar}>
-        <${Icons.DotsHorizontal} class="h-6 w-6" />
-    </div>
+    if (props.options().withNetworkingApi !== true) {
+        return html`
+        <div class="h-6 w-6 my-4 text-gray-600 cursor-pointer" onClick=${toggleSideBar}>
+            <${Icons.DotsHorizontal} class="h-6 w-6" />
+        </div>
     `;
+    } else if (props.ipxConnected) {
+        return html`
+        <div class="h-6 w-6 my-4 text-green-400 cursor-pointer" onClick=${toggleSideBar}>
+            <${Icons.Online} class="h-6 w-6" />
+        </div>
+    `;
+    } else {
+        return html`
+            <div class="h-6 w-6 my-4 relative text-red-800 cursor-pointer" onClick=${toggleSideBar}>
+                <${Icons.Offline} class="h-6 w-6" />
+                <span class="animate-ping absolute inline-flex top-0 left-0
+                    h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            </div>
+        `;
+    }
 }

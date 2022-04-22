@@ -11,7 +11,9 @@ export function ActionSaveOrExit(props: Props) {
     const onExitDefined = typeof onExit === "function";
 
     useEffect(() => {
-        if (busy || !onExitDefined) {
+        const preventUnload = props.options().preventUnload;
+
+        if (busy || !onExitDefined || preventUnload === false) {
             return;
         }
 

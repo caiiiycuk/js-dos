@@ -29,6 +29,8 @@ export interface DosPlayerOptions extends DosOptions {
     noSideBar?: boolean;
     noFullscreen?: boolean;
     noSocialLinks?: boolean;
+    preventUnload?: boolean;
+    withNetworkingApi?: boolean;
     withExperimentalApi?: boolean;
 }
 

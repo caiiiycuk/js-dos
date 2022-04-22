@@ -4,7 +4,18 @@ module.exports = {
     ],
     darkMode: false,
     theme: {
-        extend: {},
+        extend: {
+            animation: {
+                "reverse-spin": "reverse-spin 1s linear infinite",
+            },
+            keyframes: {
+                "reverse-spin": {
+                    from: {
+                        transform: "rotate(360deg)",
+                    },
+                },
+            },
+        },
     },
     variants: {
         extend: {},

@@ -103,7 +103,7 @@ export function TokenSelect(props: TokenProps) {
         ${ awaitingToken ?
         html`
             <div class="col-span-2">
-                <${Icons.Refresh} class="w-6 h-6 animate-spin" />
+                <${Icons.Refresh} class="w-6 h-6 animate-reverse-spin" />
             </div>
         ` :
         html`
