@@ -28,7 +28,7 @@ Often gameplay quality depends on good configuration.
 For example, [digger.jsdos](https://dos.zone/digger-may-06-1999/) contains: 
 ```
 .jsdos/dosbox.conf - dosbox configuration file (required)
-.jsdos/jsods.json  - additional configuration (optional)
+.jsdos/jsdos.json  - additional configuration (optional)
 DIGGER.COM         - game file
 ```
 
