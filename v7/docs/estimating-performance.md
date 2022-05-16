@@ -15,8 +15,6 @@ Basically this test produces a lot of int operations and measures the amount of 
 ## Running the test
 
 
-You can estimate performance of your device [here](https://dos.zone/en/my).
-
 Example output:
 
 <img alt="Result" src={useBaseUrl('img/emulators-logo.jpg')} />

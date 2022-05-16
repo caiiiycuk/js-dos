@@ -10,7 +10,7 @@ create-dosbox
 `create-dosbox` is an npx command to fast setup js-dos v7 web page with no build configuration.
 
 create-dosbox works on macOS, Windows, and Linux.
-If something doesn’t work, please [file an issue](https://github.com/js-dos/create-dosbox/issues/new).
+If something doesn’t work, please [file an issue](https://github.com/caiiiycuk/js-dos/issues/new).
 
 ## Quick Overview
 
