@@ -10,6 +10,9 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  background: url(../../static/img/hero-bg.jpeg);
+  background-size: cover;
+  background-position: center center;
 }
 
 @media screen and (max-width: 966px) {

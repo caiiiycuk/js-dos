@@ -155,6 +155,7 @@ function Home() {
                 'button button--outline button--secondary button--lg',
                 styles.getStarted,
               )}
+              style={{color: "white"}}
               to="/v7/build/docs/">
               Documentation
             </Link>
