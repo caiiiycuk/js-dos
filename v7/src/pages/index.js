@@ -44,6 +44,19 @@ const features = [
     ),
   },
     {
+        title: <>DOS.Zone Browser</>,
+        imageUrl: 'img/dz-bro.jpg',
+        description: (
+            <>
+              DOS.Zone Browser is an application that enables hardware acceleration on DOS.Zone web site.
+              You can use it to run any dos program on your device with much more performance as in regular browser.  <br/>
+              <a href="https://dos.zone/download/" target="_blank">
+                Download
+              </a>
+            </>
+        ),
+    },
+    {
         title: <>DOS.Zone Repository</>,
         imageUrl: 'img/dz.png',
         description: (
@@ -51,19 +64,6 @@ const features = [
               Community driven js-dos repository contains <br/>
               <strong style={{background: "#8f398f", color: "white", padding: "2px 4px"}}>1900+ bundles are ready to run and play in browser</strong><br/>
               <a href="https://dos.zone" target="_blank">View repository</a>
-            </>
-        ),
-    },
-    {
-        title: <>DOS.Zone Browser</>,
-        imageUrl: 'img/dz-android.jpg',
-        description: (
-            <>
-              DOS.Zone Browser is an Android application that enables hardware acceleration on DOS.Zone web site.
-              You can use it to run any dos program on your device with much more performance as in regular browser.  <br/>
-              <a href="https://play.google.com/store/apps/details?id=zone.dos.app" target="_blank">
-                <img style={{width: "40%"}} src="/v7/build/img/gp.png"/>
-              </a>
             </>
         ),
     },
@@ -110,17 +110,17 @@ const features = [
             </>
         ),
     },
-    {
-        title: <>turbo mode</>,
-        imageUrl: 'img/turbo.png',
-        description: (
-            <>
-              js-dos can communicate with Web-RTC backend to play DOS games in the cloud. No matter which hardware you use all dos games will work smoothly.
-              <br/>
-              <a href="https://talks.dos.zone/t/dos-cloud-gaming-aka-turbo/44592" target="_blank">Read more</a>
-            </>
-        ),
-    },
+    // {
+    //     title: <>turbo mode</>,
+    //     imageUrl: 'img/turbo.png',
+    //     description: (
+    //         <>
+    //           js-dos can communicate with Web-RTC backend to play DOS games in the cloud. No matter which hardware you use all dos games will work smoothly.
+    //           <br/>
+    //           <a href="https://talks.dos.zone/t/dos-cloud-gaming-aka-turbo/44592" target="_blank">Read more</a>
+    //         </>
+    //     ),
+    // },
 ];
 
 function Feature({imageUrl, title, description}) {

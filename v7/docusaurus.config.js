@@ -78,6 +78,10 @@ module.exports = {
               label: 'Donate',
               href: 'https://dos.zone/donate/',
             },
+            {
+              label: "js-dos powered",
+              href: "https://discord.gg/EQQJhvGD",
+            },
           ],
         },
       ],

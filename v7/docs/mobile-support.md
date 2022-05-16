@@ -4,7 +4,7 @@ title: Mobile support
 ---
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-js-dos v7.xx mobile friendly. We build a set of controls that helps map touch gestures to key or mouse events.
+js-dos v7 is mobile friendly. We build a set of controls that helps map touch gestures to key or mouse events.
 
 The core concept of mobile support is a layer abstraction. Layer is a combination of virtual controls like buttons, joysticks and other that put on top of the game. Each control translates user interaction into some control sequences (keys, mouse) for the game.
 
@@ -12,8 +12,8 @@ You can put on top as many layers as you want. However, only one layer can be ac
 
 Using [game-studio](https://dos.zone/studio) can help to visually create this controls for game.
 
-Take a look how it works in real game:
-<iframe width="560" height="315" src="https://www.youtube.com/embed/I19hllmQWgk?start=20" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+Take a look to our mobile tutorial:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hULc-RsZXow" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Positioning
 
@@ -22,20 +22,9 @@ Currently supported: `square` and `honeycomb` layout.
 
 <img alt="square/honeycomb positioning" src={useBaseUrl('img/grid.jpg')} />
 
-## Options Control
-
-Control type `Options` will create and *Options* button that includes
-* **toggle keyboard** action
-* **save** action
-* **toggle fullscreen** action
-
-<img alt="options control" src={useBaseUrl('img/special-button.jpg')} />
-
-You can't customize `Options` control yet.
-
 ## Key Control
 
-`Key` is a virtual button, that map touches into keyboard press and release event.
+`Key` is a virtual button, that map touches into keyboard press and release events.
 
 <img alt="key control" src={useBaseUrl('img/key.jpg')} />
 
@@ -96,3 +85,14 @@ Position is passed in range **[0 .. 1]** (e.g. [0.5, 0,5] is a screen center).
 `Pointer Reset` is a virtual button that force sycning of browser cursor position and in-game cursor position.
 
 You can't customize `Pointer Reset` control yet.
+
+## Options Control
+
+Control type `Options` will create *Options* button that includes
+* **toggle keyboard** action
+* **save** action
+* **toggle fullscreen** action
+
+<img alt="options control" src={useBaseUrl('img/special-button.jpg')} />
+
+You can't customize `Options` control yet.
