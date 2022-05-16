@@ -80,7 +80,7 @@ module.exports = {
             },
             {
               label: "js-dos powered",
-              href: "https://discord.gg/EQQJhvGD",
+              href: "https://discord.gg/zsYXuevhdh",
             },
           ],
         },
