@@ -10,12 +10,6 @@ interface ControlsProps extends Props {
     portal: boolean,
 };
 
-const maxScale = 1.5;
-const scaleStep = 0.1;
-
-const maxSensitivy = 2;
-const minSensitivy = 0.1;
-
 export function Controls(props: ControlsProps) {
     function toggleKeyboard() {
         props.toggleKeyboard();
@@ -61,15 +55,20 @@ export function Controls(props: ControlsProps) {
 
 function MouseControls(props: ControlsProps) {
     const [open, setOpen] = useState<boolean>(false);
-    const [showSync, setShowSync] = useState<boolean>(false);
-    const [sensitivity, setSensitivity] = useState<number>(props.player().sensitivity);
 
     async function menuClick(e: Event) {
+        if ((e.target as HTMLElement).classList.contains("sensitivity")) {
+            return;
+        }
+
         if (!props.portal) {
             await toggleMouseLock(e);
         } else {
             setOpen(!open);
         }
+
+        e.preventDefault();
+        e.stopPropagation();
     }
 
     async function toggleMouseLock(e: Event) {
@@ -85,39 +84,8 @@ function MouseControls(props: ControlsProps) {
         }
     }
 
-    async function cycleSensivity(e: Event) {
-        let newSensitivity = (sensitivity + scaleStep);
-        if (sensitivity > maxSensitivy) {
-            newSensitivity = minSensitivy;
-        }
-
-        await props.player().setSensitivity(newSensitivity);
-        setSensitivity(newSensitivity);
-        e.stopPropagation();
-    }
-
-    function sync(e: Event) {
-        props.player().ciPromise?.then((ci) => {
-            ci.sendMouseSync();
-        });
-        if (!showSync) {
-            setShowSync(true);
-        }
-        if (open) {
-            setOpen(false);
-        }
-        e.stopPropagation();
-    }
-
-    let scaleText = Math.round(sensitivity * 10) / 10 + "";
-    if (scaleText.length === 1) {
-        scaleText += ".0";
-    }
-
-    const syncVisible = props.portal && !props.autolock && (open || showSync);
-
     return html`
-    <div class="h-6 w-6 text-green-400 cursor-pointer" onClick=${menuClick}>
+        <div class="menu-button h-6 w-6 text-green-400 cursor-pointer" onClick=${menuClick}>
             <${props.autolock ? Icons.CursorClick : Icons.Cursor} class="h-6 w-6" />
             <div class="${props.portal ? "" : "hidden"} absolute z-50 
                         bg-gray-200 -mt-7 h-8 left-10 flex flex-row items-center
@@ -133,16 +101,6 @@ function MouseControls(props: ControlsProps) {
                         onClick=${(e: Event) => setMouseLock(e, true)}>
                         <${Icons.CursorClick} class="h-6 w-6" />
                     </div>
-                    <div class="h-6 mx-2 pl-2 border-l-2 border-gray-400 text-gray-400 ${props.autolock ? "" : "hidden"}
-                        ${scaleText === "1.0" ? "text-black" : "text-green-400" }"
-                        onClick=${cycleSensivity}>
-                        ${scaleText}
-                    </div>
-                </div>
-
-                <div class="h-6 w-10 pr-2 pl-2 border-l-2 border-gray-400 ${syncVisible ? "" : "hidden"}"
-                    onClick=${sync}>
-                    <${Icons.Refresh} class="h-6 w-6" />
                 </div>
             </div>
         </div>
@@ -151,7 +109,6 @@ function MouseControls(props: ControlsProps) {
 
 function VirtualControls(props: ControlsProps) {
     const [open, setOpen] = useState<boolean>(false);
-    const [scale, setScale] = useState<number>(props.player().scaleControls);
 
     function toggleVirtualControlsOpen() {
         if (props.portal) {
@@ -181,22 +138,6 @@ function VirtualControls(props: ControlsProps) {
         e.stopPropagation();
     }
 
-    async function cycleScale(e: Event) {
-        let newScale = (scale + scaleStep);
-        if (scale > maxScale) {
-            newScale = 1;
-        }
-
-        await props.player().setScaleControls(newScale);
-        setScale(newScale);
-        e.stopPropagation();
-    }
-
-    let scaleText = Math.round(scale * 10) / 10 + "";
-    if (scaleText.length === 1) {
-        scaleText += ".0";
-    }
-
     return html`
     <div class="h-6 w-6 text-green-400 cursor-pointer" onClick=${toggleVirtualControlsOpen}>
             <${props.mirroredControls ? Icons.SwithcHorizontal :
@@ -216,11 +157,6 @@ function VirtualControls(props: ControlsProps) {
                 <div class="h-6 w-6 mx-2  ${props.mirroredControls ? "text-green-400" : "text-black"}"
                     onClick=${mirrored}>
                     <${Icons.SwithcHorizontal} class="h-6 w-6" />
-                </div>
-                <div class="h-6 px-2 border-l-2 border-gray-400 
-                    ${scaleText === "1.0" ? "text-black" : "text-green-400" }"
-                    onClick=${cycleScale}>
-                    ${scaleText}
                 </div>
             </div>
         </div>

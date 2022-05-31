@@ -4,7 +4,7 @@ import { Icons } from "../icons";
 
 import { Props } from "../player-app";
 
-export function ActionSaveOrExit(props: Props) {
+export function ActionSaveOrExit(props: Props & { class: string }) {
     const onExit = props.options().onExit;
     const [pulse, setPulse] = useState<boolean>(false);
     const [busy, setBusy] = useState<boolean>(false);
@@ -72,15 +72,16 @@ export function ActionSaveOrExit(props: Props) {
         }
     }
 
-    if (busy || props.sideBar) {
+    if (busy) {
         return null;
     }
 
     return html`
-    <div class="filter transition-opacity duration-1000 absolute z-50
-                                                    bg-gray-200 ${pulse ? " text-red-500 animate-pulse" : "" } w-8 h-8
-        top-0 ${props.actionBar ? "left-10" : "left-0" } rounded-br-md cursor-pointer" onClick=${doSaveOrClose}>
-        <div class="h-6 w-6 mt-1 ml-1">
+    <div class="${props.class ? props.class : ""} flex items-center justify-center 
+        filter transition-opacity duration-1000
+        bg-gray-200 ${pulse ? " text-red-500 animate-pulse" : "" }
+        cursor-pointer" onClick=${doSaveOrClose}>
+        <div class="h-6 w-6">
             <${onExitDefined ? Icons.XCircle : Icons.FloppyDisk} class="h-6 w-6" />
         </div>
     </div>
