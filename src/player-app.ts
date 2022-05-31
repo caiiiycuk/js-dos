@@ -15,6 +15,11 @@ import { EmulatorsUi } from "emulators-ui";
 
 import { nanoid } from "nanoid/non-secure";
 
+import { SensitivityControl } from "./components/sensitivity-control";
+import { ScaleControl } from "./components/scale-control";
+import { VolumeControl } from "./components/volume-control";
+import { SyncMouseControl } from "./components/sync-control";
+
 declare const emulatorsUi: EmulatorsUi;
 
 export type SidebarPage = "main" | "latency-info" | "networking";
@@ -291,13 +296,32 @@ export function PlayerApp(playerProps: {
         setIpxConnected,
     };
 
+    if (props.actionBar === false) {
+        return html`<div>
+            <${ActionSaveOrExit} ...${props} class="absolute left-0 top-0 rounded-br-md z-50 w-8 h-8" />
+            <${ActionHide} ...${props} class="absolute left-0 opacity-80 top-1/2 z-50 -mt-6" />
+        </div>`;
+    }
+
     return html`
-    <div class="h-full">
-        <${ActionHide} ...${props} />
+    <div class="h-full flex flex-row">
         <${SideBar} ...${props} />
-        <${ActionBar} ...${props} />
-        <${ActionSaveOrExit} ...${props} />
         <${Tips} ...${props} />
+        <div class="h-full">
+            <${ActionBar} ...${props} />
+        </div>
+        <div class="bg-gray-300 w-8 h-full flex flex-col items-center">
+            <div class="flex-grow flex flex-col items-center">
+                <${ActionSaveOrExit} ...${props} class="rounded mt-1" />
+                <${SyncMouseControl} ...${props} />
+                <${SensitivityControl} ...${props} />
+            </div>
+            <${ActionHide} ...${props} class="self-start" />
+            <div class="flex-grow">
+                <${ScaleControl} ...${props} />
+                <${VolumeControl} ...${props} />
+            </div>
+        </div>
     </div>
     `;
 }
