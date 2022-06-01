@@ -103,7 +103,7 @@ export function PlayerApp(playerProps: {
         (userGesture: boolean) => requestClientIdFn(userGesture) :
         undefined;
     const [clientId, setClientId] = useState<ClientId | null>(null);
-    const [sideBar, setSideBar] = useState<boolean>(true);
+    const [sideBar, setSideBar] = useState<boolean>(false);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
     const [mirroredControls, setMirroredControls] = useState<boolean>(playerProps.player().mirroredControls);
     const [autolock, setAutolock] = useState<boolean>(playerProps.player().autolock);

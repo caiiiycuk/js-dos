@@ -29,7 +29,7 @@ export function Main(props: Props) {
         ${ withNetworkingApi && html`<${ConfigureNetworking} ...${props} class="mt-2" />` }
 
         <div class="sidebar-header mt-8">Configuration</div>
-        <${LabeledSlideBar} label="CPU" slideBar=${SideBarCpuControl} appProps=${props} />
+        ${ false && html`<${LabeledSlideBar} label="CPU" slideBar=${SideBarCpuControl} appProps=${props} />` }
         <${LabeledSlideBar} label="Volume" slideBar=${SideBarVolumeControl} appProps=${props} />
         <${LabeledSlideBar} label="Sensitivity" slideBar=${SideBarSensitivityControl} appProps=${props} />
         <${LabeledSlideBar} label="Scale" slideBar=${SideBarScaleControl} appProps=${props} />
