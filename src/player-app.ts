@@ -15,9 +15,9 @@ import { EmulatorsUi } from "emulators-ui";
 
 import { nanoid } from "nanoid/non-secure";
 
-import { SensitivityControl } from "./components/sensitivity-control";
-import { ScaleControl } from "./components/scale-control";
-import { VolumeControl } from "./components/volume-control";
+import { ActionBarSensitivityControl } from "./components/sensitivity-control";
+import { ActionBarScaleControl } from "./components/scale-control";
+import { ActionBarVolumeControl } from "./components/volume-control";
 import { SyncMouseControl } from "./components/sync-control";
 
 declare const emulatorsUi: EmulatorsUi;
@@ -103,7 +103,7 @@ export function PlayerApp(playerProps: {
         (userGesture: boolean) => requestClientIdFn(userGesture) :
         undefined;
     const [clientId, setClientId] = useState<ClientId | null>(null);
-    const [sideBar, setSideBar] = useState<boolean>(false);
+    const [sideBar, setSideBar] = useState<boolean>(true);
     const [mobileControls, setMobileControls] = useState<boolean>(playerProps.player().mobileControls);
     const [mirroredControls, setMirroredControls] = useState<boolean>(playerProps.player().mirroredControls);
     const [autolock, setAutolock] = useState<boolean>(playerProps.player().autolock);
@@ -314,12 +314,12 @@ export function PlayerApp(playerProps: {
             <div class="flex-grow flex flex-col items-center">
                 <${ActionSaveOrExit} ...${props} class="rounded mt-1" />
                 <${SyncMouseControl} ...${props} />
-                <${SensitivityControl} ...${props} />
+                <${ActionBarSensitivityControl} ...${props} />
             </div>
             <${ActionHide} ...${props} class="self-start" />
             <div class="flex-grow">
-                <${ScaleControl} ...${props} />
-                <${VolumeControl} ...${props} />
+                <${ActionBarScaleControl} ...${props} />
+                <${ActionBarVolumeControl} ...${props} />
             </div>
         </div>
     </div>
