@@ -5,7 +5,7 @@ import { VerticalSlider } from "./vertical-slider";
 import { HorizontalSlider } from "./horizontal-slider";
 
 const minScale = 0.8;
-const maxScale = 1.8;
+const maxScale = 2.5;
 
 export function ActionBarScaleControl(props: Props) {
     if (!props.mobileControls && !props.mirroredControls) {
@@ -17,6 +17,8 @@ export function ActionBarScaleControl(props: Props) {
             initialValue=${props.player().scaleControls} 
             onChange=${(v: number) => props.player().setScaleControls(v)}
             icon=${props.mirroredControls ? Icons.SwithcHorizontal : Icons.Mobile}
+            registerListner=${props.player().registerOnScaleChanged}
+            removeListener=${props.player().removeOnScaleChanged}
             />
     `;
 }
@@ -27,6 +29,8 @@ export function SideBarScaleControl(props: Props) {
             initialValue=${props.player().scaleControls} 
             onChange=${(v: number) => props.player().setScaleControls(v)}
             icon=${props.mirroredControls ? Icons.SwithcHorizontal : Icons.Mobile}
+            registerListner=${props.player().registerOnScaleChanged}
+            removeListener=${props.player().removeOnScaleChanged}
             />
     `;
 }

@@ -9,6 +9,8 @@ export interface VerticalSliderProps {
     initialValue: number,
     onChange: (value: number) => void,
     icon: JSX.Element,
+    registerListner: (fn: (value: number) => void) => void,
+    removeListener: (fn: (value: number) => void) => void,
 };
 
 export function VerticalSlider(props: VerticalSliderProps) {
@@ -71,8 +73,10 @@ export function VerticalSlider(props: VerticalSliderProps) {
         window.addEventListener("pointermove", onMove);
         window.addEventListener("pointerup", onEnd);
         window.addEventListener("pointercancel", onEnd);
+        props.registerListner(setValue);
 
         return () => {
+            props.removeListener(setValue);
             window.removeEventListener("pointerdown", onStart);
             window.removeEventListener("pointermove", onMove);
             window.removeEventListener("pointerup", onEnd);
@@ -87,10 +91,10 @@ export function VerticalSlider(props: VerticalSliderProps) {
             <div class="bg-gray-200 rounded flex items-center justify-center h-6 w-5 mt-4 text-gray-600">
                 <${icon} class="h-4 w-4" />
             </div>
-            <div class="flex-grow py-4">
-                <div ref=${sliderRef} class=${"relative sensitivity cursor-pointer rounded-2xl bg-gray-400 w-2 " +
+            <div class="cursor-pointer flex-grow py-4 px-2" ref=${sliderRef}>
+                <div class=${"pointer-events-none relative sensitivity rounded-2xl bg-gray-400 w-2 " +
                     "h-full" + (props.class ? props.class : "")}>
-                    <div class="flex flex-row items-center absolute pointer-events-none -mt-3" style=${{ top }}>
+                    <div class="flex flex-row items-center absolute -mt-3" style=${{ top }}>
                         <div class="bg-gray-600 -ml-2 flex-shrink-0 w-6 h-6 rounded-full"></div>
                         <div class="bg-green-100 ml-2 py-1 px-2 rounded z-50 ${"opacity-" + opacity}">
                             ${Math.round((minValue + value) * 10) / 10}

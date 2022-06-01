@@ -14,9 +14,11 @@ export function ActionBarVolumeControl(props: Props) {
 
     return html`
         <${VerticalSlider} minValue=${minVolume} maxValue=${maxVolume}
-            initialValue=${1.0} 
-            onChange=${(v: number) => {/* TODO */}}
+            initialValue=${props.player().volume} 
+            onChange=${(v: number) => props.player().setVolume(v)}
             icon=${Icons.VolumeUp}
+            registerListner=${props.player().registerOnVolumeChanged}
+            removeListener=${props.player().removeOnVolumeChanged}
             />
     `;
 }
@@ -24,9 +26,11 @@ export function ActionBarVolumeControl(props: Props) {
 export function SideBarVolumeControl(props: Props) {
     return html`
         <${HorizontalSlider} minValue=${minVolume} maxValue=${maxVolume}
-            initialValue=${1.0} 
-            onChange=${(v: number) => {/* TODO */}}
+            initialValue=${props.player().volume} 
+            onChange=${(v: number) => props.player().setVolume(v)}
             icon=${Icons.VolumeUp}
+            registerListner=${props.player().registerOnVolumeChanged}
+            removeListener=${props.player().removeOnVolumeChanged}
             />
     `;
 }

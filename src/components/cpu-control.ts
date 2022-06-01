@@ -13,6 +13,8 @@ export function SideBarCpuControl(props: Props) {
             initialValue=${5000} 
             onChange=${(v: number) => {/* TODO */}}
             icon=${Icons.VolumeUp}
+            registerListner=${() => {}}
+            removeListener=${() => {}}
             />
     `;
 }
