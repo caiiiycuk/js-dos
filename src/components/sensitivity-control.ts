@@ -17,6 +17,8 @@ export function ActionBarSensitivityControl(props: Props) {
             initialValue=${props.player().sensitivity} 
             onChange=${(v: number) => props.player().setSensitivity(v)}
             icon=${Icons.CursorClick}
+            registerListner=${props.player().registerOnSensitivityChanged}
+            removeListener=${props.player().removeOnSensitivityChanged}
             />
     `;
 }
@@ -27,6 +29,8 @@ export function SideBarSensitivityControl(props: Props) {
             initialValue=${props.player().sensitivity} 
             onChange=${(v: number) => props.player().setSensitivity(v)}
             icon=${Icons.CursorClick}
+            registerListner=${props.player().registerOnSensitivityChanged}
+            removeListener=${props.player().removeOnSensitivityChanged}
             />
     `;
 }
