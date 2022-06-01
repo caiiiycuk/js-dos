@@ -1,7 +1,11 @@
 module.exports = {
-    purge: [
-        "src/**/*.ts",
-    ],
+    purge: {
+        content: ["src/**/*.ts"],
+        safelist: [
+            "opacity-0",
+            "opacity-80",
+        ],
+    },
     darkMode: false,
     theme: {
         extend: {
