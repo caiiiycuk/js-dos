@@ -16,6 +16,11 @@ import { getGrid } from "./controls/grid";
 import { LStorage } from "./dom/storage";
 import { DosFactoryType } from "./js-dos";
 export declare class EmulatorsUi {
+    build: {
+        short: string;
+        version: string;
+        buildSeed: number;
+    };
     dom: {
         layers: typeof layers;
         lifecycle: typeof lifecycle;

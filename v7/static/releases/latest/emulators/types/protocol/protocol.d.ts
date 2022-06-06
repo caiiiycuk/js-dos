@@ -1,8 +1,8 @@
 import { DosConfig } from "../dos/bundle/dos-conf";
-import { CommandInterface } from "../emulators";
+import { DirectSound, CommandInterface, NetworkType, BackendOptions } from "../emulators";
 import { CommandInterfaceEventsImpl } from "../impl/ci-impl";
-export declare type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" | "wc-add-key" | "wc-mouse-move" | "wc-mouse-button" | "wc-mouse-sync" | "wc-exit" | "wc-sync-sleep" | "wc-pause" | "wc-resume" | "wc-mute" | "wc-unmute";
-export declare type ServerMessage = "ws-ready" | "ws-server-ready" | "ws-frame-set-size" | "ws-update-lines" | "ws-log" | "ws-warn" | "ws-err" | "ws-stdout" | "ws-exit" | "ws-persist" | "ws-sound-init" | "ws-sound-push" | "ws-config" | "ws-sync-sleep";
+export declare type ClientMessage = "wc-install" | "wc-run" | "wc-pack-fs-to-bundle" | "wc-add-key" | "wc-mouse-move" | "wc-mouse-button" | "wc-mouse-sync" | "wc-exit" | "wc-sync-sleep" | "wc-pause" | "wc-resume" | "wc-mute" | "wc-unmute" | "wc-connect" | "wc-disconnect";
+export declare type ServerMessage = "ws-extract-progress" | "ws-ready" | "ws-server-ready" | "ws-frame-set-size" | "ws-update-lines" | "ws-log" | "ws-warn" | "ws-err" | "ws-stdout" | "ws-exit" | "ws-persist" | "ws-sound-init" | "ws-sound-push" | "ws-config" | "ws-sync-sleep" | "ws-connected" | "ws-disconnected";
 export declare type MessageHandler = (name: ServerMessage, props: {
     [key: string]: any;
 }) => void;
@@ -23,6 +23,7 @@ export declare class CommandInterfaceOverTransportLayer implements CommandInterf
     private frameWidth;
     private frameHeight;
     private rgb;
+    private rgba;
     private freq;
     private bundles?;
     private transport;
@@ -36,7 +37,15 @@ export declare class CommandInterfaceOverTransportLayer implements CommandInterf
     private configPromise;
     private configResolve;
     private panicMessages;
-    constructor(bundles: Uint8Array[], transport: TransportLayer, ready: (err: Error | null) => void);
+    private connectPromise;
+    private connectResolve;
+    private connectReject;
+    private disconnectPromise;
+    private disconnectResolve;
+    sharedMemory?: SharedArrayBuffer;
+    directSound?: DirectSound;
+    options: BackendOptions;
+    constructor(bundles: Uint8Array[], transport: TransportLayer, ready: (err: Error | null) => void, options: BackendOptions);
     private sendClientMessage;
     private onServerMessage;
     private onConfig;
@@ -69,4 +78,6 @@ export declare class CommandInterfaceOverTransportLayer implements CommandInterf
     exit(): Promise<void>;
     private onExit;
     events(): CommandInterfaceEventsImpl;
+    networkConnect(networkType: NetworkType, address: string, port: number): Promise<void>;
+    networkDisconnect(networkType: NetworkType): Promise<void>;
 }

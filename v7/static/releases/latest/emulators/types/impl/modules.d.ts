@@ -1,4 +1,3 @@
-import { Cache } from "../cache";
 export interface WasmModule {
     instantiate: (module?: any) => Promise<any>;
 }
@@ -22,14 +21,14 @@ declare class Host {
 export declare const host: Host;
 export declare class WasmModulesImpl implements IWasmModules {
     private pathPrefix;
-    private cache;
+    private wdosboxJs;
     private libzipPromise?;
     private dosboxPromise?;
     wasmSupported: boolean;
-    constructor(pathPrefix: string, cache: Cache);
+    constructor(pathPrefix: string, wdosboxJs: string);
     libzip(): Promise<WasmModule>;
     dosbox(): Promise<WasmModule>;
     private loadModule;
 }
-export declare function loadWasmModule(url: string, moduleName: string, cache: Cache, onprogress: (stage: string, total: number, loaded: number) => void): Promise<WasmModule>;
+export declare function loadWasmModule(url: string, moduleName: string, onprogress: (stage: string, total: number, loaded: number) => void): Promise<WasmModule>;
 export {};

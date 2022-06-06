@@ -3817,15 +3817,15 @@ emoticon@^3.2.0:
   resolved "https://registry.yarnpkg.com/emoticon/-/emoticon-3.2.0.tgz#c008ca7d7620fac742fe1bf4af8ff8fed154ae7f"
   integrity sha512-SNujglcLTTg+lDAcApPNgEdudaqQFiAbJCqzjNxJkvN9vAwCGi0uu8IUVvx+f16h+V44KCY6Y2yboroc9pilHg==
 
-emulators-ui@^0.72.4:
-  version "0.72.4"
-  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.72.4.tgz#beaeb1244b7f82308f1cc7fdfc6c178f4bb4afcd"
-  integrity sha512-ZJv5HqZvb79PfDw3SpR49ZwNuHoA+5AcRCPLGfTNyyfJUnCE1VU1gW4a/ItetSSE0GjDtXuRr631s1XNvIWSvg==
+emulators-ui@^0.73.5:
+  version "0.73.5"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.73.5.tgz#e61bfc21f009ba23dc841f23caf7c9bf03eb5151"
+  integrity sha512-gjXq6Wh3PnFAZM1tSuvg07tVdlPmrjf2JmKNwcTPYoizwDqfcBT/doO6DolTTqOuOihkQ7/peWA9U4Eq+ThcmQ==
 
-emulators@^0.72.0:
-  version "0.72.0"
-  resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.72.0.tgz#86f301421e0ca9aaa43a9e14d73e0ee61ebde35d"
-  integrity sha512-tTln9/LbHQqRD+0PPYapazZK8eqm0OhSRJ/zg7kXgugS/xVTMFnRX+Rc7RacRobFohecRLOufcV7HhpNPLHDbQ==
+emulators@^0.73.6:
+  version "0.73.6"
+  resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.73.6.tgz#4da1e1e3ed26748bd712700dc917d9b8e58f47f3"
+  integrity sha512-s8cdq5NnBU4/bky4zgNtR1hCxnD8m5QX1gZxhEGg1rLkxiyIyrttfWShls7f54+DFmXcqHYAk5phUd1grWckfQ==
 
 encodeurl@~1.0.2:
   version "1.0.2"
@@ -5469,10 +5469,12 @@ joi@^17.3.0, joi@^17.4.0:
     "@sideway/formula" "^3.0.0"
     "@sideway/pinpoint" "^2.0.0"
 
-js-dos@^7.2.4:
-  version "7.2.4"
-  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.2.4.tgz#a3775c9fd9a52d9c05a9baac73d680d97acd6330"
-  integrity sha512-s87Bpp8zuFpMAxNKCu8M8e8CQwb+N6Jo4lUvL4EmMmU5m3Va0Hust2q9FJyPCzvD3PSmgNMdNEHxY/0jhsp+/g==
+js-dos@^7.4.4:
+  version "7.4.4"
+  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.4.4.tgz#03ed8f5bb86cf2021f0e03760e6a60e29e403eaa"
+  integrity sha512-vjwbeQuI8Af34BOeTzStRioowwqdHjOPZSpKQexWSOE7T+uSoldQu1Sy08ycL8WY3jJjvsWRtuddq2fIAvoUJg==
+  dependencies:
+    nanoid "^3.3.4"
 
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
@@ -6108,6 +6110,11 @@ nanoid@^3.1.23:
   version "3.1.23"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.23.tgz#f744086ce7c2bc47ee0a8472574d5c78e4183a81"
   integrity sha512-FiB0kzdP0FFVGDKlRLEQ1BgDzU87dy5NnzjeW9YZNt+/c3+q82EQDUwniSAUxp/F0gFNI1ZhKU1FqYsMuqZVnw==
+
+nanoid@^3.3.4:
+  version "3.3.4"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
+  integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
 
 nanomatch@^1.2.9:
   version "1.2.13"

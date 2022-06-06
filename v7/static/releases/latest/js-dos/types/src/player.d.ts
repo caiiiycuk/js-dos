@@ -12,10 +12,14 @@ export interface DosPlayerOptions extends DosOptions {
     style?: "default" | "none";
     hardware?: Hardware;
     clientId?: ClientIdSupplier;
+    onBeforeExit?: () => Promise<void>;
     onExit?: () => void;
     noSideBar?: boolean;
     noFullscreen?: boolean;
-    donate?: boolean;
+    noSocialLinks?: boolean;
+    preventUnload?: boolean;
+    withNetworkingApi?: boolean;
+    withExperimentalApi?: boolean;
 }
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;
 export declare function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): DosPlayer;

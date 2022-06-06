@@ -12,7 +12,6 @@ export interface DosOptions {
     createTransportLayer?: () => TransportLayer;
 }
 export declare class DosInstance {
-    static initialRun: boolean;
     emulatorsUi: EmulatorsUi;
     emulatorFunction: EmulatorFunction;
     createTransportLayer?: () => TransportLayer;
@@ -26,10 +25,15 @@ export declare class DosInstance {
     autolock: boolean;
     sensitivity: number;
     storage: Storage;
+    volume: number;
     private clickToStart;
     private unbindControls;
     private storedLayersConfig;
     private onMobileControlsChanged;
+    private onSensitivityChanged;
+    private onScaleChanged;
+    private onVolumeChanged;
+    setVolumeImplFn: (volume: number) => void;
     constructor(root: HTMLDivElement, emulatorsUi: EmulatorsUi, options: DosOptions);
     run(bundleUrl: string, optionalChangesUrl?: string, optionalPersistKey?: string): Promise<CommandInterface>;
     stop(): Promise<void>;
@@ -40,8 +44,15 @@ export declare class DosInstance {
     setMirroredControls(mirrored: boolean): Promise<void>;
     setScaleControls(scale: number): Promise<void>;
     setSensitivity(sensitivity: number): Promise<void>;
+    setVolume(volume: number): Promise<void>;
     setAutolock(autolock: boolean): Promise<void>;
     setOnMobileControlsChanged(handler: (visible: boolean) => void): void;
+    registerOnSensitivityChanged: (handler: (sensitivity: number) => void) => void;
+    removeOnSensitivityChanged: (handler: (sensitivity: number) => void) => void;
+    registerOnScaleChanged: (handler: (scale: number) => void) => void;
+    removeOnScaleChanged: (handler: (scale: number) => void) => void;
+    registerOnVolumeChanged: (handler: (volume: number) => void) => void;
+    removeOnVolumeChanged: (handler: (volume: number) => void) => void;
     private runBundle;
 }
 export declare type DosFactoryType = (root: HTMLDivElement, options?: DosOptions) => DosInstance;

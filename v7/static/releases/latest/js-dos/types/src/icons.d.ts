@@ -32,6 +32,12 @@ export declare const Icons: {
     ArrowsExpand: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    ArrowsCircleLeft: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    ArrowsCircleRight: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     ChevronLeft: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
@@ -60,6 +66,30 @@ export declare const Icons: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
     CurrencyDollar: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    QuestionMarkCircle: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Discord: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Telegram: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Twitter: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    FloppyDisk: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Online: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    Offline: (props: {
+        class: string;
+    }) => import("preact").VNode<any> | import("preact").VNode<any>[];
+    InformationCircle: (props: {
         class: string;
     }) => import("preact").VNode<any> | import("preact").VNode<any>[];
 };
