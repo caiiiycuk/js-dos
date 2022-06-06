@@ -12,6 +12,7 @@ export const personalAcl: Handler = async (event: any) => {
     const namespace = event.queryStringParameters.namespace;
     const id = event.queryStringParameters.id;
     const bundleUrl = event.queryStringParameters.bundleUrl;
+    const publishToken = event.queryStringParameters.publishToken;
 
     if (!bundleUrl || bundleUrl.length === 0) {
         return badRequest();
@@ -21,7 +22,7 @@ export const personalAcl: Handler = async (event: any) => {
         return noSession();
     }
 
-    const personalKey = getPersonalBundleKey(namespace, id, bundleUrl);
+    const personalKey = getPersonalBundleKey(namespace, id, bundleUrl, publishToken);
 
     await s3.putObjectAcl({
         Bucket: uploadsS3Bucket,

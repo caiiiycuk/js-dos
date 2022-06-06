@@ -13,6 +13,7 @@ export const personalPut: Handler = async (event: any) => {
     const namespace = event.queryStringParameters.namespace;
     const id = event.queryStringParameters.id;
     const bundleUrl = event.queryStringParameters.bundleUrl;
+    const publishToken = event.queryStringParameters.publishToken;
 
     if (!bundleUrl || bundleUrl.length === 0) {
         return badRequest();
@@ -22,11 +23,12 @@ export const personalPut: Handler = async (event: any) => {
         return noSession();
     }
 
-    const personalUrl = getPersonalBundleUrl(namespace, id, bundleUrl);
+    const personalUrl = getPersonalBundleUrl(namespace, id, bundleUrl, publishToken);
 
     const result = await lambda.invoke({
         FunctionName: PutCurlLambda,
         Payload: JSON.stringify({
+            publishToken,
             bundleUrl: personalUrl,
         }),
     }).promise();
