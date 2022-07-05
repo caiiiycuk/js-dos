@@ -3,7 +3,7 @@ id: node
 title: In node.js
 ---
 
-In this tutorial we will run Digger game in Node.js and save game screenshot to image.
+In this tutorial we will run Digger game in Node.js and save game screenshot to the image.
 
 Let's start with creating empty project:
 
@@ -11,7 +11,7 @@ Let's start with creating empty project:
 npm init
 ```
 
-In node environment you can use only [emulators](https://www.npmjs.com/package/emulators) package, because `emulators-ui` is made for browser integrations. For creating screenshot we will use `jimp` library. So let's install them.
+In node environment you can only use [emulators](https://www.npmjs.com/package/emulators) package, because `emulators-ui` is made for browser integrations. For creating screenshot we will use `jimp` library. So let's install them.
 
 ```sh
 npm install --save emulators jimp
@@ -22,7 +22,7 @@ Next we need to download Digger [js-dos bundle](jsdos-bundle):
 curl https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos -o digger.jsdos
 ```
 
-We will edit file named `digger.js`. We can run it with this command `node digger.js`
+Let's create source file `digger.js`. We can run it with this command `node digger.js`
 
 **Use require to import all libraries**
 ```js
@@ -35,10 +35,12 @@ const emulators = global.emulators;
 emulators.pathPrefix = "./";
 ```
 
+<br/>
+
 :::info
 
-emulators package is made for browser, it didn't export anything. It injects itself into global object.
-In node `pathPrefix` is relative to `require`
+emulators package does not use exports system. It injects itself into global object.
+`pathPrefix` is used to locate wasm files it relative to `require` path.
 
 :::
 
@@ -57,23 +59,28 @@ When dos emulation starts, we will receive [Command Interface](command-interface
 to subscribe on frame updates and to send key/mouse events.
 
 ```js
-    let rgb = new Uint8Array(0);
-    ci.events().onFrame((frame) => {
-        this.rgb = frame;
+    ci.events().onFrame((rgb, rgba) => {
+        // use rgb or rgba image data
     });
 ```
 
-**Now we have frame, it's in RGB format. We only need to save it to png image:**
+<br/>
+
+:::info
+**onFrame** method have two arguments `rgb` and `rgba` image data. One of them is always **null** whilte other is **UInt8ClampedArray**. It depends on used emulator which data it uses rgb or rgba. js-dos for browsers return **rgba** data
+with transparent alpha channel.
+:::
+
+<br/>
+
+In browser we have frame in RGBA format with transparent alpha, let's fix this and save screenshot:
+
 ```js
     const width = ci.width();
     const height = ci.height();
-
-    const rgba = new Uint8Array(width * height * 4);
-    for (let next = 0; next < width * height; ++next) {
-        rgba[next * 4 + 0] = rgb[next * 3 + 0];
-        rgba[next * 4 + 1] = rgb[next * 3 + 1];
-        rgba[next * 4 + 2] = rgb[next * 3 + 2];
-        rgba[next * 4 + 3] = 255;
+    
+    for (let next = 3; next < width * height * 4; next = next + 4) {
+        rgba[next] = 255;
     }
 
     new jimp({ data: rgba, width, height }, (err, image) => {
@@ -83,8 +90,9 @@ to subscribe on frame updates and to send key/mouse events.
     });
 ```
 
+<br/>
 
-If you execute `node digger.js` it will save digger screenshot to `./screenshot.png`.
+If you execute `node digger.js` it will save the screenshot to `./screenshot.png`.
 
 Full code of `digger.js`:
 ```js
@@ -102,8 +110,8 @@ emulators
     .dosDirect(bundle)
     .then((ci) => {
         let rgba = new Uint8Array(0);
-        ci.events().onFrame((frame) => {
-            rgba = frame;
+        ci.events().onFrame((_, _rgba) => {
+            rgba = _rgba;
         });
 
         // capture the screen after 3 sec
@@ -112,13 +120,9 @@ emulators
             const width = ci.width();
             const height = ci.height();
 
-            const rgba = new Uint8Array(width * height * 4);
-            for (let next = 0; next < width * height; ++next) {
-                rgba[next * 4 + 0] = rgb[next * 3 + 0];
-                rgba[next * 4 + 1] = rgb[next * 3 + 1];
-                rgba[next * 4 + 2] = rgb[next * 3 + 2];
-                rgba[next * 4 + 3] = 255;
-            }
+            for (let next = 3; next < width * height * 4; next = next + 4) {
+                rgba[next] = 255;
+            }           
 
             new jimp({ data: rgba, width, height }, (err, image) => {
                 image.write("./screenshot.png", () => {
