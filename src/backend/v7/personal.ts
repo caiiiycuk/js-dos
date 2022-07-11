@@ -6,7 +6,7 @@ import { personalAcl, personalPut } from "./v7-config";
 declare const zip: any;
 
 export function getPersonalBundleUrl(namespace: string, id: string, bundleUrl: string): string {
-    return impl(namespace, id, bundleUrl);
+    return impl(namespace, id, bundleUrl, undefined);
 }
 
 export async function putPersonalBundle(namespace: string,
