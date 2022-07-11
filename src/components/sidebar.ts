@@ -41,7 +41,7 @@ export function SideBar(props: Props) {
 
     function onHelp() {
         if (networking) {
-            window.open("https://youtu.be/XEoWLQmU168", "_blank");
+            props.options().windowOpen("https://youtu.be/XEoWLQmU168", "_blank");
             return;
         }
         props.setShowTips(true);
@@ -81,19 +81,19 @@ function SocialIcons(props: Props) {
     const matchmaking = props.sideBarPage === "networking";
 
     function openDiscrodPage() {
-        window.open("https://discord.com/invite/hMVYEbG", "_blank");
+        props.options().windowOpen("https://discord.com/invite/hMVYEbG", "_blank");
     }
 
     function openTelegramPage() {
-        window.open("https://t.me/doszonechat", "_blank");
+        props.options().windowOpen("https://t.me/doszonechat", "_blank");
     }
 
     function openTwitterPage() {
-        window.open("https://twitter.com/intent/user?screen_name=doszone_db", "_blank");
+        props.options().windowOpen("https://twitter.com/intent/user?screen_name=doszone_db", "_blank");
     }
 
     function openDonatePage() {
-        window.open("https://dos.zone/donate/", "_blank");
+        props.options().windowOpen("https://dos.zone/donate/", "_blank");
     }
 
     if (matchmaking === true) {

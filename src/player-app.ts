@@ -8,7 +8,7 @@ import { ActionBar } from "./components/action-bar";
 import { ActionSaveOrExit } from "./components/action-save-or-exit";
 import { SideBar } from "./components/sidebar";
 import { Tips } from "./components/tip";
-import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
+import { ClientId, DosPlayer, DosPlayerOptionsWithDefaults } from "./player";
 import { LatencyInfo } from "./backend/v7/latency";
 
 import { EmulatorsUi } from "emulators-ui";
@@ -34,7 +34,7 @@ const storageKeys = {
 
 export interface Props {
     player: () => DosPlayer;
-    options: () => DosPlayerOptions;
+    options: () => DosPlayerOptionsWithDefaults;
 
     clientId: ClientId | null,
     setClientId: (clientId: ClientId | null) => void,
@@ -94,7 +94,7 @@ export interface Props {
 
 export function PlayerApp(playerProps: {
     player: () => DosPlayer,
-    options: () => DosPlayerOptions,
+    options: () => DosPlayerOptionsWithDefaults,
     setOnRun: (onRun: () => void) => void,
 }) {
     const storage = emulatorsUi.dom.storage;
@@ -328,7 +328,7 @@ export function PlayerApp(playerProps: {
 
 export function createPlayerApp(root: HTMLDivElement,
                                 player: DosPlayer,
-                                options: DosPlayerOptions,
+                                options: DosPlayerOptionsWithDefaults,
                                 setOnRun: (onRun: () => void) => void) {
     render(html`<${PlayerApp} player=${() => player} options=${() => options} setOnRun=${setOnRun} />`, root);
 }

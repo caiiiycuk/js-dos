@@ -32,12 +32,27 @@ export interface DosPlayerOptions extends DosOptions {
     preventUnload?: boolean;
     withNetworkingApi?: boolean;
     withExperimentalApi?: boolean;
+    windowOpen?: (url: string, target: string) => void;
+}
+
+export interface DosPlayerOptionsWithDefaults extends DosPlayerOptions {
+    windowOpen: (url: string, target?: string) => void;
 }
 
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;
 
-export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): DosPlayer {
-    options = options || {};
+export function DosPlayer(root: HTMLDivElement, optOptions?: DosPlayerOptions): DosPlayer {
+    const options = (optOptions || {}) as DosPlayerOptionsWithDefaults;
+
+    if (options.windowOpen === undefined) {
+        if (typeof window === "object") {
+            options.windowOpen = window.open.bind(window);
+        } else {
+            options.windowOpen = () => {
+                throw new Error("window.open is not defined");
+            };
+        }
+    }
 
     if (options.style === "none") {
         console.warn("If you don't need the jsdos services, please use emulatros + emulators-ui instead");
@@ -57,11 +72,11 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
     modal.appendChild(modalText);
 
     const col = createDiv(["flex", "flex-col", "flex-grow", "overflow-hidden"]);
-    const window = createDiv("flex-grow");
+    const frame = createDiv("flex-grow");
     const appRoot = createDiv("flex-grow-0");
     const keyboard = createDiv("flex-grow-0");
 
-    col.appendChild(window);
+    col.appendChild(frame);
     col.appendChild(keyboard);
 
     root.appendChild(appRoot);
@@ -93,7 +108,7 @@ export function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): Dos
     }
 
 
-    const player = dosImpl(window, options) as DosPlayer;
+    const player = dosImpl(frame, options) as DosPlayer;
     let onRun = () => { };
     const setOnRun = (newOnRun: () => void) => onRun = newOnRun;
     createPlayerApp(appRoot, player, options, setOnRun);
