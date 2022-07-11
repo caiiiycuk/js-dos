@@ -2816,10 +2816,10 @@ elliptic@^6.5.3:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-emulators-ui@0.73.5:
-  version "0.73.5"
-  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.73.5.tgz#e61bfc21f009ba23dc841f23caf7c9bf03eb5151"
-  integrity sha512-gjXq6Wh3PnFAZM1tSuvg07tVdlPmrjf2JmKNwcTPYoizwDqfcBT/doO6DolTTqOuOihkQ7/peWA9U4Eq+ThcmQ==
+emulators-ui@0.73.6:
+  version "0.73.6"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.73.6.tgz#77221e4ce7bcabc759786631e8671ada0c76a323"
+  integrity sha512-wESDM/WcXSGio0KJOLKfvY4986Yf6LneB4f/1ZYRxMWPp++Igy6Zrg4k+TJ4dtUUFMZFCC5hfW0BHi8K4s5PJQ==
 
 emulators@0.73.7:
   version "0.73.7"

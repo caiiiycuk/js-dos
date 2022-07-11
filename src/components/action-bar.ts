@@ -28,7 +28,7 @@ function More(props: Props) {
     }
 
     function openMore() {
-        window.open("https://dos.zone/", "_blank");
+        props.options().windowOpen("https://dos.zone/", "_blank");
     }
 
     return html`

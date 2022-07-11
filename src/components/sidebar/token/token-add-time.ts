@@ -49,7 +49,7 @@ export function TokenAddTime(props: TokenProps) {
                 if (accessToken === null) {
                     throw new Error("accessToken is null");
                 }
-                purchase(accessToken);
+                purchase(accessToken, props.options().windowOpen);
                 setTimeout(() => {
                     setNeedReload(true);
                 }, 300);
@@ -133,6 +133,6 @@ async function createToken(product: string, props: TokenProps) {
     return token;
 }
 
-function purchase(accessToken: string) {
-    window.open(checkoutEndpoint + "?token=" + accessToken, "_blank");
+function purchase(accessToken: string, windowOpen: (url: string, target?: string) => void) {
+    windowOpen(checkoutEndpoint + "?token=" + accessToken, "_blank");
 };
