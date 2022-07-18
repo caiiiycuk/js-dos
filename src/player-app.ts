@@ -97,6 +97,7 @@ export function PlayerApp(playerProps: {
     options: () => DosPlayerOptionsWithDefaults,
     setOnRun: (onRun: () => void) => void,
 }) {
+    const actionaBarHidden = playerProps.options().withNetworkingApi !== true;
     const storage = emulatorsUi.dom.storage;
     const requestClientIdFn = playerProps.options().clientId;
     const requestClientId = typeof requestClientIdFn === "function" ?
@@ -111,7 +112,7 @@ export function PlayerApp(playerProps: {
     const [pause, setPause] = useState<boolean>(false);
     const [mute, setMute] = useState<boolean>(false);
     const [fullscreen, setFullscreen] = useState<boolean>(playerProps.player().layers.fullscreen);
-    const [actionBar, setActionBar] = useState<boolean>(true);
+    const [actionBar, setActionBar] = useState<boolean>(!actionaBarHidden);
     const [region, _setRegion] = useState<string | null>(storage.getItem(storageKeys.networkRegion));
     const [estimatingRegion, setEstimatingRegion] = useState<string | null>(null);
     const [showTips, setShowTips] = useState<boolean>(false);
@@ -283,6 +284,9 @@ export function PlayerApp(playerProps: {
             setTimeout(() => {
                 setDosPause(newShowTips);
                 setShowTips(newShowTips);
+                if (newShowTips && playerProps.options().style !== "hidden") {
+                    setActionBar(true);
+                }
             }, 500);
         },
 
