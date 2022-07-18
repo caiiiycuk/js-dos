@@ -1,9 +1,9 @@
-import { ClientId, DosPlayer, DosPlayerOptions } from "./player";
+import { ClientId, DosPlayer, DosPlayerOptionsWithDefaults } from "./player";
 import { LatencyInfo } from "./backend/v7/latency";
 export declare type SidebarPage = "main" | "latency-info" | "networking";
 export interface Props {
     player: () => DosPlayer;
-    options: () => DosPlayerOptions;
+    options: () => DosPlayerOptionsWithDefaults;
     clientId: ClientId | null;
     setClientId: (clientId: ClientId | null) => void;
     requestClientId?: (userGesture: boolean) => Promise<ClientId | null>;
@@ -44,7 +44,7 @@ export interface Props {
 }
 export declare function PlayerApp(playerProps: {
     player: () => DosPlayer;
-    options: () => DosPlayerOptions;
+    options: () => DosPlayerOptionsWithDefaults;
     setOnRun: (onRun: () => void) => void;
 }): import("preact").VNode<any> | import("preact").VNode<any>[];
-export declare function createPlayerApp(root: HTMLDivElement, player: DosPlayer, options: DosPlayerOptions, setOnRun: (onRun: () => void) => void): void;
+export declare function createPlayerApp(root: HTMLDivElement, player: DosPlayer, options: DosPlayerOptionsWithDefaults, setOnRun: (onRun: () => void) => void): void;

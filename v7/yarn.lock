@@ -3817,15 +3817,15 @@ emoticon@^3.2.0:
   resolved "https://registry.yarnpkg.com/emoticon/-/emoticon-3.2.0.tgz#c008ca7d7620fac742fe1bf4af8ff8fed154ae7f"
   integrity sha512-SNujglcLTTg+lDAcApPNgEdudaqQFiAbJCqzjNxJkvN9vAwCGi0uu8IUVvx+f16h+V44KCY6Y2yboroc9pilHg==
 
-emulators-ui@^0.73.5:
-  version "0.73.5"
-  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.73.5.tgz#e61bfc21f009ba23dc841f23caf7c9bf03eb5151"
-  integrity sha512-gjXq6Wh3PnFAZM1tSuvg07tVdlPmrjf2JmKNwcTPYoizwDqfcBT/doO6DolTTqOuOihkQ7/peWA9U4Eq+ThcmQ==
+emulators-ui@^0.73.7:
+  version "0.73.7"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.73.7.tgz#da93d0d44563910c37f5fcb6adde2a498248e773"
+  integrity sha512-K5XlkbcT1CTqwlhuxengS0EzkHI8f9PNMdAVJx1upkJiZXGJSX2VnceZFwnG4V4u2a6K5jitQhhT9dBDGGWz2g==
 
-emulators@^0.73.6:
-  version "0.73.6"
-  resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.73.6.tgz#4da1e1e3ed26748bd712700dc917d9b8e58f47f3"
-  integrity sha512-s8cdq5NnBU4/bky4zgNtR1hCxnD8m5QX1gZxhEGg1rLkxiyIyrttfWShls7f54+DFmXcqHYAk5phUd1grWckfQ==
+emulators@^0.73.7:
+  version "0.73.7"
+  resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.73.7.tgz#daa83218981c32efd75fe3aae13477d2953a355f"
+  integrity sha512-DxGsZlDqMkyVJc/t4m3MLTk4GXlYNq+hFGNHyi6TtwTcTNCCB7WM8afWUtlJJazESuIK8Sp/P+ejJJIHE4t2zw==
 
 encodeurl@~1.0.2:
   version "1.0.2"
@@ -5469,10 +5469,10 @@ joi@^17.3.0, joi@^17.4.0:
     "@sideway/formula" "^3.0.0"
     "@sideway/pinpoint" "^2.0.0"
 
-js-dos@^7.4.4:
-  version "7.4.4"
-  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.4.4.tgz#03ed8f5bb86cf2021f0e03760e6a60e29e403eaa"
-  integrity sha512-vjwbeQuI8Af34BOeTzStRioowwqdHjOPZSpKQexWSOE7T+uSoldQu1Sy08ycL8WY3jJjvsWRtuddq2fIAvoUJg==
+js-dos@^7.4.7:
+  version "7.4.7"
+  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.4.7.tgz#82e6a0b3595b797946603ae809883fb784432c62"
+  integrity sha512-lNtvMNXXpRnYHJQZfLAfhA3iobV+jcg4yh65h3jjCMG4HTafYUOrK77uUEJ8htS1kO/jSJCIkmH3OT6hyRPkXw==
   dependencies:
     nanoid "^3.3.4"
 

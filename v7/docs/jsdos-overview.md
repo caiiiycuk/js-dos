@@ -59,7 +59,7 @@ You can pass options object as second parameter as dos constructor:
 
 ```
 export interface DosPlayerOptions extends DosOptions {
-    style?: "default" | "none";
+    style?: "default" | "none" | "hidden";
     clientId?: ClientIdSupplier;
     onExit?: () => void;
     noSideBar?: boolean;
@@ -69,7 +69,7 @@ export interface DosPlayerOptions extends DosOptions {
 ```
 
 
-* `style` - if you set it to "**none**" then control bar will not be added
+* `style` - if you set it to "**none**" then control bar will not be added, with "**hidden**" sidebar will be minimized at start
 * `clientId` - for [storing fs](jsdos-save-load.md) changes in cloud
 * `onExit` - if set then exit button will be added, and you will be notified when user exit from emulation
 * `noSideBar` - if true - removes `...` button

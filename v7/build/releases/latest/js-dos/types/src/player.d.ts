@@ -9,7 +9,7 @@ export interface DosPlayer extends DosInstance {
     bundleUrl: string | null;
 }
 export interface DosPlayerOptions extends DosOptions {
-    style?: "default" | "none";
+    style?: "default" | "none" | "hidden";
     hardware?: Hardware;
     clientId?: ClientIdSupplier;
     onBeforeExit?: () => Promise<void>;
@@ -20,6 +20,10 @@ export interface DosPlayerOptions extends DosOptions {
     preventUnload?: boolean;
     withNetworkingApi?: boolean;
     withExperimentalApi?: boolean;
+    windowOpen?: (url: string, target: string) => void;
+}
+export interface DosPlayerOptionsWithDefaults extends DosPlayerOptions {
+    windowOpen: (url: string, target?: string) => void;
 }
 export declare type DosPlayerFactoryType = (root: HTMLDivElement, options?: DosPlayerOptions) => DosPlayer;
-export declare function DosPlayer(root: HTMLDivElement, options?: DosPlayerOptions): DosPlayer;
+export declare function DosPlayer(root: HTMLDivElement, optOptions?: DosPlayerOptions): DosPlayer;

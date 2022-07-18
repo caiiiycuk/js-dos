@@ -2,6 +2,7 @@ import { Notyf } from "notyf";
 export interface LayersOptions {
     optionControls?: string[];
     keyboardDiv?: HTMLDivElement;
+    keyboardInputDiv?: HTMLDivElement;
     fullscreenElement?: HTMLElement;
 }
 export declare function layers(root: HTMLDivElement, options?: LayersOptions): Layers;
