@@ -21,7 +21,7 @@ export interface DosPlayer extends DosInstance {
 }
 
 export interface DosPlayerOptions extends DosOptions {
-    style?: "default" | "none";
+    style?: "default" | "none" | "hidden";
     hardware?: Hardware;
     clientId?: ClientIdSupplier;
     onBeforeExit?: () => Promise<void>;
@@ -56,7 +56,7 @@ export function DosPlayer(root: HTMLDivElement, optOptions?: DosPlayerOptions): 
 
     if (options.style === "none") {
         console.warn("If you don't need the jsdos services, please use emulatros + emulators-ui instead");
-        return dosImpl(root, options || {}) as DosPlayer;
+        return dosImpl(root, options) as DosPlayer;
     }
 
     root.classList.add("flex");
@@ -75,6 +75,7 @@ export function DosPlayer(root: HTMLDivElement, optOptions?: DosPlayerOptions): 
     const frame = createDiv("flex-grow");
     const appRoot = createDiv("flex-grow-0");
     const keyboard = createDiv("flex-grow-0");
+    const keyboardInput = root;
 
     col.appendChild(frame);
     col.appendChild(keyboard);
@@ -96,6 +97,7 @@ export function DosPlayer(root: HTMLDivElement, optOptions?: DosPlayerOptions): 
 
     options.layersOptions = options.layersOptions || {};
     options.layersOptions.keyboardDiv = keyboard;
+    options.layersOptions.keyboardInputDiv = keyboardInput;
     options.layersOptions.fullscreenElement = root;
     options.layersOptions.optionControls = [];
 
