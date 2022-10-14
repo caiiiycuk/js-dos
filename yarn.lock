@@ -2821,10 +2821,10 @@ emulators-ui@0.73.7:
   resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.73.7.tgz#da93d0d44563910c37f5fcb6adde2a498248e773"
   integrity sha512-K5XlkbcT1CTqwlhuxengS0EzkHI8f9PNMdAVJx1upkJiZXGJSX2VnceZFwnG4V4u2a6K5jitQhhT9dBDGGWz2g==
 
-emulators@0.73.7:
-  version "0.73.7"
-  resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.73.7.tgz#daa83218981c32efd75fe3aae13477d2953a355f"
-  integrity sha512-DxGsZlDqMkyVJc/t4m3MLTk4GXlYNq+hFGNHyi6TtwTcTNCCB7WM8afWUtlJJazESuIK8Sp/P+ejJJIHE4t2zw==
+emulators@0.73.8:
+  version "0.73.8"
+  resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.73.8.tgz#1847e57fa5ce897cf148242943026676e1f2576e"
+  integrity sha512-vfJTHDr6bD+Su+6cJE6wgRtQk+eVUZyJDUEY+wBChE1rUmSU76otrN5ejZL6s1oOnN3RAW45ZOj0u4dnCugW7Q==
 
 end-of-stream@^1.0.0, end-of-stream@^1.1.0:
   version "1.4.4"

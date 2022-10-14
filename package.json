@@ -1,6 +1,6 @@
 {
     "name": "js-dos",
-    "version": "7.4.7",
+    "version": "7.4.8",
     "description": "Easiest API to run dos programs in browser",
     "main": "dist/js-dos.js",
     "types": "dist/types/src/player.d.ts",
@@ -48,7 +48,7 @@
         "browserify": "^17.0.0",
         "core-js": "^3.23.5",
         "del": "^6.1.1",
-        "emulators": "0.73.7",
+        "emulators": "0.73.8",
         "emulators-ui": "0.73.7",
         "eslint": "^8.20.0",
         "eslint-config-google": "^0.14.0",
