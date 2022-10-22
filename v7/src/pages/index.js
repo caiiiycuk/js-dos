@@ -110,17 +110,6 @@ const features = [
             </>
         ),
     },
-    // {
-    //     title: <>turbo mode</>,
-    //     imageUrl: 'img/turbo.png',
-    //     description: (
-    //         <>
-    //           js-dos can communicate with Web-RTC backend to play DOS games in the cloud. No matter which hardware you use all dos games will work smoothly.
-    //           <br/>
-    //           <a href="https://talks.dos.zone/t/dos-cloud-gaming-aka-turbo/44592" target="_blank">Read more</a>
-    //         </>
-    //     ),
-    // },
 ];
 
 function Feature({imageUrl, title, description}) {

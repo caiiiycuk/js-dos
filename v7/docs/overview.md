@@ -23,7 +23,7 @@ You can use this three layers separetely. For example:
 
 ## Bundles repository
 
-Visit our [repository](https://dos.zone) that contains **1900+** already created bundles of dos games. You can [contribute](https://talks.dos.zone/t/read-first/44582) in it.
+Visit our [repository](https://dos.zone) that contains **1900+** already created bundles of dos games.
 
 ## Getting started
 

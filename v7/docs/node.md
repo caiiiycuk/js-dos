@@ -39,7 +39,7 @@ emulators.pathPrefix = "./";
 
 :::info
 
-emulators package does not use exports system. It injects itself into global object.
+emulators package does not use export system. It injects itself into global object.
 `pathPrefix` is used to locate wasm files it relative to `require` path.
 
 :::
