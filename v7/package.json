@@ -13,9 +13,9 @@
         "@docusaurus/plugin-google-analytics": "^2.0.0-beta.6",
         "@docusaurus/preset-classic": "^2.0.0-beta.6",
         "clsx": "^1.1.1",
-        "emulators": "^0.73.7",
+        "emulators": "^0.73.8",
         "emulators-ui": "^0.73.7",
-        "js-dos": "^7.4.7",
+        "js-dos": "^7.4.8",
         "react": "^16.8.4",
         "react-dom": "^16.8.4",
         "three": "^0.118.3"

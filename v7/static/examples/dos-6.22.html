@@ -18,7 +18,7 @@
          Dos(document.getElementById("jsdos"), {
              wdosboxUrl: "/6.22/current/dosbox.js",
          }).ready((fs, main) => {
-             fs.extract("https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos").then(() => {
+             fs.extract("https://cdn.dos.zone/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos").then(() => {
                  main(["-conf", ".jsdos/dosbox.conf"]);
              });
          });

@@ -18,7 +18,7 @@
              const layers = emulatorsUi.dom.layers(document.getElementById("root"), { scale: 0.7 });
              layers.showLoadingLayer();
 
-             const bundleUrl = "https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos";
+             const bundleUrl = "https://cdn.dos.zone/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos";
              const bundle = await emulatorsUi.network.resolveBundle(bundleUrl);
 
              const ci = await emulators.dosWorker(bundle);

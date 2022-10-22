@@ -63,7 +63,7 @@
          async function runDigger() {
              stop();
 
-             const bundle = await emulatorsUi.network.resolveBundle("https://doszone-uploads.s3.dualstack.eu-central-1.amazonaws.com/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos");
+             const bundle = await emulatorsUi.network.resolveBundle("https://cdn.dos.zone/original/2X/9/9ed7eb9c2c441f56656692ed4dc7ab28f58503ce.jsdos");
              const ciPromise = emulators.dosWorker(bundle);
              const rgba = new Uint8ClampedArray(320 * 200 * 4);
              ciPromise.then((ci) => {
