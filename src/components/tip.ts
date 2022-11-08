@@ -14,17 +14,17 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
                     <strong>This game is controlled by gestures.</strong>
                 </p>
                 <p class="pt-2">
-                    When you tap on screen the DOS game will receive click event without
-                    mouse coordinates. <b>Click will be simulated in place where game cursor 
+                    When you tap on the screen, the DOS game will receive click events without
+                    mouse coordinates. <b>The click will be simulated in place where game cursor 
                     is, without moving it.</b>
                 </p>
                 <p class="pt-2">
-                    <strong>To move the game cursor</strong> you need to put your finger on the screen and move it in
-                    wanted direction until the game cursor reached the desired position. After that
-                    you can release the finger.
+                    <strong>To move the game cursor</strong>, you need to put your finger on the screen and move it in
+                    the wanted direction until the game cursor reaches the desired position. After that,
+                    you can release your finger.
                 </p>
                 <p class="pt-2">
-                    You can <strong>change sensitivity</strong> of the mouse inside
+                    You can <strong>change sensitivity</strong> of the mouse inside the
                     submenu of icon <${Icons.CursorClick} class="h-4 w-4 text-green-600 mr-2 inline-block" />.
                 </p>
             </div>
@@ -37,18 +37,18 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
         <div>
             <div class="flex flex-col">
                 <p class=""> 
-                    <strong>The game will lock browser cursor.</strong>
+                    <strong>The game will lock the browser cursor.</strong>
                 </p>
                 <p class="pt-2">
-                    When the mouse is locked DOS game exclusively controls the mouse and
+                    When the mouse is locked, the DOS game exclusively controls the mouse and
                     the cursor can't leave the game screen. 
                 </p>
                 <p class="pt-2">
-                    You can <strong>change sensitivity</strong> of the mouse inside
+                    You can <strong>change sensitivity</strong> of the mouse inside the
                     submenu of icon <${Icons.CursorClick} class="h-4 w-4 text-green-600 mr-2 inline-block" />.
                 </p>
                 <p class="pt-2">
-                    To exit from lock mode please use <strong>Escape</strong> key.
+                    To exit from lock mode, please use the <strong>Escape</strong> key.
                 </p>
             </div>
         </div>
@@ -59,17 +59,17 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
         tip: html`
         <div class="flex flex-col">
             <p class="">
-                By clicking on pointer icon you can switch between <b>regular mouse emulation</b> and <b>lock mode</b>.
+                By clicking on the pointer icon, you can switch between <b>regular mouse emulation</b> and <b>lock mode</b>.
             </p>
             <div class="mt-2">
                 <${Icons.Cursor} class="h-4 w-4 text-green-600 mr-2 inline-block" />
                 <p class="inline">
-                    - In regular mouse emulation mode game will receive
-                    borwser pointer coordinates. If the browser pointer and game pointer is out of sync then use
+                    - In regular mouse emulation mode, the game will receive
+                    browser pointer coordinates. If the browser pointer and game pointer are out of sync, use the
                 </p>
                 <${Icons.Refresh} class="h-4 w-4 text-green-600 mx-2 inline-block" />
                 <p class="inline">
-                    refresh control to synchronize dos and browser pointer poistion.
+                    refresh control to synchronize DOS and browser pointer position.
                 </p>
             </div>
             <div class="mt-2">
@@ -79,11 +79,11 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
                 </p>
             </div>
             <div class="mt-2">
-                <strong>On desktop</strong> DOS game exclusively controls the mouse and
+                <strong>On desktop</strong>, the DOS game exclusively controls the mouse and
                 the cursor can't leave the game screen.
             </div>
             <div class="mt-2">
-                <strong>On mobile</strong> DOS game will be controlled by gestures.
+                <strong>On mobile</strong>, the DOS game will be controlled by gestures.
             </div>
         </div>
         `,
@@ -93,7 +93,7 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
         tip: html`
         <div class="flex flex-col">
             <p>
-                You can change visibility of mobile controls by pressing on of this buttons:
+                You can change the visibility of mobile controls by pressing one of these buttons:
             </p>
             <div class="pt-2">
                 <${Icons.Mobile} class="h-4 w-4 text-green-600 mr-2 inline-block" />
@@ -114,7 +114,7 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
                 </p>
             </div>
             <p class="pt-2">
-                You can <b>change size</b> of mobile controls inside submenu.
+                You can <b>change size</b> of mobile controls inside the submenu.
             </p>
         </div>
         `,
@@ -124,7 +124,7 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
         tip: html`
         <div class="flex flex-col">
             <div>
-                On the left side of the screen you can see a sidebar, it has a set of useful controls.
+                On the left side of the screen, you will see a sidebar; it has a set of useful controls.
                 You can hide it at any time by pressing on the arrow in the middle.
             </div>
             <div class="pt-2">
@@ -155,7 +155,7 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
                 <${Icons.DotsHorizontal} class="h-4 w-4 text-green-600 mr-2 inline-block" />
                 <p class="inline">
                     -  will open the settings sidebar, where you can change additional
-                    settings of js-dos like networking.
+                    settings of js-dos, like networking.
                 </p>
             </div>
         </div>
@@ -167,14 +167,14 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
         <div>
             <div class="flex flex-col">
                 <p class=""> 
-                    js-dos supports saving and restoring game progress. You can play game from time to time 
-                    without losing progress. It's working automatically or by pressing 
+                    js-dos supports saving and restoring game progress. You can play a game from time to time 
+                    without losing progress. This works automatically or by pressing the
                     <${Icons.FloppyDisk} class="h-4 w-4 text-green-600 mx-1 -mt-1 inline-block" />
                     icon.
                 </p>
                 <p class="pt-2">
-                    However, it works only if DOS game it self supports save and load commands.
-                    <strong> You need to save your progress in DOS game before stopping emulator.</strong>
+                    However, it works only if the DOS game itself supports save and load commands.
+                    <strong> You need to save your progress in the DOS game before stopping the emulator.</strong>
                 </p>
             </div>
         </div>
