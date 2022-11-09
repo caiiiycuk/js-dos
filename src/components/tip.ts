@@ -59,7 +59,8 @@ const pages: { [key: string]: { title: string, tip: any /* VNode */ } } = {
         tip: html`
         <div class="flex flex-col">
             <p class="">
-                By clicking on the pointer icon, you can switch between <b>regular mouse emulation</b> and <b>lock mode</b>.
+                By clicking on the pointer icon, you can switch between <b>regular mouse emulation</b> and 
+                <b>lock mode</b>.
             </p>
             <div class="mt-2">
                 <${Icons.Cursor} class="h-4 w-4 text-green-600 mr-2 inline-block" />
