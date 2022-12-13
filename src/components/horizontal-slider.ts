@@ -74,6 +74,8 @@ export function HorizontalSlider(props: HorizontalSliderProps) {
         window.addEventListener("pointermove", onMove);
         window.addEventListener("pointerup", onEnd);
         window.addEventListener("pointercancel", onEnd);
+        el.addEventListener("pointerup", onEnd);
+        el.addEventListener("pointercancel", onEnd);
         props.registerListner(setValue);
 
         return () => {
