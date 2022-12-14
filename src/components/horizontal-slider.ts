@@ -84,6 +84,8 @@ export function HorizontalSlider(props: HorizontalSliderProps) {
             window.removeEventListener("pointermove", onMove);
             window.removeEventListener("pointerup", onEnd);
             window.removeEventListener("pointercancel", onEnd);
+            el.removeEventListener("pointerup", onEnd);
+            el.removeEventListener("pointercancel", onEnd);
         };
     }, [sliderRef]);
 
