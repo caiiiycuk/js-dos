@@ -5469,10 +5469,10 @@ joi@^17.3.0, joi@^17.4.0:
     "@sideway/formula" "^3.0.0"
     "@sideway/pinpoint" "^2.0.0"
 
-js-dos@^7.4.8:
-  version "7.4.8"
-  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.4.8.tgz#ce37c634ca748130097674dc5bf8b4eec0638f5f"
-  integrity sha512-I36tcge33XStiTaVVCeas4FDaAESuZ+OM/F9rR642SyuT8K1buYQcTiqH1je0GHGwuRaUUofC2719IcsRYcFMA==
+js-dos@^7.4.9:
+  version "7.4.9"
+  resolved "https://registry.yarnpkg.com/js-dos/-/js-dos-7.4.9.tgz#40c35d407f1777bcd9f2b03803cc873b8b0e28cd"
+  integrity sha512-QQbXFigy1DNmlaxY6up/c+E/9pSFDCNsX8PUQ+TMoTpYRO4a5K4e80GuatPiqWAMoHjtzh/7uDt93tLkySG5yw==
   dependencies:
     nanoid "^3.3.4"
 
