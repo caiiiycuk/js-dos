@@ -24,7 +24,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "preact": "^10.11.3"
+    "@reduxjs/toolkit": "^1.9.1",
+    "@xsolla/login-sdk": "^0.72.4",
+    "preact": "^10.11.3",
+    "react-redux": "^8.0.5"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.4.0",
