@@ -1,0 +1,38 @@
+{
+  "name": "js-dos",
+  "version": "0.80.0",
+  "description": "Full-featured DOS player with multiple emulator backends",
+  "type": "module",
+  "keywords": [
+    "js-dos",
+    "dos",
+    "api",
+    "browser",
+    "dosbox",
+    "emulators",
+    "webassembly"
+  ],
+  "author": "Alexander Guryanov (aka caiiiycuk)",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/caiiiycuk/js-dos/issues"
+  },
+  "homepage": "https://js-dos.com",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "preact": "^10.11.3"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.4.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "eslint": "^8.29.0",
+    "eslint-config-google": "^0.14.0"
+  }
+}
