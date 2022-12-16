@@ -2,10 +2,11 @@ import { render } from "preact";
 import "./index.css";
 
 import { Provider } from "react-redux";
-import { store } from "./store";
-
 import { App } from "./app";
 import { authenticate } from "./auth/auth";
+import { makeStore } from "./store";
+
+const store = makeStore();
 
 render(
     <Provider store={store}>
@@ -14,4 +15,4 @@ render(
     document.getElementById("app") as HTMLElement,
 );
 
-authenticate();
+authenticate(store);

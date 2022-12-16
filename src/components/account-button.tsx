@@ -6,17 +6,18 @@ export function AccountButton(props: {
     class?: string,
 }) {
     const loggedIn = useSelector((state: State) => state.auth.account) !== null;
+    const hightlight = useSelector((state: State) => state.app.frame) === "account";
     const dispatch = useDispatch();
 
     function onClick() {
         if (loggedIn) {
-            //
+            dispatch(appSlice.actions.frameAccount());
         } else {
             dispatch(appSlice.actions.modalLogin());
         }
     }
 
-    return <div class={"sidebar-button " +
+    return <div class={"sidebar-button " + (hightlight ? "sidebar-highlight " : "") +
         props.class} onClick={onClick}>
 
         <svg xmlns="http://www.w3.org/2000/svg" fill="none"

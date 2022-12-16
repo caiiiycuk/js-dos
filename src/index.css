@@ -16,11 +16,15 @@
   } */
   
   :root {
+    --root-bg: black;
     --frame-bg: #252526;
+    --frame-color: #cccccc;
     --sidebar-bg: linear-gradient(90deg, #2d2d2d 0%, #333333 100%);
     --sidebar-color: #838383; 
     --sidebar-bage-color: #0078c9;
-    --sidebar-highlight: white; 
+    --sidebar-highlight: white;
+    --button-bg: #10629d;
+    --button-text: white;
   }
 
   html {
@@ -33,7 +37,7 @@ html, body, #app {
 }
 
 #app {
-  background: var(--frame-bg);
+  background: var(--root-bg);
 }
 
 .login-widget {
@@ -54,6 +58,7 @@ html, body, #app {
   color: var(--sidebar-color);
 }
 
+.sidebar-highlight,
 .sidebar-button:hover {
   color: var(--sidebar-highlight);
 }
@@ -65,4 +70,28 @@ html, body, #app {
 
 .contentbar {
   @apply flex-grow;
+}
+
+.frame {
+  background-color: var(--frame-bg);
+  color: var(--frame-color);
+  @apply absolute left-0 top-0 pl-12 h-full w-full sm:w-96 py-4;
+}
+
+.frame-root {
+  @apply flex flex-col; 
+}
+
+.account-img {
+  @apply w-24 h-24 my-8 rounded-full;
+}
+
+.account-email {
+  @apply text-xs mt-4;
+}
+
+button {
+  @apply cursor-pointer px-8 py-1 rounded hover:brightness-125;
+  background-color: var(--button-bg);
+  color: var(--button-text);
 }

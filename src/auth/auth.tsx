@@ -1,6 +1,6 @@
 import { auth, xsollaMe, xsollaOAuth2 } from "../conf";
-import { createSlice } from "@reduxjs/toolkit";
-import { store } from "../store";
+import { createSlice, Store } from "@reduxjs/toolkit";
+import { makeStore } from "../store";
 
 const revalidateTimeout = 30 * 60 * 1000; // 30 min
 
@@ -138,7 +138,7 @@ async function loadAccount(token: Token): Promise<Account> {
     };
 }
 
-export function authenticate() {
+export function authenticate(store: ReturnType<typeof makeStore>) {
     store.dispatch(async (dispatch) => {
         try {
             const token = await initAuthToken();
