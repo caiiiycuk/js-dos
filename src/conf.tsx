@@ -3,3 +3,6 @@ export const auth = {
     callbackUrl: "http://localhost:3000",
     clientId: 3508,
 };
+
+export const xsollaOAuth2 = "https://login.xsolla.com/api/oauth2/token";
+export const xsollaMe = "https://login.xsolla.com/api/users/me";
