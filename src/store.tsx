@@ -11,6 +11,6 @@ export function makeStore() {
     });
 };
 
-// export const store = makeStore();
+export const store = makeStore();
 
-export type State = any; // ReturnType<typeof store.getState>;
+export type State = ReturnType<typeof store.getState>;

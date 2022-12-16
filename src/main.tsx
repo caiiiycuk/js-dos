@@ -4,9 +4,7 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { App } from "./app";
 import { authenticate } from "./auth/auth";
-import { makeStore } from "./store";
-
-const store = makeStore();
+import { store } from "./store";
 
 render(
     <Provider store={store}>

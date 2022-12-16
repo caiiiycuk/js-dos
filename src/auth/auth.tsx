@@ -1,5 +1,5 @@
 import { auth, xsollaMe, xsollaOAuth2 } from "../conf";
-import { createSlice, Store } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { makeStore } from "../store";
 
 const revalidateTimeout = 30 * 60 * 1000; // 30 min
@@ -33,6 +33,7 @@ export const authSlice = createSlice({
             state.account = action.payload;
         },
         logout: (state) => {
+            clearToken();
             state.account = null;
         },
     },
@@ -130,12 +131,22 @@ async function loadAccount(token: Token): Promise<Account> {
     });
 
     const data = await response.json();
+    if (typeof data.error !== "undefined") {
+        clearToken();
+        throw new Error(data.error.code + ": " + data.error.description);
+    }
+    console.log(data);
+
     return {
         token,
-        name: data.name,
+        name: data.name ?? data.first_name ?? null,
         email: data.email,
-        picture: data.picture,
+        picture: data.picture ?? null,
     };
+}
+
+function clearToken() {
+    localStorage.removeItem("token");
 }
 
 export function authenticate(store: ReturnType<typeof makeStore>) {
