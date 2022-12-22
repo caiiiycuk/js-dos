@@ -78,7 +78,7 @@ html, body, #app {
 .frame {
   background-color: var(--frame-bg);
   color: var(--frame-color);
-  @apply absolute left-0 top-0 pl-12 h-full w-full py-4;
+  @apply absolute left-0 top-0 pl-12 overflow-auto h-full w-full py-4;
 }
 
 @media (min-width: 640px) {
