@@ -117,7 +117,7 @@ export function webGl(canvas: HTMLCanvasElement, ci: CommandInterface) {
     onResizeFrame(ci.width(), ci.height());
 
     const resizeObserver = new ResizeObserver(onResize);
-    resizeObserver.observe(canvas);
+    resizeObserver.observe(canvas.parentElement!);
     window.addEventListener("resize", onResize);
 
     return () => {
