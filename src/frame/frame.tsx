@@ -3,7 +3,7 @@ import { State } from "../store";
 import { AccountFrame } from "./account-frame";
 
 export function Frame(props: {}) {
-    const frame = useSelector((state: State) => state.app.frame);
+    const frame = useSelector((state: State) => state.ui.frame);
     if (frame === "none") {
         return null;
     }

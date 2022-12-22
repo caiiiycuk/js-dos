@@ -34,6 +34,10 @@
   }
 }
 
+.frame-color {
+  color: var(--frame-color);
+}
+
 html, body, #app {
   @apply h-full;
 }

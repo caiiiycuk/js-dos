@@ -1,19 +1,19 @@
 import { useDispatch, useSelector } from "react-redux";
-import { appSlice } from "../app";
+import { uiSlice } from "../ui";
 import { State } from "../store";
 
 export function AccountButton(props: {
     class?: string,
 }) {
     const loggedIn = useSelector((state: State) => state.auth.account) !== null;
-    const hightlight = useSelector((state: State) => state.app.frame) === "account";
+    const hightlight = useSelector((state: State) => state.ui.frame) === "account";
     const dispatch = useDispatch();
 
     function onClick() {
         if (loggedIn) {
-            dispatch(appSlice.actions.frameAccount());
+            dispatch(uiSlice.actions.frameAccount());
         } else {
-            dispatch(appSlice.actions.modalLogin());
+            dispatch(uiSlice.actions.modalLogin());
         }
     }
 

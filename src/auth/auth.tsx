@@ -2,6 +2,7 @@ import { auth, xsollaMe, xsollaOAuth2 } from "../conf";
 import { createSlice } from "@reduxjs/toolkit";
 import { makeStore } from "../store";
 import { havePremium } from "../subscriptions/subscriptions";
+import { lStorage } from "../storage/storage";
 
 const revalidateTimeout = 30 * 60 * 1000; // 30 min
 
@@ -76,7 +77,7 @@ export async function initAuthToken(): Promise<Token | null> {
 
 async function refreshToken(): Promise<Token | null> {
     try {
-        const value: string | null = localStorage.getItem("token");
+        const value: string | null = lStorage.getItem("token");
         if (value !== null) {
             const token: Token = JSON.parse(value);
 
@@ -119,7 +120,7 @@ async function proceedAuthResponse(response: Response): Promise<Token> {
     }
 
     token.validUntilMs = Date.now() + (token.expires_in - 5) * 1000;
-    localStorage.setItem("token", JSON.stringify(token));
+    lStorage.setItem("token", JSON.stringify(token));
     return token;
 }
 
@@ -155,7 +156,7 @@ async function loadAccount(token: Token): Promise<Account> {
 }
 
 function clearToken() {
-    localStorage.removeItem("token");
+    lStorage.removeItem("token");
 }
 
 export function authenticate(store: ReturnType<typeof makeStore>) {

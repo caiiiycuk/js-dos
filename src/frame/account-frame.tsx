@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "preact/hooks";
-import { appSlice } from "../app";
+import { uiSlice } from "../ui";
 import { authSlice } from "../auth/auth";
 import { useT } from "../i18n";
 import { State } from "../store";
@@ -17,7 +17,7 @@ export function AccountFrame(props: {}) {
 
     function logout() {
         dispatch(authSlice.actions.logout());
-        dispatch(appSlice.actions.frameNone());
+        dispatch(uiSlice.actions.frameNone());
     }
 
     return <div class="frame-root items-center">

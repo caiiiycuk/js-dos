@@ -13,6 +13,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         game_no_limits: "Любой размер игры",
         net_no_limits: "Безлимитные сетевые игры",
         unlock_options: "Доступ ко всем настройкам",
+        error: "Упс... Что-то пошло не так...",
+        consult_logs: "Проверьте логи браузера",
     },
     en: {
         logout: "Logout",
@@ -24,6 +26,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         game_no_limits: "Unlimited game size",
         net_no_limits: "No limits for multiplayer games",
         unlock_options: "Unlock all configuration options",
+        error: "Oops... Something went wrong...",
+        consult_logs: "Please check browser logs",
     },
 };
 

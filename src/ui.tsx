@@ -1,18 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAction, createSlice } from "@reduxjs/toolkit";
 import { Login } from "./auth/login";
-import { DosWindow } from "./dos/dom/dos";
 import { Frame } from "./frame/frame";
 import { SideBar } from "./sidebar/sidebar";
+import { Window } from "./window/window";
 
 const initialState: {
     modal: "none" | "login",
     frame: "none" | "account",
+    window: "none" | "error" | "loading" | "dos",
 } = {
     modal: "none",
     frame: "none",
+    window: "none",
 };
 
-export const appSlice = createSlice({
+export const uiSlice = createSlice({
     name: "app",
     initialState,
     reducers: {
@@ -28,6 +30,15 @@ export const appSlice = createSlice({
         frameAccount: (state) =>
             toggleFrameIfNeeded(state, "account"),
     },
+    extraReducers: (builder) => {
+        builder
+            .addCase(createAction<string>("dos/emuError"), (s, a) => {
+                s.window = "error";
+            })
+            .addCase(createAction<string>("dos/bndLoad"), (s, a) => {
+                s.window = "loading";
+            });
+    },
 });
 
 function toggleFrameIfNeeded(
@@ -40,9 +51,9 @@ function toggleFrameIfNeeded(
     }
 }
 
-export function App() {
+export function Ui() {
     return <div class="w-full h-full relative">
-        <DosWindow />
+        <Window />
         <Frame />
         <SideBar />
         <Login />

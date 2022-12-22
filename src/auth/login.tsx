@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { auth } from "../conf";
 import { useDispatch, useSelector } from "react-redux";
 import { State } from "../store";
-import { appSlice } from "../app";
+import { uiSlice } from "../ui";
 import { CloseButton } from "../components/close-button";
 
 type LoginWidget = { elId: string, mounted: boolean } & Widget;
@@ -13,7 +13,7 @@ export function Login() {
     const rootRef = useRef<HTMLDivElement>(null);
     const [widget, setWidget] = useState<LoginWidget | null>(null);
 
-    const visible = useSelector((state: State) => state.app.modal) === "login";
+    const visible = useSelector((state: State) => state.ui.modal) === "login";
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export function Login() {
         ref={rootRef}>
         <CloseButton
             class="absolute z-40 right-24 top-10"
-            onClose={() => dispatch(appSlice.actions.modalNone()) }
+            onClose={() => dispatch(uiSlice.actions.modalNone()) }
         />
     </div>;
 }
