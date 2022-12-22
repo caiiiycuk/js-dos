@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { App } from "./app";
 import { authenticate } from "./auth/auth";
 import { store } from "./store";
+import { initEmulators } from "./dos/dom/dos";
 
 render(
     <Provider store={store}>
@@ -14,3 +15,4 @@ render(
 );
 
 authenticate(store);
+initEmulators(store);

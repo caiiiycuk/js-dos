@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Login } from "./auth/login";
+import { DosWindow } from "./dos/dom/dos";
 import { Frame } from "./frame/frame";
 import { SideBar } from "./sidebar/sidebar";
 
@@ -39,9 +40,9 @@ function toggleFrameIfNeeded(
     }
 }
 
-
 export function App() {
     return <div class="w-full h-full relative">
+        <DosWindow />
         <Frame />
         <SideBar />
         <Login />

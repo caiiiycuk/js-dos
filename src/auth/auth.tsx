@@ -135,7 +135,6 @@ async function loadAccount(token: Token): Promise<Account> {
         clearToken();
         throw new Error(data.error.code + ": " + data.error.description);
     }
-    console.log(data);
 
     return {
         token,

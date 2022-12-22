@@ -1,9 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { appSlice } from "../app";
 import { authSlice } from "../auth/auth";
+import { useT } from "../i18n";
 import { State } from "../store";
 
 export function AccountFrame(props: {}) {
+    const t = useT();
     const account = useSelector((state: State) => state.auth.account);
     const dispatch = useDispatch();
 
@@ -17,10 +19,60 @@ export function AccountFrame(props: {}) {
     }
 
     return <div class="frame-root items-center">
-        { account.picture !== null &&
-            <img class="account-img" src={account.picture} /> }
+        {account.picture !== null &&
+            <img class="account-img" src={account.picture} />}
         <div>{account.name ?? account.email}</div>
-        { account.name !== null && <div class="account-email">{account.email}</div> }
-        <button class="mt-8" onClick={logout}>Logout</button>
+        {account.name !== null && <div class="account-email">{account.email}</div>}
+        <button class="mt-8" onClick={logout}>{t("logout")}</button>
+
+        <div class="mt-16 mb-4 text-2xl">{t("features")}</div>
+        <PremiumPlan />
     </div>;
+}
+
+function PremiumPlan(props: {}) {
+    const t = useT();
+    return <div class="premium-plan-root">
+        <div class="premium-plan-head">{t("premium")}</div>
+        <div class="flex flex-row my-6 items-top">
+            <div class="premium-plan-cost">
+                $5
+            </div>
+            <div class="premium-plan-cost-expl">
+                <div>USD / mo</div>
+                <div>or <span class="text-blue-600">$50</span> per year</div>
+            </div>
+        </div>
+        <button class="w-full">{t("buy")}</button>
+        <div class="flex flex-col mt-4">
+            <div class="premium-plan-highlight">
+                <PremiumCheck />
+                <div>{t("experimental_features")}</div>
+            </div>
+            <div class="premium-plan-highlight">
+                <PremiumCheck />
+                <div>{t("cloud_saves")}</div>
+            </div>
+            <div class="premium-plan-highlight">
+                <PremiumCheck />
+                <div>{t("game_no_limits")}</div>
+            </div>
+            <div class="premium-plan-highlight">
+                <PremiumCheck />
+                <div>{t("net_no_limits")}</div>
+            </div>
+            <div class="premium-plan-highlight" style="border-bottom: 0px">
+                <PremiumCheck />
+                <div>{t("unlock_options")}</div>
+            </div>
+        </div>
+    </div>;
+}
+
+function PremiumCheck(props: {}) {
+    return <svg xmlns="http://www.w3.org/2000/svg"
+        fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
+        class="mr-4 w-6 h-6 text-blue-500 flex-shrink-0">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+    </svg>;
 }
