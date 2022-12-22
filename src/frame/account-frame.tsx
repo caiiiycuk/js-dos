@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "preact/hooks";
 import { appSlice } from "../app";
 import { authSlice } from "../auth/auth";
 import { useT } from "../i18n";
@@ -34,6 +35,7 @@ export function AccountFrame(props: {}) {
 function PremiumPlan(props: {}) {
     const t = useT();
     const account = useSelector((state: State) => state.auth.account);
+    const [locked, setLocked] = useState<boolean>(false);
 
     if (account === null) {
         return null;
@@ -41,13 +43,19 @@ function PremiumPlan(props: {}) {
 
     const token = account.token.access_token;
     function onBuy() {
+        if (locked) {
+            return;
+        }
+
+        setLocked(true);
         linkToBuy(token)
             .then((link) => {
                 if (link !== null) {
                     window.open(link, "_blank");
                 }
             })
-            .catch(console.error);
+            .catch(console.error)
+            .finally(() => setLocked(false));
     }
 
     return <div class="premium-plan-root">
@@ -61,7 +69,7 @@ function PremiumPlan(props: {}) {
                 <div>or <span class="text-blue-600">$36</span> per year</div>
             </div>
         </div>
-        <button class="w-full" onClick={onBuy}>{t("buy")}</button>
+        <button class={ "w-full " + (locked ? "hidden" : "") } onClick={onBuy}>{t("buy")}</button>
         <div class="flex flex-col mt-4">
             <div class="premium-plan-highlight">
                 <PremiumCheck />
