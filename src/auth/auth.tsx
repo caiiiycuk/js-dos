@@ -1,6 +1,7 @@
 import { auth, xsollaMe, xsollaOAuth2 } from "../conf";
 import { createSlice } from "@reduxjs/toolkit";
 import { makeStore } from "../store";
+import { havePremium } from "../subscriptions/subscriptions";
 
 const revalidateTimeout = 30 * 60 * 1000; // 30 min
 
@@ -17,6 +18,7 @@ export interface Account {
     name: null | string,
     picture: null | string,
     token: Token,
+    premium: boolean,
 };
 
 const initialState: {
@@ -136,11 +138,19 @@ async function loadAccount(token: Token): Promise<Account> {
         throw new Error(data.error.code + ": " + data.error.description);
     }
 
+    let premium = false;
+    try {
+        premium = await havePremium(token.access_token);
+    } catch (e) {
+        console.error("Unknown preimium status", e);
+    }
+
     return {
         token,
         name: data.name ?? data.first_name ?? null,
         email: data.email,
         picture: data.picture ?? null,
+        premium,
     };
 }
 
