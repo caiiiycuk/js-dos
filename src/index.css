@@ -114,6 +114,10 @@ button {
   width: calc(var(--frame-width) * 0.7);
 }
 
+.premium-plan-root.have-premium {
+  @apply bg-green-200;
+}
+
 .premium-plan-head {
   @apply text-blue-400;
 }
@@ -129,6 +133,9 @@ button {
 .premium-plan-highlight {
   @apply flex flex-row text-xs items-center py-2 border-b border-b-gray-200;
   @apply text-gray-600;
+}
+.premium-plan-root.have-premium  .premium-plan-highlight {
+  @apply border-b-green-300;
 }
 
 .play-button {

@@ -17,6 +17,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         consult_logs: "Проверьте логи браузера",
         bundle_loading: "Загрузка бандла",
         bundle_config: "Чтение конфигурации",
+        try_free: "дней бесплатно",
     },
     en: {
         logout: "Logout",
@@ -32,6 +33,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         consult_logs: "Please check browser logs",
         bundle_loading: "Bundle loading",
         bundle_config: "Reading config",
+        try_free: "days for free",
     },
 };
 

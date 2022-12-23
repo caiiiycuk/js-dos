@@ -58,18 +58,22 @@ function PremiumPlan(props: {}) {
             .finally(() => setLocked(false));
     }
 
-    return <div class="premium-plan-root">
+    return <div class={ "premium-plan-root " + (account.premium ? "have-premium" : "") }>
         <div class="premium-plan-head">{t("premium")}</div>
-        <div class="flex flex-row my-6 items-top">
-            <div class="premium-plan-cost">
-                $3
-            </div>
-            <div class="premium-plan-cost-expl">
-                <div>USD / mo</div>
-                <div>or <span class="text-blue-600">$36</span> per year</div>
-            </div>
-        </div>
-        <button class={ "w-full " + (locked ? "hidden" : "") } onClick={onBuy}>{t("buy")}</button>
+        { !account.premium &&
+            <>
+                <div class="flex flex-row my-6 items-top">
+                    <div class="premium-plan-cost">
+                        $3
+                    </div>
+                    <div class="premium-plan-cost-expl">
+                        <div>USD / mo</div>
+                        <div><span class="text-blue-600">5</span> {t("try_free")}</div>
+                    </div>
+                </div>
+                <button class={ "w-full " + (locked ? "hidden" : "") } onClick={onBuy}>{t("buy")}</button>
+            </>
+        }
         <div class="flex flex-col mt-4">
             <div class="premium-plan-highlight">
                 <PremiumCheck />

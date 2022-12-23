@@ -38,5 +38,5 @@ export async function havePremium(token: string): Promise<boolean> {
         return false;
     }
 
-    return json.items.size > 0 && json.items[0] === xsollaPremiumId;
+    return json.items.length > 0 && json.items[0].plan_external_id === xsollaPremiumId;
 }
