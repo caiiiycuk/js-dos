@@ -2,14 +2,10 @@ import { render } from "preact";
 import "./index.css";
 
 import { Provider } from "react-redux";
-import { Ui } from "./ui";
+import { Ui, uiSlice } from "./ui";
 import { authenticate } from "./auth/auth";
 import { store } from "./store";
-import { dosSlice, initEmulators } from "./dos";
-import { BundleStorage } from "./storage/bundle-storage";
-import { loadBundle } from "./load";
-
-export const bundleStorage = new BundleStorage(store);
+import { initEmulators } from "./dos";
 
 render(
     <Provider store={store}>
@@ -34,10 +30,12 @@ function pollEvents() {
             // TODO:
             // / enter url screen
             // / parse params
-            const url = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos";
 
-            loadBundle(store, bundleStorage, url)
-                .catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
+            store.dispatch(uiSlice.actions.windowUpload());
+
+            // const url = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos";
+            // loadBundleFromUrl(url, store.dispatch)
+            //     .catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
         } break;
     };
 }

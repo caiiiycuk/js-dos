@@ -1,5 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { makeStore } from "../store";
+import { createSlice, Dispatch } from "@reduxjs/toolkit";
 
 const initialState: {
     recived: number,
@@ -24,50 +23,59 @@ export const storageSlice = createSlice({
     },
 });
 
-export class BundleStorage {
-    private store: ReturnType<typeof makeStore>;
-    constructor(s: ReturnType<typeof makeStore>) {
-        this.store = s;
+
+export function loadFile(file: File, dispatch: Dispatch): Promise<Uint8Array> {
+    return new Promise<Uint8Array>((resolve) => {
+        dispatch(storageSlice.actions.reset());
+        const reader = new FileReader();
+        reader.addEventListener("load", async (e) => {
+            resolve(new Uint8Array(reader.result as ArrayBuffer));
+        });
+        reader.addEventListener("progress", (e) => {
+            dispatch(storageSlice.actions.progress([e.loaded, e.total]));
+        });
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+export async function loadUrl(url: string, dispatch: Dispatch): Promise<Uint8Array> {
+    dispatch(storageSlice.actions.reset());
+
+    const response = await fetch(url, {
+        cache: "default",
+    });
+
+    if (response.status !== 200) {
+        throw new Error("Resource not avalible (" + response.status + "): " + response.statusText);
     }
 
-    async load(url: string): Promise<Uint8Array> {
-        this.store.dispatch(storageSlice.actions.reset());
+    const lenHeader = response.headers.get("Content-Length");
+    const length = lenHeader === null ? 0 :
+        Number.parseInt(lenHeader);
+    const reader = response.body!.getReader();
 
-        const response = await fetch(url, {
-            cache: "default",
-        });
+    let received = 0;
+    const chunks: Uint8Array[] = [];
+    while (true) {
+        const { done, value } = await reader.read();
 
-        if (response.status !== 200) {
-            throw new Error("Resource not avalible (" + response.status + "): " + response.statusText);
+        if (done) {
+            break;
         }
 
-        const lenHeader = response.headers.get("Content-Length");
-        const length = lenHeader === null ? 0 :
-            Number.parseInt(lenHeader);
-        const reader = response.body!.getReader();
+        chunks.push(value);
+        received += value.length;
 
-        let received = 0;
-        const chunks: Uint8Array[] = [];
-        while (true) {
-            const { done, value } = await reader.read();
+        dispatch(storageSlice.actions.progress([received, length]));
+    }
 
-            if (done) {
-                break;
-            }
+    let offset = 0;
+    const complete = new Uint8Array(received);
+    for (const next of chunks) {
+        complete.set(next, offset);
+        offset += next.length;
+    }
 
-            chunks.push(value);
-            received += value.length;
+    return complete;
+};
 
-            this.store.dispatch(storageSlice.actions.progress([received, length]));
-        }
-
-        let offset = 0;
-        const complete = new Uint8Array(received);
-        for (const next of chunks) {
-            complete.set(next, offset);
-            offset += next.length;
-        }
-
-        return complete;
-    };
-}

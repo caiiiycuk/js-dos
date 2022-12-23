@@ -7,7 +7,7 @@ import { Window } from "./window/window";
 const initialState: {
     modal: "none" | "login",
     frame: "none" | "account",
-    window: "none" | "error" | "loading" | "prerun" | "run",
+    window: "none" | "error" | "loading" | "prerun" | "run" | "upload",
 } = {
     modal: "none",
     frame: "none",
@@ -27,8 +27,12 @@ export const uiSlice = createSlice({
         frameNone: (state) => {
             state.frame = "none";
         },
-        frameAccount: (state) =>
-            toggleFrameIfNeeded(state, "account"),
+        frameAccount: (state) => {
+            toggleFrameIfNeeded(state, "account");
+        },
+        windowUpload: (s) => {
+            s.window = "upload";
+        },
     },
     extraReducers: (builder) => {
         builder

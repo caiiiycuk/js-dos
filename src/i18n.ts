@@ -18,6 +18,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         bundle_loading: "Загрузка бандла",
         bundle_config: "Чтение конфигурации",
         try_free: "дней бесплатно",
+        upload_file: "Выбирите архив jsdos/zip что бы начать...",
     },
     en: {
         logout: "Logout",
@@ -34,6 +35,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         bundle_loading: "Bundle loading",
         bundle_config: "Reading config",
         try_free: "days for free",
+        upload_file: "Select jsdos/zip file to start...",
     },
 };
 
