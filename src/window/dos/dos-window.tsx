@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { dosSlice, nonSerializedDosState } from "../../dos";
 import { State } from "../../store";
+import { keyboard } from "./controls/keyboard";
 import { webGl } from "./render/webgl";
 
 declare const emulators: Emulators;
@@ -43,8 +44,12 @@ export function DosWindow(props: {
 
         const canvas = root.childNodes[0] as HTMLCanvasElement;
 
-        const unmount = webGl(canvas, ci);
-        return unmount;
+        const unKeyboard = keyboard(window as any, ci);
+        const unWebGL = webGl(canvas, ci);
+        return () => {
+            unKeyboard();
+            unWebGL();
+        };
     }, [ci !== null]);
 
     return <div ref={rootRef} class="h-full flex-grow overflow-hidden relative">
