@@ -7,7 +7,7 @@ import { Window } from "./window/window";
 const initialState: {
     modal: "none" | "login",
     frame: "none" | "account",
-    window: "none" | "error" | "loading" | "dos",
+    window: "none" | "error" | "loading" | "prerun" | "run",
 } = {
     modal: "none",
     frame: "none",
@@ -32,11 +32,20 @@ export const uiSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(createAction<string>("dos/emuError"), (s, a) => {
-                s.window = "error";
-            })
             .addCase(createAction<string>("dos/bndLoad"), (s, a) => {
                 s.window = "loading";
+            })
+            .addCase(createAction<string>("dos/bndReady"), (s, a) => {
+                s.window = "prerun";
+            })
+            .addCase(createAction<string>("dos/bndPlay"), (s, a) => {
+                s.window = "run";
+            })
+            .addMatcher((action: {type: string}) => {
+                return action.type.startsWith("dos/") &&
+                action.type.endsWith("Error");
+            }, (s, a) => {
+                s.window = "error";
             });
     },
 });

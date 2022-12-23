@@ -15,6 +15,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         unlock_options: "Доступ ко всем настройкам",
         error: "Упс... Что-то пошло не так...",
         consult_logs: "Проверьте логи браузера",
+        bundle_loading: "Загрузка бандла",
+        bundle_config: "Чтение конфигурации",
     },
     en: {
         logout: "Logout",
@@ -28,6 +30,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         unlock_options: "Unlock all configuration options",
         error: "Oops... Something went wrong...",
         consult_logs: "Please check browser logs",
+        bundle_loading: "Bundle loading",
+        bundle_config: "Reading config",
     },
 };
 

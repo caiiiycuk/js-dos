@@ -30,12 +30,16 @@ export class BundleStorage {
         this.store = s;
     }
 
-    async load(url: string): Promise<Uint8Array[]> {
+    async load(url: string): Promise<Uint8Array> {
         this.store.dispatch(storageSlice.actions.reset());
 
         const response = await fetch(url, {
             cache: "default",
         });
+
+        if (response.status !== 200) {
+            throw new Error("Resource not avalible (" + response.status + "): " + response.statusText);
+        }
 
         const lenHeader = response.headers.get("Content-Length");
         const length = lenHeader === null ? 0 :
@@ -57,6 +61,13 @@ export class BundleStorage {
             this.store.dispatch(storageSlice.actions.progress([received, length]));
         }
 
-        return chunks;
+        let offset = 0;
+        const complete = new Uint8Array(received);
+        for (const next of chunks) {
+            complete.set(next, offset);
+            offset += next.length;
+        }
+
+        return complete;
     };
 }

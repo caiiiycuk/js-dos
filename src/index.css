@@ -130,3 +130,21 @@ button {
   @apply flex flex-row text-xs items-center py-2 border-b border-b-gray-200;
   @apply text-gray-600;
 }
+
+.play-button {
+  color: var(--sidebar-color);
+}
+
+.play-button:hover {
+  color: var(--sidebar-highlight);
+}
+
+select {
+  background-color: var(--frame-bg);
+  color: var(--frame-color);
+  @apply px-4 py-2 outline-none rounded cursor-pointer;
+}
+
+select:hover {
+  color: var(--sidebar-highlight);
+}

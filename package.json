@@ -34,7 +34,7 @@
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
     "autoprefixer": "^10.4.13",
-    "emulators": "^0.73.8",
+    "emulators": "0.80.2",
     "eslint": "^8.30.0",
     "eslint-config-google": "^0.14.0",
     "postcss": "^8.4.20",

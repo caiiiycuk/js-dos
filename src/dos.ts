@@ -4,24 +4,37 @@ import { Emulators } from "emulators";
 
 declare const emulators: Emulators;
 
+export interface BundleConfig {
+    name?: string,
+    version?: string,
+    backend?: string,
+    render?: string,
+};
+
 const initialState: {
     step:
     "emu-init" | "emu-error" | "emu-ready" |
-    "bnd-load" | "bnd-ready",
+    "bnd-load" | "bnd-error" | "bnd-config" | "bnd-ready" |
+    "bnd-play",
+    emuVersion: string,
     error: null | undefined | string,
     bundle: string | null,
+    config: BundleConfig,
 } = {
     step: "emu-init",
+    emuVersion: "-",
     error: null,
     bundle: null,
+    config: {},
 };
 
 export const dosSlice = createSlice({
     name: "dos",
     initialState,
     reducers: {
-        emuReady: (s) => {
+        emuReady: (s, a: { payload: string }) => {
             s.step = "emu-ready";
+            s.emuVersion = a.payload;
         },
         emuError: (s, a: { payload: string }) => {
             s.step = "emu-error";
@@ -31,17 +44,34 @@ export const dosSlice = createSlice({
             s.step = "bnd-load";
             s.bundle = a.payload;
         },
-        bndReady: (s) => {
+        bndError: (s, a: { payload: string }) => {
+            s.step = "bnd-error";
+            s.error = a.payload ?? "Unexpeceted error";
+        },
+        bndConfig: (s) => {
+            s.step = "bnd-config";
+        },
+        bndReady: (s, a: { payload: BundleConfig }) => {
             s.step = "bnd-ready";
+            s.config = a.payload;
+        },
+        bndPlay: (s) => {
+            s.step = "bnd-play";
         },
     },
 });
+
+export const nonSerializedDosState: {
+    bundle: Uint8Array[] | null
+} = {
+    bundle: null,
+};
 
 export function initEmulators(store: ReturnType<typeof makeStore>) {
     store.dispatch(async (dispatch) => {
         try {
             await initEmulatorsJs();
-            dispatch(dosSlice.actions.emuReady());
+            dispatch(dosSlice.actions.emuReady(emulators.version));
         } catch (e) {
             console.error("Unable to init emulators.js", e);
             dispatch(dosSlice.actions.emuError((e as any).message));

@@ -14,13 +14,34 @@ export function LoadingWindow() {
     switch (step) {
         case "bnd-load": {
             head = t("bundle_loading");
-            // TODO: normal format
-            message = `${received} / ${total} (${received * 100 / total}%)`;
+            message = `${formatSize(received)} / ${formatSize(total)}`;
+
+            if (total > 0) {
+                message += ` (${received * 100 / total}%)`;
+            }
         } break;
+        case "bnd-config": {
+            head = t("bundle_config");
+        }
     }
 
-    return <div class="flex-grow flex flex-col items-center justify-center frame-color">
-        <div class="text-2xl">{head}</div>
-        <div class="mt-2">{message}</div>
+    return <div class="flex-grow flex flex-col items-center justify-center frame-color px-8">
+        <div class="text-2xl text-center">{head}</div>
+        <div class="mt-2 text-center">{message}</div>
     </div>;
+}
+
+function formatSize(size: number) {
+    if (size < 1024) {
+        return size + "b";
+    }
+
+    size /= 1024;
+
+    if (size < 1024) {
+        return Math.round(size) + "kb";
+    }
+
+    size /= 1024;
+    return Math.round(size * 10) / 10 + "mb";
 }

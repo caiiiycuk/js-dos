@@ -7,6 +7,7 @@ import { authenticate } from "./auth/auth";
 import { store } from "./store";
 import { dosSlice, initEmulators } from "./dos";
 import { BundleStorage } from "./storage/bundle-storage";
+import { loadBundle } from "./load";
 
 export const bundleStorage = new BundleStorage(store);
 
@@ -33,17 +34,10 @@ function pollEvents() {
             // TODO:
             // / enter url screen
             // / parse params
-            const url = "http://localhost:8080/test/digger.jsdos";
+            const url = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos";
 
-            store.dispatch(dosSlice.actions.bndLoad(url));
-            bundleStorage
-                .load(url)
-                .then(() => {
-                    // store.dispatch(dosSlice.actions.bndReady());
-                })
-                .catch((e) => {
-                    // jj
-                });
+            loadBundle(store, bundleStorage, url)
+                .catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
         } break;
     };
 }
