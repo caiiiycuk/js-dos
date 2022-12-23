@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { makeStore } from "./store";
 import { Emulators } from "emulators";
+import { lStorage } from "./storage/storage";
 
 declare const emulators: Emulators;
 
@@ -11,12 +12,16 @@ export interface BundleConfig {
     render?: string,
 };
 
+type Backend = "dosbox" | "dosboxX";
+
 const initialState: {
     step:
     "emu-init" | "emu-error" | "emu-ready" |
     "bnd-load" | "bnd-error" | "bnd-config" | "bnd-ready" |
     "bnd-play",
     emuVersion: string,
+    worker: boolean,
+    backend: Backend,
     error: null | undefined | string,
     bundle: string | null,
     config: BundleConfig,
@@ -26,6 +31,8 @@ const initialState: {
     error: null,
     bundle: null,
     config: {},
+    worker: lStorage.getItem("worker") !== "false",
+    backend: (lStorage.getItem("backend") ?? "dosbox") as Backend,
 };
 
 export const dosSlice = createSlice({
@@ -57,6 +64,14 @@ export const dosSlice = createSlice({
         },
         bndPlay: (s) => {
             s.step = "bnd-play";
+        },
+        dosWorker: (s, a: { payload: boolean }) => {
+            s.worker = a.payload;
+            lStorage.setItem("worker", s.worker + "");
+        },
+        dosBackend: (s, a: { payload: Backend | string }) => {
+            s.backend = a.payload as Backend;
+            lStorage.setItem("backend", s.backend);
         },
     },
 });
