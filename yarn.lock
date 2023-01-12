@@ -2816,12 +2816,12 @@ elliptic@^6.5.3:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-emulators-ui@0.73.7:
-  version "0.73.7"
-  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.73.7.tgz#da93d0d44563910c37f5fcb6adde2a498248e773"
-  integrity sha512-K5XlkbcT1CTqwlhuxengS0EzkHI8f9PNMdAVJx1upkJiZXGJSX2VnceZFwnG4V4u2a6K5jitQhhT9dBDGGWz2g==
+emulators-ui@^0.73.9:
+  version "0.73.9"
+  resolved "https://registry.yarnpkg.com/emulators-ui/-/emulators-ui-0.73.9.tgz#194bf4d7712c3e5b31c073826373b42d2c9200be"
+  integrity sha512-Zx1eD9yHt+QjMwU0ay9FQKhyvvKucL1bRsTlZdHZsBrU3rNsZm52XODXFLSHMmAksEUe5TRocopWduJF7R9+xw==
 
-emulators@0.73.8:
+emulators@^0.73.8:
   version "0.73.8"
   resolved "https://registry.yarnpkg.com/emulators/-/emulators-0.73.8.tgz#1847e57fa5ce897cf148242943026676e1f2576e"
   integrity sha512-vfJTHDr6bD+Su+6cJE6wgRtQk+eVUZyJDUEY+wBChE1rUmSU76otrN5ejZL6s1oOnN3RAW45ZOj0u4dnCugW7Q==
