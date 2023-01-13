@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { uiSlice } from "../ui";
+import { uiSlice } from "../store/ui";
 import { State } from "../store";
 
 export function AccountButton(props: {

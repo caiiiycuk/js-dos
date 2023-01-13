@@ -1,6 +1,6 @@
 import { Dispatch } from "@reduxjs/toolkit";
 import { Emulators } from "emulators";
-import { dosSlice, nonSerializedDosState } from "./dos";
+import { dosSlice, nonSerializedDosState } from "./store/dos";
 import { loadFile, loadUrl } from "./storage/bundle-storage";
 
 declare const emulators: Emulators;

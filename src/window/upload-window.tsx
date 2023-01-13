@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { dosSlice } from "../dos";
+import { dosSlice } from "../store/dos";
 import { useT } from "../i18n";
 import { loadBundleFromFile } from "../load";
 

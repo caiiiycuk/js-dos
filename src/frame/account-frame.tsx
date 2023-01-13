@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "preact/hooks";
-import { uiSlice } from "../ui";
+import { uiSlice } from "../store/ui";
 import { authSlice } from "../auth/auth";
 import { useT } from "../i18n";
 import { State } from "../store";

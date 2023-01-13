@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { makeStore } from "./store";
+import { makeStore } from "../store";
 import { Emulators } from "emulators";
-import { lStorage } from "./storage/storage";
+import { lStorage } from "../storage/storage";
 
 declare const emulators: Emulators;
 
@@ -12,7 +12,14 @@ export interface BundleConfig {
     render?: string,
 };
 
-type Backend = "dosbox" | "dosboxX";
+export const BackendValues = <const> ["dosbox", "dosboxX"];
+export type Backend = typeof BackendValues[number];
+
+export const RenderBackendValues = <const> ["webgl", "canvas"];
+export type RenderBackend = typeof RenderBackendValues[number];
+
+export const RenderAspectValues = <const> ["AsIs", "4/3", "16/10"];
+export type RenderAspect = typeof RenderAspectValues[number];
 
 const initialState: {
     step:
@@ -22,6 +29,8 @@ const initialState: {
     emuVersion: string,
     worker: boolean,
     backend: Backend,
+    renderBackend: RenderBackend,
+    renderAspect: RenderAspect,
     error: null | undefined | string,
     bundle: string | null,
     config: BundleConfig,
@@ -33,6 +42,8 @@ const initialState: {
     config: {},
     worker: lStorage.getItem("worker") !== "false",
     backend: (lStorage.getItem("backend") ?? "dosbox") as Backend,
+    renderBackend: (lStorage.getItem("renderBackend") ?? "webgl") as RenderBackend,
+    renderAspect: (lStorage.getItem("renderAspect") ?? "AsIs") as RenderAspect,
 };
 
 export const dosSlice = createSlice({
@@ -69,9 +80,17 @@ export const dosSlice = createSlice({
             s.worker = a.payload;
             lStorage.setItem("worker", s.worker + "");
         },
-        dosBackend: (s, a: { payload: Backend | string }) => {
+        dosBackend: (s, a: { payload: Backend }) => {
             s.backend = a.payload as Backend;
             lStorage.setItem("backend", s.backend);
+        },
+        renderBackend: (s, a: { payload: RenderBackend }) => {
+            s.renderBackend = a.payload;
+            lStorage.setItem("renderBackend", s.renderBackend);
+        },
+        renderAspect: (s, a: { payload: RenderAspect }) => {
+            s.renderAspect = a.payload;
+            lStorage.setItem("renderAspect", s.renderAspect);
         },
     },
 });

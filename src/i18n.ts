@@ -19,6 +19,9 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         bundle_config: "Чтение конфигурации",
         try_free: "дней бесплатно",
         upload_file: "Выбирите архив jsdos/zip что бы начать...",
+        emulation_backend: "Эмуляция",
+        render_backend: "Рендер",
+        render_aspect: "Соотношение сторон",
     },
     en: {
         logout: "Logout",
@@ -36,6 +39,9 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         bundle_config: "Reading config",
         try_free: "days for free",
         upload_file: "Select jsdos/zip file to start...",
+        emulation_backend: "Emulation",
+        render_backend: "Render",
+        render_aspect: "Aspect",
     },
 };
 

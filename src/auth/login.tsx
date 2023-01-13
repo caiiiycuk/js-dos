@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import { auth } from "../conf";
 import { useDispatch, useSelector } from "react-redux";
 import { State } from "../store";
-import { uiSlice } from "../ui";
+import { uiSlice } from "../store/ui";
 import { CloseButton } from "../components/close-button";
 
 type LoginWidget = { elId: string, mounted: boolean } & Widget;

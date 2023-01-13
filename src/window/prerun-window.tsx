@@ -1,22 +1,25 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Select } from "../components/select";
-import { dosSlice } from "../dos";
+import { BackendSelect, RenderAspectSelect, RenderSelect } from "../components/dos-option-select";
+import { dosSlice } from "../store/dos";
 import { State } from "../store";
 
 export function PreRunWindow() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
-    const backend = useSelector((state: State) => state.dos.backend);
-    const dispatch = useDispatch();
-
-    function onBackend(backend: string) {
-        dispatch(dosSlice.actions.dosBackend(backend));
-    }
 
     return <div class="overflow-hidden flex-grow flex flex-col items-center justify-center frame-color px-8">
         <Play />
 
         <div class="text-center">emu-version: <span class="text-ellipsis overflow-hidden">{emuVersion}</span></div>
-        <Select class="mt-4" label="backend" selected={backend} values={["dosbox", "dosboxX"]} onSelect={onBackend} />
+
+        <div class="flex flex-row flex-wrap justify-end">
+            <div class="flex flex-col items-end">
+                <BackendSelect />
+            </div>
+            <div class="ml-10 flex flex-col items-end">
+                <RenderSelect />
+                <RenderAspectSelect />
+            </div>
+        </div>
     </div>;
 }
 

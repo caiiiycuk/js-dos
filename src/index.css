@@ -27,6 +27,7 @@
     --sidebar-width: 3rem; /* w-12 */
     --button-bg: #10629d;
     --button-text: white;
+    --select-bg: #FFFFFF15;
   }
 
   html {
@@ -147,9 +148,9 @@ button {
 }
 
 select {
-  background-color: var(--frame-bg);
+  background-color: var(--select-bg);
   color: var(--frame-color);
-  @apply px-4 py-2 outline-none rounded cursor-pointer;
+  @apply pl-4 pr-2 py-2 outline-none rounded cursor-pointer border-r-4 border-r-transparent;
 }
 
 select:hover {
