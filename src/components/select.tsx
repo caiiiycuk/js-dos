@@ -14,7 +14,7 @@ export function Select(props: {
             props.onSelect(e.currentTarget.value);
         }
     }
-    return <div class={props.class + " flex flex-row items-center"}>
+    return <div class={props.class + " option flex flex-row items-center"}>
         <div class="mr-4">{props.label}</div>
         <div>
             <select class="w-28" onChange={onSelect} disabled={props.disabled === true}>

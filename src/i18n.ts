@@ -22,6 +22,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         emulation_backend: "Эмуляция",
         render_backend: "Рендер",
         render_aspect: "Соотношение сторон",
+        worker: "Фоновый поток",
     },
     en: {
         logout: "Logout",
@@ -42,6 +43,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         emulation_backend: "Emulation",
         render_backend: "Render",
         render_aspect: "Aspect",
+        worker: "Worker thread",
     },
 };
 
