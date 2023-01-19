@@ -5,6 +5,7 @@ import { CommandInterface } from "emulators";
 import { keyboard } from "./controls/keyboard";
 import { webGl as webglRender } from "./render/webgl";
 import { canvas as canvasRender } from "./render/canvas";
+import { audioNode } from "./sound/audio-node";
 
 export function useDosRuntime(canvas: HTMLCanvasElement | null, ci: CommandInterface | null) {
     if (canvas === null || ci === null) {
@@ -25,10 +26,15 @@ export function useDosRuntime(canvas: HTMLCanvasElement | null, ci: CommandInter
         default:
     }
 
-    useKeyboard(ci);
-    useRenderBackend(renderBackend, canvas, ci, aspect);
+    const unbindKeyboard = useKeyboard(ci);
+    const unbindRenderBackend = useRenderBackend(renderBackend, canvas, ci, aspect);
+    const unbindAudioBackend = useAudioBackend(ci);
 
-    return null;
+    return () => {
+        unbindKeyboard();
+        unbindRenderBackend();
+        unbindAudioBackend();
+    };
 }
 
 function useKeyboard(ci: CommandInterface) {
@@ -59,4 +65,8 @@ function useRenderBackend(renderBackend: RenderBackend,
     return () => {
         unbind();
     };
+}
+
+function useAudioBackend(ci: CommandInterface) {
+    return audioNode(ci);
 }

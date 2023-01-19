@@ -35,7 +35,7 @@ function pollEvents() {
 
             // store.dispatch(uiSlice.actions.windowUpload());
 
-            let url = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos";
+            const url = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos";
             // url = "https://cdn.dos.zone/custom/dos/doom.jsdos";
             loadBundleFromUrl(url, store.dispatch)
                 .catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
