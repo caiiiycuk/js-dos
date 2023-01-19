@@ -1,0 +1,7 @@
+.play-button {
+  color: var(--sidebar-color);
+
+  &:hover {
+    color: var(--sidebar-highlight);
+  }
+}

@@ -3,7 +3,7 @@ import { uiSlice } from "./store/ui";
 import { authSlice } from "./auth/auth";
 import { dosSlice } from "./store/dos";
 import { i18nSlice } from "./i18n";
-import { storageSlice } from "./storage/bundle-storage";
+import { storageSlice } from "./store/storage";
 
 export function makeStore() {
     return configureStore({

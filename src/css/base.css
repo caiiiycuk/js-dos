@@ -1,0 +1,36 @@
+@font-face {
+  font-family: "DOS";
+  src: url("../assets/font/dos_vga_437.ttf");
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* :root {
+    --frame-bg: #eee8d5;
+    --sidebar-bg: linear-gradient(90deg, rgba(194,188,171,1) 0%, rgba(221,214,193,1) 100%);
+    --sidebar-color: #a39b81; 
+    --sidebar-bage-color: #b48802;
+  } */
+  
+  :root {
+    --root-bg: black;
+    --frame-bg: #252526;
+    --frame-color: #cccccc;
+    --frame-width: 24rem; /* w-96 */
+    --sidebar-bg: linear-gradient(90deg, #2d2d2d 0%, #333333 100%);
+    --sidebar-color: #838383; 
+    --sidebar-bage-color: #0078c9;
+    --sidebar-highlight: white;
+    --sidebar-width: 3rem; /* w-12 */
+    --button-bg: #10629d;
+    --button-text: white;
+    --select-bg: #FFFFFF15;
+  }
+
+  html {
+    font-family: DOS, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+}

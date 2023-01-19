@@ -17,7 +17,7 @@ export function LoadingWindow() {
             message = `${formatSize(received)} / ${formatSize(total)}`;
 
             if (total > 0) {
-                message += ` (${received * 100 / total}%)`;
+                message += ` (${Math.round(received * 10 / total) / 10}%)`;
             }
         } break;
         case "bnd-config": {

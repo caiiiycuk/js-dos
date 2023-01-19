@@ -1,0 +1,24 @@
+.contentbar {
+  @apply flex-grow;
+}
+
+.sidebar {
+  @apply absolute left-0 top-0 h-full flex flex-col items-center;
+  background: var(--sidebar-bg);
+  width: var(--sidebar-width);
+}
+
+.sidebar-button {
+  @apply cursor-pointer h-8 w-8 my-2 relative;
+  color: var(--sidebar-color);
+}
+
+.sidebar-highlight,
+.sidebar-button:hover {
+  color: var(--sidebar-highlight);
+}
+
+.sidebar-badge {
+  @apply absolute right-0 bottom-0 w-3 h-3 rounded-full animate-pulse;
+  background-color: var(--sidebar-bage-color);
+}
