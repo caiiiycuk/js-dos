@@ -23,6 +23,9 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         render_backend: "Рендер",
         render_aspect: "Соотношение сторон",
         worker: "Фоновый поток",
+        mouse_sensitivity: "Чувстит. мыши",
+        volume: "Громкость",
+        pause: "Пауза",
     },
     en: {
         logout: "Logout",
@@ -44,6 +47,9 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         render_backend: "Render",
         render_aspect: "Aspect",
         worker: "Worker thread",
+        mouse_sensitivity: "Mouse sens...",
+        volume: "Volume",
+        pause: "Pause",
     },
 };
 

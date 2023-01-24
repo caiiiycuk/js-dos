@@ -32,6 +32,8 @@ const initialState: {
     backend: Backend,
     renderBackend: RenderBackend,
     renderAspect: RenderAspect,
+    volume: number,
+    paused: boolean,
     error: null | undefined | string,
     bundle: string | null,
     config: BundleConfig,
@@ -45,6 +47,8 @@ const initialState: {
     backend: (lStorage.getItem("backend") ?? "dosbox") as Backend,
     renderBackend: (lStorage.getItem("renderBackend") ?? "webgl") as RenderBackend,
     renderAspect: (lStorage.getItem("renderAspect") ?? "AsIs") as RenderAspect,
+    volume: (Number.parseFloat(lStorage.getItem("volume") ?? "1.0")),
+    paused: false,
 };
 
 export const dosSlice = createSlice({
@@ -79,7 +83,7 @@ export const dosSlice = createSlice({
         },
         dosWorker: (s, a: { payload: boolean }) => {
             s.worker = a.payload;
-            lStorage.setItem("worker", s.worker + "");
+            lStorage.setItem("worker", s.worker ? "true" : "false");
         },
         dosBackend: (s, a: { payload: Backend }) => {
             s.backend = a.payload as Backend;
@@ -92,6 +96,13 @@ export const dosSlice = createSlice({
         renderAspect: (s, a: { payload: RenderAspect }) => {
             s.renderAspect = a.payload;
             lStorage.setItem("renderAspect", s.renderAspect);
+        },
+        volume: (s, a: { payload: number}) => {
+            s.volume = a.payload;
+            lStorage.setItem("volume", s.volume + "");
+        },
+        paused: (s, a: { payload: boolean}) => {
+            s.paused = a.payload;
         },
     },
 });

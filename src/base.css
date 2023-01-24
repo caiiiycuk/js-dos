@@ -1,6 +1,6 @@
 @font-face {
   font-family: "DOS";
-  src: url("../assets/font/dos_vga_437.ttf");
+  src: url("./assets/font/dos_vga_437.ttf");
 }
 
 @tailwind base;

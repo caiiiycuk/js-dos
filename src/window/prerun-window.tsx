@@ -3,6 +3,7 @@ import { BackendSelect, RenderAspectSelect, RenderSelect } from "../components/d
 import { dosSlice } from "../store/dos";
 import { State } from "../store";
 import { WorkerCheckbox } from "../components/dos-option-checkbox";
+import { VolumeSlider } from "../components/dos-option-slider";
 
 export function PreRunWindow() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
@@ -15,13 +16,15 @@ export function PreRunWindow() {
         <div class="flex flex-row flex-wrap justify-end">
             <div class="flex flex-col items-end">
                 <BackendSelect />
-                <WorkerCheckbox />
+                <RenderSelect />
             </div>
             <div class="ml-10 flex flex-col items-end">
-                <RenderSelect />
+                <WorkerCheckbox />
                 <RenderAspectSelect />
             </div>
         </div>
+
+        <VolumeSlider class="mt-2 w-full max-w-sm" />
     </div>;
 }
 

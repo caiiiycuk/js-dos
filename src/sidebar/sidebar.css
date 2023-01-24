@@ -9,7 +9,7 @@
 }
 
 .sidebar-button {
-  @apply cursor-pointer h-8 w-8 my-2 relative;
+  @apply cursor-pointer h-8 w-8 my-4 relative;
   color: var(--sidebar-color);
 }
 

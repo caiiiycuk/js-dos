@@ -42,7 +42,7 @@ class SamplesQueue {
 }
 
 export function audioNode(ci: CommandInterface,
-                          setVolumeFn?: (fn: (volume: number) => void) => void) {
+                          bindVolumeFn?: (fn: (volume: number) => void) => () => void) {
     const sampleRate = ci.soundFrequency();
     const channels = 1;
 
@@ -110,8 +110,9 @@ export function audioNode(ci: CommandInterface,
 
     gainNode.gain.value = 1.0;
 
-    if (setVolumeFn) {
-        setVolumeFn((volume: number) => {
+    let unbindVolumeFn: () => void;
+    if (bindVolumeFn) {
+        unbindVolumeFn = bindVolumeFn((volume: number) => {
             gainNode.gain.value = volume;
         });
     }
@@ -122,19 +123,26 @@ export function audioNode(ci: CommandInterface,
         }
     };
 
-    document.addEventListener("click", resumeWebAudio, { once: true });
-    document.addEventListener("touchstart", resumeWebAudio, { once: true });
+    document.addEventListener("pointerdown", resumeWebAudio, { once: true });
     document.addEventListener("keydown", resumeWebAudio, { once: true });
 
     return () => {
+        ci.events().onSoundPush(() => {});
+
         if (audioContext !== null) {
             audioNode.disconnect();
             gainNode.disconnect();
-            audioContext.close();
+            audioContext
+                .close()
+                .catch(console.error);
+            audioContext = null;
         }
 
-        document.removeEventListener("click", resumeWebAudio);
-        document.removeEventListener("touchstart", resumeWebAudio);
+        if (unbindVolumeFn !== undefined) {
+            unbindVolumeFn();
+        }
+
+        document.removeEventListener("pointerdown", resumeWebAudio);
         document.removeEventListener("keydown", resumeWebAudio);
     };
 }

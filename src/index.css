@@ -1,6 +1,7 @@
-@import "./css/base.css";
-@import "./css/app.css";
-@import "./css/sidebar.css";
-@import "./css/account.css";
-@import "./css/dos.css";
-@import "./css/output.css";
+@import "./base.css";
+@import "./app.css";
+@import "./components/components.css";
+@import "./sidebar/sidebar.css";
+@import "./auth/auth.css";
+@import "./window/window.css";
+@import "./frame/frame.css";

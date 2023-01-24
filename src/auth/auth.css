@@ -1,0 +1,11 @@
+.login-widget {
+  @apply absolute z-40 left-12 top-0 bottom-0 right-0;
+}
+
+.account-img {
+  @apply w-24 h-24 my-8 rounded-full;
+}
+
+.account-email {
+  @apply text-xs mt-4;
+}
