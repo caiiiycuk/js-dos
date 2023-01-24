@@ -23,7 +23,7 @@ async function doLoadBundle(bundleName: string,
     dispatch(dosSlice.actions.bndConfig());
 
     const config = await emulators.dosConfig(bundle);
-    console.log(config);
+    dispatch(dosSlice.actions.mouseLock(config?.output.options.autolock.value === true));
 
     nonSerializedDosState.bundle = [bundle];
     dispatch(dosSlice.actions.bndReady({}));

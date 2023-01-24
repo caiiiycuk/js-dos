@@ -33,6 +33,8 @@ const initialState: {
     renderBackend: RenderBackend,
     renderAspect: RenderAspect,
     volume: number,
+    mouseSensitivity: number,
+    mouseLock: boolean,
     paused: boolean,
     error: null | undefined | string,
     bundle: string | null,
@@ -48,6 +50,8 @@ const initialState: {
     renderBackend: (lStorage.getItem("renderBackend") ?? "webgl") as RenderBackend,
     renderAspect: (lStorage.getItem("renderAspect") ?? "AsIs") as RenderAspect,
     volume: (Number.parseFloat(lStorage.getItem("volume") ?? "1.0")),
+    mouseSensitivity: (Number.parseFloat(lStorage.getItem("mouse_sensitivity") ?? "1.0")),
+    mouseLock: false,
     paused: false,
 };
 
@@ -101,6 +105,13 @@ export const dosSlice = createSlice({
             s.volume = a.payload;
             lStorage.setItem("volume", s.volume + "");
         },
+        mouseSensitivity: (s, a: { payload: number}) => {
+            s.mouseSensitivity = a.payload;
+            lStorage.setItem("mouse_sensitivity", s.mouseSensitivity + "");
+        },
+        mouseLock: (s, a: { payload: boolean}) => {
+            s.mouseLock = a.payload;
+        },
         paused: (s, a: { payload: boolean}) => {
             s.paused = a.payload;
         },
@@ -132,7 +143,7 @@ function initEmulatorsJs() {
     }
 
     return new Promise<void>((resolve, reject) => {
-        const pathPrefix = "http://localhost:8080/";
+        const pathPrefix = "/emulators/";
         const script = document.createElement("script");
         script.async = true;
         script.type = "text/javascript";

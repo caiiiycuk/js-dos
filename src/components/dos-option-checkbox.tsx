@@ -4,6 +4,18 @@ import { State } from "../store";
 import { dosSlice } from "../store/dos";
 import { Checkbox } from "./checkbox";
 
+export function MouseLock() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const lock = useSelector((state: State) => state.dos.mouseLock);
+    return <Checkbox
+        class="mt-4"
+        label={t("mouse_lock")}
+        checked={lock}
+        onChange={(l) => dispatch(dosSlice.actions.mouseLock(l))}
+    />;
+}
+
 export function PauseCheckbox() {
     const t = useT();
     const dispatch = useDispatch();
@@ -17,7 +29,6 @@ export function PauseCheckbox() {
         onChange={(p) => dispatch(dosSlice.actions.paused(p))}
     />;
 }
-
 
 export function WorkerCheckbox() {
     const t = useT();

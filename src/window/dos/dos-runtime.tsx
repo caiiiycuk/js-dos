@@ -7,13 +7,29 @@ import { webGl as webglRender } from "./render/webgl";
 import { canvas as canvasRender } from "./render/canvas";
 import { audioNode } from "./sound/audio-node";
 import { useEffect } from "preact/hooks";
+import { mouse } from "./controls/mouse";
 
 export function useDosRuntime(canvas: HTMLCanvasElement | null,
                               ci: CommandInterface | null): void {
     usePause(ci);
     useKeyboard(ci);
+    useMouse(canvas, ci);
     useRenderBackend(canvas, ci);
     useAudioBackend(ci);
+}
+
+function useMouse(canvas: HTMLCanvasElement | null,
+                  ci: CommandInterface | null): void {
+    const mouseLock = useSelector((state: State) => state.dos.mouseLock);
+    const mouseSensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
+    useEffect(() => {
+        if (canvas === null || ci === null) {
+            return;
+        }
+
+        const sensistiviy = 0.5 + mouseSensitivity * 7;
+        return mouse(mouseLock, sensistiviy, 0, canvas, ci);
+    }, [canvas, ci, mouseLock, mouseSensitivity]);
 }
 
 function useKeyboard(ci: CommandInterface | null): void {

@@ -4,6 +4,21 @@ import { dosSlice } from "../store/dos";
 import { Slider } from "./slider";
 import { State } from "../store";
 
+export function MouseSensitiviySlider(props: {
+    class?: string,
+}) {
+    const t = useT();
+    const sensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
+    const dispatch = useDispatch();
+
+    return <Slider
+        class={props.class}
+        label={t("mouse_sensitivity")}
+        value={sensitivity}
+        onChange={(value) => dispatch(dosSlice.actions.mouseSensitivity(value)) }
+    />;
+}
+
 export function VolumeSlider(props: {
     class?: string,
 }) {

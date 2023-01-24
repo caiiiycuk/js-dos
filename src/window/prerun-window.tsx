@@ -2,8 +2,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { BackendSelect, RenderAspectSelect, RenderSelect } from "../components/dos-option-select";
 import { dosSlice } from "../store/dos";
 import { State } from "../store";
-import { WorkerCheckbox } from "../components/dos-option-checkbox";
-import { VolumeSlider } from "../components/dos-option-slider";
+import { MouseLock, WorkerCheckbox } from "../components/dos-option-checkbox";
+import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
 
 export function PreRunWindow() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
@@ -21,10 +21,12 @@ export function PreRunWindow() {
             <div class="ml-10 flex flex-col items-end">
                 <WorkerCheckbox />
                 <RenderAspectSelect />
+                <MouseLock />
             </div>
         </div>
 
-        <VolumeSlider class="mt-2 w-full max-w-sm" />
+        <MouseSensitiviySlider class="mt-4 w-full max-w-sm" />
+        <VolumeSlider class="w-full max-w-sm" />
     </div>;
 }
 

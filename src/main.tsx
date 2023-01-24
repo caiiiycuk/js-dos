@@ -8,6 +8,7 @@ import { authenticate } from "./auth/auth";
 import { store } from "./store";
 import { initEmulators } from "./store/dos";
 import { loadBundleFromUrl } from "./load";
+import { uiSlice } from "./store/ui";
 
 render(
     <Provider store={store}>
@@ -33,12 +34,13 @@ function pollEvents() {
             // / enter url screen
             // / parse params
 
-            // store.dispatch(uiSlice.actions.windowUpload());
+            store.dispatch(uiSlice.actions.windowUpload());
 
-            const url = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos";
-            // url = "https://cdn.dos.zone/custom/dos/doom.jsdos";
-            loadBundleFromUrl(url, store.dispatch)
-                .catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
+            // const url = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos";
+            // const url = "https://cdn.dos.zone/custom/dos/doom.jsdos";
+            // const url = "https://cdn.dos.zone/original/2X/7/744842062905f72648a4d492ccc2526d039b3702.jsdos"; // sim-city
+            // loadBundleFromUrl(url, store.dispatch)
+                // .catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
         } break;
     };
 }
