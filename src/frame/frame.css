@@ -30,8 +30,14 @@
 
 .settings-frame {
   @apply px-8 py-4;
-  
+
   .option {
     @apply w-full justify-between;
+  }
+
+  .slider {
+    .touch {
+      @apply w-40 flex-grow-0;
+    }
   }
 }

@@ -13,7 +13,7 @@
   .title {
     @apply mb-4 text-center text-4xl;
   }
-  
+
   .backend {
     @apply mb-8 text-center;
   }
@@ -29,9 +29,26 @@
       }
     }
 
-    div:nth-child(2), div:last-child {
+    div:nth-child(2),
+    div:last-child {
       @apply text-yellow-300;
     }
 
+  }
+}
+
+.pre-run-window {
+  @apply overflow-hidden flex-grow flex flex-col items-center justify-center frame-color px-8;
+
+  .slider {
+    @apply justify-center w-80 max-w-none;
+
+    .label {
+      @apply flex-grow;
+    }
+
+    .touch {
+      @apply w-40 flex-grow-0;
+    }
   }
 }

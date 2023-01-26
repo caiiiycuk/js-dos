@@ -23,7 +23,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         render_backend: "Рендер",
         render_aspect: "Соотношение сторон",
         worker: "Фоновый поток",
-        mouse_sensitivity: "Чувстит. мыши",
+        mouse_sensitivity: "Чувст. мыши",
         mouse_lock: "Захват мыши",
         volume: "Громкость",
         pause: "Пауза",

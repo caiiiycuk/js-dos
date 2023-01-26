@@ -15,7 +15,7 @@ export function Checkbox(props: {
         onClick={onChange}>
         <div class="mr-4">{props.label}</div>
         <div class="pointer-events-none">
-            <input class="w-28"
+            <input
                 checked={props.checked === true}
                 type="checkbox"
                 disabled={props.disabled === true} />

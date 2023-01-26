@@ -8,7 +8,7 @@ import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-sl
 export function PreRunWindow() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
 
-    return <div class="overflow-hidden flex-grow flex flex-col items-center justify-center frame-color px-8">
+    return <div class="pre-run-window">
         <Play class="mb-8" />
 
         <div class="text-center">emu-version: <span class="text-ellipsis overflow-hidden">{emuVersion}</span></div>
