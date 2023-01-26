@@ -4,17 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { dosSlice, nonSerializedDosState } from "../../store/dos";
 import { State } from "../../store";
 import { useDosRuntime } from "./dos-runtime";
+import { dhry2Bundle, Dhry2Results } from "./dos-dhry2";
 
 declare const emulators: Emulators;
 
 export function DosWindow(props: {
 }) {
-    const rootRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ci, setCi] = useState<CommandInterface | null>(null);
     const worker = useSelector((state: State) => state.dos.worker);
     const backend = useSelector((state: State) => state.dos.backend);
     const dispatch = useDispatch();
-    const canvas = rootRef.current?.childNodes[0] as HTMLCanvasElement | null;
 
     useEffect(() => {
         try {
@@ -32,9 +32,19 @@ export function DosWindow(props: {
         }
     }, [worker, backend]);
 
+    return <div class="h-full flex-grow overflow-hidden relative">
+        <canvas ref={canvasRef} />
+        { canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} /> }
+    </div>;
+}
+
+function DosRuntime(props: { canvas: HTMLCanvasElement, ci: CommandInterface }) {
+    const { canvas, ci } = props;
+    const bundle = useSelector((state: State) => state.dos.bundle);
+
     useDosRuntime(canvas, ci);
 
-    return <div ref={rootRef} class="h-full flex-grow overflow-hidden relative">
-        <canvas />
-    </div>;
+    return <>
+        { bundle?.endsWith(dhry2Bundle) && <Dhry2Results ci={ci} /> }
+    </>;
 }

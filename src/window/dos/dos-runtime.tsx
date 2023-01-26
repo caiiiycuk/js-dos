@@ -9,8 +9,8 @@ import { audioNode } from "./sound/audio-node";
 import { useEffect } from "preact/hooks";
 import { mouse } from "./controls/mouse";
 
-export function useDosRuntime(canvas: HTMLCanvasElement | null,
-                              ci: CommandInterface | null): void {
+export function useDosRuntime(canvas: HTMLCanvasElement,
+                              ci: CommandInterface): void {
     usePause(ci);
     useKeyboard(ci);
     useMouse(canvas, ci);
@@ -18,32 +18,24 @@ export function useDosRuntime(canvas: HTMLCanvasElement | null,
     useAudioBackend(ci);
 }
 
-function useMouse(canvas: HTMLCanvasElement | null,
-                  ci: CommandInterface | null): void {
+function useMouse(canvas: HTMLCanvasElement,
+                  ci: CommandInterface): void {
     const mouseLock = useSelector((state: State) => state.dos.mouseLock);
     const mouseSensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
     useEffect(() => {
-        if (canvas === null || ci === null) {
-            return;
-        }
-
         const sensistiviy = 0.5 + mouseSensitivity * 7;
         return mouse(mouseLock, sensistiviy, 0, canvas, ci);
     }, [canvas, ci, mouseLock, mouseSensitivity]);
 }
 
-function useKeyboard(ci: CommandInterface | null): void {
+function useKeyboard(ci: CommandInterface): void {
     useEffect(() => {
-        if (ci === null) {
-            return;
-        }
-
         return keyboard(window as any, ci);
     }, [ci]);
 }
 
-function useRenderBackend(canvas: HTMLCanvasElement | null,
-                          ci: CommandInterface | null): void {
+function useRenderBackend(canvas: HTMLCanvasElement,
+                          ci: CommandInterface): void {
     const renderBackend = useSelector((state: State) => state.dos.renderBackend);
     const renderAspect = useSelector((state: State) => state.dos.renderAspect);
 
@@ -59,10 +51,6 @@ function useRenderBackend(canvas: HTMLCanvasElement | null,
     }
 
     useEffect(() => {
-        if (canvas === null || ci === null) {
-            return;
-        }
-
         let unbind = () => { };
 
         if (renderBackend === "canvas") {
@@ -80,12 +68,8 @@ function useRenderBackend(canvas: HTMLCanvasElement | null,
     }, [canvas, ci, renderBackend, aspect]);
 }
 
-function useAudioBackend(ci: CommandInterface | null): void {
+function useAudioBackend(ci: CommandInterface): void {
     useEffect(() => {
-        if (ci === null) {
-            return;
-        }
-
         const unbind = audioNode(ci, (setVolume) => {
             let volume = 1;
 
@@ -105,13 +89,9 @@ function useAudioBackend(ci: CommandInterface | null): void {
     }, [ci]);
 }
 
-function usePause(ci: CommandInterface | null): void {
+function usePause(ci: CommandInterface): void {
     const paused = useSelector((state: State) => state.dos.paused);
     useEffect(() => {
-        if (ci === null) {
-            return;
-        }
-
         paused ? ci.pause() : ci.resume();
     }, [paused, ci]);
 }
