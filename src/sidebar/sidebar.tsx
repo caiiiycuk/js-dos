@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { State } from "../store";
 import { AccountButton } from "./account-button";
+import { CyclesText } from "./cycles-text";
 import { SettingsButton } from "./settings-button";
 
 export function SideBar(props: {}) {
@@ -8,9 +9,8 @@ export function SideBar(props: {}) {
 
     return <div class="sidebar">
         <div class="contentbar"></div>
-        <div class="">
-            { (window === "prerun" || window === "run") && <SettingsButton /> }
-            <AccountButton />
-        </div>
+        {window === "run" && <CyclesText />}
+        {(window === "prerun" || window === "run") && <SettingsButton />}
+        <AccountButton />
     </div>;
 };

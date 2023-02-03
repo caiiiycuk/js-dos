@@ -35,7 +35,8 @@ function pollEvents() {
             // / enter url screen
             // / parse params
 
-            // store.dispatch(uiSlice.actions.windowUpload());
+            store.dispatch(uiSlice.actions.windowUpload());
+            return;
 
             /* eslint-disable max-len */
             // const url = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos"; // digger

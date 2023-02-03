@@ -22,6 +22,11 @@ export const RenderAspectValues = <const> ["Game", "1/1", "5/4", "4/3", "16/10",
 export type RenderAspect = typeof RenderAspectValues[number];
 export const FitConstant = 65535;
 
+export interface EmulatorStats {
+    sleepPerSec: number,
+    cyclesPerMs: number,
+};
+
 const initialState: {
     step:
     "emu-init" | "emu-error" | "emu-ready" |
@@ -39,6 +44,7 @@ const initialState: {
     error: null | undefined | string,
     bundle: string | null,
     config: BundleConfig,
+    stats: EmulatorStats,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -53,6 +59,10 @@ const initialState: {
     mouseSensitivity: (Number.parseFloat(lStorage.getItem("mouse_sensitivity") ?? "1.0")),
     mouseLock: false,
     paused: false,
+    stats: {
+        sleepPerSec: 0,
+        cyclesPerMs: 0,
+    },
 };
 
 export const dosSlice = createSlice({
@@ -114,6 +124,9 @@ export const dosSlice = createSlice({
         },
         paused: (s, a: { payload: boolean}) => {
             s.paused = a.payload;
+        },
+        stats: (s, a: { payload: EmulatorStats }) => {
+            s.stats = a.payload;
         },
     },
 });

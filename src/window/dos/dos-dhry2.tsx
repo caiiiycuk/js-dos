@@ -2,6 +2,7 @@ import { CommandInterface } from "emulators";
 import { useEffect, useState } from "preact/hooks";
 import { useSelector } from "react-redux";
 import { State } from "../../store";
+import { EmulatorStats } from "../../store/dos";
 
 export const dhry2Bundle = "/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos";
 
@@ -22,6 +23,11 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
         pc: null,
     });
 
+    const [stats, setStats] = useState<EmulatorStats>({
+        sleepPerSec: 0,
+        cyclesPerMs: 0,
+    });
+
     useEffect(() => {
         const listeners: ((message: string) => void)[] = [];
 
@@ -37,13 +43,27 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
         };
 
         // listen program outpus for `~>dtime` marker
+        let startedAt = Date.now();
+        let prevSleepCount = 0;
+        let prevCycles = 0;
         ci.events().onStdout((message) => {
             if (!message.startsWith("dhry2:")) {
                 return;
             }
 
+            ci.asyncifyStats().then((stats) => {
+                const dt = Date.now() - startedAt;
+                setStats({
+                    sleepPerSec: Math.round((stats.sleepCount - prevSleepCount) * 1000 / dt),
+                    cyclesPerMs: Math.round((stats.cycles - prevCycles) / dt),
+                });
+                startedAt = Date.now();
+                prevSleepCount = stats.sleepCount;
+                prevCycles = stats.cycles;
+            });
+
             // eslint-disable-next-line
-        const [_, runsStr, deltaStr, vaxRatingStr] = message.split(" ");
+            const [_, runsStr, deltaStr, vaxRatingStr] = message.split(" ");
             const runs = Number.parseInt(runsStr);
             const delta = Number.parseFloat(deltaStr);
             const vaxRating = Number.parseFloat(vaxRatingStr);
@@ -76,12 +96,16 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
         <div class="results">
             <div>VAX:</div>
             <div>{results.vax}</div>
+            <div>Cycles p/ms:</div>
+            <div>{stats.cyclesPerMs}</div>
+            <div>Sleep p/sec:</div>
+            <div>{stats.sleepPerSec}</div>
             <div>Runs:</div>
             <div>{results.runs}</div>
             <div>Time:</div>
             <div>{results.time} <span>ms</span></div>
-            { results.pc !== null && <div>PC:</div> }
-            { results.pc !== null && <div>{results.pc ?? "..."}</div> }
+            {results.pc !== null && <div>PC:</div>}
+            {results.pc !== null && <div>{results.pc ?? "..."}</div>}
         </div>
     </div>;
 }
