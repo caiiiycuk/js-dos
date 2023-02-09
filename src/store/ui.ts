@@ -3,7 +3,7 @@ import { createAction, createSlice } from "@reduxjs/toolkit";
 const initialState: {
     modal: "none" | "login",
     frame: "none" | "account" | "output",
-    window: "none" | "error" | "loading" | "prerun" | "run" | "upload",
+    window: "none" | "error" | "loading" | "prerun" | "run" | "upload" | "editor",
 } = {
     modal: "none",
     frame: "none",
@@ -31,6 +31,9 @@ export const uiSlice = createSlice({
         },
         windowUpload: (state) => {
             state.window = "upload";
+        },
+        windowEditor: (state) => {
+            state.window = "editor";
         },
     },
     extraReducers: (builder) => {

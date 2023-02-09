@@ -132,8 +132,10 @@ export const dosSlice = createSlice({
 });
 
 export const nonSerializedDosState: {
+    editorBundle: Uint8Array | null,
     bundle: Uint8Array[] | null
 } = {
+    editorBundle: null,
     bundle: null,
 };
 

@@ -24,16 +24,6 @@ html, body, #app {
   color: var(--frame-color);
 }
 
-button {
-  @apply cursor-pointer px-8 py-1 rounded brightness-125;
-  background-color: var(--button-bg);
-  color: var(--button-text);
-}
-
-.button {
-  @apply cursor-pointer h-12 w-12;
-}
-
 select {
   background-color: var(--select-bg);
   color: var(--frame-color);

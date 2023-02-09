@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { State } from "../store";
 import { DosWindow } from "./dos/dos-window";
+import { EditorWindow } from "./editor/editor-window";
 import { ErrorWindow } from "./error-window";
 import { LoadingWindow } from "./loading-window";
 import { PreRunWindow } from "./prerun-window";
@@ -26,6 +27,9 @@ export function Window(props: {}) {
         case "upload": {
             windowComponent = <UploadWindow />;
         } break;
+        case "editor": {
+            windowComponent = <EditorWindow />;
+        }
         default: ;
     };
     return <div class="absolute w-full h-full flex flex-row">

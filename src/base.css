@@ -25,12 +25,27 @@
     --sidebar-bage-color: #0078c9;
     --sidebar-highlight: white;
     --sidebar-width: 3rem; /* w-12 */
-    --button-bg: #10629d;
-    --button-text: white;
+    --button-bg: #2d2d2d;
+    --button-text: #969696;
+    --button-primary-bg: #10629d;
+    --button-primary-text: white;
     --select-bg: #FFFFFF15;
+    --window-bg: #1e1e1e;
+    --window-color: #d4d4d4;
   }
 
   html {
     font-family: DOS, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+}
+
+
+button, .button {
+  @apply cursor-pointer px-8 py-1 rounded;
+  background-color: var(--button-bg);
+  color: var(--button-text);
+
+  &:hover {
+    @apply brightness-150;
   }
 }

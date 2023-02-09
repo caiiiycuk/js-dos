@@ -27,6 +27,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         mouse_lock: "Захват мыши",
         volume: "Громкость",
         pause: "Пауза",
+        dosboxconf_template: "dosbox.conf шаблон:",
+        preview: "Превью",
     },
     en: {
         logout: "Logout",
@@ -52,6 +54,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         mouse_lock: "Capture mouse",
         volume: "Volume",
         pause: "Pause",
+        dosboxconf_template: "dosbox.conf template:",
+        preview: "Preview",
     },
 };
 

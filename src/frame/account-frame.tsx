@@ -20,7 +20,7 @@ export function AccountFrame(props: {}) {
         dispatch(uiSlice.actions.frameNone());
     }
 
-    return <div class="frame-root items-center">
+    return <div class="account-frame frame-root items-center">
         {account.picture !== null &&
             <img class="account-img" src={account.picture} />}
         <div>{account.name ?? account.email}</div>

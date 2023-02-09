@@ -4,6 +4,7 @@ import { authSlice } from "./auth/auth";
 import { dosSlice } from "./store/dos";
 import { i18nSlice } from "./i18n";
 import { storageSlice } from "./store/storage";
+import { editorSlice } from "./store/editor";
 
 export function makeStore() {
     return configureStore({
@@ -13,6 +14,7 @@ export function makeStore() {
             ui: uiSlice.reducer,
             dos: dosSlice.reducer,
             storage: storageSlice.reducer,
+            editor: editorSlice.reducer,
         },
     });
 };

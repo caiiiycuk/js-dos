@@ -41,3 +41,10 @@
     }
   }
 }
+
+.account-frame {
+  button {
+    background-color: var(--button-primary-bg);
+    color: var(--button-primary-text);
+  }
+}
