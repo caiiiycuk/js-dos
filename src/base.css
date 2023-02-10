@@ -49,3 +49,8 @@ button, .button {
     @apply brightness-150;
   }
 }
+
+.button-primary {
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
+}

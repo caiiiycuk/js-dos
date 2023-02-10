@@ -3,9 +3,14 @@ import { State } from "../../store";
 import { editorSlice } from "../../store/editor";
 
 export function PreviewButton(props: { class?: string }) {
-    const hightlight = useSelector((state: State) => state.ui.window === "editor" &&
-        state.editor.step === "preview");
+    const step = useSelector((state: State) => state.editor.step);
+    const hightlight = step === "preview";
     const dispatch = useDispatch();
+
+    if (step === "bundler" || step === "extract" || step === "error") {
+        return null;
+    }
+
     function openPreview() {
         dispatch(editorSlice.actions.stepPreview());
     }

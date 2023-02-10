@@ -29,6 +29,11 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         pause: "Пауза",
         dosboxconf_template: "dosbox.conf шаблон:",
         preview: "Превью",
+        continue: "Продолжить",
+        skip: "Пропустить",
+        loading: "Загрузка",
+        extract_loading: "Распаковка архива",
+        extract_long_time: "Может занять длительное время, пожалуйста ждите...",
     },
     en: {
         logout: "Logout",
@@ -56,6 +61,11 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         pause: "Pause",
         dosboxconf_template: "dosbox.conf template:",
         preview: "Preview",
+        continue: "Continue",
+        skip: "Skip",
+        loading: "Loading",
+        extract_loading: "Unpacking archive",
+        extract_long_time: "Can take long time, please be patient...",
     },
 };
 

@@ -3,12 +3,18 @@ import { State } from "../../store";
 import { editorSlice } from "../../store/editor";
 
 export function DosboxConfButton(props: { class?: string}) {
-    const hightlight = useSelector((state: State) => state.ui.window === "editor" &&
-        state.editor.step === "conf");
+    const step = useSelector((state: State) => state.editor.step);
+    const hightlight = step === "conf";
     const dispatch = useDispatch();
+
+    if (step === "bundler" || step === "extract" || step === "error") {
+        return null;
+    }
+
     function openConf() {
         dispatch(editorSlice.actions.stepConf());
     }
+
     return <div class={ "sidebar-button " + (hightlight ? "sidebar-highlight " : "") + props.class }
         onClick={openConf}>
         <svg xmlns="http://www.w3.org/2000/svg"

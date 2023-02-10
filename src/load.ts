@@ -2,8 +2,7 @@ import { Dispatch } from "@reduxjs/toolkit";
 import { Emulators } from "emulators";
 import { dosSlice, nonSerializedDosState } from "./store/dos";
 import { loadFile, loadUrl } from "./storage/bundle-storage";
-import { uiSlice } from "./store/ui";
-import { editorSlice } from "./store/editor";
+import { newEditor } from "./window/editor/editor-explorer";
 
 declare const emulators: Emulators;
 
@@ -29,9 +28,7 @@ async function doLoadBundle(bundleName: string,
 
     const config = await emulators.dosConfig(bundle);
     if (config === null) {
-        nonSerializedDosState.editorBundle = bundle;
-        dispatch(uiSlice.actions.windowEditor());
-        dispatch(editorSlice.actions.stepConf());
+        newEditor(bundle, dispatch);
         return;
     }
 

@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import { formatSize, Loading } from "../components/loading";
 import { useT } from "../i18n";
 import { State } from "../store";
 
@@ -8,7 +9,7 @@ export function LoadingWindow() {
     const [received, total] = useSelector((state: State) =>
         [state.storage.recived, state.storage.total]);
 
-    let head = "Loading";
+    let head = t("loading");
     let message = "";
 
     switch (step) {
@@ -25,23 +26,5 @@ export function LoadingWindow() {
         }
     }
 
-    return <div class="flex-grow flex flex-col items-center justify-center frame-color px-8">
-        <div class="text-2xl text-center">{head}</div>
-        <div class="mt-2 text-center">{message}</div>
-    </div>;
-}
-
-function formatSize(size: number) {
-    if (size < 1024) {
-        return size + "b";
-    }
-
-    size /= 1024;
-
-    if (size < 1024) {
-        return Math.round(size) + "kb";
-    }
-
-    size /= 1024;
-    return Math.round(size * 10) / 10 + "mb";
+    return <Loading head={head} message={message} />;
 }

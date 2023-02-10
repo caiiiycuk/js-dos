@@ -2,17 +2,22 @@ import { createSlice } from "@reduxjs/toolkit";
 import { dosboxconf } from "../window/editor/defaults";
 
 const initialState: {
-    step: "conf" | "preview" | "bundler",
+    step: "conf" | "preview" | "extract" | "bundler" | "error",
     dosboxconf: string,
+    errorMessage: string | null,
 } = {
     step: "conf",
     dosboxconf: dosboxconf[0].contents,
+    errorMessage: null,
 };
 
 export const editorSlice = createSlice({
     name: "editor",
     initialState,
     reducers: {
+        extract: (s) => {
+            s.step = "extract";
+        },
         stepConf: (s) => {
             s.step = "conf";
         },
@@ -29,6 +34,10 @@ export const editorSlice = createSlice({
         },
         dosboxConf: (s, a: { payload: string }) => {
             s.dosboxconf = a.payload;
+        },
+        error: (s, a: { payload: string }) => {
+            s.step = "error";
+            s.errorMessage = a.payload;
         },
     },
 });
