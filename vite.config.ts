@@ -9,4 +9,14 @@ export default defineConfig({
         host: "0.0.0.0",
         cors: true,
     },
+    build: {
+        rollupOptions: {
+            output: {
+                entryFileNames: "js-dos.js",
+                assetFileNames: (info) => {
+                    return info.name === "index.css" ? "js-dos.css" : info.name;
+                },
+            },
+        },
+    },
 });

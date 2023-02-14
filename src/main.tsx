@@ -11,13 +11,6 @@ import { loadBundleFromUrl } from "./load";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
 
-render(
-    <Provider store={store}>
-        {<Ui /> as any}
-    </Provider>,
-    document.getElementById("app") as HTMLElement,
-);
-
 let pollStep = "none";
 
 function pollEvents() {
@@ -54,3 +47,15 @@ store.subscribe(pollEvents);
 
 authenticate(store);
 initEmulators(store);
+
+
+export function Dos(element: HTMLDivElement) {
+    render(
+        <Provider store={store}>
+            {<Ui /> as any}
+        </Provider>,
+        element,
+    );
+}
+
+(window as any).Dos = Dos;
