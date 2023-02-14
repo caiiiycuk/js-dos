@@ -2,7 +2,7 @@ import { createAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: {
     modal: "none" | "login",
-    frame: "none" | "account" | "output",
+    frame: "none" | "account" | "output" | "editor-fs",
     window: "none" | "error" | "loading" | "prerun" | "run" | "upload" | "editor",
 } = {
     modal: "none",

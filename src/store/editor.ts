@@ -1,14 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Node } from "react-checkbox-tree";
 import { dosboxconf } from "../window/editor/defaults";
 
 const initialState: {
     step: "conf" | "preview" | "extract" | "bundler" | "error",
     dosboxconf: string,
     errorMessage: string | null,
+    fs: Node[],
 } = {
     step: "conf",
     dosboxconf: dosboxconf[0].contents,
     errorMessage: null,
+    fs: [],
 };
 
 export const editorSlice = createSlice({

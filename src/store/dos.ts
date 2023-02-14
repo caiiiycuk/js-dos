@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { makeStore } from "../store";
 import { Emulators } from "emulators";
 import { lStorage } from "../storage/storage";
-import { EditorExplorer } from "../window/editor/editor-explorer";
+import { ExplorerRoot } from "../window/editor/editor-explorer";
 
 declare const emulators: Emulators;
 
@@ -134,11 +134,11 @@ export const dosSlice = createSlice({
 
 export const nonSerializedDosState: {
     editorBundle: Uint8Array | null,
-    editorExplorer: EditorExplorer,
+    editorExplorer: ExplorerRoot,
     bundle: Uint8Array[] | null
 } = {
     editorBundle: null,
-    editorExplorer: new EditorExplorer(),
+    editorExplorer: new ExplorerRoot(),
     bundle: null,
 };
 
