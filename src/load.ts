@@ -2,7 +2,9 @@ import { Dispatch } from "@reduxjs/toolkit";
 import { Emulators } from "emulators";
 import { dosSlice, nonSerializedDosState } from "./store/dos";
 import { loadFile, loadUrl } from "./storage/bundle-storage";
-import { newEditor } from "./window/editor/editor-explorer";
+import { explorerExtract, newEditor } from "./frame/editor/editor-explorer";
+import { uiSlice } from "./store/ui";
+import { editorSlice } from "./store/editor";
 
 declare const emulators: Emulators;
 
@@ -27,13 +29,16 @@ async function doLoadBundle(bundleName: string,
     dispatch(dosSlice.actions.bndConfig());
 
     const config = await emulators.dosConfig(bundle);
+    newEditor(bundle, dispatch);
+
     if (config === null) {
-        newEditor(bundle, dispatch);
-        return;
+        await explorerExtract(dispatch);
+        dispatch(uiSlice.actions.frameConf());
+    } else {
+        dispatch(editorSlice.actions.dosboxConf(JSON.stringify(config, null, 2)));
     }
 
     dispatch(dosSlice.actions.mouseLock(config?.output.options.autolock.value === true));
-
     nonSerializedDosState.bundle = [bundle];
     dispatch(dosSlice.actions.bndReady({}));
 }

@@ -2,8 +2,8 @@ import { createAction, createSlice } from "@reduxjs/toolkit";
 
 const initialState: {
     modal: "none" | "login",
-    frame: "none" | "account" | "output" | "editor-fs",
-    window: "none" | "error" | "loading" | "prerun" | "run" | "upload" | "editor",
+    frame: "none" | "account" | "output" | "editor-conf" | "editor-fs",
+    window: "none" | "error" | "loading" | "prerun" | "run" | "upload",
 } = {
     modal: "none",
     frame: "none",
@@ -29,17 +29,23 @@ export const uiSlice = createSlice({
         frameOutput: (state) => {
             state.frame = "output";
         },
+        frameConf: (state) => {
+            state.frame = "editor-conf";
+        },
         windowUpload: (state) => {
             state.window = "upload";
-        },
-        windowEditor: (state) => {
-            state.window = "editor";
         },
     },
     extraReducers: (builder) => {
         builder
             .addCase(createAction<string>("dos/bndLoad"), (s, a) => {
                 s.window = "loading";
+            })
+            .addCase(createAction<string>("editor/extract"), (s, a) => {
+                s.window = "loading";
+            })
+            .addCase(createAction<string>("editor/ready"), (s, a) => {
+                s.window = "prerun";
             })
             .addCase(createAction<string>("dos/bndReady"), (s, a) => {
                 s.window = "prerun";

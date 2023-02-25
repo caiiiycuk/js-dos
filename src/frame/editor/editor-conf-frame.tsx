@@ -14,7 +14,7 @@ export function EditorConf() {
         dispatch(editorSlice.actions.dosboxConf(contents));
     }
 
-    return <div class="flex flex-col flex-grow w-full py-4">
+    return <div class="editor-conf flex flex-col flex-grow w-full py-4">
         <div class="flex flex-row items-center mb-4">
             <div class="mr-4">{t("dosboxconf_template")}</div>
             { dosboxconf.map(({ name, contents }) => {

@@ -1,21 +1,26 @@
 import { useDispatch, useSelector } from "react-redux";
+import { explorerExtract } from "../../frame/editor/editor-explorer";
 import { State } from "../../store";
-import { editorSlice } from "../../store/editor";
+import { uiSlice } from "../../store/ui";
 
-export function DosboxConfButton(props: { class?: string}) {
-    const step = useSelector((state: State) => state.editor.step);
-    const hightlight = step === "conf";
+export function DosboxConfButton(props: { class?: string }) {
+    const frame = useSelector((state: State) => state.ui.frame);
+    const editorStep = useSelector((state: State) => state.editor.step);
+    const hightlight = "editor-conf" === frame;
     const dispatch = useDispatch();
 
-    if (step === "bundler" || step === "extract" || step === "error") {
-        return null;
+    async function openConf() {
+        if (hightlight) {
+            dispatch(uiSlice.actions.frameNone());
+        } else {
+            if (editorStep === "empty") {
+                await explorerExtract(dispatch);
+            }
+            dispatch(uiSlice.actions.frameConf());
+        }
     }
 
-    function openConf() {
-        dispatch(editorSlice.actions.stepConf());
-    }
-
-    return <div class={ "sidebar-button " + (hightlight ? "sidebar-highlight " : "") + props.class }
+    return <div class={"sidebar-button " + (hightlight ? "sidebar-highlight " : "") + props.class}
         onClick={openConf}>
         <svg xmlns="http://www.w3.org/2000/svg"
             fill="none" viewBox="0 0 24 24"

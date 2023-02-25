@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import { State } from "../store";
 import { AccountFrame } from "./account-frame";
+import { EditorConf } from "./editor/editor-conf-frame";
 import { SettingsFrame } from "./settings-frame";
 
 export function Frame(props: {}) {
@@ -9,8 +10,9 @@ export function Frame(props: {}) {
         return null;
     }
 
-    return <div class="frame">
+    return <div class={"frame " + frame + "-frame"}>
         { frame === "account" && <AccountFrame /> }
-        { frame === "output" && <SettingsFrame />}
+        { frame === "output" && <SettingsFrame /> }
+        { frame === "editor-conf" && <EditorConf /> }
     </div>;
 };

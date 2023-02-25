@@ -1,3 +1,5 @@
+@import "./editor/editor-frame.css";
+
 .premium-plan-root {
   @apply bg-white rounded-xl px-4 pt-4 pb-2;
   width: calc(var(--frame-width) * 0.7);

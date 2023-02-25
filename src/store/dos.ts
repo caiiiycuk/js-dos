@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { makeStore } from "../store";
 import { Emulators } from "emulators";
 import { lStorage } from "../storage/storage";
-import { ExplorerRoot } from "../window/editor/editor-explorer";
+import { ExplorerRoot } from "../frame/editor/editor-explorer";
 
 declare const emulators: Emulators;
 

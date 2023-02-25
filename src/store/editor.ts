@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Node } from "react-checkbox-tree";
-import { dosboxconf } from "../window/editor/defaults";
+import { dosboxconf } from "../frame/editor/defaults";
 
 const initialState: {
-    step: "conf" | "preview" | "extract" | "bundler" | "error",
+    step: "empty" | "extract" | "ready" | "error",
     dosboxconf: string,
     errorMessage: string | null,
     fs: Node[],
 } = {
-    step: "conf",
+    step: "empty",
     dosboxconf: dosboxconf[0].contents,
     errorMessage: null,
     fs: [],
@@ -18,22 +18,14 @@ export const editorSlice = createSlice({
     name: "editor",
     initialState,
     reducers: {
+        empty: (s) => {
+            s.step = "empty";
+        },
         extract: (s) => {
             s.step = "extract";
         },
-        stepConf: (s) => {
-            s.step = "conf";
-        },
-        stepPreview: (s) => {
-            if (s.step === "conf") {
-                // s.step = "bundler";
-                // makeBundle(nonSerializedDosState.editorBundle, s.dosboxconf);
-                // TODO: FS layer -> new bundle
-
-                s.step = "preview";
-            } else if (s.step !== "preview") {
-                s.step = "preview";
-            }
+        ready: (s) => {
+            s.step = "ready";
         },
         dosboxConf: (s, a: { payload: string }) => {
             s.dosboxconf = a.payload;
