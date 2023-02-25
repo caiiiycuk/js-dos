@@ -34,6 +34,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         loading: "Загрузка",
         extract_loading: "Распаковка архива",
         extract_long_time: "Может занять длительное время, пожалуйста ждите...",
+        theme: "Тема",
     },
     en: {
         logout: "Logout",
@@ -66,6 +67,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         loading: "Loading",
         extract_loading: "Unpacking archive",
         extract_long_time: "Can take long time, please be patient...",
+        theme: "Theme",
     },
 };
 

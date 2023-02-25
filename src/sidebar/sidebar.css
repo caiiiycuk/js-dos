@@ -1,6 +1,6 @@
 .sidebar {
   @apply absolute left-0 top-0 h-full flex flex-col items-center;
-  background: var(--sidebar-bg);
+  background: linear-gradient(90deg, hsl(var(--b3)) 0%, hsl(var(--b2)) 100%);
   width: var(--sidebar-width);
 
   .contentbar {
@@ -9,21 +9,21 @@
 
   .sidebar-button {
     @apply cursor-pointer h-8 w-8 my-4 relative;
-    color: var(--sidebar-color);
+    color: hsl(var(--bc));
   }
 
   .sidebar-highlight,
   .sidebar-button:hover {
-    color: var(--sidebar-highlight);
+    color: hsl(var(--af));
   }
 
   .sidebar-badge {
     @apply absolute right-0 bottom-0 w-3 h-3 rounded-full animate-pulse;
-    background-color: var(--sidebar-bage-color);
+    background-color: hsl(var(--p));
   }
 
   .cycles {
-   @apply text-xs overflow-hidden text-right w-full pr-2 whitespace-nowrap; 
-   color: var(--frame-color);
+   @apply text-xs overflow-hidden text-right w-full pr-2 whitespace-nowrap opacity-50; 
+   color: hsl(var(--bc));
   }
 }

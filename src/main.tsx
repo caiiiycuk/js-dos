@@ -48,8 +48,11 @@ store.subscribe(pollEvents);
 authenticate(store);
 initEmulators(store);
 
+export interface DosOptions {
+    theme?: "dark" | "light";
+}
 
-export function Dos(element: HTMLDivElement) {
+export function Dos(element: HTMLDivElement, options: DosOptions) {
     render(
         <Provider store={store}>
             {<Ui /> as any}

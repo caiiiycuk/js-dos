@@ -1,19 +1,32 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
+import { lStorage } from "../storage/storage";
+
+export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
+    "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua", "lofi",
+    "pastel", "fantasy", "wireframe", "black", "luxury", "dracula", "cmyk", "autumn", "business",
+    "acid", "lemonade", "night", "coffee", "winter"];
+export type Theme = typeof ThemeValues[number];
 
 const initialState: {
     modal: "none" | "login",
     frame: "none" | "account" | "output" | "editor-conf" | "editor-fs",
     window: "none" | "error" | "loading" | "prerun" | "run" | "upload",
+    theme: Theme,
 } = {
     modal: "none",
     frame: "none",
     window: "none",
+    theme: (lStorage.getItem("theme") ?? "dark") as Theme,
 };
 
 export const uiSlice = createSlice({
     name: "app",
     initialState,
     reducers: {
+        theme: (state, a: { payload: Theme }) => {
+            lStorage.setItem("theme", a.payload);
+            state.theme = a.payload;
+        },
         modalLogin: (state) => {
             state.modal = "login";
         },
@@ -53,9 +66,9 @@ export const uiSlice = createSlice({
             .addCase(createAction<string>("dos/bndPlay"), (s, a) => {
                 s.window = "run";
             })
-            .addMatcher((action: {type: string}) => {
+            .addMatcher((action: { type: string }) => {
                 return action.type.startsWith("dos/") &&
-                action.type.endsWith("Error");
+                    action.type.endsWith("Error");
             }, (s, a) => {
                 s.window = "error";
             });

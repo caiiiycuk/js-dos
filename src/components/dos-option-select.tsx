@@ -3,11 +3,14 @@ import { useT } from "../i18n";
 import { State } from "../store";
 import { Select } from "./select";
 import { AnyAction } from "@reduxjs/toolkit";
-import { Backend, BackendValues, dosSlice, RenderAspect, RenderAspectValues,
-    RenderBackend, RenderBackendValues } from "../store/dos";
+import {
+    Backend, BackendValues, dosSlice, RenderAspect, RenderAspectValues,
+    RenderBackend, RenderBackendValues
+} from "../store/dos";
+import { ThemeValues, Theme, uiSlice } from "../store/ui";
 
 export function BackendSelect() {
-    return <DosOptionSelect
+    return <OptionSelect
         label="emulation_backend"
         values={[...BackendValues]}
         selector={(state: State) => state.dos.backend}
@@ -17,7 +20,7 @@ export function BackendSelect() {
 
 export function RenderSelect() {
     const disabled = useSelector((state: State) => state.ui.window) === "run";
-    return <DosOptionSelect
+    return <OptionSelect
         label="render_backend"
         values={[...RenderBackendValues]}
         disabled={disabled}
@@ -27,7 +30,7 @@ export function RenderSelect() {
 }
 
 export function RenderAspectSelect() {
-    return <DosOptionSelect
+    return <OptionSelect
         label="render_aspect"
         values={[...RenderAspectValues]}
         selector={(state: State) => state.dos.renderAspect}
@@ -35,7 +38,18 @@ export function RenderAspectSelect() {
     />;
 }
 
-function DosOptionSelect<T>(props: {
+export function ThemeSelect(props: { class?: string }) {
+    return <OptionSelect
+        class={props.class}
+        label="theme"
+        values={[...ThemeValues]}
+        selector={(state: State) => state.ui.theme}
+        dispatch={(newValue: Theme) => uiSlice.actions.theme(newValue)}
+    />;
+}
+
+function OptionSelect<T>(props: {
+    class?: string,
     label: string,
     values: string[]
     selector: (state: State) => T,
@@ -50,7 +64,7 @@ function DosOptionSelect<T>(props: {
         dispatch(props.dispatch(newValue));
     }
     return <Select
-        class="mt-4"
+        class={"mt-4 " + props.class}
         disabled={props.disabled === true}
         label={t(props.label)}
         selected={value as string}

@@ -36,6 +36,7 @@
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
     "autoprefixer": "^10.4.13",
+    "daisyui": "^2.51.1",
     "emulators": "^0.80.5",
     "eslint": "^8.34.0",
     "eslint-config-google": "^0.14.0",

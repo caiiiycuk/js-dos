@@ -1,3 +1,8 @@
+select {
+  @apply select select-bordered;
+  @apply pl-4 pr-2 py-2;
+}
+
 .slider {
     @apply flex flex-row items-center;
 
@@ -10,12 +15,12 @@
 
         .bg {
             @apply w-full h-2 rounded-full;
-            background-color: var(--sidebar-color);
+            background-color: hsl(var(--b2));
         }
 
         .point {
             @apply absolute h-6 w-6 rounded-full;
-            background-color: var(--sidebar-highlight);
+            background-color: hsl(var(--bc));
         }
     }
 

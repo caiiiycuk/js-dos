@@ -2,7 +2,8 @@
     @apply w-full;
 
     .editor-conf {
-        @apply overflow-hidden flex-grow flex flex-col items-center justify-center frame-color h-full px-4;
+        @apply overflow-hidden flex-grow flex flex-col items-center justify-center h-full px-4;
+        color: hsl(var(--n));
 
         textarea {
             @apply w-full border-0 outline-none;

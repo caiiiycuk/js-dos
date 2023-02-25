@@ -3,33 +3,5 @@ html, body, #app {
 }
 
 #app {
-  background: var(--root-bg);
-}
-
-.frame-root {
-  @apply flex flex-col;
-}
-
-.frame {
-  @apply absolute left-0 top-0 pl-12 overflow-auto h-full w-full py-4;
-  background-color: var(--frame-bg);
-  color: var(--frame-color);
-
-  @media (min-width: 640px) {
-      width: var(--frame-width);
-  }
-}
-
-.frame-color {
-  color: var(--frame-color);
-}
-
-select {
-  background-color: var(--select-bg);
-  color: var(--frame-color);
-  @apply pl-4 pr-2 py-2 outline-none rounded cursor-pointer border-r-4 border-r-transparent;
-
-  &:hover {
-    color: var(--sidebar-highlight);
-  }
+  background: hsl(var(--pc));
 }

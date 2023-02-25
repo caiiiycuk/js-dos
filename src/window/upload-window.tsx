@@ -8,7 +8,7 @@ fileInput.type = "file";
 
 export function UploadWindow() {
     const t = useT();
-    return <div class="overflow-hidden flex-grow flex flex-col items-center justify-center frame-color px-8">
+    return <div class="overflow-hidden flex-grow flex flex-col items-center justify-center px-8">
         <Upload />
         <div class="mt-4 text-center">{t("upload_file")}</div>
     </div>;
