@@ -4,6 +4,8 @@ import { dosSlice } from "../store/dos";
 import { State } from "../store";
 import { MouseLock, WorkerCheckbox } from "../components/dos-option-checkbox";
 import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
+import { updateBundleConf } from "../load";
+import { uiSlice } from "../store/ui";
 
 export function PreRunWindow() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
@@ -31,9 +33,16 @@ export function PreRunWindow() {
 }
 
 function Play(props: { class?: string }) {
+    const configChanged = useSelector((state: State) => state.editor.configChanged);
     const dispatch = useDispatch();
     function onPlay() {
-        dispatch(dosSlice.actions.bndPlay());
+        if (configChanged) {
+            updateBundleConf()
+                .then(() => dispatch(dosSlice.actions.bndPlay()))
+                .catch((e) => dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error")));
+        } else {
+            dispatch(dosSlice.actions.bndPlay());
+        }
     }
 
     return <div class={props.class + " cursor-pointer"} onClick={onPlay}>

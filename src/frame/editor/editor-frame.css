@@ -3,12 +3,9 @@
 
     .editor-conf {
         @apply overflow-hidden flex-grow flex flex-col items-center justify-center h-full px-4;
-        color: hsl(var(--n));
 
         textarea {
-            @apply w-full border-0 outline-none;
-            background-color: var(--window-bg);
-            color: var(--window-color);
+            @apply w-full textarea;
             resize: none;
         }
     }

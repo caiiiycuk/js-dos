@@ -1,11 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
-import { explorerExtract } from "../../frame/editor/editor-explorer";
 import { State } from "../../store";
 import { uiSlice } from "../../store/ui";
 
 export function DosboxConfButton(props: { class?: string }) {
     const frame = useSelector((state: State) => state.ui.frame);
-    const editorStep = useSelector((state: State) => state.editor.step);
     const hightlight = "editor-conf" === frame;
     const dispatch = useDispatch();
 
@@ -13,9 +11,6 @@ export function DosboxConfButton(props: { class?: string }) {
         if (hightlight) {
             dispatch(uiSlice.actions.frameNone());
         } else {
-            if (editorStep === "empty") {
-                await explorerExtract(dispatch);
-            }
             dispatch(uiSlice.actions.frameConf());
         }
     }

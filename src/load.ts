@@ -2,9 +2,9 @@ import { Dispatch } from "@reduxjs/toolkit";
 import { Emulators } from "emulators";
 import { dosSlice, nonSerializedDosState } from "./store/dos";
 import { loadFile, loadUrl } from "./storage/bundle-storage";
-import { explorerExtract, newEditor } from "./frame/editor/editor-explorer";
 import { uiSlice } from "./store/ui";
 import { editorSlice } from "./store/editor";
+import { store } from "./store";
 
 declare const emulators: Emulators;
 
@@ -21,31 +21,30 @@ async function doLoadBundle(bundleName: string,
                             bundleProducer: () => Promise<Uint8Array>,
                             dispatch: Dispatch) {
     nonSerializedDosState.bundle = null;
-    nonSerializedDosState.editorBundle = null;
 
     dispatch(dosSlice.actions.bndLoad(bundleName));
 
     const bundle = await bundleProducer();
     dispatch(dosSlice.actions.bndConfig());
 
-    const config = await emulators.dosConfig(bundle);
-    newEditor(bundle, dispatch);
-
+    const config = await emulators.bundleConfig(bundle);
+    dispatch(editorSlice.actions.init(config));
     if (config === null) {
-        await explorerExtract(dispatch);
         dispatch(uiSlice.actions.frameConf());
-    } else {
-        dispatch(editorSlice.actions.dosboxConf(JSON.stringify(config, null, 2)));
     }
 
-    dispatch(dosSlice.actions.mouseLock(config?.output.options.autolock.value === true));
+    // TODO: dosbox.conf parser
+    // dispatch(dosSlice.actions.mouseLock(config?.output.options.autolock.value === true));
     nonSerializedDosState.bundle = [bundle];
     dispatch(dosSlice.actions.bndReady({}));
 }
 
-export async function makeBundle(bundle: Uint8Array | null,
-                                 dosboxConf: string) {
-    if (bundle === null) {
+export async function updateBundleConf() {
+    const config = store.getState().editor.bundleConfig;
+    const bundle = nonSerializedDosState.bundle;
+    if (bundle === null || config === null) {
         throw new Error("Unexpected behaviour (internal state is broken), bundle is null");
     }
+
+    bundle[0] = await emulators.bundleUpdateConfig(bundle[0], config);
 }

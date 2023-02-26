@@ -26,7 +26,6 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.3",
     "@xsolla/login-sdk": "^0.75.1",
-    "jszip": "^3.10.1",
     "preact": "^10.13.0",
     "react-checkbox-tree": "^1.8.0",
     "react-redux": "^8.0.5"
@@ -37,7 +36,7 @@
     "@typescript-eslint/parser": "^5.53.0",
     "autoprefixer": "^10.4.13",
     "daisyui": "^2.51.1",
-    "emulators": "^0.80.5",
+    "emulators": "^0.80.8",
     "eslint": "^8.34.0",
     "eslint-config-google": "^0.14.0",
     "postcss": "^8.4.21",

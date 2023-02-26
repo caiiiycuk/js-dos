@@ -65,6 +65,7 @@ export const uiSlice = createSlice({
             })
             .addCase(createAction<string>("dos/bndPlay"), (s, a) => {
                 s.window = "run";
+                s.frame = "none";
             })
             .addMatcher((action: { type: string }) => {
                 return action.type.startsWith("dos/") &&

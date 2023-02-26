@@ -32,7 +32,7 @@ export function DosWindow(props: {
         }
     }, [worker, backend]);
 
-    return <div class="h-full flex-grow overflow-hidden relative">
+    return <div class="bg-black h-full flex-grow overflow-hidden relative">
         <canvas ref={canvasRef} />
         { canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} /> }
     </div>;
