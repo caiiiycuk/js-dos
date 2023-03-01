@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { makeStore } from "../store";
-import { Emulators } from "emulators";
+import { CommandInterface, Emulators } from "emulators";
 import { lStorage } from "../storage/storage";
 
 declare const emulators: Emulators;
@@ -45,6 +45,7 @@ const initialState: {
     bundle: string | null,
     config: BundleConfig,
     stats: EmulatorStats,
+    ci: boolean,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -63,6 +64,7 @@ const initialState: {
         sleepPerSec: 0,
         cyclesPerMs: 0,
     },
+    ci: false,
 };
 
 export const dosSlice = createSlice({
@@ -128,13 +130,18 @@ export const dosSlice = createSlice({
         stats: (s, a: { payload: EmulatorStats }) => {
             s.stats = a.payload;
         },
+        ci: (s, a: { payload: boolean }) => {
+            s.ci = a.payload;
+        },
     },
 });
 
 export const nonSerializedDosState: {
-    bundle: Uint8Array[] | null
+    bundle: Uint8Array[] | null,
+    ci: CommandInterface | null,
 } = {
     bundle: null,
+    ci: null,
 };
 
 export function initEmulators(store: ReturnType<typeof makeStore>) {

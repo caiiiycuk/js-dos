@@ -45,6 +45,9 @@ export const uiSlice = createSlice({
         frameConf: (state) => {
             state.frame = "editor-conf";
         },
+        frameFs: (state) => {
+            state.frame = "editor-fs";
+        },
         windowUpload: (state) => {
             state.window = "upload";
         },

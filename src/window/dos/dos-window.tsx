@@ -21,11 +21,19 @@ export function DosWindow(props: {
             const ci: Promise<CommandInterface> =
                 (emulators as any)[backend + (worker ? "Worker" : "Direct")](nonSerializedDosState.bundle!);
             ci
-                .then(setCi)
+                .then((ci) => {
+                    setCi(ci);
+                    dispatch(dosSlice.actions.ci(true));
+                    nonSerializedDosState.ci = ci;
+                })
                 .catch((e) => dispatch(dosSlice.actions.emuError(e.message)));
 
             return () => {
-                ci.then((ci) => ci.exit());
+                ci.then((ci) => {
+                    dispatch(dosSlice.actions.ci(false));
+                    nonSerializedDosState.ci = null;
+                    ci.exit();
+                });
             };
         } catch (e) {
             dispatch(dosSlice.actions.emuError((e as any).message));

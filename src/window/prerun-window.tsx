@@ -5,7 +5,6 @@ import { State } from "../store";
 import { MouseLock, WorkerCheckbox } from "../components/dos-option-checkbox";
 import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
 import { updateBundleConf } from "../load";
-import { uiSlice } from "../store/ui";
 
 export function PreRunWindow() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
