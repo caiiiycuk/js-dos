@@ -35,6 +35,12 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         extract_loading: "Распаковка архива",
         extract_long_time: "Может занять длительное время, пожалуйста ждите...",
         theme: "Тема",
+        create_empty: "Создать пустой бандл",
+        uploading_file: "Загрузка файла",
+        fs_restart: "Вы хотите пересобрать бандл используя эту FS?",
+        please_wait: "Пожалуйста подождите",
+        making_bundle: "Создаем бандл",
+        size: "Размер",
     },
     en: {
         logout: "Logout",
@@ -68,6 +74,12 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         extract_loading: "Unpacking archive",
         extract_long_time: "Can take long time, please be patient...",
         theme: "Theme",
+        create_empty: "Create empty bundle",
+        uploading_file: "Uploading file",
+        fs_restart: "Do you want to rebuild the bundle using this fs?",
+        please_wait: "Please wait",
+        making_bundle: "Creating bundle",
+        size: "Size",
     },
 };
 

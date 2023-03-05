@@ -8,6 +8,22 @@ import { store } from "./store";
 
 declare const emulators: Emulators;
 
+export async function loadEmptyBundle(dispatch: Dispatch) {
+    await doLoadBundle("empty.jsdos", async () => {
+        const bundle = await emulators.bundle();
+        return bundle.toUint8Array();
+    }, dispatch);
+
+    dispatch(uiSlice.actions.frameConf());
+}
+
+export async function loadBundle(bundle: Uint8Array, openConfig: boolean, dispatch: Dispatch) {
+    doLoadBundle("bundle.jsdos", () => Promise.resolve(bundle), dispatch);
+    if (openConfig) {
+        dispatch(uiSlice.actions.frameConf());
+    }
+}
+
 export async function loadBundleFromFile(file: File, dispatch: Dispatch) {
     doLoadBundle(file.name, () => loadFile(file, dispatch), dispatch);
 }

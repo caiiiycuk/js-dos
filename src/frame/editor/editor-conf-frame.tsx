@@ -26,7 +26,7 @@ export function EditorConf() {
         <div class="flex flex-row items-center mb-4">
             <div class="mr-4">{t("dosboxconf_template")}</div>
             {dosboxconf.map(({ name, contents }) => {
-                return <button
+                return <button class="mx-2"
                     onClick={() => {
                         updateDosboxConf(contents);
                     }}>

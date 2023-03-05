@@ -1,16 +1,25 @@
 import { useDispatch } from "react-redux";
 import { dosSlice } from "../store/dos";
 import { useT } from "../i18n";
-import { loadBundleFromFile } from "../load";
+import { loadBundleFromFile, loadEmptyBundle } from "../load";
 
 const fileInput = document.createElement("input");
 fileInput.type = "file";
 
 export function UploadWindow() {
     const t = useT();
+    const dispatch = useDispatch();
+
+    function createEmpty() {
+        loadEmptyBundle(dispatch)
+            .catch(console.error);
+    }
+
     return <div class="overflow-hidden flex-grow flex flex-col items-center justify-center px-8">
         <Upload />
         <div class="mt-4 text-center">{t("upload_file")}</div>
+        <div class="mt-4 text-center underline cursor-pointer hover:text-accent"
+            onClick={createEmpty}>{t("create_empty")}</div>
     </div>;
 }
 
