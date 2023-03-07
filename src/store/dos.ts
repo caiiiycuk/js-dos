@@ -12,13 +12,13 @@ export interface BundleConfig {
     render?: string,
 };
 
-export const BackendValues = <const> ["dosbox", "dosboxX"];
+export const BackendValues = <const>["dosbox", "dosboxX"];
 export type Backend = typeof BackendValues[number];
 
-export const RenderBackendValues = <const> ["webgl", "canvas"];
+export const RenderBackendValues = <const>["webgl", "canvas"];
 export type RenderBackend = typeof RenderBackendValues[number];
 
-export const RenderAspectValues = <const> ["Game", "1/1", "5/4", "4/3", "16/10", "16/9", "Fit"];
+export const RenderAspectValues = <const>["Game", "1/1", "5/4", "4/3", "16/10", "16/9", "Fit"];
 export type RenderAspect = typeof RenderAspectValues[number];
 export const FitConstant = 65535;
 
@@ -113,18 +113,18 @@ export const dosSlice = createSlice({
             s.renderAspect = a.payload;
             lStorage.setItem("renderAspect", s.renderAspect);
         },
-        volume: (s, a: { payload: number}) => {
+        volume: (s, a: { payload: number }) => {
             s.volume = a.payload;
             lStorage.setItem("volume", s.volume + "");
         },
-        mouseSensitivity: (s, a: { payload: number}) => {
+        mouseSensitivity: (s, a: { payload: number }) => {
             s.mouseSensitivity = a.payload;
             lStorage.setItem("mouse_sensitivity", s.mouseSensitivity + "");
         },
-        mouseLock: (s, a: { payload: boolean}) => {
+        mouseLock: (s, a: { payload: boolean }) => {
             s.mouseLock = a.payload;
         },
-        paused: (s, a: { payload: boolean}) => {
+        paused: (s, a: { payload: boolean }) => {
             s.paused = a.payload;
         },
         stats: (s, a: { payload: EmulatorStats }) => {
@@ -144,10 +144,10 @@ export const nonSerializedDosState: {
     ci: null,
 };
 
-export function initEmulators(store: ReturnType<typeof makeStore>) {
+export function initEmulators(store: ReturnType<typeof makeStore>, pathPrefix: string) {
     store.dispatch(async (dispatch) => {
         try {
-            await initEmulatorsJs();
+            await initEmulatorsJs(pathPrefix);
             dispatch(dosSlice.actions.emuReady(emulators.version));
         } catch (e) {
             console.error("Unable to init emulators.js", e);
@@ -156,14 +156,13 @@ export function initEmulators(store: ReturnType<typeof makeStore>) {
     });
 }
 
-function initEmulatorsJs() {
+function initEmulatorsJs(pathPrefix: string) {
     const el = document.querySelector("#emulators.js");
     if (el !== null) {
         return Promise.resolve();
     }
 
     return new Promise<void>((resolve, reject) => {
-        const pathPrefix = "/emulators/";
         const script = document.createElement("script");
         script.async = true;
         script.type = "text/javascript";
@@ -173,7 +172,8 @@ function initEmulatorsJs() {
             resolve();
         };
         script.onerror = (err) => {
-            reject(new Error("Unable to add emulators.js"));
+            reject(new Error("Unable to add emulators.js. Probably you should set the " +
+            "'pathPrefix' option to point to the js-dos folder."));
         };
 
         document.head.appendChild(script);

@@ -4,7 +4,6 @@
 
 @layer base {
   :root {
-    --frame-width: 24rem; /* w-96 */
     --sidebar-width: 3rem; /* w-12 */
   }
 }

@@ -10,6 +10,7 @@ import { initEmulators } from "./store/dos";
 import { loadBundleFromUrl } from "./load";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
+import { i18nSlice } from "./i18n";
 
 let pollStep = "none";
 
@@ -46,19 +47,58 @@ function pollEvents() {
 store.subscribe(pollEvents);
 
 authenticate(store);
-initEmulators(store);
+
+export type DosTheme = "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |
+    "synthwave" | "retro" | "cyberpunk" | "valentine" | "halloween" | "garden" |
+    "forest" | "aqua" | "lofi" | "pastel" | "fantasy" | "wireframe" | "black" |
+    "luxury" | "dracula" | "cmyk" | "autumn" | "business" | "acid" | "lemonade" |
+    "night" | "coffee" | "winter";
 
 export interface DosOptions {
-    theme?: "dark" | "light";
+    pathPrefix?: string,
+    theme?: DosTheme,
+    lang?: "ru" | "en",
 }
 
-export function Dos(element: HTMLDivElement, options: DosOptions) {
+export interface DosProps {
+    setTheme(theme: DosTheme): void;
+    setLang(lang: "ru" | "en"): void;
+}
+
+let skipEmulatorsInit = false;
+export function Dos(element: HTMLDivElement, options: DosOptions = {}): DosProps {
+    if (!skipEmulatorsInit) {
+        skipEmulatorsInit = true;
+        initEmulators(store, (options.pathPrefix ?? "") + "/emulators/");
+    }
+
+    function setTheme(theme: DosTheme) {
+        store.dispatch(uiSlice.actions.theme(theme));
+    }
+
+    function setLang(lang: "ru" | "en") {
+        store.dispatch(i18nSlice.actions.setLang(lang));
+    }
+
+    if (options.theme) {
+        setTheme(options.theme);
+    }
+
+    if (options.lang) {
+        setLang(options.lang);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
         </Provider>,
         element,
     );
+
+    return {
+        setTheme,
+        setLang,
+    };
 }
 
 (window as any).Dos = Dos;

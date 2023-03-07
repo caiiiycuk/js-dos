@@ -12,11 +12,13 @@ const initialState: {
     frame: "none" | "account" | "output" | "editor-conf" | "editor-fs",
     window: "none" | "error" | "loading" | "prerun" | "run" | "upload",
     theme: Theme,
+    wideScreen: boolean,
 } = {
     modal: "none",
     frame: "none",
     window: "none",
     theme: (lStorage.getItem("theme") ?? "dark") as Theme,
+    wideScreen: true,
 };
 
 export const uiSlice = createSlice({
@@ -50,6 +52,9 @@ export const uiSlice = createSlice({
         },
         windowUpload: (state) => {
             state.window = "upload";
+        },
+        setWideScreen: (state, a: { payload: boolean } ) => {
+            state.wideScreen = a.payload;
         },
     },
     extraReducers: (builder) => {

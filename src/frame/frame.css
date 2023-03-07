@@ -5,17 +5,16 @@
 }
 
 .frame {
-  @apply absolute left-0 top-0 pl-12 overflow-auto h-full w-full py-4;
+  @apply absolute left-0 top-0 pl-12 overflow-auto h-full w-96 py-4;
   background-color: hsl(var(--b3));
+}
 
-  @media (min-width: 640px) {
-    width: var(--frame-width);
-  }
+.frame-md {
+  width: 100% !important;
 }
 
 .premium-plan-root {
-  @apply bg-white rounded-xl px-4 pt-4 pb-2;
-  width: calc(var(--frame-width) * 0.7);
+  @apply bg-white rounded-xl px-4 pt-4 pb-2 w-64;
 }
 
 .premium-plan-root.have-premium {
