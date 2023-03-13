@@ -6,7 +6,6 @@ import { State } from "../store";
 export function LoadingWindow() {
     const t = useT();
     const step = useSelector((state: State) => state.dos.step);
-    const editorStep = useSelector((state: State) => state.editor.step);
     const [received, total] = useSelector((state: State) =>
         [state.storage.recived, state.storage.total]);
 
@@ -27,12 +26,6 @@ export function LoadingWindow() {
         }
 
         default: {
-            switch (editorStep) {
-                case "extract": {
-                    head = t("extract_loading");
-                    message = t("extract_long_time");
-                } break;
-            };
         }
     }
 

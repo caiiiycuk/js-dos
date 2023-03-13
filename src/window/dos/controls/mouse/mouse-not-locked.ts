@@ -3,9 +3,9 @@ import { mount } from "./mount";
 
 const insensitivePadding = 1 / 100;
 
-export function mouseNotLocked(pointerNumber: number,
-                               el: HTMLElement,
-                               ci: CommandInterface) {
+export function mouseDefault(pointerNumber: number,
+                             el: HTMLElement,
+                             ci: CommandInterface) {
     const mapXY = (x: number, y: number) => doMapXY(x, y, el, ci);
 
     if (document.pointerLockElement === el) {

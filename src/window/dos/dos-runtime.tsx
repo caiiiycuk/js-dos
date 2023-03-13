@@ -21,12 +21,12 @@ export function useDosRuntime(canvas: HTMLCanvasElement,
 
 function useMouse(canvas: HTMLCanvasElement,
                   ci: CommandInterface): void {
-    const mouseLock = useSelector((state: State) => state.dos.mouseLock);
+    const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
     const mouseSensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
     useEffect(() => {
         const sensistiviy = 0.5 + mouseSensitivity * 7;
-        return mouse(mouseLock, sensistiviy, 0, canvas, ci);
-    }, [canvas, ci, mouseLock, mouseSensitivity]);
+        return mouse(mouseCapture, sensistiviy, 0, canvas, ci);
+    }, [canvas, ci, mouseCapture, mouseSensitivity]);
 }
 
 function useKeyboard(ci: CommandInterface): void {

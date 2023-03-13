@@ -39,7 +39,7 @@ const initialState: {
     renderAspect: RenderAspect,
     volume: number,
     mouseSensitivity: number,
-    mouseLock: boolean,
+    mouseCapture: boolean,
     paused: boolean,
     error: null | undefined | string,
     bundle: string | null,
@@ -58,7 +58,7 @@ const initialState: {
     renderAspect: (lStorage.getItem("renderAspect") ?? "AsIs") as RenderAspect,
     volume: (Number.parseFloat(lStorage.getItem("volume") ?? "1.0")),
     mouseSensitivity: (Number.parseFloat(lStorage.getItem("mouse_sensitivity") ?? "1.0")),
-    mouseLock: false,
+    mouseCapture: false,
     paused: false,
     stats: {
         sleepPerSec: 0,
@@ -121,8 +121,8 @@ export const dosSlice = createSlice({
             s.mouseSensitivity = a.payload;
             lStorage.setItem("mouse_sensitivity", s.mouseSensitivity + "");
         },
-        mouseLock: (s, a: { payload: boolean }) => {
-            s.mouseLock = a.payload;
+        mouseCapture: (s, a: { payload: boolean }) => {
+            s.mouseCapture = a.payload;
         },
         paused: (s, a: { payload: boolean }) => {
             s.paused = a.payload;

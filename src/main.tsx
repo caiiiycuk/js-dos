@@ -48,36 +48,52 @@ store.subscribe(pollEvents);
 
 authenticate(store);
 
-export type DosTheme = "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |
+export interface DosOptions {
+    pathPrefix: string,
+    theme: "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |
     "synthwave" | "retro" | "cyberpunk" | "valentine" | "halloween" | "garden" |
     "forest" | "aqua" | "lofi" | "pastel" | "fantasy" | "wireframe" | "black" |
     "luxury" | "dracula" | "cmyk" | "autumn" | "business" | "acid" | "lemonade" |
-    "night" | "coffee" | "winter";
-
-export interface DosOptions {
-    pathPrefix?: string,
-    theme?: DosTheme,
-    lang?: "ru" | "en",
+    "night" | "coffee" | "winter",
+    lang: "ru" | "en",
+    backend: "dosbox" | "dosboxX",
+    workerThread: boolean,
+    mouseCapture: boolean,
 }
 
 export interface DosProps {
-    setTheme(theme: DosTheme): void;
-    setLang(lang: "ru" | "en"): void;
+    setTheme(theme: DosOptions["theme"]): void;
+    setLang(lang: DosOptions["lang"]): void;
+    setBackend(lang: DosOptions["backend"]): void;
+    setWorkerThread(capture: DosOptions["workerThread"]): void;
+    setMouseCapture(capture: DosOptions["mouseCapture"]): void;
 }
 
 let skipEmulatorsInit = false;
-export function Dos(element: HTMLDivElement, options: DosOptions = {}): DosProps {
+export function Dos(element: HTMLDivElement, options: Partial<DosOptions> = {}): DosProps {
     if (!skipEmulatorsInit) {
         skipEmulatorsInit = true;
         initEmulators(store, (options.pathPrefix ?? "") + "/emulators/");
     }
 
-    function setTheme(theme: DosTheme) {
+    function setTheme(theme: DosOptions["theme"]) {
         store.dispatch(uiSlice.actions.theme(theme));
     }
 
-    function setLang(lang: "ru" | "en") {
+    function setLang(lang: DosOptions["lang"]) {
         store.dispatch(i18nSlice.actions.setLang(lang));
+    }
+
+    function setBackend(backend: DosOptions["backend"]) {
+        store.dispatch(dosSlice.actions.dosBackend(backend));
+    }
+
+    function setWorkerThread(workerThread: DosOptions["workerThread"]) {
+        store.dispatch(dosSlice.actions.dosWorker(workerThread));
+    }
+
+    function setMouseCapture(capture: DosOptions["mouseCapture"]) {
+        store.dispatch(dosSlice.actions.mouseCapture(capture));
     }
 
     if (options.theme) {
@@ -86,6 +102,18 @@ export function Dos(element: HTMLDivElement, options: DosOptions = {}): DosProps
 
     if (options.lang) {
         setLang(options.lang);
+    }
+
+    if (options.backend) {
+        setBackend(options.backend);
+    }
+
+    if (options.workerThread !== undefined) {
+        setWorkerThread(options.workerThread);
+    }
+
+    if (options.mouseCapture !== undefined) {
+        setMouseCapture(options.mouseCapture);
     }
 
     render(
@@ -98,6 +126,9 @@ export function Dos(element: HTMLDivElement, options: DosOptions = {}): DosProps
     return {
         setTheme,
         setLang,
+        setBackend,
+        setWorkerThread,
+        setMouseCapture,
     };
 }
 

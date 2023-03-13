@@ -4,15 +4,15 @@ import { State } from "../store";
 import { dosSlice } from "../store/dos";
 import { Checkbox } from "./checkbox";
 
-export function MouseLock() {
+export function MouseCapture() {
     const t = useT();
     const dispatch = useDispatch();
-    const lock = useSelector((state: State) => state.dos.mouseLock);
+    const lock = useSelector((state: State) => state.dos.mouseCapture);
     return <Checkbox
         class="mt-4"
         label={t("mouse_lock")}
         checked={lock}
-        onChange={(l) => dispatch(dosSlice.actions.mouseLock(l))}
+        onChange={(l) => dispatch(dosSlice.actions.mouseCapture(l))}
     />;
 }
 

@@ -1,6 +1,6 @@
 import { CommandInterface } from "emulators";
-import { mouseLocked } from "./mouse/mouse-locked";
-import { mouseNotLocked } from "./mouse/mouse-not-locked";
+import { mouseCapture } from "./mouse/mouse-locked";
+import { mouseDefault } from "./mouse/mouse-not-locked";
 import { mouseSwipe } from "./mouse/mouse-swipe";
 import { pointer } from "./mouse/pointer";
 
@@ -14,8 +14,8 @@ export function mouse(lock: boolean,
     }
 
     if (lock) {
-        return mouseLocked(sensitivity, pointerButton, el, ci);
+        return mouseCapture(sensitivity, pointerButton, el, ci);
     }
 
-    return mouseNotLocked(pointerButton, el, ci);
+    return mouseDefault(pointerButton, el, ci);
 }

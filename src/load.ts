@@ -50,7 +50,7 @@ async function doLoadBundle(bundleName: string,
     }
 
     // TODO: dosbox.conf parser
-    // dispatch(dosSlice.actions.mouseLock(config?.output.options.autolock.value === true));
+    // dispatch(dosSlice.actions.mouseCapture(config?.output.options.autolock.value === true));
     nonSerializedDosState.bundle = [bundle];
     dispatch(dosSlice.actions.bndReady({}));
 }

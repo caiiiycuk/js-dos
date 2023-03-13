@@ -150,6 +150,13 @@ function Actions(props: {
     const dispatch = useDispatch();
     const { onRefresh, onUploadingFile, onMakingBundle } = props;
 
+    useEffect(() => {
+        if (uploadDirRef.current !== null) {
+            uploadDirRef.current.setAttribute("directory", "");
+            uploadDirRef.current.setAttribute("webkitdirectory", "");
+        }
+    }, [uploadDirRef]);
+
     function onUploadClick(file: boolean) {
         const input = (file ? uploadFileRef : uploadDirRef).current;
         if (input === null) {
@@ -226,9 +233,8 @@ function Actions(props: {
         }
     }
 
-
     return <div class="h-6 flex flex-row">
-        <input class="hidden" type="file" webkitdirectory multiple ref={uploadDirRef} onChange={onUpload} />
+        <input class="hidden" type="file" multiple ref={uploadDirRef} onChange={onUpload} />
         <input class="hidden" type="file" multiple ref={uploadFileRef} onChange={onUpload} />
         <button class="refresh btn-xs rounded-none" onClick={onRefresh}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none"

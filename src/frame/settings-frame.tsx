@@ -1,4 +1,4 @@
-import { MouseLock, PauseCheckbox } from "../components/dos-option-checkbox";
+import { MouseCapture, PauseCheckbox } from "../components/dos-option-checkbox";
 import { RenderAspectSelect, RenderSelect } from "../components/dos-option-select";
 import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
 
@@ -7,7 +7,7 @@ export function SettingsFrame(props: {}) {
         <PauseCheckbox />
         <RenderSelect />
         <RenderAspectSelect />
-        <MouseLock />
+        <MouseCapture />
         <MouseSensitiviySlider />
         <VolumeSlider />
     </div>;

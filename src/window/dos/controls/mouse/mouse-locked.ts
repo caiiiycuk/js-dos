@@ -1,10 +1,10 @@
 import { CommandInterface } from "emulators";
 import { mount } from "./mount";
 
-export function mouseLocked(sensitivity: number,
-                            pointerButton: number,
-                            el: HTMLElement,
-                            ci: CommandInterface) {
+export function mouseCapture(sensitivity: number,
+                             pointerButton: number,
+                             el: HTMLElement,
+                             ci: CommandInterface) {
     function isNotLocked() {
         return document.pointerLockElement !== el;
     }

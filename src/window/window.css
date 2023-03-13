@@ -1,4 +1,6 @@
 .window {
+  @apply overflow-hidden;
+
   background-color: hsl(var(--b1));
   .play-button {
     &:hover {
