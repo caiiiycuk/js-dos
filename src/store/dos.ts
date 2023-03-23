@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { makeStore } from "../store";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { makeStore, State } from "../store";
 import { CommandInterface, Emulators } from "emulators";
 import { lStorage } from "../storage/storage";
 
@@ -23,8 +23,14 @@ export type RenderAspect = typeof RenderAspectValues[number];
 export const FitConstant = 65535;
 
 export interface EmulatorStats {
-    sleepPerSec: number,
     cyclesPerMs: number,
+    nonSkippableSleepPreSec: number,
+    sleepPerSec: number,
+    sleepTimePerSec: number,
+    framePerSec: number,
+    soundPerSec: number,
+    msgSentPerSec: number,
+    msgRecvPerSec: number,
 };
 
 const initialState: {
@@ -46,6 +52,9 @@ const initialState: {
     config: BundleConfig,
     stats: EmulatorStats,
     ci: boolean,
+    network: {
+        ipx: "connecting" | "connected" | "disconnected" | "error",
+    }
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -61,11 +70,34 @@ const initialState: {
     mouseCapture: false,
     paused: false,
     stats: {
-        sleepPerSec: 0,
         cyclesPerMs: 0,
+        nonSkippableSleepPreSec: 0,
+        sleepPerSec: 0,
+        sleepTimePerSec: 0,
+        framePerSec: 0,
+        soundPerSec: 0,
+        msgSentPerSec: 0,
+        msgRecvPerSec: 0,
+    },
+    network: {
+        ipx: "disconnected",
     },
     ci: false,
 };
+
+const connectIpx = createAsyncThunk("dos/connectIpx",
+    async (payload: { room: string, address: string }, thunkApi) => {
+        const dos = (thunkApi.getState() as State).dos;
+        if (dos.network.ipx === "connected") {
+            throw new Error("Already connected");
+        }
+        if (dos.ci === false || !nonSerializedDosState.ci) {
+            throw new Error("DOS is not started");
+        }
+
+        return nonSerializedDosState.ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */,
+            payload.address, 1900);
+    });
 
 export const dosSlice = createSlice({
     name: "dos",
@@ -133,8 +165,28 @@ export const dosSlice = createSlice({
         ci: (s, a: { payload: boolean }) => {
             s.ci = a.payload;
         },
+        disconnectIpx: (s) => {
+            s.network.ipx = "disconnected";
+            nonSerializedDosState.ci?.networkDisconnect(0 /* IPX */);
+        },
+    },
+    extraReducers: {
+        [connectIpx.fulfilled.type]: (state) => {
+            state.network.ipx = "connected";
+        },
+        [connectIpx.pending.type]: (state) => {
+            state.network.ipx = "connecting";
+        },
+        [connectIpx.rejected.type]: (state) => {
+            state.network.ipx = "error";
+        },
     },
 });
+
+export const dosExtraActions = {
+    connectIpx,
+};
+
 
 export const nonSerializedDosState: {
     bundle: Uint8Array[] | null,

@@ -8,6 +8,7 @@ import { canvas as canvasRender } from "./render/canvas";
 import { audioNode } from "./sound/audio-node";
 import { useEffect } from "preact/hooks";
 import { mouse } from "./controls/mouse";
+import { KBD_0 } from "./controls/keys";
 
 export function useDosRuntime(canvas: HTMLCanvasElement,
                               ci: CommandInterface): void {
@@ -101,19 +102,39 @@ function useStats(ci: CommandInterface): void {
     const dispatch = useDispatch();
     useEffect(() => {
         let prevCycles = 0;
+        let prevNonSkippableSleepCount = 0;
         let prevSleepCount = 0;
+        let prevSleepTime = KBD_0;
+        let prevFrame = 0;
+        let prevSound = 0;
+        let prevMsgSent = 0;
+        let prevMsgRecv = 0;
         let intervalStartedAt = Date.now();
         const intervalId = setInterval(() => {
             ci.asyncifyStats().then((stats) => {
-                const dt = Date.now() - intervalStartedAt;
+                const dtMs = Date.now() - intervalStartedAt;
+                const dtSec = dtMs / 1000;
 
                 dispatch(dosSlice.actions.stats({
-                    sleepPerSec: Math.round((stats.sleepCount - prevSleepCount) * 1000 / dt),
-                    cyclesPerMs: Math.round((stats.cycles - prevCycles) / dt),
+                    cyclesPerMs: Math.round((stats.cycles - prevCycles) / dtMs),
+                    nonSkippableSleepPreSec: Math.round((stats.nonSkippableSleepCount -
+                        prevNonSkippableSleepCount) / dtSec),
+                    sleepPerSec: Math.round((stats.sleepCount - prevSleepCount) / dtSec),
+                    sleepTimePerSec: Math.round((stats.sleepTime - prevSleepTime) / dtSec),
+                    framePerSec: Math.round((stats.messageFrame - prevFrame) / dtSec),
+                    soundPerSec: Math.round((stats.messageSound - prevSound) / dtSec),
+                    msgSentPerSec: Math.round((stats.messageSent - prevMsgSent) / dtSec),
+                    msgRecvPerSec: Math.round((stats.messageReceived - prevMsgRecv) / dtSec),
                 }));
 
                 prevCycles = stats.cycles;
+                prevNonSkippableSleepCount = stats.nonSkippableSleepCount;
                 prevSleepCount = stats.sleepCount;
+                prevSleepTime = stats.sleepTime;
+                prevFrame = stats.messageFrame;
+                prevSound = stats.messageSound;
+                prevMsgSent = stats.messageSent;
+                prevMsgRecv = stats.messageReceived;
                 intervalStartedAt = Date.now();
             });
         }, 3000);

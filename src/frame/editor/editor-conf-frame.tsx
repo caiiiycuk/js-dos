@@ -22,7 +22,7 @@ export function EditorConf() {
         return null;
     }
 
-    return <div class="editor-conf flex flex-col flex-grow w-full py-4">
+    return <div class="editor-conf-frame flex flex-col flex-grow w-full py-4">
         <div class="mr-4 self-start mb-4">{t("dosboxconf_template")}</div>
         <div class="flex flex-row flex-wrap items-center mb-4">
             {dosboxconf.map(({ name, contents }) => {

@@ -5,6 +5,7 @@ import { State } from "./store";
 const translations: {[lang: string]: {[key: string]: string} } = {
     ru: {
         logout: "Выйти",
+        please_login: "Войдите в аккаунт",
         features: "Функции",
         premium: "Премиум",
         buy: "Купить",
@@ -44,6 +45,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
     },
     en: {
         logout: "Logout",
+        please_login: "Please login",
         features: "Features",
         premium: "Premium",
         buy: "Buy",

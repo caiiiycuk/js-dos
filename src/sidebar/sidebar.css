@@ -23,7 +23,18 @@
   }
 
   .cycles {
-   @apply text-xs overflow-hidden text-right w-full pr-2 whitespace-nowrap opacity-50; 
-   color: hsl(var(--bc));
+    @apply text-xs overflow-hidden text-right w-full pr-2 whitespace-nowrap opacity-50;
+    color: hsl(var(--bc));
+
+    &.higlight,
+    &:hover {
+      color: hsl(var(--af));
+    }
+  }
+
+  .network-button {
+    &.inactive {
+      @apply opacity-50;
+    }
   }
 }

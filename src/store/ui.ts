@@ -9,7 +9,8 @@ export type Theme = typeof ThemeValues[number];
 
 const initialState: {
     modal: "none" | "login",
-    frame: "none" | "account" | "output" | "editor-conf" | "editor-fs",
+    frame: "none" | "account" | "settings" | "editor-conf" | "editor-fs" | "network" |
+        "stats",
     window: "none" | "error" | "loading" | "prerun" | "run" | "upload",
     theme: Theme,
     wideScreen: boolean,
@@ -41,8 +42,14 @@ export const uiSlice = createSlice({
         frameAccount: (state) => {
             toggleFrameIfNeeded(state, "account");
         },
-        frameOutput: (state) => {
-            state.frame = "output";
+        frameSettings: (state) => {
+            state.frame = "settings";
+        },
+        frameNetwork: (state) => {
+            state.frame = "network";
+        },
+        frameStats: (state) => {
+            state.frame = "stats";
         },
         frameConf: (state) => {
             state.frame = "editor-conf";

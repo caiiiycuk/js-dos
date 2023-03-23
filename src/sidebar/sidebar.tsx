@@ -4,6 +4,7 @@ import { AccountButton } from "./account-button";
 import { CyclesText } from "./cycles-text";
 import { DosboxConfButton } from "./editor/editorconf-button";
 import { FsButton } from "./fs-button";
+import { NetworkButton } from "./network-button";
 import { SettingsButton } from "./settings-button";
 
 export function SideBar(props: {}) {
@@ -13,6 +14,7 @@ export function SideBar(props: {}) {
         {window === "prerun" && <DosboxConfButton />}
         {window === "run" && <FsButton />}
         <div class="contentbar"></div>
+        {window === "run" && <NetworkButton />}
         {window === "run" && <CyclesText />}
         {(window === "prerun" || window === "run") && <SettingsButton />}
         <AccountButton />

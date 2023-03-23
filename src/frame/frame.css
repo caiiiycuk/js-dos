@@ -62,3 +62,26 @@
     color: hsl(var(--pc));
   }
 }
+
+.network-frame {
+  @apply w-full;
+
+  .option {
+    @apply w-full;
+  }
+
+  .error {
+    .label-text {
+      @apply text-error;
+    }
+
+    input {
+      border-color: hsl(var(--er) / var(--tw-border-opacity));
+      --tw-border-opacity: 0.1;
+      --tw-bg-opacity: 1;
+      background-color: hsl(var(--er) / var(--tw-bg-opacity));
+      --tw-text-opacity: 1;
+      color: hsl(var(--erc, var(--nc)) / var(--tw-text-opacity));
+    }
+  }
+}

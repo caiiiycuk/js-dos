@@ -5,14 +5,14 @@ import { uiSlice } from "../store/ui";
 export function SettingsButton(props: {
     class?: string,
 }) {
-    const hightlight = useSelector((state: State) => state.ui.frame) === "output";
+    const hightlight = useSelector((state: State) => state.ui.frame) === "settings";
     const dispatch = useDispatch();
 
     function onClick() {
         if (hightlight) {
             dispatch(uiSlice.actions.frameNone());
         } else {
-            dispatch(uiSlice.actions.frameOutput());
+            dispatch(uiSlice.actions.frameSettings());
         }
     }
 
