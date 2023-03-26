@@ -1,7 +1,8 @@
 import { Emulators, CommandInterface } from "emulators";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
-import { dosSlice, nonSerializedDosState } from "../../store/dos";
+import { dosSlice } from "../../store/dos";
+import { nonSerializableStore } from "../../non-serializable-store";
 import { State } from "../../store";
 import { useDosRuntime } from "./dos-runtime";
 import { dhry2Bundle, Dhry2Results } from "./dos-dhry2";
@@ -18,13 +19,20 @@ export function DosWindow(props: {
 
     useEffect(() => {
         try {
+            const bundles = nonSerializableStore.loadedBundle!.bundleChanges !== null ?
+                [nonSerializableStore.loadedBundle!.bundle, nonSerializableStore.loadedBundle!.bundleChanges] :
+                nonSerializableStore.loadedBundle!.bundle;
+
+            nonSerializableStore.loadedBundle!.bundle = null;
+            nonSerializableStore.loadedBundle!.bundleChanges = null;
+
             const ci: Promise<CommandInterface> =
-                (emulators as any)[backend + (worker ? "Worker" : "Direct")](nonSerializedDosState.bundle!);
+                (emulators as any)[backend + (worker ? "Worker" : "Direct")](bundles);
             ci
                 .then((ci) => {
                     setCi(ci);
                     dispatch(dosSlice.actions.ci(true));
-                    nonSerializedDosState.ci = ci;
+                    nonSerializableStore.ci = ci;
                     (window as any).ci = ci;
                 })
                 .catch((e) => dispatch(dosSlice.actions.emuError(e.message)));
@@ -32,7 +40,7 @@ export function DosWindow(props: {
             return () => {
                 ci.then((ci) => {
                     dispatch(dosSlice.actions.ci(false));
-                    nonSerializedDosState.ci = null;
+                    nonSerializableStore.ci = null;
                     ci.exit();
                 });
             };

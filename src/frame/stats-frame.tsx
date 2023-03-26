@@ -45,6 +45,14 @@ export function StatsFrame() {
                         <td>Msg RECV/s</td>
                         <td>{stats.msgRecvPerSec}</td>
                     </tr>
+                    <tr>
+                        <td>Net SENT/s</td>
+                        <td>{Math.round(stats.netSent / 1024 * 100) / 100}Kb</td>
+                    </tr>
+                    <tr>
+                        <td>Net RECV/s</td>
+                        <td>{Math.round(stats.netRecv / 1024 * 100) / 100}Kb</td>
+                    </tr>
                 </tbody>
             </table>
         </div>

@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { makeStore, State } from "../store";
-import { CommandInterface, Emulators } from "emulators";
-import { lStorage } from "../storage/storage";
+import { Emulators } from "emulators";
+import { lStorage } from "../host/lstorage";
+import { nonSerializableStore } from "../non-serializable-store";
 
 declare const emulators: Emulators;
-
 export interface BundleConfig {
     name?: string,
     version?: string,
@@ -31,6 +31,8 @@ export interface EmulatorStats {
     soundPerSec: number,
     msgSentPerSec: number,
     msgRecvPerSec: number,
+    netSent: number,
+    netRecv: number,
 };
 
 const initialState: {
@@ -78,6 +80,8 @@ const initialState: {
         soundPerSec: 0,
         msgSentPerSec: 0,
         msgRecvPerSec: 0,
+        netRecv: 0,
+        netSent: 0,
     },
     network: {
         ipx: "disconnected",
@@ -91,12 +95,12 @@ const connectIpx = createAsyncThunk("dos/connectIpx",
         if (dos.network.ipx === "connected") {
             throw new Error("Already connected");
         }
-        if (dos.ci === false || !nonSerializedDosState.ci) {
+        if (dos.ci === false || !nonSerializableStore.ci) {
             throw new Error("DOS is not started");
         }
 
-        return nonSerializedDosState.ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */,
-            payload.address, 1900);
+        return nonSerializableStore.ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */,
+            payload.address + ":1900/ipx/" + payload.room.replaceAll("@", "_"), 1900);
     });
 
 export const dosSlice = createSlice({
@@ -167,7 +171,7 @@ export const dosSlice = createSlice({
         },
         disconnectIpx: (s) => {
             s.network.ipx = "disconnected";
-            nonSerializedDosState.ci?.networkDisconnect(0 /* IPX */);
+            nonSerializableStore.ci?.networkDisconnect(0 /* IPX */);
         },
     },
     extraReducers: {
@@ -185,15 +189,6 @@ export const dosSlice = createSlice({
 
 export const dosExtraActions = {
     connectIpx,
-};
-
-
-export const nonSerializedDosState: {
-    bundle: Uint8Array[] | null,
-    ci: CommandInterface | null,
-} = {
-    bundle: null,
-    ci: null,
 };
 
 export function initEmulators(store: ReturnType<typeof makeStore>, pathPrefix: string) {

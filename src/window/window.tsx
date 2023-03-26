@@ -4,7 +4,7 @@ import { DosWindow } from "./dos/dos-window";
 import { ErrorWindow } from "./error-window";
 import { LoadingWindow } from "./loading-window";
 import { PreRunWindow } from "./prerun-window";
-import { UploadWindow } from "./upload-window";
+import { SelectWindow } from "./select-window";
 
 export function Window(props: {}) {
     const frameOpened = useSelector((state: State) => state.ui.frame) !== "none";
@@ -24,7 +24,7 @@ export function Window(props: {}) {
             windowComponent = <DosWindow />;
         } break;
         case "upload": {
-            windowComponent = <UploadWindow />;
+            windowComponent = <SelectWindow />;
         } break;
         default: ;
     };

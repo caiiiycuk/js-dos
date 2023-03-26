@@ -114,7 +114,7 @@ function useStats(ci: CommandInterface): void {
             ci.asyncifyStats().then((stats) => {
                 const dtMs = Date.now() - intervalStartedAt;
                 const dtSec = dtMs / 1000;
-
+                // TODO: remove as any
                 dispatch(dosSlice.actions.stats({
                     cyclesPerMs: Math.round((stats.cycles - prevCycles) / dtMs),
                     nonSkippableSleepPreSec: Math.round((stats.nonSkippableSleepCount -
@@ -125,6 +125,8 @@ function useStats(ci: CommandInterface): void {
                     soundPerSec: Math.round((stats.messageSound - prevSound) / dtSec),
                     msgSentPerSec: Math.round((stats.messageSent - prevMsgSent) / dtSec),
                     msgRecvPerSec: Math.round((stats.messageReceived - prevMsgRecv) / dtSec),
+                    netSent: (stats as any).netSent,
+                    netRecv: (stats as any).netRecv,
                 }));
 
                 prevCycles = stats.cycles;

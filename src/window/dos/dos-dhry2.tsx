@@ -2,7 +2,6 @@ import { CommandInterface } from "emulators";
 import { useEffect, useState } from "preact/hooks";
 import { useSelector } from "react-redux";
 import { State } from "../../store";
-import { EmulatorStats } from "../../store/dos";
 
 export const dhry2Bundle = "/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos";
 
@@ -23,7 +22,7 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
         pc: null,
     });
 
-    const [stats, setStats] = useState<EmulatorStats>({
+    const [stats, setStats] = useState<{sleepPerSec: number, cyclesPerMs: number}>({
         sleepPerSec: 0,
         cyclesPerMs: 0,
     });
@@ -114,7 +113,7 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
 function getComparablePc(vax: number): string {
     let index = 0;
     while ((index * 2 + 1) < results.length) {
-        if (results[index * 2 + 1] >= vax) {
+        if (results[index * 2 + 1] as number >= vax) {
             break;
         }
 

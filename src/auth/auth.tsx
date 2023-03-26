@@ -1,8 +1,10 @@
 import { auth, xsollaMe, xsollaOAuth2 } from "../conf";
 import { createSlice } from "@reduxjs/toolkit";
 import { makeStore } from "../store";
+import { nonSerializableStore } from "../non-serializable-store";
 import { havePremium } from "../subscriptions/subscriptions";
-import { lStorage } from "../storage/storage";
+import { lStorage } from "../host/lstorage";
+import { getCache } from "../host/lcache";
 
 const revalidateTimeout = 30 * 60 * 1000; // 30 min
 
@@ -25,7 +27,13 @@ export interface Account {
 const initialState: {
     account: Account | null,
 } = {
-    account: null,
+    account: {
+        email: "caiiiycuk@gmail.com",
+        name: null,
+        picture: null,
+        token: {} as any,
+        premium: true,
+    },
 };
 
 export const authSlice = createSlice({
@@ -164,13 +172,16 @@ export function authenticate(store: ReturnType<typeof makeStore>) {
         try {
             const token = await initAuthToken();
             if (token === null) {
+                nonSerializableStore.cache = await getCache("guest");
                 return;
             }
 
             const account = await loadAccount(token);
+            nonSerializableStore.cache = await getCache(account.email);
             dispatch(authSlice.actions.login(account));
         } catch (e) {
             console.error("initAuth", e);
+            nonSerializableStore.cache = await getCache("guest");
         }
     });
 }

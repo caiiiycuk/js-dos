@@ -3,6 +3,9 @@ import { domToKeyCode } from "./keys";
 
 export function keyboard(el: HTMLElement, ci: CommandInterface) {
     function onKeyDown(e: KeyboardEvent) {
+        if ((e.target as any).type === "text") {
+            return;
+        }
         const keyCode = domToKeyCode(e.keyCode);
         ci.sendKeyEvent(keyCode, true);
         e.stopPropagation();
@@ -10,6 +13,9 @@ export function keyboard(el: HTMLElement, ci: CommandInterface) {
     };
 
     function onKeyUp(e: KeyboardEvent) {
+        if ((e.target as any).type === "text") {
+            return;
+        }
         const keyCode = domToKeyCode(e.keyCode);
         ci.sendKeyEvent(keyCode, false);
         e.stopPropagation();

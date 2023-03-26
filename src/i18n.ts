@@ -42,6 +42,13 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         please_wait: "Пожалуйста подождите",
         making_bundle: "Создаем бандл",
         size: "Размер",
+        room: "Команта",
+        server: "Сервер",
+        load_by_url: "Загрузить по ссылке",
+        enter_url: "Введите ссылку",
+        load: "Загрузить",
+        stored: "Сохраненные",
+        delete: "Удалить",
     },
     en: {
         logout: "Logout",
@@ -82,6 +89,13 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         please_wait: "Please wait",
         making_bundle: "Creating bundle",
         size: "Size",
+        room: "Room",
+        server: "Server",
+        load_by_url: "Load by url",
+        enter_url: "Enter url",
+        load: "Load",
+        stored: "Stored",
+        delete: "Delete",
     },
 };
 

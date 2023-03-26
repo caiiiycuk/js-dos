@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useT } from "../../i18n";
 import { loadBundle } from "../../load";
 import { State } from "../../store";
-import { nonSerializedDosState } from "../../store/dos";
+import { nonSerializableStore } from "../../non-serializable-store";
 
 interface NodeExt extends Node {
     fsNode: FsNode,
@@ -27,7 +27,7 @@ export function EditorFsFrame() {
     }
 
     useEffect(() => {
-        const ci = nonSerializedDosState.ci;
+        const ci = nonSerializableStore.ci;
         if (ci === null || !haveCi) {
             return;
         }
@@ -62,7 +62,7 @@ export function EditorFsFrame() {
 
     async function onRefresh() {
         setFsTree(null);
-        const ci = nonSerializedDosState.ci;
+        const ci = nonSerializableStore.ci;
         if (ci === null || !haveCi) {
             return;
         }
@@ -167,7 +167,7 @@ function Actions(props: {
     }
 
     async function onUpload(event: any) {
-        const ci = nonSerializedDosState.ci;
+        const ci = nonSerializableStore.ci;
         const files: FileList = event.target.files;
         if (ci === null || files === null) {
             return;
@@ -189,7 +189,7 @@ function Actions(props: {
     }
 
     async function onRestart() {
-        const ci = nonSerializedDosState.ci;
+        const ci = nonSerializableStore.ci;
         if (ci === null || !window.confirm(t("fs_restart"))) {
             return;
         }
@@ -205,7 +205,7 @@ function Actions(props: {
     }
 
     async function onDownload() {
-        const ci = nonSerializedDosState.ci;
+        const ci = nonSerializableStore.ci;
         if (ci === null) {
             return;
         }

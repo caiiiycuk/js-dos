@@ -1,5 +1,6 @@
 import { storageSlice } from "../store/storage";
 import { Dispatch } from "@reduxjs/toolkit";
+import { nonSerializableStore } from "../non-serializable-store";
 
 export function loadFile(file: File, dispatch: Dispatch): Promise<Uint8Array> {
     return new Promise<Uint8Array>((resolve) => {
@@ -16,10 +17,15 @@ export function loadFile(file: File, dispatch: Dispatch): Promise<Uint8Array> {
 }
 
 export async function loadUrl(url: string, dispatch: Dispatch): Promise<Uint8Array> {
-    dispatch(storageSlice.actions.reset());
+    try {
+        return await nonSerializableStore.cache.get(url);
+    } catch (e: any) {
+        // ignore
+    }
 
+    dispatch(storageSlice.actions.reset());
     const response = await fetch(url, {
-        cache: "default",
+        cache: "no-store",
     });
 
     if (response.status !== 200) {
@@ -52,6 +58,10 @@ export async function loadUrl(url: string, dispatch: Dispatch): Promise<Uint8Arr
         complete.set(next, offset);
         offset += next.length;
     }
+
+    nonSerializableStore.cache
+        .put(url, complete)
+        .catch(console.error);
 
     return complete;
 };
