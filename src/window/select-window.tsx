@@ -2,8 +2,8 @@ import { useDispatch } from "react-redux";
 import { dosSlice } from "../store/dos";
 import { useT } from "../i18n";
 import { loadBundleFromFile, loadBundleFromUrl, loadEmptyBundle } from "../load";
-import { useEffect, useState } from "preact/hooks";
-import { nonSerializableStore } from "../non-serializable-store";
+import { useState } from "preact/hooks";
+import { uiSlice } from "../store/ui";
 
 const fileInput = document.createElement("input");
 fileInput.type = "file";
@@ -43,15 +43,10 @@ function Load() {
     const dispatch = useDispatch();
     const [url, setUrl] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
-    const [cached, setCached] = useState<string[]>([]);
-
-    useEffect(() => {
-        nonSerializableStore.cache.keys()
-            .then(setCached)
-            .catch(console.error);
-    }, []);
 
     async function loadBundle(url: string) {
+        dispatch(uiSlice.actions.frameNone());
+
         let validUrl;
         try {
             validUrl = new URL(url);
@@ -65,13 +60,6 @@ function Load() {
         } catch (e: any) {
             dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error"));
         }
-    }
-
-    function onDelete(url: string) {
-        nonSerializableStore.cache
-            .del(url).catch(console.error);
-
-        setCached(cached.filter((v) => v !== url));
     }
 
     return <>
@@ -91,19 +79,6 @@ function Load() {
                 {error}
             </div>
         }
-        {cached.length > 0 && <>
-            <div class="mt-8 text-center">{t("stored")}</div>
-            <div class="text-center overflow-auto">
-                {cached.map((url) => {
-                    return <div class="flex flex-row mt-2">
-                        <div class="mr-4 cursor-pointer underline hover:text-accent"
-                            onClick={() => loadBundle(url)}>{url}</div>
-                        <div class="cursor-pointer text-error hover:text-accent"
-                            onClick={() => onDelete(url)}>{t("delete")}</div>
-                    </div>;
-                })}
-            </div>
-        </>}
     </>;
 }
 

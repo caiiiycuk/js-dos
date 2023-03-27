@@ -2,7 +2,7 @@ import { storageSlice } from "../store/storage";
 import { Dispatch } from "@reduxjs/toolkit";
 import { nonSerializableStore } from "../non-serializable-store";
 
-export function loadFile(file: File, dispatch: Dispatch): Promise<Uint8Array> {
+export function bundleFromFile(file: File, dispatch: Dispatch): Promise<Uint8Array> {
     return new Promise<Uint8Array>((resolve) => {
         dispatch(storageSlice.actions.reset());
         const reader = new FileReader();
@@ -16,7 +16,24 @@ export function loadFile(file: File, dispatch: Dispatch): Promise<Uint8Array> {
     });
 }
 
-export async function loadUrl(url: string, dispatch: Dispatch): Promise<Uint8Array> {
+
+export async function bundleFromChanges(url: string): Promise<Uint8Array | null> {
+    try {
+        const response = await fetch(url, {
+            cache: "no-cache",
+        });
+
+        if (response.status !== 200) {
+            throw new Error("Resource not avalible (" + response.status + "): " + response.statusText);
+        }
+
+        return response.arrayBuffer().then((b) => new Uint8Array(b));
+    } catch (e: any) {
+        return await nonSerializableStore.cache.get(url).catch(() => null);
+    }
+}
+
+export async function bundleFromUrl(url: string, dispatch: Dispatch): Promise<Uint8Array> {
     try {
         return await nonSerializableStore.cache.get(url);
     } catch (e: any) {
@@ -65,4 +82,3 @@ export async function loadUrl(url: string, dispatch: Dispatch): Promise<Uint8Arr
 
     return complete;
 };
-

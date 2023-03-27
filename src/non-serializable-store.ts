@@ -9,10 +9,12 @@ export interface LoadedBundle {
 }
 
 export const nonSerializableStore: {
+    root: HTMLDivElement,
     loadedBundle: LoadedBundle | null,
     ci: CommandInterface | null,
     cache: Cache,
 } = {
+    root: null as any,
     loadedBundle: null,
     ci: null,
     cache: new CacheNoop(),

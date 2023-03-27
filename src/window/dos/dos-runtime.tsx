@@ -25,7 +25,7 @@ function useMouse(canvas: HTMLCanvasElement,
     const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
     const mouseSensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
     useEffect(() => {
-        const sensistiviy = 0.5 + mouseSensitivity * 7;
+        const sensistiviy = 0.1 + mouseSensitivity * 3;
         return mouse(mouseCapture, sensistiviy, 0, canvas, ci);
     }, [canvas, ci, mouseCapture, mouseSensitivity]);
 }

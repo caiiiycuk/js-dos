@@ -49,6 +49,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         load: "Загрузить",
         stored: "Сохраненные",
         delete: "Удалить",
+        editor: "Редактор",
     },
     en: {
         logout: "Logout",
@@ -96,6 +97,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         load: "Load",
         stored: "Stored",
         delete: "Delete",
+        editor: "Editor",
     },
 };
 

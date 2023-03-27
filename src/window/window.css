@@ -40,7 +40,7 @@
   }
 
   .pre-run-window {
-    @apply overflow-hidden flex-grow flex flex-col items-center justify-center px-8;
+    @apply overflow-x-hidden overflow-y-auto flex-grow flex flex-col items-center justify-center px-8;
 
     .slider {
       @apply justify-center w-80 max-w-none;

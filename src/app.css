@@ -5,3 +5,13 @@ html, body, #app {
 #app {
   background: hsl(var(--pc));
 }
+
+.jsdos-fullscreen-workaround {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    background: black;
+    z-index: 999;
+}

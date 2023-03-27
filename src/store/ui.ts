@@ -7,19 +7,26 @@ export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "eme
     "acid", "lemonade", "night", "coffee", "winter"];
 export type Theme = typeof ThemeValues[number];
 
+export type Frame = "none" | "account" | "settings" |
+    "editor-conf" | "editor-fs" | "network" |
+    "stats" | "host-cache";
+
 const initialState: {
     modal: "none" | "login",
-    frame: "none" | "account" | "settings" | "editor-conf" | "editor-fs" | "network" |
-        "stats",
-    window: "none" | "error" | "loading" | "prerun" | "run" | "upload",
+    frame: Frame,
+    window: "none" | "error" | "loading" | "prerun" | "run" | "select",
     theme: Theme,
+    editor: boolean,
     wideScreen: boolean,
+    fullScreen: boolean,
 } = {
     modal: "none",
     frame: "none",
     window: "none",
     theme: (lStorage.getItem("theme") ?? "dark") as Theme,
+    editor: false,
     wideScreen: true,
+    fullScreen: false,
 };
 
 export const uiSlice = createSlice({
@@ -57,11 +64,20 @@ export const uiSlice = createSlice({
         frameFs: (state) => {
             state.frame = "editor-fs";
         },
-        windowUpload: (state) => {
-            state.window = "upload";
+        frameHostCache: (state) => {
+            state.frame = "host-cache";
         },
-        setWideScreen: (state, a: { payload: boolean } ) => {
+        windowSelect: (state) => {
+            state.window = "select";
+        },
+        setEditor: (state, a: { payload: boolean }) => {
+            state.editor = a.payload;
+        },
+        setWideScreen: (state, a: { payload: boolean }) => {
             state.wideScreen = a.payload;
+        },
+        setFullScreen: (state, a: { payload: boolean }) => {
+            state.fullScreen = a.payload;
         },
     },
     extraReducers: (builder) => {

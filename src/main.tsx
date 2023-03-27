@@ -11,6 +11,7 @@ import { loadBundleFromUrl } from "./load";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
+import { nonSerializableStore } from "./non-serializable-store";
 
 let pollStep = "none";
 
@@ -29,7 +30,7 @@ function pollEvents() {
             // / enter url screen
             // / parse params
 
-            store.dispatch(uiSlice.actions.windowUpload());
+            store.dispatch(uiSlice.actions.windowSelect());
             return;
 
             /* eslint-disable max-len */
@@ -71,6 +72,8 @@ export interface DosProps {
 
 let skipEmulatorsInit = false;
 export function Dos(element: HTMLDivElement, options: Partial<DosOptions> = {}): DosProps {
+    setupRootElement(element);
+
     if (!skipEmulatorsInit) {
         skipEmulatorsInit = true;
         initEmulators(store, (options.pathPrefix ?? "") + "/emulators/");
@@ -130,6 +133,19 @@ export function Dos(element: HTMLDivElement, options: Partial<DosOptions> = {}):
         setWorkerThread,
         setMouseCapture,
     };
+}
+
+function setupRootElement(root: HTMLDivElement) {
+    nonSerializableStore.root = root;
+    root.addEventListener("contextmenu", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+    });
+    document.addEventListener("fullscreenchange", () => {
+        const fullscreen = document.fullscreenElement === root;
+        store.dispatch(uiSlice.actions.setFullScreen(fullscreen));
+    });
 }
 
 (window as any).Dos = Dos;

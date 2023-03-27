@@ -12,7 +12,7 @@ export function MouseSensitiviySlider(props: {
     const dispatch = useDispatch();
 
     return <Slider
-        class={props.class}
+        class={"mt-4 " + props.class}
         label={t("mouse_sensitivity")}
         value={sensitivity}
         onChange={(value) => dispatch(dosSlice.actions.mouseSensitivity(value)) }

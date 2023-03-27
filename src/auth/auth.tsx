@@ -27,13 +27,7 @@ export interface Account {
 const initialState: {
     account: Account | null,
 } = {
-    account: {
-        email: "caiiiycuk@gmail.com",
-        name: null,
-        picture: null,
-        token: {} as any,
-        premium: true,
-    },
+    account: null,
 };
 
 export const authSlice = createSlice({

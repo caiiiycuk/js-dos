@@ -1,5 +1,5 @@
 .sidebar {
-  @apply absolute left-0 top-0 h-full flex flex-col items-center;
+  @apply absolute left-0 top-0 h-full flex flex-col items-center py-2;
   background: linear-gradient(90deg, hsl(var(--b3)) 0%, hsl(var(--b2)) 100%);
   width: var(--sidebar-width);
 
@@ -8,7 +8,7 @@
   }
 
   .sidebar-button {
-    @apply cursor-pointer h-8 w-8 my-4 relative;
+    @apply cursor-pointer h-8 w-8 my-2 relative;
     color: hsl(var(--bc));
   }
 
@@ -23,7 +23,7 @@
   }
 
   .cycles {
-    @apply text-xs overflow-hidden text-right w-full pr-2 whitespace-nowrap opacity-50;
+    @apply text-xs overflow-hidden text-right w-full pr-2 mt-1 -mb-2 whitespace-nowrap opacity-50;
     color: hsl(var(--bc));
 
     &.higlight,

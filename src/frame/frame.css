@@ -43,7 +43,15 @@
 }
 
 .settings-frame {
-  @apply px-8 py-4;
+  @apply px-6 -mt-2;
+
+  .label {
+    @apply p-0;
+  }
+
+  .label-text {
+    font-size: inherit;
+  }
 
   .option {
     @apply w-full justify-between;
@@ -83,5 +91,13 @@
       --tw-text-opacity: 1;
       color: hsl(var(--erc, var(--nc)) / var(--tw-text-opacity));
     }
+  }
+}
+
+.host-cache-frame {
+  .url {
+    word-wrap: break-word;
+    word-break: break-all;
+    white-space: normal;
   }
 }

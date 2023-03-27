@@ -2,10 +2,11 @@ import { Dispatch } from "@reduxjs/toolkit";
 import { Emulators } from "emulators";
 import { dosSlice } from "./store/dos";
 import { nonSerializableStore } from "./non-serializable-store";
-import { loadFile, loadUrl } from "./host/bundle-storage";
+import { bundleFromChanges, bundleFromFile, bundleFromUrl } from "./host/bundle-storage";
 import { uiSlice } from "./store/ui";
 import { editorSlice } from "./store/editor";
 import { store } from "./store";
+import { getChangesUrl } from "./cloud/changes";
 
 declare const emulators: Emulators;
 
@@ -29,22 +30,26 @@ export async function loadBundle(bundle: Uint8Array, openConfig: boolean, dispat
 
 export function loadBundleFromFile(file: File, dispatch: Dispatch) {
     return doLoadBundle(file.name,
-        () => loadFile(file, dispatch),
+        () => bundleFromFile(file, dispatch),
         null, null, null, dispatch);
 }
 
 
-export function loadBundleFromUrl(url: string, dispatch: Dispatch) {
+export async function loadBundleFromUrl(url: string, dispatch: Dispatch) {
+    const changesUrl = await getChangesUrl(url);
     return doLoadBundle(url,
-        () => loadUrl(url, dispatch),
-        null, null, null, dispatch);
+        () => bundleFromUrl(url, dispatch),
+        () => bundleFromChanges(changesUrl),
+        url,
+        changesUrl,
+        dispatch);
 }
 
 async function doLoadBundle(bundleName: string,
                             bundleProducer: () => Promise<Uint8Array>,
+                            bundleChangesProducer: (() => Promise<Uint8Array | null>) | null,
                             bundleUrl: string | null,
                             bundleChangesUrl: string | null,
-                            bundleChangesProducer: (() => Promise<Uint8Array>) | null,
                             dispatch: Dispatch) {
     nonSerializableStore.loadedBundle = null;
 

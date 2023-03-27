@@ -18,7 +18,7 @@ export type Backend = typeof BackendValues[number];
 export const RenderBackendValues = <const>["webgl", "canvas"];
 export type RenderBackend = typeof RenderBackendValues[number];
 
-export const RenderAspectValues = <const>["Game", "1/1", "5/4", "4/3", "16/10", "16/9", "Fit"];
+export const RenderAspectValues = <const>["AsIs", "1/1", "5/4", "4/3", "16/10", "16/9", "Fit"];
 export type RenderAspect = typeof RenderAspectValues[number];
 export const FitConstant = 65535;
 

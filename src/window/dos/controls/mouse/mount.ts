@@ -18,7 +18,7 @@ export function mount(el: HTMLElement,
         }
 
         const state = getPointerState(e, el);
-        pressedButton = state.button ?? pointerButton;
+        pressedButton = state.button === undefined ? pointerButton : state.button;
         onMouseDown(state.x, state.y, pressedButton);
 
         e.stopPropagation();

@@ -23,7 +23,7 @@ export function Window(props: {}) {
         case "run": {
             windowComponent = <DosWindow />;
         } break;
-        case "upload": {
+        case "select": {
             windowComponent = <SelectWindow />;
         } break;
         default: ;

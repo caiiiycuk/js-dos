@@ -18,7 +18,6 @@ export function NetworkButton(props: {
         }
     }
 
-    /* eslint-disable max-len */
     return <div class={"network-button sidebar-button " +
         (hightlight ? " sidebar-highlight " : "") +
         (inactive ? " inactive " : "") +
@@ -38,5 +37,4 @@ export function NetworkButton(props: {
 
 
     </div >;
-    /* eslint-enable max-len */
 }
