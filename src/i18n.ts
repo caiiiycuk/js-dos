@@ -50,6 +50,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         stored: "Сохраненные",
         delete: "Удалить",
         editor: "Редактор",
+        download: "Скачать",
+        changes: "Сохранения",
     },
     en: {
         logout: "Logout",
@@ -98,6 +100,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         stored: "Stored",
         delete: "Delete",
         editor: "Editor",
+        download: "Download",
+        changes: "Saves",
     },
 };
 

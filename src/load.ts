@@ -63,10 +63,10 @@ async function doLoadBundle(bundleName: string,
     dispatch(editorSlice.actions.init(config));
     if (config === null) {
         dispatch(uiSlice.actions.frameConf());
+    } else {
+        dispatch(dosSlice.actions.mouseCapture(config.dosboxConf.indexOf("autolock=true") > 0));
     }
 
-    // TODO: dosbox.conf parser
-    // dispatch(dosSlice.actions.mouseCapture(config?.output.options.autolock.value === true));
     nonSerializableStore.loadedBundle = {
         bundleUrl,
         bundleChangesUrl,

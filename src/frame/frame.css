@@ -13,6 +13,10 @@
   width: 100% !important;
 }
 
+.frame-xs {
+  width: calc(var(--sidebar-width) * 2) !important;
+}
+
 .premium-plan-root {
   @apply bg-white rounded-xl px-4 pt-4 pb-2 w-64;
 }

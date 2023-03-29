@@ -9,11 +9,12 @@ export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "account" | "settings" |
     "editor-conf" | "editor-fs" | "network" |
-    "stats" | "host-cache";
+    "stats" | "host-cache" | "quick-save";
 
 const initialState: {
     modal: "none" | "login",
     frame: Frame,
+    frameXs: boolean,
     window: "none" | "error" | "loading" | "prerun" | "run" | "select",
     theme: Theme,
     editor: boolean,
@@ -22,6 +23,7 @@ const initialState: {
 } = {
     modal: "none",
     frame: "none",
+    frameXs: false,
     window: "none",
     theme: (lStorage.getItem("theme") ?? "dark") as Theme,
     editor: false,
@@ -45,27 +47,39 @@ export const uiSlice = createSlice({
         },
         frameNone: (state) => {
             state.frame = "none";
+            state.frameXs = false;
         },
         frameAccount: (state) => {
             toggleFrameIfNeeded(state, "account");
+            state.frameXs = false;
         },
         frameSettings: (state) => {
             state.frame = "settings";
+            state.frameXs = false;
         },
         frameNetwork: (state) => {
             state.frame = "network";
+            state.frameXs = false;
         },
         frameStats: (state) => {
             state.frame = "stats";
+            state.frameXs = false;
         },
         frameConf: (state) => {
             state.frame = "editor-conf";
+            state.frameXs = false;
         },
         frameFs: (state) => {
             state.frame = "editor-fs";
+            state.frameXs = false;
         },
         frameHostCache: (state) => {
             state.frame = "host-cache";
+            state.frameXs = false;
+        },
+        frameQuickSave: (state) => {
+            state.frame = "quick-save";
+            state.frameXs = true;
         },
         windowSelect: (state) => {
             state.window = "select";

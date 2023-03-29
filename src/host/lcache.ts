@@ -1,6 +1,7 @@
 /* eslint @typescript-eslint/no-unused-vars: 0 */
 
 export interface Cache {
+    readonly owner: string;
     put: (key: string, data: Uint8Array) => Promise<void>;
     get: (key: string, defaultValue?: Uint8Array) => Promise<Uint8Array>;
     del: (key: string) => Promise<void>;
@@ -10,7 +11,8 @@ export interface Cache {
 }
 
 export class CacheNoop implements Cache {
-    // eslint-disable-next-line
+    public owner = "";
+
     public close() {
     }
 

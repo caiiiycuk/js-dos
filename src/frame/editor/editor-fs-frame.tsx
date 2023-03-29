@@ -6,6 +6,7 @@ import { useT } from "../../i18n";
 import { loadBundle } from "../../load";
 import { State } from "../../store";
 import { nonSerializableStore } from "../../non-serializable-store";
+import { downloadArrayToFs } from "../../download-file";
 
 interface NodeExt extends Node {
     fsNode: FsNode,
@@ -213,21 +214,8 @@ function Actions(props: {
         // TODO: remove as any
         onMakingBundle(true);
         try {
-            const bundle = await (ci as any).persist(false);
-            const blob = new Blob([bundle], {
-                type: "application/zip",
-            });
-            const newUrl = URL.createObjectURL(blob);
-            const fileName = "bundle.jsdos";
-
-            const a = document.createElement("a");
-            a.href = newUrl;
-            a.download = fileName;
-            a.style.display = "none";
-            document.body.appendChild(a);
-
-            a.click();
-            a.remove();
+            const bundle = await ci.persist(false);
+            downloadArrayToFs("bundle.jsdos", bundle);
         } finally {
             onMakingBundle(false);
         }
