@@ -195,10 +195,9 @@ function Actions(props: {
             return;
         }
 
-        // TODO: remove as any
         onMakingBundle(true);
         try {
-            const bundle = await (ci as any).persist(false);
+            const bundle = await ci.persist(false);
             loadBundle(bundle, true, dispatch);
         } finally {
             onMakingBundle(false);
@@ -211,7 +210,6 @@ function Actions(props: {
             return;
         }
 
-        // TODO: remove as any
         onMakingBundle(true);
         try {
             const bundle = await ci.persist(false);

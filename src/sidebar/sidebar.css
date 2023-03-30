@@ -7,11 +7,6 @@
     @apply flex-grow;
   }
 
-  .sidebar-highlight,
-  .sidebar-button:hover {
-    color: hsl(var(--af));
-  }
-
   .sidebar-badge {
     @apply absolute right-0 bottom-0 w-3 h-3 rounded-full animate-pulse;
     background-color: hsl(var(--p));
@@ -37,4 +32,9 @@
 .sidebar-button {
   @apply cursor-pointer h-8 w-8 my-2 relative;
   color: hsl(var(--bc));
+}
+
+.sidebar-highlight,
+.sidebar-button:hover {
+  color: hsl(var(--af));
 }

@@ -5,7 +5,6 @@ import { authSlice } from "../auth/auth";
 import { useT } from "../i18n";
 import { State } from "../store";
 import { linkToBuy } from "../subscriptions/subscriptions";
-import { ThemeSelect } from "../components/dos-option-select";
 
 export function AccountFrame(props: {}) {
     const t = useT();
@@ -30,8 +29,6 @@ export function AccountFrame(props: {}) {
 
         <div class="mt-8 mb-4 text-2xl">{t("features")}</div>
         <PremiumPlan />
-
-        <ThemeSelect class="mt-8" />
     </div>;
 }
 

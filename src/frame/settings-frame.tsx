@@ -1,5 +1,5 @@
 import { Editor, MouseCapture, PauseCheckbox } from "../components/dos-option-checkbox";
-import { RenderAspectSelect } from "../components/dos-option-select";
+import { RenderAspectSelect, ThemeSelect } from "../components/dos-option-select";
 import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
 
 export function SettingsFrame(props: {}) {
@@ -10,5 +10,6 @@ export function SettingsFrame(props: {}) {
         <VolumeSlider />
         <RenderAspectSelect />
         <Editor />
+        <ThemeSelect class="mt-16" />
     </div>;
 }

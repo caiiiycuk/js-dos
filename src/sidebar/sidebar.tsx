@@ -3,7 +3,7 @@ import { State } from "../store";
 import { AccountButton } from "./account-button";
 import { FullscreenButton } from "./fullscreen-button";
 import { NetworkButton } from "./network-button";
-import { SaveButton } from "./save-button";
+import { CloudSaveButton } from "./cloud-save-button";
 import { DosboxConfButton, SettingsButton, CyclesButton, FsButton,
     HostCacheButton, QuickSaveButton } from "./sidebar-button";
 
@@ -13,13 +13,13 @@ export function SideBar(props: {}) {
     const backend = useSelector((state: State) => state.dos.backend);
 
     return <div class="sidebar">
-        {window === "run" && <SaveButton />}
+        {window === "run" && backend === "dosbox" && <CloudSaveButton />}
         {window === "run" && backend === "dosboxX" && <QuickSaveButton />}
+        {window === "run" && <NetworkButton />}
         {window === "select" && <HostCacheButton />}
         {window === "prerun" && <DosboxConfButton />}
         {editor && window === "run" && <FsButton />}
         <div class="contentbar"></div>
-        {window === "run" && <NetworkButton />}
         {window === "run" && <FullscreenButton />}
         {window === "run" && <CyclesButton />}
         {(window === "prerun" || window === "run") && <SettingsButton />}

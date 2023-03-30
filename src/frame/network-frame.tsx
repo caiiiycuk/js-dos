@@ -4,7 +4,6 @@ import { Checkbox } from "../components/checkbox";
 import { useT } from "../i18n";
 import { State } from "../store";
 import { dosExtraActions, dosSlice } from "../store/dos";
-import { uiSlice } from "../store/ui";
 
 export function NetworkFrame() {
     const account = useSelector((state: State) => state.auth.account);
@@ -13,17 +12,7 @@ export function NetworkFrame() {
     const dispatch = useDispatch();
     const [room, setRoom] = useState<string>(account == null ? "default" :
         "@" + account.email.substring(0, account.email.indexOf("@")));
-    const [server, setServer] = useState<string>("jsdos-netherlands");
-
-    function login() {
-        dispatch(uiSlice.actions.modalLogin());
-    }
-
-    if (account === null) {
-        return <div class="network-frame frame-root items-center" onClick={login}>
-            <button class="btn-primary">{t("please_login")}</button>
-        </div>;
-    }
+    const [server, setServer] = useState<string>("wss://netherlands.dos.zone/");
 
     function toggleIpx() {
         if (network.ipx === "connected") {
@@ -42,16 +31,12 @@ export function NetworkFrame() {
         <div class="form-control w-full">
             <label class="label">
                 <span class="label-text">{t("server")}:</span>
-                <span class={"label-text-alt " +
-                    (account.premium ? "text-success" : "text-error")}>
-                    {t("premium").toLowerCase()}
-                </span>
             </label>
             <input type="text"
                 class="input w-full input-sm input-bordered"
                 onChange={(e) => setServer(e.currentTarget.value ?? "default")}
-                value={server}
-                disabled={!account.premium}></input>
+                value={server}>
+            </input>
         </div>
         <div class="form-control w-full">
             <label class="label">
@@ -70,5 +55,5 @@ export function NetworkFrame() {
             disabled={network.ipx === "connecting"}
             intermediate={network.ipx === "connecting"}
         />
-    </div>;
+    </div >;
 }
