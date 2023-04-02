@@ -4,7 +4,7 @@ export function Loading(props: {
 }) {
     const { head, message } = props;
 
-    return <div class="flex-grow flex flex-col items-center justify-center frame-color px-8">
+    return <div class="flex flex-col items-center justify-center frame-color px-8">
         <div class="text-2xl text-center">{head}</div>
         <div class="mt-2 text-center">{message}</div>
     </div>;

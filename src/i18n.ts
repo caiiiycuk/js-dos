@@ -52,6 +52,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         editor: "Редактор",
         download: "Скачать",
         changes: "Сохранения",
+        account_not_ready: "Пропустить загрузку сохранений",
+        loading_saves: "Загрузка сохранений",
     },
     en: {
         logout: "Logout",
@@ -102,6 +104,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         editor: "Editor",
         download: "Download",
         changes: "Saves",
+        account_not_ready: "Skip loading saves",
+        loading_saves: "Loading saves",
     },
 };
 

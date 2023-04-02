@@ -10,7 +10,8 @@ export function Window(props: {}) {
     const frameOpened = useSelector((state: State) => state.ui.frame) !== "none";
     const frameXs = useSelector((state: State) => state.ui.frameXs);
     const window = useSelector((state: State) => state.ui.window);
-    let windowComponent = null;
+
+    let windowComponent = <Loading />;
     switch (window) {
         case "error": {
             windowComponent = <ErrorWindow />;
@@ -29,8 +30,15 @@ export function Window(props: {}) {
         } break;
         default: ;
     };
+
     return <div class="window absolute w-full h-full flex flex-row">
         <div class={(frameOpened ? (frameXs ? "w-24" : "w-96") : "w-12") + " flex-shrink-0"}></div>
         {windowComponent}
+    </div>;
+}
+
+function Loading() {
+    return <div class="w-full h-full flex justify-center items-center">
+        <div class="radial-progress animate-spin" style="--value:70;"></div>
     </div>;
 }

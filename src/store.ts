@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { uiSlice } from "./store/ui";
-import { authSlice } from "./auth/auth";
+import { authSlice } from "./store/auth";
 import { dosSlice } from "./store/dos";
 import { i18nSlice } from "./i18n";
 import { storageSlice } from "./store/storage";

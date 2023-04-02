@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.3",
-    "@xsolla/login-sdk": "^0.77.0",
     "preact": "^10.13.1",
     "react-checkbox-tree": "^1.8.0",
     "react-redux": "^8.0.5"

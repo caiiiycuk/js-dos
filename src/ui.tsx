@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
-import { Login } from "./auth/login";
+import { Login } from "./login/login";
 import { Frame } from "./frame/frame";
 import { SideBar } from "./sidebar/sidebar";
 import { State } from "./store";

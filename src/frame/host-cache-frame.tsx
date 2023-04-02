@@ -1,6 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
 import { useDispatch } from "react-redux";
-import { getChangesUrlPrefix } from "../cloud/changes";
+import { getChangesUrlPrefix } from "../v8/changes";
 import { downloadArrayToFs, downloadUrlToFs } from "../download-file";
 import { useT } from "../i18n";
 import { loadBundleFromUrl } from "../load";

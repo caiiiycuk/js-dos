@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "preact/hooks";
 import { uiSlice } from "../store/ui";
-import { authSlice } from "../auth/auth";
+import { authSlice } from "../store/auth";
 import { useT } from "../i18n";
 import { State } from "../store";
-import { linkToBuy } from "../subscriptions/subscriptions";
+import { linkToBuy } from "../v8/subscriptions";
 
 export function AccountFrame(props: {}) {
     const t = useT();

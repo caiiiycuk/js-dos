@@ -73,6 +73,14 @@
     background-color: hsl(var(--p));
     color: hsl(var(--pc));
   }
+
+  .account-img {
+    @apply w-24 h-24 my-8 rounded-full;
+  }
+
+  .account-email {
+    @apply text-xs mt-4;
+  }
 }
 
 .network-frame {
