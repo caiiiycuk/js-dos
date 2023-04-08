@@ -11,10 +11,12 @@ import { loadBundleFromUrl } from "./load";
 import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
 import { nonSerializableStore } from "./non-serializable-store";
+import { getCachedEmail } from "./store/auth";
+import { getCache } from "./host/lcache";
 
 let pollStep = "none";
 
-function pollEvents() {
+async function pollEvents() {
     const state = store.getState();
     const step = state.dos.step;
 
@@ -25,6 +27,10 @@ function pollEvents() {
 
     switch (state.dos.step) {
         case "emu-ready": {
+            const cachedEmail = getCachedEmail();
+            if (cachedEmail !== null) {
+                nonSerializableStore.cache = await getCache(cachedEmail);
+            }
             // TODO:
             // / enter url screen
             // / parse params

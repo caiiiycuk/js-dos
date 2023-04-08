@@ -46,6 +46,21 @@ export function Ui() {
         <Frame />
         <SideBar />
         <Login />
+        <Toast />
     </div>;
 };
 
+function Toast() {
+    const toast = useSelector((state: State) => state.ui.toast);
+    const intent = useSelector((state: State) => state.ui.toastIntent);
+
+    if (toast === null) {
+        return null;
+    }
+
+    return <div class="absolute right-10 bottom-10">
+        <div class={"alert alert-" + intent} >
+            { toast }
+        </div>
+    </div>;
+}

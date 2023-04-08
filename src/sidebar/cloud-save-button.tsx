@@ -5,18 +5,22 @@ import { nonSerializableStore } from "../non-serializable-store";
 import { State } from "../store";
 import { uiSlice } from "../store/ui";
 import { DisketteIcon } from "./diskette-icon";
+import { useT } from "../i18n";
+import { putChanges } from "../v8/changes";
 
 export function CloudSaveButton(props: {
     class?: string,
 }) {
     const [busy, setBusy] = useState<boolean>(false);
-    const disabled = useSelector((state: State) => state.auth.account) === null;
+    const account = useSelector((state: State) => state.auth.account);
+    const disabled = account === null;
     const dispatch = useDispatch();
+    const t = useT();
 
-    // if (nonSerializableStore.loadedBundle === null ||
-    //     nonSerializableStore.loadedBundle.bundleChangesUrl === null) {
-    //     return null;
-    // }
+    if (nonSerializableStore.loadedBundle === null ||
+        nonSerializableStore.loadedBundle.bundleChangesUrl === null) {
+        return null;
+    }
 
     async function onClick() {
         if (disabled) {
@@ -38,10 +42,26 @@ export function CloudSaveButton(props: {
         setBusy(true);
         try {
             const changes = await ci.persist(true);
-            // TODO: check if empty
-            nonSerializableStore.cache.put(changesUrl, changes);
+            if (changes !== null) {
+                if (account === null || !account.premium) {
+                    await nonSerializableStore.cache.put(changesUrl, changes);
+                } else {
+                    await Promise.all([
+                        putChanges(changesUrl, changes),
+                        nonSerializableStore.cache.put(changesUrl, changes),
+                    ]);
+                }
+            }
+
+            dispatch(uiSlice.actions.showToast({
+                message: t("success"),
+                intent: "success",
+            }));
         } catch (e: any) {
-            // TODO: show toast
+            dispatch(uiSlice.actions.showToast({
+                message: t("unable_to_save"),
+                intent: "error",
+            }));
             console.error(e);
         } finally {
             setBusy(false);

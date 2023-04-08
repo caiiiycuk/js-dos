@@ -1,5 +1,6 @@
 import { CommandInterface } from "emulators";
 import { Cache, CacheNoop } from "./host/lcache";
+import { Dispatch } from "@reduxjs/toolkit";
 
 export interface LoadedBundle {
     bundleUrl: string | null,
@@ -10,11 +11,13 @@ export interface LoadedBundle {
 
 export const nonSerializableStore: {
     root: HTMLDivElement,
+    dispatch: Dispatch | null,
     loadedBundle: LoadedBundle | null,
     ci: CommandInterface | null,
     cache: Cache,
 } = {
     root: null as any,
+    dispatch: null,
     loadedBundle: null,
     ci: null,
     cache: new CacheNoop(),

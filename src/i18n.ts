@@ -54,6 +54,9 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         changes: "Сохранения",
         account_not_ready: "Пропустить загрузку сохранений",
         loading_saves: "Загрузка сохранений",
+        success: "Успешно",
+        unable_to_save: "Ошибка записи",
+        not_premium: "Ограниченный функционал",
     },
     en: {
         logout: "Logout",
@@ -106,6 +109,9 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         changes: "Saves",
         account_not_ready: "Skip loading saves",
         loading_saves: "Loading saves",
+        success: "Success",
+        unable_to_save: "Unable to save",
+        not_premium: "Limited functionality",
     },
 };
 

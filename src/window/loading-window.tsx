@@ -12,7 +12,7 @@ export function LoadingWindow() {
     const ready = useSelector((state: State) => state.storage.ready);
 
     let head = t("loading");
-    let message = "";
+    let message = "100%";
 
     switch (step) {
         case "bnd-load": {

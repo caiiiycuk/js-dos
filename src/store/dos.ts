@@ -99,8 +99,12 @@ const connectIpx = createAsyncThunk("dos/connectIpx",
             throw new Error("DOS is not started");
         }
 
+        const canonicalAddress = payload.address.endsWith("/") ?
+            payload.address.substring(0, payload.address.length - 1) :
+            payload.address;
+
         return nonSerializableStore.ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */,
-            payload.address + ":1900/ipx/" + payload.room.replaceAll("@", "_"), 1900);
+            canonicalAddress + ":1900/ipx/" + payload.room.replaceAll("@", "_"), 1900);
     });
 
 export const dosSlice = createSlice({

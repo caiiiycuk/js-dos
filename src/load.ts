@@ -94,9 +94,10 @@ async function changesProducer(bundleUrl: string): Promise<{
         }
     });
 
-    const owner = store.getState().auth.account?.email ?? "guest";
+    const account = store.getState().auth.account;
+    const owner = account?.email ?? "guest";
     const url = getChangesUrl(owner, bundleUrl);
-    const bundle = await bundleFromChanges(url);
+    const bundle = await bundleFromChanges(url, account);
     return {
         url,
         bundle,

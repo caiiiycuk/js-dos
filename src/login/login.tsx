@@ -24,8 +24,9 @@ export function Login() {
                         account.premium = false;
                     }
                     dispatch(authSlice.actions.login(e.data.account));
+                } else {
+                    dispatch(authSlice.actions.ready());
                 }
-                dispatch(authSlice.actions.ready());
             }
         }
 

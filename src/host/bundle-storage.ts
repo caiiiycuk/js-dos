@@ -1,6 +1,7 @@
 import { storageSlice } from "../store/storage";
 import { Dispatch } from "@reduxjs/toolkit";
 import { nonSerializableStore } from "../non-serializable-store";
+import { Account } from "../store/auth";
 
 export function bundleFromFile(file: File, dispatch: Dispatch): Promise<Uint8Array> {
     return new Promise<Uint8Array>((resolve) => {
@@ -17,7 +18,11 @@ export function bundleFromFile(file: File, dispatch: Dispatch): Promise<Uint8Arr
 }
 
 
-export async function bundleFromChanges(url: string): Promise<Uint8Array | null> {
+export async function bundleFromChanges(url: string, account: Account | null): Promise<Uint8Array | null> {
+    if (account === null || !account.premium) {
+        return await nonSerializableStore.cache.get(url).catch(() => null);
+    }
+
     try {
         const response = await fetch(url, {
             cache: "no-cache",

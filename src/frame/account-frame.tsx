@@ -77,11 +77,11 @@ function PremiumPlan(props: {}) {
         <div class="flex flex-col mt-4">
             <div class="premium-plan-highlight">
                 <PremiumCheck />
-                <div>{t("experimental_features")}</div>
+                <div>{t("cloud_saves")}</div>
             </div>
             <div class="premium-plan-highlight">
                 <PremiumCheck />
-                <div>{t("cloud_saves")}</div>
+                <div>{t("experimental_features")}</div>
             </div>
             <div class="premium-plan-highlight">
                 <PremiumCheck />

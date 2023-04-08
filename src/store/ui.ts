@@ -1,5 +1,6 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
 import { lStorage } from "../host/lstorage";
+import { nonSerializableStore } from "../non-serializable-store";
 
 export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
     "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua", "lofi",
@@ -20,6 +21,9 @@ const initialState: {
     editor: boolean,
     wideScreen: boolean,
     fullScreen: boolean,
+    toast: string | null,
+    toastIntent: "none" | "error" | "success",
+    toastTimeoutId: number,
 } = {
     modal: "none",
     frame: "none",
@@ -29,6 +33,9 @@ const initialState: {
     editor: false,
     wideScreen: true,
     fullScreen: false,
+    toast: null,
+    toastIntent: "none",
+    toastTimeoutId: 0,
 };
 
 export const uiSlice = createSlice({
@@ -92,6 +99,20 @@ export const uiSlice = createSlice({
         },
         setFullScreen: (state, a: { payload: boolean }) => {
             state.fullScreen = a.payload;
+        },
+        showToast: (state, a: { payload: { message: string, intent?: typeof initialState.toastIntent } }) => {
+            if (state.toastTimeoutId !== 0) {
+                clearInterval(state.toastTimeoutId);
+            }
+            state.toast = a.payload.message;
+            state.toastIntent = a.payload.intent ?? "none";
+            state.toastTimeoutId = setTimeout(() => {
+                nonSerializableStore.dispatch!(uiSlice.actions.hideToast());
+            }, 1500);
+        },
+        hideToast: (state) => {
+            state.toast = null;
+            state.toastTimeoutId = 0;
         },
     },
     extraReducers: (builder) => {
