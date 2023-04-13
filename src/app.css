@@ -1,12 +1,8 @@
-html, body, #app {
+.jsdos-rso {
   @apply h-full;
-}
-
-#app {
   background: hsl(var(--pc));
-}
 
-.jsdos-fullscreen-workaround {
+  .jsdos-fullscreen-workaround {
     position: fixed !important;
     left: 0;
     top: 0;
@@ -14,4 +10,5 @@ html, body, #app {
     right: 0;
     background: black;
     z-index: 999;
+  }
 }

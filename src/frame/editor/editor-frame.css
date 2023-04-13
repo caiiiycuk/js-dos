@@ -1,52 +1,54 @@
-.editor-conf-frame {
-    @apply w-full overflow-hidden flex-grow flex flex-col items-center justify-center h-full px-4;
+.jsdos-rso {
+    .editor-conf-frame {
+        @apply w-full overflow-hidden flex-grow flex flex-col items-center justify-center h-full px-4;
 
-    textarea {
-        @apply w-full textarea;
-        resize: none;
+        textarea {
+            @apply w-full textarea;
+            resize: none;
+        }
     }
-}
 
-.editor-fs-frame {
-    @apply h-full;
+    .editor-fs-frame {
+        @apply h-full;
 
-    .fs-tree-view {
-        @apply form-control bg-base-100 rounded w-full h-full;
+        .fs-tree-view {
+            @apply form-control bg-base-100 rounded w-full h-full;
 
-        .fs-tree {
+            .fs-tree {
 
-            ol {
-                @apply ml-2;
-            }
+                ol {
+                    @apply ml-2;
+                }
 
-            li {
-                @apply my-2;
-            }
+                li {
+                    @apply my-2;
+                }
 
-            button {
-                border: none;
-                background: none;
-                filter: none;
-                min-height: auto;
-                height: auto;
-                @apply m-0 p-0;
-            }
+                button {
+                    border: none;
+                    background: none;
+                    filter: none;
+                    min-height: auto;
+                    height: auto;
+                    @apply m-0 p-0;
+                }
 
-            svg {
-                @apply text-accent;
-            }
+                svg {
+                    @apply text-accent;
+                }
 
-            input {
-                @apply checkbox checkbox-accent mr-2 w-4 h-4;
-            }
+                input {
+                    @apply checkbox checkbox-accent mr-2 w-4 h-4;
+                }
 
-            .rct-text,
-            .rct-bare-label,
-            label {
-                display: flex;
-                flex-direction: row;
-                justify-content: start;
-                align-items: center;
+                .rct-text,
+                .rct-bare-label,
+                label {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: start;
+                    align-items: center;
+                }
             }
         }
     }

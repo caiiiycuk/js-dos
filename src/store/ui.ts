@@ -39,7 +39,7 @@ const initialState: {
 };
 
 export const uiSlice = createSlice({
-    name: "app",
+    name: "js-dos v8s",
     initialState,
     reducers: {
         theme: (state, a: { payload: Theme }) => {

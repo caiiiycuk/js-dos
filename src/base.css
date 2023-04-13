@@ -4,15 +4,18 @@
 
 @layer base {
   :root {
-    --sidebar-width: 3rem; /* w-12 */
+    --sidebar-width: 3rem;
+    /* w-12 */
   }
 }
 
+.jsdos-rso {
+  button,
+  .button {
+    @apply btn;
 
-button, .button {
-  @apply btn;
-
-  &:hover {
-    @apply brightness-150;
+    &:hover {
+      @apply brightness-150;
+    }
   }
 }

@@ -1,122 +1,124 @@
 @import "./editor/editor-frame.css";
 
-.frame-root {
-  @apply flex flex-col;
-}
-
-.frame {
-  @apply absolute left-0 top-0 pl-12 overflow-auto h-full w-96 py-4;
-  background-color: hsl(var(--b3));
-}
-
-.frame-md {
-  width: 100% !important;
-}
-
-.frame-xs {
-  width: calc(var(--sidebar-width) * 2) !important;
-}
-
-.premium-plan-root {
-  @apply bg-white rounded-xl px-4 pt-4 pb-2 w-64;
-}
-
-.premium-plan-root.have-premium {
-  @apply bg-green-200;
-}
-
-.premium-plan-head {
-  @apply text-blue-400;
-}
-
-.premium-plan-cost {
-  @apply text-blue-600 text-5xl;
-}
-
-.premium-plan-cost-expl {
-  @apply text-gray-600 ml-4 flex flex-col;
-}
-
-.premium-plan-highlight {
-  @apply flex flex-row text-xs items-center py-2 border-b border-b-gray-200;
-  @apply text-gray-600;
-}
-
-.premium-plan-root.have-premium .premium-plan-highlight {
-  @apply border-b-green-300;
-}
-
-.settings-frame {
-  @apply px-6 -mt-2;
-
-  .label {
-    @apply p-0;
+.jsdos-rso {
+  .frame-root {
+    @apply flex flex-col;
   }
 
-  .label-text {
-    font-size: inherit;
+  .frame {
+    @apply absolute left-0 top-0 pl-12 overflow-auto h-full w-96 py-4;
+    background-color: hsl(var(--b3));
   }
 
-  .option {
-    @apply w-full justify-between;
+  .frame-md {
+    width: 100% !important;
   }
 
-  .slider {
-    .touch {
-      @apply w-40 flex-grow-0;
+  .frame-xs {
+    width: calc(var(--sidebar-width) * 2) !important;
+  }
+
+  .premium-plan-root {
+    @apply bg-white rounded-xl px-4 pt-4 pb-2 w-64;
+  }
+
+  .premium-plan-root.have-premium {
+    @apply bg-green-200;
+  }
+
+  .premium-plan-head {
+    @apply text-blue-400;
+  }
+
+  .premium-plan-cost {
+    @apply text-blue-600 text-5xl;
+  }
+
+  .premium-plan-cost-expl {
+    @apply text-gray-600 ml-4 flex flex-col;
+  }
+
+  .premium-plan-highlight {
+    @apply flex flex-row text-xs items-center py-2 border-b border-b-gray-200;
+    @apply text-gray-600;
+  }
+
+  .premium-plan-root.have-premium .premium-plan-highlight {
+    @apply border-b-green-300;
+  }
+
+  .settings-frame {
+    @apply px-6 -mt-2;
+
+    .label {
+      @apply p-0;
     }
-  }
-}
 
-.account-frame {
-  button {
-    background-color: hsl(var(--p));
-    color: hsl(var(--pc));
-  }
-
-  .account-img {
-    @apply w-24 h-24 my-8 rounded-full;
-  }
-
-  .account-email {
-    @apply text-xs mt-4;
-  }
-}
-
-.network-frame {
-  @apply w-full;
-
-  .option {
-    @apply w-full;
-  }
-
-  .error {
     .label-text {
-      @apply text-error;
+      font-size: inherit;
     }
 
-    input {
-      border-color: hsl(var(--er) / var(--tw-border-opacity));
-      --tw-border-opacity: 0.1;
-      --tw-bg-opacity: 1;
-      background-color: hsl(var(--er) / var(--tw-bg-opacity));
-      --tw-text-opacity: 1;
-      color: hsl(var(--erc, var(--nc)) / var(--tw-text-opacity));
+    .option {
+      @apply w-full justify-between;
+    }
+
+    .slider {
+      .touch {
+        @apply w-40 flex-grow-0;
+      }
     }
   }
-}
 
-.host-cache-frame {
-  .url {
-    word-wrap: break-word;
-    word-break: break-all;
-    white-space: normal;
+  .account-frame {
+    button {
+      background-color: hsl(var(--p));
+      color: hsl(var(--pc));
+    }
+
+    .account-img {
+      @apply w-24 h-24 my-8 rounded-full;
+    }
+
+    .account-email {
+      @apply text-xs mt-4;
+    }
   }
-}
 
-.quick-save-frame {
-  .text-badge {
-    @apply absolute left-0 top-0 w-3 h-3 font-bold rounded-full flex items-center justify-center;
-    font-size: 0.5rem;
+  .network-frame {
+    @apply w-full;
+
+    .option {
+      @apply w-full;
+    }
+
+    .error {
+      .label-text {
+        @apply text-error;
+      }
+
+      input {
+        border-color: hsl(var(--er) / var(--tw-border-opacity));
+        --tw-border-opacity: 0.1;
+        --tw-bg-opacity: 1;
+        background-color: hsl(var(--er) / var(--tw-bg-opacity));
+        --tw-text-opacity: 1;
+        color: hsl(var(--erc, var(--nc)) / var(--tw-text-opacity));
+      }
+    }
+  }
+
+  .host-cache-frame {
+    .url {
+      word-wrap: break-word;
+      word-break: break-all;
+      white-space: normal;
+    }
+  }
+
+  .quick-save-frame {
+    .text-badge {
+      @apply absolute left-0 top-0 w-3 h-3 font-bold rounded-full flex items-center justify-center;
+      font-size: 0.5rem;
+    }
   }
 }

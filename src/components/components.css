@@ -1,27 +1,29 @@
-select {
-  @apply select select-bordered;
-  @apply pl-4 pr-2 py-2;
-}
-
-.slider {
-    @apply flex flex-row items-center;
-
-    .label {
-        @apply mr-4 w-min;
+.jsdos-rso {
+    select {
+        @apply select select-bordered;
+        @apply pl-4 pr-2 py-2;
     }
 
-    .touch {
-        @apply cursor-pointer h-16 relative flex-grow flex flex-row items-center;
+    .slider {
+        @apply flex flex-row items-center;
 
-        .bg {
-            @apply w-full h-2 rounded-full;
-            background-color: hsl(var(--b2));
+        .label {
+            @apply mr-4 w-min;
         }
 
-        .point {
-            @apply absolute h-6 w-6 rounded-full;
-            background-color: hsl(var(--bc));
+        .touch {
+            @apply cursor-pointer h-16 relative flex-grow flex flex-row items-center;
+
+            .bg {
+                @apply w-full h-2 rounded-full;
+                background-color: hsl(var(--b2));
+            }
+
+            .point {
+                @apply absolute h-6 w-6 rounded-full;
+                background-color: hsl(var(--bc));
+            }
         }
+
     }
-
 }

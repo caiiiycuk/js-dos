@@ -17,7 +17,7 @@ export function SideBar(props: {}) {
         {window === "run" && backend === "dosboxX" && <QuickSaveButton />}
         {window === "run" && <NetworkButton />}
         {window === "select" && <HostCacheButton />}
-        {window === "prerun" && <DosboxConfButton />}
+        {editor && window === "prerun" && <DosboxConfButton />}
         {editor && window === "run" && <FsButton />}
         <div class="contentbar"></div>
         {window === "run" && <FullscreenButton />}

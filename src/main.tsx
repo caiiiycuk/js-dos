@@ -79,7 +79,7 @@ export function Dos(element: HTMLDivElement, options: Partial<DosOptions> = {}):
 
     if (!skipEmulatorsInit) {
         skipEmulatorsInit = true;
-        initEmulators(store, (options.pathPrefix ?? "") + "/emulators/");
+        initEmulators(store, options.pathPrefix ?? "https://v8.js-dos.com/latest/emulators/");
     }
 
     function setTheme(theme: DosOptions["theme"]) {
@@ -140,6 +140,7 @@ export function Dos(element: HTMLDivElement, options: Partial<DosOptions> = {}):
 
 function setupRootElement(root: HTMLDivElement) {
     nonSerializableStore.root = root;
+    root.classList.add("jsdos-rso");
     root.addEventListener("contextmenu", (e) => {
         e.stopPropagation();
         e.preventDefault();
