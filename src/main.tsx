@@ -1,4 +1,4 @@
-import { render } from "preact";
+import { options, render } from "preact";
 import "./index.css";
 
 import { Provider } from "react-redux";
@@ -6,13 +6,13 @@ import { Ui } from "./ui";
 import { dosSlice } from "./store/dos";
 import { store } from "./store";
 import { initEmulators } from "./store/dos";
-import { loadBundleFromUrl } from "./load";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
 import { nonSerializableStore } from "./non-serializable-store";
 import { getCachedEmail } from "./store/auth";
 import { getCache } from "./host/lcache";
+import { loadBundleFromUrl } from "./load";
 
 let pollStep = "none";
 
@@ -32,23 +32,14 @@ async function pollEvents() {
                 nonSerializableStore.cache = await getCache(cachedEmail);
             }
 
-            nonSerializableStore.onEvent("emu-ready");
+            if (nonSerializableStore.options.url) {
+                loadBundleFromUrl(nonSerializableStore.options.url, store.dispatch)
+                    .catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
+            } else {
+                store.dispatch(uiSlice.actions.windowSelect());
+            }
 
-            // TODO:
-            // / enter url screen
-            // / parse params
-
-            // store.dispatch(uiSlice.actions.windowSelect());
-            // return;
-
-            /* eslint-disable max-len */
-            // const url = "https://cdn.dos.zone/original/2X/6/6a2bfa87c031c2a11ab212758a5d914f7c112eeb.jsdos"; // digger
-            const url = "https://cdn.dos.zone/custom/dos/doom.jsdos";
-            // const url = "https://cdn.dos.zone/original/2X/7/744842062905f72648a4d492ccc2526d039b3702.jsdos"; // sim-city
-            // const url = "https://cdn.dos.zone/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos"; // dhry2
-            /* eslint-enable max-len */
-            loadBundleFromUrl(url, store.dispatch)
-                .catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
+            nonSerializableStore.options.onEvent?.("emu-ready");
         } break;
     };
 }
@@ -56,6 +47,7 @@ async function pollEvents() {
 store.subscribe(pollEvents);
 
 export interface DosOptions {
+    url: string,
     pathPrefix: string,
     theme: "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |
     "synthwave" | "retro" | "cyberpunk" | "valentine" | "halloween" | "garden" |
@@ -66,7 +58,7 @@ export interface DosOptions {
     backend: "dosbox" | "dosboxX",
     workerThread: boolean,
     mouseCapture: boolean,
-    onEvent: typeof nonSerializableStore.onEvent,
+    onEvent: (event: "emu-ready" | "ci-ready", ci?: any) => void,
 }
 
 export interface DosProps {
@@ -78,12 +70,10 @@ export interface DosProps {
 }
 
 let skipEmulatorsInit = false;
-export function Dos(element: HTMLDivElement, options: Partial<DosOptions> = {}): DosProps {
+export function Dos(element: HTMLDivElement,
+                    options: Partial<DosOptions> = {}): DosProps {
+    nonSerializableStore.options = options;
     setupRootElement(element);
-
-    if (options.onEvent) {
-        nonSerializableStore.onEvent = options.onEvent;
-    }
 
     if (!skipEmulatorsInit) {
         skipEmulatorsInit = true;

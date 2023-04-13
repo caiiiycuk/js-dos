@@ -1,6 +1,7 @@
 import { CommandInterface } from "emulators";
 import { Cache, CacheNoop } from "./host/lcache";
 import { Dispatch } from "@reduxjs/toolkit";
+import { DosOptions } from "./main";
 
 export interface LoadedBundle {
     bundleUrl: string | null,
@@ -15,12 +16,12 @@ export const nonSerializableStore: {
     loadedBundle: LoadedBundle | null,
     ci: CommandInterface | null,
     cache: Cache,
-    onEvent: (event: "emu-ready" | "ci-ready", ci?: CommandInterface) => void,
+    options: Partial<DosOptions>,
 } = {
     root: null as any,
     dispatch: null,
     loadedBundle: null,
     ci: null,
     cache: new CacheNoop(),
-    onEvent: () => {/**/},
+    options: {},
 };
