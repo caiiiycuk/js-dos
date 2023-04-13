@@ -33,6 +33,7 @@ export function DosWindow(props: {
                     setCi(ci);
                     dispatch(dosSlice.actions.ci(true));
                     nonSerializableStore.ci = ci;
+                    nonSerializableStore.onEvent("ci-ready", ci);
                     (window as any).ci = ci;
                 })
                 .catch((e) => dispatch(dosSlice.actions.emuError(e.message)));

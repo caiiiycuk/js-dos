@@ -17,7 +17,9 @@
     </script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        Dos(document.getElementById("app"));
+        Dos(document.getElementById("app"), {
+          onEvent: (event) => console.log("Event", event),
+        });
       });
     </script>
   </body>

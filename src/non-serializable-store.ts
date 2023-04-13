@@ -15,10 +15,12 @@ export const nonSerializableStore: {
     loadedBundle: LoadedBundle | null,
     ci: CommandInterface | null,
     cache: Cache,
+    onEvent: (event: "emu-ready" | "ci-ready", ci?: CommandInterface) => void,
 } = {
     root: null as any,
     dispatch: null,
     loadedBundle: null,
     ci: null,
     cache: new CacheNoop(),
+    onEvent: () => {/**/},
 };

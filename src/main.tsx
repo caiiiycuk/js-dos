@@ -31,6 +31,9 @@ async function pollEvents() {
             if (cachedEmail !== null) {
                 nonSerializableStore.cache = await getCache(cachedEmail);
             }
+
+            nonSerializableStore.onEvent("emu-ready");
+
             // TODO:
             // / enter url screen
             // / parse params
@@ -63,6 +66,7 @@ export interface DosOptions {
     backend: "dosbox" | "dosboxX",
     workerThread: boolean,
     mouseCapture: boolean,
+    onEvent: typeof nonSerializableStore.onEvent,
 }
 
 export interface DosProps {
@@ -76,6 +80,10 @@ export interface DosProps {
 let skipEmulatorsInit = false;
 export function Dos(element: HTMLDivElement, options: Partial<DosOptions> = {}): DosProps {
     setupRootElement(element);
+
+    if (options.onEvent) {
+        nonSerializableStore.onEvent = options.onEvent;
+    }
 
     if (!skipEmulatorsInit) {
         skipEmulatorsInit = true;
