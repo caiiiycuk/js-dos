@@ -198,7 +198,9 @@ function Actions(props: {
         onMakingBundle(true);
         try {
             const bundle = await ci.persist(false);
-            loadBundle(bundle, true, dispatch);
+            if (bundle) {
+                loadBundle(bundle, true, dispatch);
+            }
         } finally {
             onMakingBundle(false);
         }
@@ -213,7 +215,9 @@ function Actions(props: {
         onMakingBundle(true);
         try {
             const bundle = await ci.persist(false);
-            downloadArrayToFs("bundle.jsdos", bundle);
+            if (bundle) {
+                downloadArrayToFs("bundle.jsdos", bundle);
+            }
         } finally {
             onMakingBundle(false);
         }

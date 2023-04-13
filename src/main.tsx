@@ -1,4 +1,4 @@
-import { options, render } from "preact";
+import { render } from "preact";
 import "./index.css";
 
 import { Provider } from "react-redux";

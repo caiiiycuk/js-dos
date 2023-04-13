@@ -104,7 +104,7 @@ const connectIpx = createAsyncThunk("dos/connectIpx",
             payload.address;
 
         return nonSerializableStore.ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */,
-            canonicalAddress + ":1900/ipx/" + payload.room.replaceAll("@", "_"), 1900);
+            canonicalAddress + ":1900/ipx/" + payload.room.replaceAll("@", "_"));
     });
 
 export const dosSlice = createSlice({
