@@ -34,6 +34,7 @@ export const authSlice = createSlice({
     initialState,
     reducers: {
         login: (state, action: { payload: Account }) => {
+            setRefreshToken(action.payload.token.refresh_token);
             state.account = action.payload;
             lStorage.setItem(cachedEmailKey, action.payload.email);
             getCache(state.account.email)
@@ -44,9 +45,7 @@ export const authSlice = createSlice({
                 });
         },
         logout: (state) => {
-            postAuthMessage({
-                action: "auth/logout",
-            });
+            clearRefreshToken();
             lStorage.removeItem(cachedEmailKey);
             getCache("guest")
                 .then((cache) => nonSerializableStore.cache = cache)
@@ -63,7 +62,37 @@ export function getCachedEmail() {
     return lStorage.getItem(cachedEmailKey);
 }
 
-function postAuthMessage(message: { action: "auth/login" | "auth/logout" }) {
+export function postAuthMessage(action: "auth/login" | "auth/authenicate") {
+    const message = {
+        action,
+        refresh_token: action === "auth/authenicate" ? getRefreshToken() : undefined,
+        url: action === "auth/login" ? location.href : undefined,
+    };
     document.querySelector<HTMLIFrameElement>("#authentificator")!
         .contentWindow?.postMessage(message, "*");
+}
+
+function getRefreshToken(): string | null {
+    return lStorage.getItem("cached.rt");
+}
+
+function setRefreshToken(refreshToken: string | null) {
+    if (refreshToken === null) {
+        clearRefreshToken();
+        return;
+    }
+
+    return lStorage.setItem("cached.rt", refreshToken);
+}
+
+function clearRefreshToken() {
+    lStorage.removeItem("cached.rt");
+}
+
+const params = new URLSearchParams(location.search);
+const refreshToken = params.get("jsdos_token");
+if (refreshToken !== null) {
+    params.delete("jsdos_token");
+    location.search = params.toString();
+    setRefreshToken(refreshToken);
 }

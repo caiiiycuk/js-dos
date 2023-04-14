@@ -4,7 +4,7 @@ import { State } from "../store";
 import { uiSlice } from "../store/ui";
 import { CloseButton } from "../components/close-button";
 import { authentificator } from "../v8/config";
-import { Account, authSlice } from "../store/auth";
+import { Account, authSlice, postAuthMessage } from "../store/auth";
 import { havePremium } from "../v8/subscriptions";
 
 export function Login() {
@@ -14,7 +14,9 @@ export function Login() {
 
     useEffect(() => {
         async function onAuthMessage(e: any) {
-            if (e.data.action === "auth/authenicate") {
+            if (e.data.action === "auth/ready") {
+                postAuthMessage("auth/authenicate");
+            } else if (e.data.action === "auth/authenicate") {
                 const account = e.data.account as Account | null;
                 if (account !== null) {
                     try {
@@ -25,6 +27,7 @@ export function Login() {
                     }
                     dispatch(authSlice.actions.login(e.data.account));
                 } else {
+                    dispatch(authSlice.actions.logout());
                     dispatch(authSlice.actions.ready());
                 }
             }
@@ -42,10 +45,7 @@ export function Login() {
             return;
         }
 
-        iframe.contentWindow?.postMessage({
-            action: "auth/login",
-            url: location.href,
-        }, "*");
+        postAuthMessage("auth/login");
     }, [visible]);
 
     return <div

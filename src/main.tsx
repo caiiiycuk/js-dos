@@ -28,9 +28,7 @@ async function pollEvents() {
     switch (state.dos.step) {
         case "emu-ready": {
             const cachedEmail = getCachedEmail();
-            if (cachedEmail !== null) {
-                nonSerializableStore.cache = await getCache(cachedEmail);
-            }
+            nonSerializableStore.cache = await getCache(cachedEmail ?? "guest");
 
             if (nonSerializableStore.options.url) {
                 loadBundleFromUrl(nonSerializableStore.options.url, store.dispatch)
