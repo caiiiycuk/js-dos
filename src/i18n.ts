@@ -12,7 +12,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         experimental_features: "Доступ к экспериентальным функциям",
         cloud_saves: "Облачные сохранения",
         game_no_limits: "Любой размер игры",
-        net_no_limits: "Безлимитные сетевые игры",
+        net_no_limits: "Выбор сервера для стевой игры",
         unlock_options: "Доступ ко всем настройкам",
         error: "Упс... Что-то пошло не так...",
         consult_logs: "Проверьте логи браузера",
@@ -56,7 +56,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         loading_saves: "Загрузка сохранений",
         success: "Успешно",
         unable_to_save: "Ошибка записи",
-        not_premium: "Ограниченный функционал",
+        not_premium: "Подключить премиум",
     },
     en: {
         logout: "Logout",
@@ -67,7 +67,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         experimental_features: "Access to all experimental features",
         cloud_saves: "Cloud saves",
         game_no_limits: "Unlimited game size",
-        net_no_limits: "No limits for multiplayer games",
+        net_no_limits: "Change the network region",
         unlock_options: "Unlock all configuration options",
         error: "Oops... Something went wrong...",
         consult_logs: "Please check browser logs",
@@ -111,7 +111,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         loading_saves: "Loading saves",
         success: "Success",
         unable_to_save: "Unable to save",
-        not_premium: "Limited functionality",
+        not_premium: "Subscribe to premium",
     },
 };
 

@@ -28,16 +28,18 @@ export function PreRunWindow() {
         {(account === null || !account.premium) &&
             <div>
                 <div
-                    class="alert alert-warning shadow-lg mb-4 -mt-4 underline cursor-pointer"
+                    class="alert alert-success shadow-lg mb-4 -mt-4 underline cursor-pointer"
                     onClick={login}>
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg"
-                            class="stroke-current flex-shrink-0 h-6 w-6"
-                            fill="none" viewBox="0 0 24 24">
+                            fill="red"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor"
+                            class="stroke-current flex-shrink-0 h-6 w-6">
                             <path stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732
-                            4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597
+                                    1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75
+                                    3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                         </svg>
                         <span>{t("not_premium")}</span>
                     </div>

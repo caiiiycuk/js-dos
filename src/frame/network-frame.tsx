@@ -4,6 +4,10 @@ import { Checkbox } from "../components/checkbox";
 import { useT } from "../i18n";
 import { State } from "../store";
 import { dosExtraActions, dosSlice } from "../store/dos";
+import { Select } from "../components/select";
+import { lStorage } from "../host/lstorage";
+import { uiSlice } from "../store/ui";
+import { LockBadge } from "../components/lock";
 
 export function NetworkFrame() {
     const account = useSelector((state: State) => state.auth.account);
@@ -12,7 +16,8 @@ export function NetworkFrame() {
     const dispatch = useDispatch();
     const [room, setRoom] = useState<string>(account == null ? "default" :
         "@" + account.email.substring(0, account.email.indexOf("@")));
-    const [server, setServer] = useState<string>("wss://netherlands.dos.zone/");
+    const premium = account?.premium === true;
+    const [server, setServer] = useState<string>((premium ? lStorage.getItem("net.server") : null) ??"netherlands");
 
     function toggleIpx() {
         if (network.ipx === "connected") {
@@ -20,23 +25,38 @@ export function NetworkFrame() {
         } else {
             dispatch(dosExtraActions.connectIpx({
                 room,
-                address: server === "jsdos-netherlands" ?
-                    "127.0.0.1" :
-                    server,
+                address: "wss://" + (premium ? server : "netherlands") + ".dos.zone",
             }) as any);
+            dispatch(uiSlice.actions.frameNone());
         }
     }
 
-    return <div class="network-frame frame-root items-start px-4">
-        <div class="form-control w-full">
-            <label class="label">
-                <span class="label-text">{t("server")}:</span>
-            </label>
-            <input type="text"
-                class="input w-full input-sm input-bordered"
-                onChange={(e) => setServer(e.currentTarget.value ?? "default")}
-                value={server}>
-            </input>
+    function lockClick() {
+        dispatch(uiSlice.actions.frameAccount());
+    }
+
+    function onServer(newServer: string) {
+        if (!premium) {
+            dispatch(uiSlice.actions.frameAccount());
+            return;
+        }
+
+        setServer(newServer);
+    }
+
+    return <div class="network-frame frame-root items-start px-4 relative">
+        <div class="ml-1 mb-4 w-full flex flex-row items-center">
+            <Select
+                class="text-sm"
+                selectClass="w-full"
+                label={t("server") + ":"}
+                selected="netherlands"
+                values={["netherlands", "newyork", "singapore"]}
+                onSelect={onServer}
+            />
+            <div onClick={lockClick}>
+                <LockBadge class="cursor-pointer ml-2 w-4 h-4 text-error"/>
+            </div>
         </div>
         <div class="form-control w-full">
             <label class="label">
@@ -48,7 +68,7 @@ export function NetworkFrame() {
                 value={room}></input>
         </div>
         <Checkbox
-            class={"mt-8 " + (network.ipx === "error" ? "error" : "")}
+            class={"mt-4 " + (network.ipx === "error" ? "error" : "")}
             onChange={toggleIpx}
             label="IPX"
             checked={network.ipx === "connected"}

@@ -25,7 +25,7 @@ export function AccountFrame(props: {}) {
             <img class="account-img" src={account.picture} />}
         <div>{account.name ?? account.email}</div>
         {account.name !== null && <div class="account-email">{account.email}</div>}
-        <button class="mt-8" onClick={logout}>{t("logout")}</button>
+        <button class="button mt-8" onClick={logout}>{t("logout")}</button>
 
         <div class="mt-8 mb-4 text-2xl">{t("features")}</div>
         <PremiumPlan />
@@ -71,7 +71,7 @@ function PremiumPlan(props: {}) {
                         <div><span class="text-blue-600">5</span> {t("try_free")}</div>
                     </div>
                 </div>
-                <button class={ "w-full " + (locked ? "hidden" : "") } onClick={onBuy}>{t("buy")}</button>
+                <button class={ "button w-full " + (locked ? "hidden" : "") } onClick={onBuy}>{t("buy")}</button>
             </>
         }
         <div class="flex flex-col mt-4">

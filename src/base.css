@@ -10,7 +10,6 @@
 }
 
 .jsdos-rso {
-  button,
   .button {
     @apply btn;
 
