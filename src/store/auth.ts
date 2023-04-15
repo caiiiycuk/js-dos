@@ -36,7 +36,6 @@ export const authSlice = createSlice({
         login: (state, action: { payload: Account }) => {
             setRefreshToken(action.payload.token.refresh_token);
             state.account = action.payload;
-            state.account.premium = true;
             lStorage.setItem(cachedEmailKey, action.payload.email);
             getCache(state.account.email)
                 .then((cache) => nonSerializableStore.cache = cache)
