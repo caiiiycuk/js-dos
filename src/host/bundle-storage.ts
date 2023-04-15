@@ -2,6 +2,7 @@ import { storageSlice } from "../store/storage";
 import { Dispatch } from "@reduxjs/toolkit";
 import { nonSerializableStore } from "../non-serializable-store";
 import { Account } from "../store/auth";
+import { brCdn } from "../v8/config";
 
 export function bundleFromFile(file: File, dispatch: Dispatch): Promise<Uint8Array> {
     return new Promise<Uint8Array>((resolve) => {
@@ -71,7 +72,8 @@ export async function bundleFromUrl(url: string, dispatch: Dispatch): Promise<Ui
         chunks.push(value);
         received += value.length;
 
-        dispatch(storageSlice.actions.progress([received, length]));
+        const bytes = Math.min(url.startsWith(brCdn) ? received / 2 : received, length);
+        dispatch(storageSlice.actions.progress([bytes, length]));
     }
 
     let offset = 0;

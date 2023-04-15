@@ -1,4 +1,4 @@
-import { xsollaPremiumId, xsollaSubscriptons } from "../conf";
+import { xsollaPremiumId, xsollaSubscriptons } from "../v8/config";
 
 export async function linkToBuy(token: string): Promise<string | null> {
     const response = await fetch(xsollaSubscriptons + "/buy", {

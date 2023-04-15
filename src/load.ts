@@ -8,6 +8,7 @@ import { editorSlice } from "./store/editor";
 import { store } from "./store";
 import { getChangesUrl } from "./v8/changes";
 import { storageSlice } from "./store/storage";
+import { brCdn } from "./v8/config";
 
 declare const emulators: Emulators;
 
@@ -39,6 +40,10 @@ export function loadBundleFromFile(file: File, dispatch: Dispatch) {
 export async function loadBundleFromUrl(url: string, dispatch: Dispatch) {
     const owner = store.getState().auth.account?.email ?? "guest";
     const changesUrl = await getChangesUrl(owner, url);
+    if (url.startsWith(brCdn)) {
+        const lastIndex = url.lastIndexOf("/");
+        dispatch(uiSlice.actions.background(url.substring(0, lastIndex) + "/bg.jpeg"));
+    }
     return doLoadBundle(url,
         bundleFromUrl(url, dispatch),
         changesProducer(changesUrl),
@@ -81,8 +86,8 @@ async function changesProducer(bundleUrl: string): Promise<{
     url: string,
     bundle: Uint8Array | null,
 }> {
-    await new Promise<void>((resolve) => {
-        if (!store.getState().auth.ready) {
+    if (!store.getState().auth.ready) {
+        await new Promise<void>((resolve) => {
             let unsubscirbe: Unsubscribe | null = null;
             const updateFn = () => {
                 if (store.getState().auth.ready) {
@@ -91,8 +96,8 @@ async function changesProducer(bundleUrl: string): Promise<{
                 }
             };
             unsubscirbe = store.subscribe(updateFn);
-        }
-    });
+        });
+    }
 
     const account = store.getState().auth.account;
     const owner = account?.email ?? "guest";

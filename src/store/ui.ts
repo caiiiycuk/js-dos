@@ -24,6 +24,7 @@ const initialState: {
     toast: string | null,
     toastIntent: "none" | "error" | "success",
     toastTimeoutId: number,
+    background: string | null,
 } = {
     modal: "none",
     frame: "none",
@@ -36,6 +37,7 @@ const initialState: {
     toast: null,
     toastIntent: "none",
     toastTimeoutId: 0,
+    background: null,
 };
 
 export const uiSlice = createSlice({
@@ -90,6 +92,9 @@ export const uiSlice = createSlice({
         },
         windowSelect: (state) => {
             state.window = "select";
+        },
+        background: (state, a: { payload: string }) => {
+            state.background = a.payload;
         },
         setEditor: (state, a: { payload: boolean }) => {
             state.editor = a.payload;

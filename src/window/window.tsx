@@ -10,6 +10,7 @@ export function Window(props: {}) {
     const frameOpened = useSelector((state: State) => state.ui.frame) !== "none";
     const frameXs = useSelector((state: State) => state.ui.frameXs);
     const window = useSelector((state: State) => state.ui.window);
+    const background = useSelector((state: State) => state.ui.background);
 
     let windowComponent = <Loading />;
     switch (window) {
@@ -31,9 +32,13 @@ export function Window(props: {}) {
         default: ;
     };
 
-    return <div class="window absolute w-full h-full flex flex-row">
-        <div class={(frameOpened ? (frameXs ? "w-24" : "w-96") : "w-12") + " flex-shrink-0"}></div>
-        {windowComponent}
+    return <div class="window absolute w-full h-full bg-base-100">
+        <div class="background-image"
+            style={{ backgroundImage: (background ? "url(" + background + ")" : undefined ) }} />
+        <div class="relative flex flex-row h-full w-full">
+            <div class={(frameOpened ? (frameXs ? "w-24" : "w-96") : "w-12") + " flex-shrink-0"}></div>
+            {windowComponent}
+        </div>
     </div>;
 }
 

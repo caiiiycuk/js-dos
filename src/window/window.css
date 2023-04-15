@@ -2,7 +2,12 @@
   .window {
     @apply overflow-hidden;
 
-    background-color: hsl(var(--b1));
+    .background-image {
+      @apply absolute w-full h-full pointer-events-none;
+      background-position: center;
+      background-size: cover;
+      opacity: 0.05;
+    }
 
     .play-button {
       &:hover {

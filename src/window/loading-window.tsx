@@ -35,7 +35,7 @@ export function LoadingWindow() {
 
     return <div class="flex flex-col w-full h-full items-center justify-center">
         <Loading head={head} message={message} />
-        { step === "bnd-load" && ready && <AccountNotReady /> }
+        {step === "bnd-load" && ready && <AccountNotReady />}
     </div>;
 }
 
