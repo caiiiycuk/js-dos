@@ -15,6 +15,9 @@ export function Login() {
     useEffect(() => {
         const iframe = iframeRef.current;
         if (iframe === null) {
+            dispatch(authSlice.actions.logout());
+            dispatch(authSlice.actions.ready());
+            console.error("Unable to inialize authentificator!");
             return;
         }
 
@@ -44,7 +47,7 @@ export function Login() {
         return () => {
             window.removeEventListener("message", onAuthMessage);
         };
-    }, [iframeRef.current]);
+    }, []);
 
     useEffect(() => {
         const iframe = iframeRef.current;
