@@ -25,3 +25,11 @@ export const nonSerializableStore: {
     cache: new CacheNoop(),
     options: {},
 };
+
+export const postJsDosEvent: DosOptions["onEvent"] = (event, ci) => {
+    if (nonSerializableStore.options.onEvent) {
+        setTimeout(() => {
+            nonSerializableStore.options.onEvent?.(event, ci);
+        }, 4);
+    }
+};

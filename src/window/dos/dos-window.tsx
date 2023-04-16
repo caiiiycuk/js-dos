@@ -2,7 +2,7 @@ import { Emulators, CommandInterface } from "emulators";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { dosSlice } from "../../store/dos";
-import { nonSerializableStore } from "../../non-serializable-store";
+import { nonSerializableStore, postJsDosEvent } from "../../non-serializable-store";
 import { State } from "../../store";
 import { useDosRuntime } from "./dos-runtime";
 import { dhry2Bundle, Dhry2Results } from "./dos-dhry2";
@@ -33,7 +33,7 @@ export function DosWindow(props: {
                     setCi(ci);
                     dispatch(dosSlice.actions.ci(true));
                     nonSerializableStore.ci = ci;
-                    nonSerializableStore.options.onEvent?.("ci-ready", ci);
+                    postJsDosEvent("ci-ready", ci);
                     (window as any).ci = ci;
                 })
                 .catch((e) => dispatch(dosSlice.actions.emuError(e.message)));

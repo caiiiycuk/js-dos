@@ -58,6 +58,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         unable_to_save: "Ошибка записи",
         not_premium: "Подключить премиум",
         copy_net_link: "Отправьте ссылку на подключение",
+        copied: "Скопировано",
     },
     en: {
         logout: "Logout",
@@ -114,6 +115,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         unable_to_save: "Unable to save",
         not_premium: "Subscribe to premium",
         copy_net_link: "Share this link to connect",
+        copied: "Copied",
     },
 };
 

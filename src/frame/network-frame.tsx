@@ -145,7 +145,7 @@ async function copyToClipBoard(text: string,
     try {
         await navigator.clipboard.writeText(text);
         dispatch(uiSlice.actions.showToast({
-            message: t("success"),
+            message: t("copied"),
             intent: "success",
         }));
     } catch (e: any) {

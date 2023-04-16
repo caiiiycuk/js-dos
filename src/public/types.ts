@@ -1,5 +1,5 @@
 export interface DosOptions {
-    url: string,
+    url: string | null,
     pathPrefix: string,
     theme: "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |
     "synthwave" | "retro" | "cyberpunk" | "valentine" | "halloween" | "garden" |

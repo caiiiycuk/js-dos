@@ -1,36 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>js-dos 8.xx</title>
-    <style>
-      html, body {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.tsx">
-    </script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        /* eslint-disable max-len */
-        // const url = "https://cdn.dos.zone/original/2X/7/744842062905f72648a4d492ccc2526d039b3702.jsdos"; // sim-city
-        // const url = "https://cdn.dos.zone/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos"; // dhry2
-        /* eslint-enable max-len */
-        Dos(document.getElementById("app"), 
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>js-dos 8.xx</title>
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.tsx">
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      /* eslint-disable max-len */
+      // const url = "https://cdn.dos.zone/original/2X/7/744842062905f72648a4d492ccc2526d039b3702.jsdos"; // sim-city
+      // const url = "https://cdn.dos.zone/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos"; // dhry2
+      /* eslint-enable max-len */
+      const props = Dos(document.getElementById("app"),
         {
           url: "https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos", // digger
           // url: "https://cdn.dos.zone/custom/dos/doom.jsdos",
           // url: "https://cdn.dos.zone/custom/dos/duke3d_ipx.jsdos",
           // url: "https://br.cdn.dos.zone/ipx/duke3d/duke3d_ipx.jsdos",
           pathPrefix: "/emulators/",
-          onEvent: (event) => console.log("Event", event),
+          onEvent: (event) => {
+            console.log("Event", event)
+            if (event === "bnd-play") {
+              props.setFrame("network");
+            }
+          },
         });
-      });
-    </script>
-  </body>
+    });
+  </script>
+</body>
+
 </html>

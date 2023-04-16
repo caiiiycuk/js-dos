@@ -9,7 +9,7 @@ import { initEmulators } from "./store/dos";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
-import { nonSerializableStore } from "./non-serializable-store";
+import { nonSerializableStore, postJsDosEvent } from "./non-serializable-store";
 import { getCachedEmail } from "./store/auth";
 import { getCache } from "./host/lcache";
 import { loadBundleFromUrl } from "./load";
@@ -39,7 +39,7 @@ async function pollEvents() {
                 store.dispatch(uiSlice.actions.windowSelect());
             }
 
-            nonSerializableStore.options.onEvent?.("emu-ready");
+            postJsDosEvent("emu-ready");
         } break;
     };
 }

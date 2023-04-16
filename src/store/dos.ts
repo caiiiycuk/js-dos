@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { makeStore, State } from "../store";
 import { Emulators } from "emulators";
 import { lStorage } from "../host/lstorage";
-import { nonSerializableStore } from "../non-serializable-store";
+import { nonSerializableStore, postJsDosEvent } from "../non-serializable-store";
 
 const alphabet = "qwertyuiopasdfghjklzxcvbnm1234567890";
 declare const emulators: Emulators;
@@ -141,7 +141,7 @@ export const dosSlice = createSlice({
         },
         bndPlay: (s) => {
             s.step = "bnd-play";
-            nonSerializableStore.options.onEvent?.("bnd-play");
+            postJsDosEvent("bnd-play");
         },
         dosWorker: (s, a: { payload: boolean }) => {
             s.worker = a.payload;
