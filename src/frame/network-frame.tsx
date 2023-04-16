@@ -5,7 +5,7 @@ import { useT } from "../i18n";
 import { State } from "../store";
 import { dosExtraActions, dosSlice } from "../store/dos";
 import { Select } from "../components/select";
-import { uiSlice } from "../store/ui";
+import { dispatchLoginAction, uiSlice } from "../store/ui";
 import { LockBadge } from "../components/lock";
 import { Dispatch } from "@reduxjs/toolkit";
 
@@ -57,16 +57,16 @@ export function NetworkFrame() {
     }
 
     function lockClick() {
-        dispatch(uiSlice.actions.frameAccount());
+        dispatchLoginAction(account, dispatch);
     }
 
     function onServer(newServer: string) {
+        setServer(newServer);
+
         if (!premium) {
-            dispatch(uiSlice.actions.frameAccount());
+            dispatchLoginAction(account, dispatch);
             return;
         }
-
-        setServer(newServer);
     }
 
     return <div class="network-frame frame-root items-start px-4 relative">

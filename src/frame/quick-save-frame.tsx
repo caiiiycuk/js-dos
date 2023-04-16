@@ -4,7 +4,7 @@ import { nonSerializableStore } from "../non-serializable-store";
 import { CloudSaveButton } from "../sidebar/cloud-save-button";
 import { DisketteIcon } from "../sidebar/diskette-icon";
 import { State } from "../store";
-import { uiSlice } from "../store/ui";
+import { dispatchLoginAction } from "../store/ui";
 
 export function QuickSaveFrame() {
     const premium = useSelector((state: State) => state.auth.account)?.premium;
@@ -25,10 +25,11 @@ function SaveButton(props: {
     textcolor: string,
     disabled?: boolean,
 }) {
+    const account = useSelector((state: State) => state.auth.account);
     const dispatch = useDispatch();
     function onClick() {
         if (props.disabled === true) {
-            dispatch(uiSlice.actions.frameAccount());
+            dispatchLoginAction(account, dispatch);
         }
 
         const ci = nonSerializableStore.ci;
@@ -66,10 +67,11 @@ function LoadButton(props: {
     textcolor: string,
     disabled?: boolean,
 }) {
+    const account = useSelector((state: State) => state.auth.account);
     const dispatch = useDispatch();
     function onClick() {
         if (props.disabled === true) {
-            dispatch(uiSlice.actions.frameAccount());
+            dispatchLoginAction(account, dispatch);
         }
 
         const ci = nonSerializableStore.ci;

@@ -1,20 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
-import { uiSlice } from "../store/ui";
+import { dispatchLoginAction } from "../store/ui";
 import { State } from "../store";
 
 export function AccountButton(props: {
     class?: string,
 }) {
-    const loggedIn = useSelector((state: State) => state.auth.account) !== null;
+    const account = useSelector((state: State) => state.auth.account);
+    const loggedIn = account !== null;
     const hightlight = useSelector((state: State) => state.ui.frame) === "account";
     const dispatch = useDispatch();
 
     function onClick() {
-        if (loggedIn) {
-            dispatch(uiSlice.actions.frameAccount());
-        } else {
-            dispatch(uiSlice.actions.modalLogin());
-        }
+        dispatchLoginAction(account, dispatch);
     }
 
     return <div class={"sidebar-button " + (hightlight ? "sidebar-highlight " : "") +

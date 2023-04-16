@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { LockBadge } from "../components/lock";
 import { State } from "../store";
 import { uiSlice } from "../store/ui";
 
@@ -7,17 +6,10 @@ export function NetworkButton(props: {
     class?: string,
 }) {
     const hightlight = useSelector((state: State) => state.ui.frame) === "network";
-    const account = useSelector((state: State) => state.auth.account);
-    const inactive = account === null ||
-        useSelector((state: State) => state.dos.network.ipx !== "connected");
+    const inactive = useSelector((state: State) => state.dos.network.ipx !== "connected");
     const dispatch = useDispatch();
 
     function onClick() {
-        if (account === null) {
-            dispatch(uiSlice.actions.modalLogin());
-            return;
-        }
-
         if (hightlight) {
             dispatch(uiSlice.actions.frameNone());
         } else {
@@ -40,7 +32,6 @@ export function NetworkButton(props: {
                 stroke="currentColor" class="w-full text-error h-full absolute top-0 left-0">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4L18 18" />
             </svg> }
-            { account === null && <LockBadge /> }
         </div>
 
 

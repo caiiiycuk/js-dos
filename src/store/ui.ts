@@ -1,6 +1,7 @@
-import { createAction, createSlice } from "@reduxjs/toolkit";
+import { Dispatch, createAction, createSlice } from "@reduxjs/toolkit";
 import { lStorage } from "../host/lstorage";
 import { nonSerializableStore } from "../non-serializable-store";
+import { Account } from "./auth";
 
 export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
     "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua", "lofi",
@@ -154,5 +155,13 @@ function toggleFrameIfNeeded(
         state.frame = "none";
     } else {
         state.frame = newFrame;
+    }
+}
+
+export function dispatchLoginAction(account: Account | null, dispatch: Dispatch) {
+    if (account === null) {
+        dispatch(uiSlice.actions.modalLogin());
+    } else {
+        dispatch(uiSlice.actions.frameAccount());
     }
 }

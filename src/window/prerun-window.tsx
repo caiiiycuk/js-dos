@@ -6,7 +6,7 @@ import { MouseCapture, WorkerCheckbox } from "../components/dos-option-checkbox"
 import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
 import { updateBundleConf } from "../load";
 import { useT } from "../i18n";
-import { uiSlice } from "../store/ui";
+import { dispatchLoginAction } from "../store/ui";
 
 export function PreRunWindow() {
     const account = useSelector((state: State) => state.auth.account);
@@ -15,11 +15,7 @@ export function PreRunWindow() {
     const t = useT();
 
     function login() {
-        if (account === null) {
-            dispatch(uiSlice.actions.modalLogin());
-        } else {
-            dispatch(uiSlice.actions.frameAccount());
-        }
+        dispatchLoginAction(account, dispatch);
     }
 
     return <div class="pre-run-window">
