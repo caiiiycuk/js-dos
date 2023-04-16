@@ -1,23 +1,42 @@
-import { useState } from "preact/hooks";
+import { useEffect } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { Checkbox } from "../components/checkbox";
 import { useT } from "../i18n";
 import { State } from "../store";
 import { dosExtraActions, dosSlice } from "../store/dos";
 import { Select } from "../components/select";
-import { lStorage } from "../host/lstorage";
 import { uiSlice } from "../store/ui";
 import { LockBadge } from "../components/lock";
+import { Dispatch } from "@reduxjs/toolkit";
 
 export function NetworkFrame() {
     const account = useSelector((state: State) => state.auth.account);
     const network = useSelector((state: State) => state.dos.network);
+    const room = network.room;
+    const server = network.server;
+    const disabled = network.ipx !== "disconnected";
     const t = useT();
     const dispatch = useDispatch();
-    const [room, setRoom] = useState<string>(account == null ? "default" :
-        "@" + account.email.substring(0, account.email.indexOf("@")));
     const premium = account?.premium === true;
-    const [server, setServer] = useState<string>((premium ? lStorage.getItem("net.server") : null) ??"netherlands");
+    const ipxLink =
+        network.ipx === "connected" ?
+            location.href + searchSeparator() +
+            "ipx=1&server=" + network.server + "&room=" + room :
+            null;
+
+    useEffect(() => {
+        if (server !== "netherlands" && account?.premium !== true) {
+            dispatch(dosSlice.actions.setServer("netherlands"));
+        }
+    }, [server, account]);
+
+    function setRoom(room: string) {
+        dispatch(dosSlice.actions.setRoom(room));
+    }
+
+    function setServer(server: string) {
+        dispatch(dosSlice.actions.setServer(server as any));
+    }
 
     function toggleIpx() {
         if (network.ipx === "connected") {
@@ -27,6 +46,12 @@ export function NetworkFrame() {
                 room,
                 address: "wss://" + (premium ? server : "netherlands") + ".dos.zone",
             }) as any);
+        }
+    }
+
+    function copyAndClose() {
+        if (ipxLink) {
+            copyToClipBoard(ipxLink, t, dispatch);
             dispatch(uiSlice.actions.frameNone());
         }
     }
@@ -50,12 +75,13 @@ export function NetworkFrame() {
                 class="text-sm"
                 selectClass="w-full"
                 label={t("server") + ":"}
-                selected="netherlands"
+                selected={server}
                 values={["netherlands", "newyork", "singapore"]}
+                disabled={disabled}
                 onSelect={onServer}
             />
             <div onClick={lockClick}>
-                <LockBadge class="cursor-pointer ml-2 w-4 h-4 text-error"/>
+                <LockBadge class="cursor-pointer ml-2 w-4 h-4 text-error" />
             </div>
         </div>
         <div class="form-control w-full">
@@ -64,7 +90,8 @@ export function NetworkFrame() {
             </label>
             <input type="text"
                 class="input w-full input-sm input-bordered"
-                onChange={(e) => setRoom(e.currentTarget.value ?? "default")}
+                disabled={disabled}
+                onChange={(e) => setRoom(e.currentTarget.value)}
                 value={room}></input>
         </div>
         <Checkbox
@@ -75,5 +102,56 @@ export function NetworkFrame() {
             disabled={network.ipx === "connecting"}
             intermediate={network.ipx === "connecting"}
         />
+
+        {ipxLink !== null && <div class="mt-4 text-sm alert alert-success shadow-lg flex flex-col">
+            <div>{t("copy_net_link")}:</div>
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-10 h-10 cursor-pointer hover:text-accent-focus"
+                    fill="none" onClick={copyAndClose}
+                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125
+                        1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06
+                        9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504
+                        1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0
+                        00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5
+                        10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12
+                        6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125
+                         0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+                </svg>
+                <div class="contextmenu underline break-all"
+                    target="_blank">{ipxLink}</div>
+            </div>
+        </div>}
     </div >;
+}
+
+function searchSeparator() {
+    if (location.href.endsWith("?") || location.href.endsWith("&")) {
+        return "";
+    }
+    return location.href.indexOf("?") > 0 ? "&" : "?";
+}
+
+async function copyToClipBoard(text: string,
+                               t: (key: string) => string,
+                               dispatch: Dispatch) {
+    if (!navigator.clipboard) {
+        return;
+    }
+
+    try {
+        await navigator.clipboard.writeText(text);
+        dispatch(uiSlice.actions.showToast({
+            message: t("success"),
+            intent: "success",
+        }));
+    } catch (e: any) {
+        dispatch(uiSlice.actions.showToast({
+            message: t("error"),
+            intent: "error",
+        }));
+    }
 }

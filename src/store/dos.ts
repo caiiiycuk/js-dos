@@ -4,6 +4,7 @@ import { Emulators } from "emulators";
 import { lStorage } from "../host/lstorage";
 import { nonSerializableStore } from "../non-serializable-store";
 
+const alphabet = "qwertyuiopasdfghjklzxcvbnm1234567890";
 declare const emulators: Emulators;
 export interface BundleConfig {
     name?: string,
@@ -55,6 +56,8 @@ const initialState: {
     stats: EmulatorStats,
     ci: boolean,
     network: {
+        server: "netherlands" | "newyork" | "singapore",
+        room: string,
         ipx: "connecting" | "connected" | "disconnected" | "error",
     }
 } = {
@@ -84,6 +87,8 @@ const initialState: {
         netSent: 0,
     },
     network: {
+        server: (lStorage.getItem("net.server") ?? "netherlands") as any,
+        room: randomRoom(),
         ipx: "disconnected",
     },
     ci: false,
@@ -136,6 +141,7 @@ export const dosSlice = createSlice({
         },
         bndPlay: (s) => {
             s.step = "bnd-play";
+            nonSerializableStore.options.onEvent?.("bnd-play");
         },
         dosWorker: (s, a: { payload: boolean }) => {
             s.worker = a.payload;
@@ -176,6 +182,13 @@ export const dosSlice = createSlice({
         disconnectIpx: (s) => {
             s.network.ipx = "disconnected";
             nonSerializableStore.ci?.networkDisconnect(0 /* IPX */);
+        },
+        setRoom: (s, a: { payload: string }) => {
+            s.network.room = a.payload;
+        },
+        setServer: (s, a: { payload: typeof initialState.network.server }) => {
+            s.network.server = a.payload;
+            lStorage.setItem("net.server", a.payload);
         },
     },
     extraReducers: {
@@ -230,3 +243,11 @@ function initEmulatorsJs(pathPrefix: string) {
         document.head.appendChild(script);
     });
 };
+
+function randomSymbol() {
+    return alphabet[Math.round(Math.random() * (alphabet.length - 1))];
+}
+
+function randomRoom() {
+    return randomSymbol() + randomSymbol() + randomSymbol();
+}

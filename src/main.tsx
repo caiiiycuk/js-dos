@@ -14,6 +14,8 @@ import { getCachedEmail } from "./store/auth";
 import { getCache } from "./host/lcache";
 import { loadBundleFromUrl } from "./load";
 
+import { DosOptions, DosProps, DosFn } from "./public/types";
+
 let pollStep = "none";
 
 async function pollEvents() {
@@ -44,32 +46,10 @@ async function pollEvents() {
 
 store.subscribe(pollEvents);
 
-export interface DosOptions {
-    url: string,
-    pathPrefix: string,
-    theme: "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |
-    "synthwave" | "retro" | "cyberpunk" | "valentine" | "halloween" | "garden" |
-    "forest" | "aqua" | "lofi" | "pastel" | "fantasy" | "wireframe" | "black" |
-    "luxury" | "dracula" | "cmyk" | "autumn" | "business" | "acid" | "lemonade" |
-    "night" | "coffee" | "winter",
-    lang: "ru" | "en",
-    backend: "dosbox" | "dosboxX",
-    workerThread: boolean,
-    mouseCapture: boolean,
-    onEvent: (event: "emu-ready" | "ci-ready", ci?: any) => void,
-}
-
-export interface DosProps {
-    setTheme(theme: DosOptions["theme"]): void;
-    setLang(lang: DosOptions["lang"]): void;
-    setBackend(lang: DosOptions["backend"]): void;
-    setWorkerThread(capture: DosOptions["workerThread"]): void;
-    setMouseCapture(capture: DosOptions["mouseCapture"]): void;
-}
 
 let skipEmulatorsInit = false;
-export function Dos(element: HTMLDivElement,
-                    options: Partial<DosOptions> = {}): DosProps {
+export const Dos: DosFn = (element: HTMLDivElement,
+    options: Partial<DosOptions> = {}): DosProps =>{
     nonSerializableStore.options = options;
     setupRootElement(element);
 
@@ -98,6 +78,18 @@ export function Dos(element: HTMLDivElement,
         store.dispatch(dosSlice.actions.mouseCapture(capture));
     }
 
+    function setServer(server: DosOptions["server"]) {
+        store.dispatch(dosSlice.actions.setServer(server));
+    }
+
+    function setRoom(room: DosOptions["room"]) {
+        store.dispatch(dosSlice.actions.setRoom(room));
+    }
+
+    function setFrame(frame: "network") {
+        store.dispatch(uiSlice.actions.frameNetwork());
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -118,6 +110,14 @@ export function Dos(element: HTMLDivElement,
         setMouseCapture(options.mouseCapture);
     }
 
+    if (options.server) {
+        setServer(options.server);
+    }
+
+    if (options.room) {
+        setRoom(options.room);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -131,13 +131,20 @@ export function Dos(element: HTMLDivElement,
         setBackend,
         setWorkerThread,
         setMouseCapture,
+        setServer,
+        setRoom,
+        setFrame,
     };
-}
+};
 
 function setupRootElement(root: HTMLDivElement) {
     nonSerializableStore.root = root;
     root.classList.add("jsdos-rso");
     root.addEventListener("contextmenu", (e) => {
+        if (e.target !== null &&
+            (e.target as HTMLElement).classList?.contains("contextmenu")) {
+            return;
+        }
         e.stopPropagation();
         e.preventDefault();
         return false;

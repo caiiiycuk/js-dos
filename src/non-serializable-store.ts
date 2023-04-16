@@ -1,7 +1,7 @@
 import { CommandInterface } from "emulators";
 import { Cache, CacheNoop } from "./host/lcache";
 import { Dispatch } from "@reduxjs/toolkit";
-import { DosOptions } from "./main";
+import { DosOptions } from "./public/types";
 
 export interface LoadedBundle {
     bundleUrl: string | null,
