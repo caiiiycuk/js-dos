@@ -13,6 +13,11 @@ export function Login() {
     const dispatch = useDispatch();
 
     useEffect(() => {
+        const iframe = iframeRef.current;
+        if (iframe === null) {
+            return;
+        }
+
         async function onAuthMessage(e: any) {
             if (e.data.action === "auth/ready") {
                 postAuthMessage("auth/authenicate");
@@ -34,10 +39,12 @@ export function Login() {
         }
 
         window.addEventListener("message", onAuthMessage);
+        iframe.src = authentificator;
+
         return () => {
             window.removeEventListener("message", onAuthMessage);
         };
-    }, []);
+    }, [iframeRef.current]);
 
     useEffect(() => {
         const iframe = iframeRef.current;
@@ -53,7 +60,7 @@ export function Login() {
         class={
             "login-widget " + (visible ? "block" : "hidden")
         }>
-        <iframe id="authentificator" src={authentificator} ref={iframeRef} />
+        <iframe id="authentificator" ref={iframeRef} />
         <CloseButton
             class="absolute z-40 right-24 top-10"
             onClose={() => dispatch(uiSlice.actions.modalNone()) }
