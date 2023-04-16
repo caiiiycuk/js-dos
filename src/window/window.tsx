@@ -35,7 +35,7 @@ export function Window(props: {}) {
     return <div class="window absolute w-full h-full bg-base-100">
         <div class="background-image"
             style={{ backgroundImage: (background ? "url(" + background + ")" : undefined ) }} />
-        <div class="relative flex flex-row h-full w-full">
+        <div class="relative flex flex-row h-full w-full items-start justify-start overflow-auto">
             <div class={(frameOpened ? (frameXs ? "w-24" : "w-96") : "w-12") + " flex-shrink-0"}></div>
             {windowComponent}
         </div>

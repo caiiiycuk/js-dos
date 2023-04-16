@@ -26,16 +26,16 @@
       /* eslint-enable max-len */
       const props = Dos(document.getElementById("app"),
         {
-          // url: "https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos", // digger
+          url: "https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos", // digger
           // url: "https://cdn.dos.zone/custom/dos/doom.jsdos",
           // url: "https://cdn.dos.zone/custom/dos/duke3d_ipx.jsdos",
-          url: "https://br.cdn.dos.zone/ipx/duke3d/duke3d_ipx.jsdos",
+          // url: "https://br.cdn.dos.zone/ipx/duke3d/duke3d_ipx.jsdos",
           pathPrefix: "/emulators/",
           onEvent: (event) => {
             console.log("Event", event)
-            if (event === "bnd-play") {
-              props.setFrame("network");
-            }
+            // if (event === "ci-ready") {
+              // props.setFrame("network");
+            // }
           },
         });
     });
