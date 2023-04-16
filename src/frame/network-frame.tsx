@@ -105,9 +105,9 @@ export function NetworkFrame() {
 
         {ipxLink !== null && <div class="mt-4 text-sm alert alert-success shadow-lg flex flex-col">
             <div>{t("copy_net_link")}:</div>
-            <div>
+            <div class="flex flex-row">
                 <svg xmlns="http://www.w3.org/2000/svg"
-                    class="w-10 h-10 cursor-pointer hover:text-accent-focus"
+                    class="w-6 h-6 mx-1 cursor-pointer hover:text-accent-focus flex-shrink-0"
                     fill="none" onClick={copyAndClose}
                     viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round"
