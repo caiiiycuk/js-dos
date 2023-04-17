@@ -6,7 +6,8 @@
       @apply absolute w-full h-full pointer-events-none;
       background-position: center;
       background-size: cover;
-      opacity: 0.05;
+      opacity: 0.2;
+      mix-blend-mode: luminosity;
     }
 
     .play-button {

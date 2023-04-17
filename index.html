@@ -19,6 +19,7 @@
   <script type="module" src="/src/main.tsx">
   </script>
   <script>
+    const params = new URLSearchParams(location.search);
     document.addEventListener("DOMContentLoaded", () => {
       /* eslint-disable max-len */
       // const url = "https://cdn.dos.zone/original/2X/7/744842062905f72648a4d492ccc2526d039b3702.jsdos"; // sim-city
@@ -26,11 +27,16 @@
       /* eslint-enable max-len */
       const props = Dos(document.getElementById("app"),
         {
-          url: "https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos", // digger
+          // url: decodeURIComponent("https%3A%2F%2Fcdn.dos.zone%2Fcustom%2Fdos%2Fdoom_dm.jsdos"),
+          // url: decodeURIComponent("https%3A%2F%2Fcdn.dos.zone%2Fcustom%2Fdos%2Fhomm2_netbios.jsdos"),
+          // url: "https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos", // digger
           // url: "https://cdn.dos.zone/custom/dos/doom.jsdos",
           // url: "https://cdn.dos.zone/custom/dos/duke3d_ipx.jsdos",
           // url: "https://br.cdn.dos.zone/ipx/duke3d/duke3d_ipx.jsdos",
+          url: "https://br.cdn.dos.zone/ipx/doom_dm/doom_dm.jsdos",
           pathPrefix: "/emulators/",
+          server: params.get("server"),
+          room: params.get("room"),
           onEvent: (event) => {
             console.log("Event", event)
             // if (event === "ci-ready") {
