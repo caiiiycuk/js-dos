@@ -59,6 +59,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         not_premium: "Подключить премиум",
         copy_net_link: "Отправьте ссылку на подключение",
         copied: "Скопировано",
+        image_rendering: "Обработка изображения",
     },
     en: {
         logout: "Logout",
@@ -116,6 +117,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         not_premium: "Subscribe to premium",
         copy_net_link: "Share this link to connect",
         copied: "Copied",
+        image_rendering: "Image rendering",
     },
 };
 

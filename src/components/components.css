@@ -1,7 +1,6 @@
 .jsdos-rso {
     select {
         @apply select select-bordered;
-        @apply pl-4 pr-2 py-2;
     }
 
     .slider {

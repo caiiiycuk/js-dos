@@ -23,6 +23,9 @@ export const RenderAspectValues = <const>["AsIs", "1/1", "5/4", "4/3", "16/10", 
 export type RenderAspect = typeof RenderAspectValues[number];
 export const FitConstant = 65535;
 
+export const ImageRenderingValues = <const>["pixelated", "smooth"];
+export type ImageRendering = typeof ImageRenderingValues[number];
+
 export interface EmulatorStats {
     cyclesPerMs: number,
     nonSkippableSleepPreSec: number,
@@ -59,7 +62,8 @@ const initialState: {
         server: "netherlands" | "newyork" | "singapore",
         room: string,
         ipx: "connecting" | "connected" | "disconnected" | "error",
-    }
+    },
+    imageRendering: ImageRendering,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -92,6 +96,7 @@ const initialState: {
         ipx: "disconnected",
     },
     ci: false,
+    imageRendering: (lStorage.getItem("imageRendering") ?? "pixelated") as any,
 };
 
 const connectIpx = createAsyncThunk("dos/connectIpx",
@@ -158,6 +163,10 @@ export const dosSlice = createSlice({
         renderAspect: (s, a: { payload: RenderAspect }) => {
             s.renderAspect = a.payload;
             lStorage.setItem("renderAspect", s.renderAspect);
+        },
+        imageRendering: (s, a: { payload: ImageRendering }) => {
+            s.imageRendering = a.payload;
+            lStorage.setItem("imageRendering", s.imageRendering);
         },
         volume: (s, a: { payload: number }) => {
             s.volume = a.payload;

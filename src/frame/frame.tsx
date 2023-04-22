@@ -8,6 +8,7 @@ import { NetworkFrame } from "./network-frame";
 import { QuickSaveFrame } from "./quick-save-frame";
 import { SettingsFrame } from "./settings-frame";
 import { StatsFrame } from "./stats-frame";
+import { ImageRenderingFrame } from "./image-rendering-frame";
 
 export function Frame(props: {}) {
     const frame = useSelector((state: State) => state.ui.frame);
@@ -28,5 +29,6 @@ export function Frame(props: {}) {
         { frame === "stats" && <StatsFrame /> }
         { frame === "host-cache" && <HostCacheFrame /> }
         { frame === "quick-save" && <QuickSaveFrame /> }
+        { frame === "image-rendering" && <ImageRenderingFrame /> }
     </div>;
 };

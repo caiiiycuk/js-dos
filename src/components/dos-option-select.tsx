@@ -4,7 +4,7 @@ import { State } from "../store";
 import { Select } from "./select";
 import { AnyAction } from "@reduxjs/toolkit";
 import {
-    Backend, BackendValues, dosSlice, RenderAspect, RenderAspectValues,
+    Backend, BackendValues, dosSlice, ImageRendering, ImageRenderingValues, RenderAspect, RenderAspectValues,
     RenderBackend, RenderBackendValues,
 } from "../store/dos";
 import { ThemeValues, Theme, uiSlice } from "../store/ui";
@@ -29,22 +29,34 @@ export function RenderSelect() {
     />;
 }
 
-export function RenderAspectSelect() {
+export function RenderAspectSelect(props: { multiline?: boolean }) {
     return <OptionSelect
         label="render_aspect"
+        multiline={props.multiline}
         values={[...RenderAspectValues]}
         selector={(state: State) => state.dos.renderAspect}
         dispatch={(newValue: RenderAspect) => dosSlice.actions.renderAspect(newValue)}
     />;
 }
 
-export function ThemeSelect(props: { class?: string }) {
+export function ImageRenderingSelect(props: { multiline?: boolean }) {
+    return <OptionSelect
+        label="image_rendering"
+        multiline={props.multiline}
+        values={[...ImageRenderingValues]}
+        selector={(state: State) => state.dos.imageRendering}
+        dispatch={(newValue: ImageRendering) => dosSlice.actions.imageRendering(newValue)}
+    />;
+}
+
+export function ThemeSelect(props: { class?: string, multiline?: boolean }) {
     return <OptionSelect
         class={props.class}
         label="theme"
         values={[...ThemeValues]}
         selector={(state: State) => state.ui.theme}
         dispatch={(newValue: Theme) => uiSlice.actions.theme(newValue)}
+        multiline={props.multiline}
     />;
 }
 
@@ -55,6 +67,7 @@ function OptionSelect<T>(props: {
     selector: (state: State) => T,
     dispatch: (newValue: T) => AnyAction;
     disabled?: boolean,
+    multiline?: boolean,
 }) {
     const t = useT();
     const value = useSelector(props.selector);
@@ -65,7 +78,8 @@ function OptionSelect<T>(props: {
     }
     return <Select
         class={"mt-4 " + props.class}
-        disabled={props.disabled === true}
+        disabled={props.disabled}
+        multiline={props.multiline}
         label={t(props.label)}
         selected={value as string}
         values={props.values}

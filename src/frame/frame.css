@@ -69,6 +69,14 @@
     }
   }
 
+  .image-rendering-frame {
+    @apply px-6 -mt-2;
+    
+    .option {
+      @apply w-full justify-between;
+    }
+  }
+
   .account-frame {
     button {
       background-color: hsl(var(--p));

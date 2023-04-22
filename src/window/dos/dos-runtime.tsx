@@ -12,12 +12,20 @@ import { KBD_0 } from "./controls/keys";
 
 export function useDosRuntime(canvas: HTMLCanvasElement,
                               ci: CommandInterface): void {
+    useRenderImage(canvas);
     useStats(ci);
     usePause(ci);
     useKeyboard(ci);
     useMouse(canvas, ci);
     useRenderBackend(canvas, ci);
     useAudioBackend(ci);
+}
+
+function useRenderImage(canvas: HTMLCanvasElement): void {
+    const rendering = useSelector((state: State) => state.dos.imageRendering);
+    useEffect(() => {
+        canvas.style.imageRendering = rendering === "smooth" ? "auto" : rendering;
+    }, [canvas, rendering]);
 }
 
 function useMouse(canvas: HTMLCanvasElement,

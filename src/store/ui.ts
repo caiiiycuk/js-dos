@@ -11,7 +11,7 @@ export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "account" | "settings" |
     "editor-conf" | "editor-fs" | "network" |
-    "stats" | "host-cache" | "quick-save";
+    "stats" | "host-cache" | "quick-save" | "image-rendering";
 
 const initialState: {
     modal: "none" | "login",
@@ -90,6 +90,10 @@ export const uiSlice = createSlice({
         frameQuickSave: (state) => {
             state.frame = "quick-save";
             state.frameXs = true;
+        },
+        frameImageRendering: (state) => {
+            state.frame = "image-rendering";
+            state.frameXs = false;
         },
         windowSelect: (state) => {
             state.window = "select";
