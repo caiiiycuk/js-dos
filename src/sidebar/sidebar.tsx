@@ -16,7 +16,7 @@ export function SideBar(props: {}) {
         {window === "run" && backend === "dosbox" && <CloudSaveButton />}
         {window === "run" && backend === "dosboxX" && <QuickSaveButton />}
         {window === "run" && <NetworkButton />}
-        {window === "select" && <HostCacheButton />}
+        {false && window === "select" && <HostCacheButton />}
         {editor && window === "prerun" && <DosboxConfButton />}
         {editor && window === "run" && <FsButton />}
         <div class="contentbar"></div>

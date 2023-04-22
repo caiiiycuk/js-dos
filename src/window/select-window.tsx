@@ -14,7 +14,7 @@ export function SelectWindow() {
     const [useUrl, setUseUrl] = useState<boolean>(false);
 
     if (useUrl) {
-        return <div class="overflow-hidden flex-grow flex flex-col items-center justify-center px-8 py-8">
+        return <div class="select-window overflow-hidden flex-grow flex flex-col items-center justify-center px-8 py-8">
             <Load />
         </div>;
     }
@@ -28,7 +28,7 @@ export function SelectWindow() {
         }
     }
 
-    return <div class="overflow-hidden flex-grow flex flex-col items-center justify-center px-8">
+    return <div class="select-window overflow-hidden flex-grow flex flex-col items-center justify-center px-8">
         <div class="mb-4 text-center underline cursor-pointer hover:text-accent"
             onClick={() => setUseUrl(true)}>{t("load_by_url")}</div>
         <Upload />
