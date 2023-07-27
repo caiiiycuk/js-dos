@@ -40,10 +40,6 @@ export function loadBundleFromFile(file: File, dispatch: Dispatch) {
 export async function loadBundleFromUrl(url: string, dispatch: Dispatch) {
     const owner = store.getState().auth.account?.email ?? "guest";
     const changesUrl = await getChangesUrl(owner, url);
-    if (url.startsWith(brCdn)) {
-        const lastIndex = url.lastIndexOf("/");
-        dispatch(uiSlice.actions.background(url.substring(0, lastIndex) + "/bg.jpeg"));
-    }
     return doLoadBundle(url,
         bundleFromUrl(url, dispatch),
         changesProducer(changesUrl),

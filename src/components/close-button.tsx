@@ -2,7 +2,7 @@ export function CloseButton(props: {
     onClose: () => void
     class?: string,
 }) {
-    return <div class={ "text-gray-400 hover:text-gray-600 button " +
+    return <div class={ "text-gray-400 hover:text-gray-600 btn " +
         props.class } onClick={props.onClose}>
         <svg xmlns="http://www.w3.org/2000/svg"
             class="w-full h-full"

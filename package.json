@@ -24,24 +24,24 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^1.9.3",
-    "preact": "^10.13.2",
+    "@reduxjs/toolkit": "^1.9.5",
+    "preact": "^10.16.0",
     "react-checkbox-tree": "^1.8.0",
-    "react-redux": "^8.0.5"
+    "react-redux": "^8.1.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.4.0",
-    "@typescript-eslint/eslint-plugin": "^5.58.0",
-    "@typescript-eslint/parser": "^5.58.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
     "autoprefixer": "^10.4.14",
-    "daisyui": "^2.51.5",
-    "emulators": "^0.80.17",
-    "eslint": "^8.36.0",
+    "daisyui": "^3.5.0",
+    "emulators": "^0.73.8",
+    "eslint": "^8.45.0",
     "eslint-config-google": "^0.14.0",
-    "postcss": "^8.4.21",
-    "tailwindcss": "^3.2.7",
-    "terser": "^5.16.9",
-    "typescript": "^5.0.2",
-    "vite": "^4.2.1"
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "terser": "^5.19.2",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.7"
   }
 }

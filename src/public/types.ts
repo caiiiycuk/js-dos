@@ -1,5 +1,6 @@
 export interface DosOptions {
     url: string | null,
+    background: string | null,
     pathPrefix: string,
     theme: "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |
     "synthwave" | "retro" | "cyberpunk" | "valentine" | "halloween" | "garden" |
@@ -24,6 +25,7 @@ export interface DosProps {
     setServer(server: DosOptions["server"]): void;
     setRoom(room: DosOptions["room"]): void;
     setFrame(frame: "network"): void;
+    setBackground(background: string | null): void;
 }
 
 export type DosFn = (element: HTMLDivElement, options: Partial<DosOptions>) => DosProps;

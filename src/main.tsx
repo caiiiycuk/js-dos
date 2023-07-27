@@ -90,6 +90,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(uiSlice.actions.frameNetwork());
     }
 
+    function setBackground(background: string) {
+        store.dispatch(uiSlice.actions.background(background));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -118,6 +122,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setRoom(options.room);
     }
 
+    if (options.background) {
+        setBackground(options.background);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -134,6 +142,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setServer,
         setRoom,
         setFrame,
+        setBackground,
     };
 };
 
