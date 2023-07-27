@@ -3,11 +3,19 @@
     @apply overflow-hidden;
 
     .background-image {
-      @apply absolute w-full h-full pointer-events-none;
+      @apply absolute left-12 right-0 h-full pointer-events-none;
       background-position: center;
       background-size: cover;
-      opacity: 0.2;
-      mix-blend-mode: luminosity;
+      background-repeat: no-repeat;
+      &::after {
+        position: relative;
+        content: "";
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: hsl(var(--b1)/var(--tw-bg-opacity));
+        opacity: 0.75;
+      }
     }
 
     .play-button {
