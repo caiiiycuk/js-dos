@@ -14,6 +14,7 @@ export interface DosOptions {
     onEvent: (event: "emu-ready" | "ci-ready" | "bnd-play", ci?: any) => void,
     server: "netherlands" | "newyork" | "singapore",
     room: string,
+    fullScreen: boolean,
 }
 
 export interface DosProps {
@@ -26,6 +27,7 @@ export interface DosProps {
     setRoom(room: DosOptions["room"]): void;
     setFrame(frame: "network"): void;
     setBackground(background: string | null): void;
+    setFullScreen(fullScreen: boolean): void;
 }
 
 export type DosFn = (element: HTMLDivElement, options: Partial<DosOptions>) => DosProps;

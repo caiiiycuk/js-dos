@@ -94,6 +94,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(uiSlice.actions.background(background));
     }
 
+    function setFullScreen(fullScreen: boolean) {
+        store.dispatch(uiSlice.actions.setFullScreen(fullScreen));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -126,6 +130,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setBackground(options.background);
     }
 
+    if (options.fullScreen !== undefined) {
+        setFullScreen(options.fullScreen);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -143,6 +151,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setRoom,
         setFrame,
         setBackground,
+        setFullScreen,
     };
 };
 
