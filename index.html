@@ -39,9 +39,10 @@
           room: params.get("room"),
           onEvent: (event) => {
             console.log("Event", event)
-            // if (event === "ci-ready") {
+            if (event === "ci-ready") {
               // props.setFrame("network");
-            // }
+              // props.setFullScreen(true);
+            }
           },
         });
     });

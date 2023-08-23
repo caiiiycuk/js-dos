@@ -1,8 +1,6 @@
-import { Dispatch } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
-import { nonSerializableStore } from "../non-serializable-store";
 import { State } from "../store";
-import { uiSlice } from "../store/ui";
+import { browserSetFullScreen } from "../host/fullscreen";
 
 export function FullscreenButton(props: {
     class?: string,
@@ -11,52 +9,35 @@ export function FullscreenButton(props: {
     const dispatch = useDispatch();
 
     function onClick() {
-        setFullscreen(!fullScreen, dispatch);
+        browserSetFullScreen(!fullScreen, dispatch);
     }
 
-    return <div class={"fullscreen-button sidebar-button " +
-        (fullScreen ? " sidebar-highlight " : "") +
-        props.class} onClick={onClick}>
-        <div class={"w-full h-full" +
-            (fullScreen ? " scale-125 hover:scale-100" : "scale-100 hover:scale-125")}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-full h-full">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 3.75H6A2.25 2.25 0 003.75
-                6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9
-                0H6A2.25 2.25 0 013.75 18v-1.5M15 0z" />
-            </svg>
+    return <div class={"fullscreen-button sidebar-button " + props.class} onClick={onClick}>
+        <div class={"w-full h-full scale-75 hover:scale-90"}>
+            { !fullScreen &&
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                    viewBox="0 0 16 16" fill="currentColor" stroke="none" enable-background="new 0 0 16 16" >
+                        <g>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M5.99,8.99c-0.28,0-0.53,0.11-0.71,0.29l-3.29,3.29v-1.59c0-0.55-0.45-1-1-1
+                                s-1,0.45-1,1v4c0,0.55,0.45,1,1,1h4c0.55,0,1-0.45,1-1s-0.45-1-1-1H3.41L6.7,10.7c0.18-0.18,0.29-0.43,0.29-0.71
+                                C6.99,9.44,6.54,8.99,5.99,8.99z M14.99-0.01h-4c-0.55,0-1,0.45-1,1s0.45,1,1,1h1.59L9.28,5.29C9.1,5.47,8.99,5.72,8.99,5.99
+                                c0,0.55,0.45,1,1,1c0.28,0,0.53-0.11,0.71-0.29l3.29-3.29v1.59c0,0.55,0.45,1,1,1s1-0.45,1-1v-4C15.99,0.44,15.54-0.01,14.99-0.01
+                                z"/>
+                        </g>
+                </svg>
+            }
+            { fullScreen &&
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                    viewBox="0 0 16 16" fill="currentColor" stroke="none" enable-background="new 0 0 16 16">
+                    <g>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.99,0.99c0-0.55-0.45-1-1-1c-0.28,0-0.53,0.11-0.71,0.29l-3.29,3.29V1.99
+                            c0-0.55-0.45-1-1-1s-1,0.45-1,1v4c0,0.55,0.45,1,1,1h4c0.55,0,1-0.45,1-1s-0.45-1-1-1h-1.59L15.7,1.7
+                            C15.88,1.52,15.99,1.27,15.99,0.99z M5.99,8.99h-4c-0.55,0-1,0.45-1,1s0.45,1,1,1h1.59l-3.29,3.29c-0.18,0.18-0.29,0.43-0.29,0.71
+                            c0,0.55,0.45,1,1,1c0.28,0,0.53-0.11,0.71-0.29l3.29-3.29v1.59c0,0.55,0.45,1,1,1s1-0.45,1-1v-4C6.99,9.44,6.54,8.99,5.99,8.99z"
+                            />
+                    </g>
+                </svg>
+            }
         </div>
     </div >;
-}
-function setFullscreen(fullScreen: boolean, dispatch: Dispatch) {
-    const root = nonSerializableStore.root as any;
-    if (fullScreen) {
-        if (root.requestFullscreen) {
-            root.requestFullscreen();
-        } else if (root.webkitRequestFullscreen) {
-            root.webkitRequestFullscreen();
-        } else if (root.mozRequestFullScreen) {
-            root.mozRequestFullScreen();
-        } else if (root.msRequestFullscreen) {
-            root.msRequestFullscreen();
-        } else if (root.webkitEnterFullscreen) {
-            root.webkitEnterFullscreen();
-        } else {
-            root.classList.add("jsdos-fullscreen-workaround");
-        }
-    } else {
-        if (root.classList.contains("jsdos-fullscreen-workaround")) {
-            root.classList.remove("jsdos-fullscreen-workaround");
-        } else if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if ((document as any).webkitExitFullscreen) {
-            (document as any).webkitExitFullscreen();
-        } else if ((document as any).mozCancelFullScreen) {
-            (document as any).mozCancelFullScreen();
-        } else if ((document as any).msExitFullscreen) {
-            (document as any).msExitFullscreen();
-        }
-    }
-
-    dispatch(uiSlice.actions.setFullScreen(fullScreen));
 }

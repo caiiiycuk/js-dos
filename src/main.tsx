@@ -15,6 +15,7 @@ import { getCache } from "./host/lcache";
 import { loadBundleFromUrl } from "./load";
 
 import { DosOptions, DosProps, DosFn } from "./public/types";
+import { browserSetFullScreen } from "./host/fullscreen";
 
 let pollStep = "none";
 
@@ -95,7 +96,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     }
 
     function setFullScreen(fullScreen: boolean) {
-        store.dispatch(uiSlice.actions.setFullScreen(fullScreen));
+        browserSetFullScreen(fullScreen, store.dispatch);
     }
 
     if (options.theme) {
