@@ -37,6 +37,9 @@ export interface EmulatorStats {
     msgRecvPerSec: number,
     netSent: number,
     netRecv: number,
+    driveSent: number,
+    driveRecv: number,
+    driveRecvTime: number,
 };
 
 const initialState: {

@@ -3,6 +3,9 @@ import { State } from "../store";
 
 export function StatsFrame() {
     const stats = useSelector((state: State) => state.dos.stats);
+    const driveRecvMb = Math.round(stats.driveRecv / 1024 / 1024 * 100) / 100;
+    const driveSpeedMb = (stats.driveRecvTime / 1000) > 1 ?
+        Math.round(driveRecvMb / stats.driveRecvTime * 1000 * 100) / 100 : 0;
     return <div class="stats-frame frame-root items-start px-4">
         <div class="w-full overflow-x-auto">
             <table class="table table-compact w-full">
@@ -52,6 +55,14 @@ export function StatsFrame() {
                     <tr>
                         <td>Net RECV/s</td>
                         <td>{Math.round(stats.netRecv / 1024 * 100) / 100}Kb</td>
+                    </tr>
+                    <tr>
+                        <td>Drive RECV/s</td>
+                        <td>{driveRecvMb}Mb (~{driveSpeedMb}Mb/s)</td>
+                    </tr>
+                    <tr>
+                        <td>Drive SENT/s</td>
+                        <td>{Math.round(stats.driveSent / 1024 / 1024 * 100) / 100}Mb</td>
                     </tr>
                 </tbody>
             </table>

@@ -133,8 +133,11 @@ function useStats(ci: CommandInterface): void {
                     soundPerSec: Math.round((stats.messageSound - prevSound) / dtSec),
                     msgSentPerSec: Math.round((stats.messageSent - prevMsgSent) / dtSec),
                     msgRecvPerSec: Math.round((stats.messageReceived - prevMsgRecv) / dtSec),
-                    netSent: (stats as any).netSent,
-                    netRecv: (stats as any).netRecv,
+                    netSent: stats.netSent,
+                    netRecv: stats.netRecv,
+                    driveSent: stats.driveSent,
+                    driveRecv: stats.driveRecv,
+                    driveRecvTime: stats.driveRecvTime,
                 }));
 
                 prevCycles = stats.cycles;
