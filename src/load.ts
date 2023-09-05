@@ -20,6 +20,7 @@ export async function loadEmptyBundle(dispatch: Dispatch) {
         })(), null, null, dispatch);
 
     dispatch(uiSlice.actions.frameConf());
+    dispatch(uiSlice.actions.setEditor(true));
 }
 
 export async function loadBundle(bundle: Uint8Array, openConfig: boolean, dispatch: Dispatch) {
