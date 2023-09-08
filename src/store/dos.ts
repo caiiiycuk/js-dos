@@ -40,6 +40,9 @@ export interface EmulatorStats {
     driveSent: number,
     driveRecv: number,
     driveRecvTime: number,
+    driveCacheHit: number,
+    driveCacheMiss: number,
+    driveCacheUsed: number,
 };
 
 const initialState: {

@@ -122,7 +122,6 @@ function useStats(ci: CommandInterface): void {
             ci.asyncifyStats().then((stats) => {
                 const dtMs = Date.now() - intervalStartedAt;
                 const dtSec = dtMs / 1000;
-                // TODO: remove as any
                 dispatch(dosSlice.actions.stats({
                     cyclesPerMs: Math.round((stats.cycles - prevCycles) / dtMs),
                     nonSkippableSleepPreSec: Math.round((stats.nonSkippableSleepCount -
@@ -138,6 +137,9 @@ function useStats(ci: CommandInterface): void {
                     driveSent: stats.driveSent,
                     driveRecv: stats.driveRecv,
                     driveRecvTime: stats.driveRecvTime,
+                    driveCacheHit: stats.driveCacheHit,
+                    driveCacheMiss: stats.driveCacheMiss,
+                    driveCacheUsed: stats.driveCacheUsed,
                 }));
 
                 prevCycles = stats.cycles;

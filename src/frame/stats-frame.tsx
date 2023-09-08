@@ -57,12 +57,20 @@ export function StatsFrame() {
                         <td>{Math.round(stats.netRecv / 1024 * 100) / 100}Kb</td>
                     </tr>
                     <tr>
-                        <td>Drive RECV/s</td>
+                        <td>HDD RECV/s</td>
                         <td>{driveRecvMb}Mb (~{driveSpeedMb}Mb/s)</td>
                     </tr>
                     <tr>
-                        <td>Drive SENT/s</td>
+                        <td>HDD SENT/s</td>
                         <td>{Math.round(stats.driveSent / 1024 / 1024 * 100) / 100}Mb</td>
+                    </tr>
+                    <tr>
+                        <td>HDD Cache</td>
+                        <td>{Math.round(stats.driveCacheUsed / 1024 / 1024 * 100) / 100}Mb</td>
+                    </tr>
+                    <tr>
+                        <td>HDD Cache Hit/Miss</td>
+                        <td>{stats.driveCacheHit} / {stats.driveCacheMiss}</td>
                     </tr>
                 </tbody>
             </table>
