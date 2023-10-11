@@ -7,8 +7,8 @@ import { authSlice } from "../store/auth";
 export function LoadingWindow() {
     const t = useT();
     const step = useSelector((state: State) => state.dos.step);
-    const [received, total] = useSelector((state: State) =>
-        [state.storage.recived, state.storage.total]);
+    const received = useSelector((state: State) => state.storage.recived);
+    const total = useSelector((state: State) => state.storage.total);
     const ready = useSelector((state: State) => state.storage.ready);
 
     let head = t("loading");

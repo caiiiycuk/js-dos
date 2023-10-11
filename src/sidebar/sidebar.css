@@ -1,6 +1,6 @@
 .jsdos-rso {
   .sidebar {
-    @apply absolute left-0 top-0 h-full flex flex-col items-center py-2;
+    @apply absolute left-0 top-0 h-full flex flex-col items-center py-2 z-10;
     background: linear-gradient(90deg, hsl(var(--b3)) 0%, hsl(var(--b2)) 100%);
     width: var(--sidebar-width);
 
