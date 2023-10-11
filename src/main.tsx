@@ -10,7 +10,6 @@ import { initEmulators } from "./store/dos";
 import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
 import { nonSerializableStore, postJsDosEvent } from "./non-serializable-store";
-import { getCachedEmail } from "./store/auth";
 import { getCache } from "./host/lcache";
 import { loadBundleFromUrl } from "./load";
 
@@ -30,7 +29,7 @@ async function pollEvents() {
 
     switch (state.dos.step) {
         case "emu-ready": {
-            const cachedEmail = getCachedEmail();
+            const cachedEmail = state.auth.account?.email;
             nonSerializableStore.cache = await getCache(cachedEmail ?? "guest");
 
             if (nonSerializableStore.options.url) {

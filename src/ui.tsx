@@ -6,6 +6,7 @@ import { SideBar } from "./sidebar/sidebar";
 import { State } from "./store";
 import { uiSlice } from "./store/ui";
 import { Window } from "./window/window";
+import { useT } from "./i18n";
 
 let currentWideScreen = uiSlice.getInitialState().wideScreen;
 export function Ui() {
@@ -47,6 +48,7 @@ export function Ui() {
         <SideBar />
         <Login />
         <Toast />
+        <ReadOnlyWarning />
     </div>;
 };
 
@@ -59,8 +61,42 @@ function Toast() {
     }
 
     return <div class="absolute right-10 bottom-10">
-        <div class={"alert alert-" + intent} >
-            { toast }
+        <div class={"alert alert-" + (intent === "panic" ? "error" : intent)} >
+            {toast}
+        </div>
+    </div>;
+}
+
+function ReadOnlyWarning() {
+    const readOnlyWarning = useSelector((state: State) => state.ui.readOnlyWarning);
+    const t = useT();
+    const dispatch = useDispatch();
+
+    if (!readOnlyWarning) {
+        return null;
+    }
+
+    function fix() {
+        dispatch(uiSlice.actions.readOnlyWarning(false));
+        dispatch(uiSlice.actions.frameAccount());
+    }
+
+    function close() {
+        dispatch(uiSlice.actions.readOnlyWarning(false));
+    }
+
+    return <div class="absolute right-10 bottom-10">
+        <div class="alert">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                class="stroke-info shrink-0 w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>{t("read_only_access")}</span>
+            <div>
+                <button class="btn btn-sm btn-primary mr-2" onClick={fix}>{t("fix")}</button>
+                <button class="btn btn-sm" onClick={close}>{t("close")}</button>
+            </div>
         </div>
     </div>;
 }

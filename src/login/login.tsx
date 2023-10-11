@@ -9,10 +9,15 @@ import { havePremium } from "../v8/subscriptions";
 
 export function Login() {
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const activeAccount = useSelector((state: State) => state.auth.account);
     const visible = useSelector((state: State) => state.ui.modal) === "login";
     const dispatch = useDispatch();
 
     useEffect(() => {
+        if (activeAccount != null) {
+            return;
+        }
+
         const iframe = iframeRef.current;
         if (iframe === null) {
             dispatch(authSlice.actions.logout());

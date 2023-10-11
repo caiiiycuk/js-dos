@@ -16,8 +16,10 @@ export function CloudSaveButton(props: {
     const disabled = account === null;
     const dispatch = useDispatch();
     const t = useT();
+    const cloudSaves = useSelector((state: State) => state.ui.cloudSaves);
 
-    if (nonSerializableStore.loadedBundle === null ||
+    if (!cloudSaves ||
+        nonSerializableStore.loadedBundle === null ||
         nonSerializableStore.loadedBundle.bundleChangesUrl === null) {
         return null;
     }

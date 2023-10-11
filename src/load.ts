@@ -8,7 +8,6 @@ import { editorSlice } from "./store/editor";
 import { store } from "./store";
 import { getChangesUrl } from "./v8/changes";
 import { storageSlice } from "./store/storage";
-import { brCdn } from "./v8/config";
 
 declare const emulators: Emulators;
 

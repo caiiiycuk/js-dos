@@ -58,9 +58,9 @@ function PremiumPlan(props: {}) {
             .finally(() => setLocked(false));
     }
 
-    return <div class={ "premium-plan-root " + (account.premium ? "have-premium" : "") }>
+    return <div class={"premium-plan-root " + (account.premium ? "have-premium" : "")}>
         <div class="premium-plan-head">{t("premium")}</div>
-        { !account.premium &&
+        {!account.premium &&
             <>
                 <div class="flex flex-row my-6 items-top">
                     <div class="premium-plan-cost">
@@ -71,7 +71,9 @@ function PremiumPlan(props: {}) {
                         <div><span class="text-blue-600">5</span> {t("try_free")}</div>
                     </div>
                 </div>
-                <button class={ "btn btn-primary w-full " + (locked ? "hidden" : "") } onClick={onBuy}>{t("buy")}</button>
+                <button class={"btn btn-primary w-full " + (locked ? "hidden" : "")} onClick={onBuy}>
+                    {t("buy")}
+                </button>
             </>
         }
         <div class="flex flex-col mt-4">

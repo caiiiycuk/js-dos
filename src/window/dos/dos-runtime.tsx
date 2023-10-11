@@ -9,9 +9,11 @@ import { audioNode } from "./sound/audio-node";
 import { useEffect } from "preact/hooks";
 import { mouse } from "./controls/mouse";
 import { KBD_0 } from "./controls/keys";
+import { uiSlice } from "../../store/ui";
 
 export function useDosRuntime(canvas: HTMLCanvasElement,
                               ci: CommandInterface): void {
+    useLog(ci);
     useRenderImage(canvas);
     useStats(ci);
     usePause(ci);
@@ -19,6 +21,25 @@ export function useDosRuntime(canvas: HTMLCanvasElement,
     useMouse(canvas, ci);
     useRenderBackend(canvas, ci);
     useAudioBackend(ci);
+}
+
+function useLog(ci: CommandInterface): void {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        ci.events().onMessage((msgType, ...args) => {
+            if (msgType === "error" && args[0]?.startsWith("[panic]")) {
+                dispatch(uiSlice.actions.showToast({
+                    message: args[0],
+                    intent: "panic",
+                }));
+            } else if (msgType === "log" && args[0]?.indexOf("sockdrive:") !== -1) {
+                dispatch(uiSlice.actions.cloudSaves(false));
+                if (args[0]?.indexOf("write=false") !== -1) {
+                    dispatch(uiSlice.actions.readOnlyWarning(true));
+                }
+            }
+        });
+    }, [ci, dispatch]);
 }
 
 function useRenderImage(canvas: HTMLCanvasElement): void {

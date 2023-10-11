@@ -20,7 +20,7 @@ export function PreRunWindow() {
     }
 
     function openPremiumPage() {
-        window.open(lang === "ru" ? 
+        window.open(lang === "ru" ?
             "https://dos.zone/ru/blog/premium-subscription/" :
             "https://dos.zone/blog/premium-subscription/", "_blank");
     }
@@ -44,7 +44,7 @@ export function PreRunWindow() {
                         {t("not_premium")}
                     </div>
                     <div class="ml-2 cursor-pointer" onClick={openPremiumPage}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" 
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025
                                  4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45

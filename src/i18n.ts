@@ -60,6 +60,9 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         copy_net_link: "Отправьте ссылку на подключение",
         copied: "Скопировано",
         image_rendering: "Обработка изображения",
+        read_only_access: "Диск FAT32 открыт только для чтения",
+        fix: "Исправить",
+        close: "Закрыть",
     },
     en: {
         logout: "Logout",
@@ -118,6 +121,9 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         copy_net_link: "Share this link to connect",
         copied: "Copied",
         image_rendering: "Image rendering",
+        read_only_access: "The FAT32 drive is open in read-only mode",
+        fix: "Fix",
+        close: "Close",
     },
 };
 

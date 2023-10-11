@@ -23,9 +23,11 @@ const initialState: {
     wideScreen: boolean,
     fullScreen: boolean,
     toast: string | null,
-    toastIntent: "none" | "error" | "success",
+    toastIntent: "none" | "error" | "success" | "panic",
     toastTimeoutId: number,
     background: string | null,
+    readOnlyWarning: boolean,
+    cloudSaves: boolean,
 } = {
     modal: "none",
     frame: "none",
@@ -39,6 +41,8 @@ const initialState: {
     toastIntent: "none",
     toastTimeoutId: 0,
     background: null,
+    readOnlyWarning: false,
+    cloudSaves: true,
 };
 
 export const uiSlice = createSlice({
@@ -116,13 +120,21 @@ export const uiSlice = createSlice({
             }
             state.toast = a.payload.message;
             state.toastIntent = a.payload.intent ?? "none";
-            state.toastTimeoutId = setTimeout(() => {
-                nonSerializableStore.dispatch!(uiSlice.actions.hideToast());
-            }, 1500);
+            if (a.payload.intent !== "panic") {
+                state.toastTimeoutId = setTimeout(() => {
+                    nonSerializableStore.dispatch!(uiSlice.actions.hideToast());
+                }, 1500);
+            }
         },
         hideToast: (state) => {
             state.toast = null;
             state.toastTimeoutId = 0;
+        },
+        readOnlyWarning: (state, a: { payload: boolean }) => {
+            state.readOnlyWarning = a.payload;
+        },
+        cloudSaves: (state, a: { payload: boolean }) => {
+            state.cloudSaves = a.payload;
         },
     },
     extraReducers: (builder) => {

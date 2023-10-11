@@ -3,6 +3,8 @@ import { nonSerializableStore } from "../non-serializable-store";
 import { getCache } from "../host/lcache";
 import { lStorage } from "../host/lstorage";
 
+const cachedAccount = "cached.account";
+
 export interface Token {
     access_token: string,
     refresh_token: string,
@@ -19,15 +21,17 @@ export interface Account {
     premium: boolean,
 };
 
+const initAccountJson = lStorage.getItem(cachedAccount);
+const initAccount = initAccountJson !== null ? JSON.parse(initAccountJson) : null;
+
 const initialState: {
     account: Account | null,
     ready: boolean,
 } = {
-    account: null,
+    account: initAccount !== null && initAccount.token.validUntilMs - Date.now() > 1 * 60 * 60 * 1000 ?
+        initAccount : null,
     ready: false,
 };
-
-const cachedEmailKey = "cached.email";
 
 export const authSlice = createSlice({
     name: "auth",
@@ -36,7 +40,7 @@ export const authSlice = createSlice({
         login: (state, action: { payload: Account }) => {
             setRefreshToken(action.payload.token.refresh_token);
             state.account = action.payload;
-            lStorage.setItem(cachedEmailKey, action.payload.email);
+            lStorage.setItem(cachedAccount, JSON.stringify(action.payload));
             getCache(state.account.email)
                 .then((cache) => nonSerializableStore.cache = cache)
                 .catch(console.error)
@@ -46,7 +50,7 @@ export const authSlice = createSlice({
         },
         logout: (state) => {
             clearRefreshToken();
-            lStorage.removeItem(cachedEmailKey);
+            lStorage.removeItem(cachedAccount);
             getCache("guest")
                 .then((cache) => nonSerializableStore.cache = cache)
                 .catch(console.error);
@@ -57,10 +61,6 @@ export const authSlice = createSlice({
         },
     },
 });
-
-export function getCachedEmail() {
-    return lStorage.getItem(cachedEmailKey);
-}
 
 export function postAuthMessage(action: "auth/login" | "auth/authenicate") {
     const message = {

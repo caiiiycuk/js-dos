@@ -13,6 +13,7 @@ export function DosWindow(props: {
 }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ci, setCi] = useState<CommandInterface | null>(null);
+    const token = useSelector((state: State) => state.auth.account?.token.access_token);
     const worker = useSelector((state: State) => state.dos.worker);
     const backend = useSelector((state: State) => state.dos.backend);
     const dispatch = useDispatch();
@@ -27,7 +28,9 @@ export function DosWindow(props: {
             nonSerializableStore.loadedBundle!.bundleChanges = null;
 
             const ci: Promise<CommandInterface> =
-                (emulators as any)[backend + (worker ? "Worker" : "Direct")](bundles);
+                (emulators as any)[backend + (worker ? "Worker" : "Direct")](bundles, {
+                    token,
+                });
             ci
                 .then((ci) => {
                     setCi(ci);
@@ -48,11 +51,11 @@ export function DosWindow(props: {
         } catch (e) {
             dispatch(dosSlice.actions.emuError((e as any).message));
         }
-    }, [worker, backend]);
+    }, [worker, backend, token ?? null]);
 
     return <div class="bg-black h-full flex-grow overflow-hidden relative">
         <canvas ref={canvasRef} />
-        { canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} /> }
+        {canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} />}
     </div>;
 }
 
@@ -63,6 +66,6 @@ function DosRuntime(props: { canvas: HTMLCanvasElement, ci: CommandInterface }) 
     useDosRuntime(canvas, ci);
 
     return <>
-        { bundle?.endsWith(dhry2Bundle) && <Dhry2Results ci={ci} /> }
+        {bundle?.endsWith(dhry2Bundle) && <Dhry2Results ci={ci} />}
     </>;
 }

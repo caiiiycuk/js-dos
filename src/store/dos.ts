@@ -95,6 +95,12 @@ const initialState: {
         msgRecvPerSec: 0,
         netRecv: 0,
         netSent: 0,
+        driveSent: 0,
+        driveRecv: 0,
+        driveRecvTime: 0,
+        driveCacheHit: 0,
+        driveCacheMiss: 0,
+        driveCacheUsed: 0,
     },
     network: {
         server: (lStorage.getItem("net.server") ?? "netherlands") as any,
@@ -252,7 +258,7 @@ function initEmulatorsJs(pathPrefix: string) {
         };
         script.onerror = (err) => {
             reject(new Error("Unable to add emulators.js. Probably you should set the " +
-            "'pathPrefix' option to point to the js-dos folder."));
+                "'pathPrefix' option to point to the js-dos folder."));
         };
 
         document.head.appendChild(script);
