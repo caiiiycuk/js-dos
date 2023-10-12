@@ -1,11 +1,11 @@
 export const dosboxconf = [{
-    name: "Win 98",
+    name: "Win 95",
     contents: `
 [sdl]
 autolock=true
 
 [dosbox]
-title=Windows 98
+title=Windows 95
 memsize=128
 
 [video]
@@ -42,9 +42,7 @@ scaler=none
 
 [autoexec]
 echo off
-mount c .
-c:
-
+imgmount 2 sockdrive wss://backend.make-vm.com:8001 dos.zone win95
 echo Please visit our website:
 echo 
 echo         _                __
@@ -53,6 +51,8 @@ echo       / / ___/_____/ __  / __ \\/ ___// ___/ __ \\/ __ \`__ \\
 echo      / (__  )_____/ /_/ / /_/ (__  )/ /__/ /_/ / / / / / /
 echo   __/ /____/      \\__,_/\\____/____(_)___/\\____/_/ /_/ /_/
 echo  /___/
+echo
+echo type 'boot c:' to load windows 95
 echo on
 # 
 # █▀▀▀▀▀█ █  ▄▄▄▀▀█ █▀▀▀▀▀█
@@ -70,15 +70,14 @@ echo on
 # ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
 #
 `.replace(/\n/g, "\r\n"),
-},
-{
-    name: "Win 95",
+}, {
+    name: "Win 98",
     contents: `
 [sdl]
 autolock=true
 
 [dosbox]
-title=Windows 95
+title=Windows 98
 memsize=128
 
 [video]

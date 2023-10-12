@@ -35,7 +35,7 @@
     "@typescript-eslint/parser": "^6.7.5",
     "autoprefixer": "^10.4.16",
     "daisyui": "^3.9.2",
-    "emulators": "^0.73.8",
+    "emulators": "0.80.19",
     "eslint": "^8.51.0",
     "eslint-config-google": "^0.14.0",
     "postcss": "^8.4.31",

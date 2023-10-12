@@ -3,6 +3,7 @@ import { useT } from "../../i18n";
 import { State } from "../../store";
 import { editorSlice } from "../../store/editor";
 import { dosboxconf } from "./defaults";
+import { dosSlice } from "../../store/dos";
 
 export function EditorConf() {
     const t = useT();
@@ -15,6 +16,7 @@ export function EditorConf() {
     }
 
     function updateDosboxConf(newConf: string) {
+        dispatch(dosSlice.actions.mouseCapture(newConf.indexOf("autolock=true") > 0));
         dispatch(editorSlice.actions.dosboxConf(newConf));
     }
 
