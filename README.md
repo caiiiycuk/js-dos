@@ -4,8 +4,7 @@ You need to put `emulators@beta` into `public/emulators`.
 
 
 ```
-aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
-    s3://jsdos/latest/emulators public/emulators
+cp -rv node_modules/emulators/dist/* public/emulators
 ```
 
 # Deployment

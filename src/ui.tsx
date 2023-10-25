@@ -4,7 +4,7 @@ import { Login } from "./login/login";
 import { Frame } from "./frame/frame";
 import { SideBar } from "./sidebar/sidebar";
 import { State } from "./store";
-import { uiSlice } from "./store/ui";
+import { dispatchLoginAction, uiSlice } from "./store/ui";
 import { Window } from "./window/window";
 import { useT } from "./i18n";
 
@@ -69,6 +69,7 @@ function Toast() {
 
 function ReadOnlyWarning() {
     const readOnlyWarning = useSelector((state: State) => state.ui.readOnlyWarning);
+    const account = useSelector((state: State) => state.auth.account);
     const t = useT();
     const dispatch = useDispatch();
 
@@ -78,7 +79,7 @@ function ReadOnlyWarning() {
 
     function fix() {
         dispatch(uiSlice.actions.readOnlyWarning(false));
-        dispatch(uiSlice.actions.frameAccount());
+        dispatchLoginAction(account, dispatch);
     }
 
     function close() {
