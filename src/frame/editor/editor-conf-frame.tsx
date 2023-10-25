@@ -4,6 +4,7 @@ import { State } from "../../store";
 import { editorSlice } from "../../store/editor";
 import { dosboxconf } from "./defaults";
 import { dosSlice } from "../../store/dos";
+import { uiSlice } from "../../store/ui";
 
 export function EditorConf() {
     const t = useT();
@@ -27,9 +28,10 @@ export function EditorConf() {
     return <div class="editor-conf-frame flex flex-col flex-grow w-full py-4">
         <div class="mr-4 self-start mb-4">{t("dosboxconf_template")}</div>
         <div class="flex flex-row flex-wrap items-center mb-4">
-            {dosboxconf.map(({ name, contents }) => {
-                return <button class="buttn mx-2 mb-2"
+            {dosboxconf.map(({ name, backend, contents }) => {
+                return <button class="btn btn-sm mx-2 mb-2"
                     onClick={() => {
+                        dispatch(dosSlice.actions.dosBackend(backend === "dosboxX" ? "dosboxX" : "dosbox"));
                         updateDosboxConf(contents);
                     }}>
                     {name}

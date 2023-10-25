@@ -1,6 +1,6 @@
 {
   "name": "js-dos",
-  "version": "0.80.0",
+  "version": "0.80.20",
   "description": "Full-featured DOS player with multiple emulator backends",
   "type": "module",
   "keywords": [
@@ -30,19 +30,19 @@
     "react-redux": "^8.1.3"
   },
   "devDependencies": {
-    "@preact/preset-vite": "^2.4.0",
-    "@typescript-eslint/eslint-plugin": "^6.7.5",
-    "@typescript-eslint/parser": "^6.7.5",
+    "@preact/preset-vite": "^2.6.0",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
     "autoprefixer": "^10.4.16",
-    "daisyui": "^3.9.2",
-    "emulators": "0.80.19",
-    "eslint": "^8.51.0",
+    "daisyui": "^3.9.3",
+    "emulators": "0.80.20",
+    "eslint": "^8.52.0",
     "eslint-config-google": "^0.14.0",
     "postcss": "^8.4.31",
     "postcss-import": "^15.1.0",
-    "tailwindcss": "^3.3.3",
-    "terser": "^5.21.0",
+    "tailwindcss": "^3.3.4",
+    "terser": "^5.22.0",
     "typescript": "^5.2.2",
-    "vite": "^4.4.11"
+    "vite": "^4.5.0"
   }
 }
