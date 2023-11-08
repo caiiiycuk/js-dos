@@ -1,5 +1,5 @@
 import { Dispatch, Unsubscribe } from "@reduxjs/toolkit";
-import { Emulators } from "emulators";
+import { DosConfig, Emulators } from "emulators";
 import { dosSlice } from "./store/dos";
 import { nonSerializableStore } from "./non-serializable-store";
 import { bundleFromChanges, bundleFromFile, bundleFromUrl } from "./host/bundle-storage";
@@ -36,6 +36,20 @@ export function loadBundleFromFile(file: File, dispatch: Dispatch) {
         null, null, dispatch);
 }
 
+export async function loadBundleFromConfg(config: DosConfig, dispatch: Dispatch) {
+    nonSerializableStore.loadedBundle = null;
+
+    dispatch(editorSlice.actions.init(config));
+    dispatch(dosSlice.actions.mouseCapture(config.dosboxConf.indexOf("autolock=true") > 0));
+
+    nonSerializableStore.loadedBundle = {
+        bundleUrl: null,
+        bundleChangesUrl: null,
+        bundle: config,
+        bundleChanges: null,
+    };
+    dispatch(dosSlice.actions.bndReady({}));
+}
 
 export async function loadBundleFromUrl(url: string, dispatch: Dispatch) {
     const owner = store.getState().auth.account?.email ?? "guest";
@@ -108,10 +122,10 @@ async function changesProducer(bundleUrl: string): Promise<{
 export async function updateBundleConf() {
     const config = store.getState().editor.bundleConfig;
     const bundle = nonSerializableStore.loadedBundle?.bundle;
-    if (bundle === null || config === null) {
+    if (bundle === null || config === null || !ArrayBuffer.isView(bundle)) {
         throw new Error("Unexpected behaviour (internal state is broken), bundle is null");
     }
 
     nonSerializableStore.loadedBundle!.bundle =
-        await emulators.bundleUpdateConfig(bundle!, config);
+        await emulators.bundleUpdateConfig(bundle, config);
 }

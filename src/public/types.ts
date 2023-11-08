@@ -1,6 +1,7 @@
 export interface DosOptions {
-    url: string | null,
-    background: string | null,
+    url: string,
+    dosboxConf: string,
+    background: string,
     pathPrefix: string,
     theme: "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |
     "synthwave" | "retro" | "cyberpunk" | "valentine" | "halloween" | "garden" |

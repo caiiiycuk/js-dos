@@ -11,7 +11,7 @@ import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
 import { nonSerializableStore, postJsDosEvent } from "./non-serializable-store";
 import { getCache } from "./host/lcache";
-import { loadBundleFromUrl } from "./load";
+import { loadBundleFromConfg, loadBundleFromUrl } from "./load";
 
 import { DosOptions, DosProps, DosFn } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
@@ -33,8 +33,18 @@ async function pollEvents() {
             nonSerializableStore.cache = await getCache(cachedEmail ?? "guest");
 
             if (nonSerializableStore.options.url) {
-                loadBundleFromUrl(nonSerializableStore.options.url, store.dispatch)
-                    .catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
+                try {
+                    await loadBundleFromUrl(nonSerializableStore.options.url, store.dispatch);
+                } catch (e: any) {
+                    store.dispatch(dosSlice.actions.bndError(e.message));
+                }
+            } else if (nonSerializableStore.options.dosboxConf) {
+                loadBundleFromConfg({
+                    dosboxConf: nonSerializableStore.options.dosboxConf,
+                    jsdosConf: {
+                        version: "8",
+                    },
+                }, store.dispatch);
             } else {
                 store.dispatch(uiSlice.actions.windowSelect());
             }
@@ -49,7 +59,7 @@ store.subscribe(pollEvents);
 
 let skipEmulatorsInit = false;
 export const Dos: DosFn = (element: HTMLDivElement,
-    options: Partial<DosOptions> = {}): DosProps =>{
+    options: Partial<DosOptions> = {}): DosProps => {
     nonSerializableStore.options = options;
     setupRootElement(element);
 

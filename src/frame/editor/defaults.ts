@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 export const dosboxconf = [{
     name: "DOS",
     backend: "dosbox",
@@ -207,7 +208,7 @@ echo on
 # █ ███ █ ▀█▀▀▄▀▀▄████▀▀█▄█
 # █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█
 # ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
-`.replace(/\n/g, "\r\n")
+`.replace(/\n/g, "\r\n"),
 }, {
     name: "X - DOS 7.1",
     backend: "dosboxX",
@@ -339,5 +340,5 @@ echo on
 # ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
 #
 `.replace(/\n/g, "\r\n"),
-}
+},
 ];

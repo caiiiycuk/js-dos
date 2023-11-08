@@ -1,4 +1,4 @@
-import { CommandInterface } from "emulators";
+import { CommandInterface, InitFs } from "emulators";
 import { Cache, CacheNoop } from "./host/lcache";
 import { Dispatch } from "@reduxjs/toolkit";
 import { DosOptions } from "./public/types";
@@ -6,7 +6,7 @@ import { DosOptions } from "./public/types";
 export interface LoadedBundle {
     bundleUrl: string | null,
     bundleChangesUrl: string | null,
-    bundle: Uint8Array | null,
+    bundle: InitFs | null,
     bundleChanges: Uint8Array | null,
 }
 

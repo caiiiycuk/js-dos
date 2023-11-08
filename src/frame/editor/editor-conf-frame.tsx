@@ -4,7 +4,6 @@ import { State } from "../../store";
 import { editorSlice } from "../../store/editor";
 import { dosboxconf } from "./defaults";
 import { dosSlice } from "../../store/dos";
-import { uiSlice } from "../../store/ui";
 
 export function EditorConf() {
     const t = useT();
