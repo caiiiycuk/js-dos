@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches: [ 8.xx ]
+  pull_request:
+    branches: [ 8.xx ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: build js-dos
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install -g yarn
+    - run: yarn
+    - run: yarn run eslint . --ext ts,tsx --max-warnings 0
+    - run: mkdir -p public/emulators && cp -rv node_modules/emulators/dist/* public/emulators
+    - run: NODE_ENV=production yarn run vite build --base /latest --sourcemap true --minify terser
+    - name: upload
+      uses: actions/upload-artifact@v3.0.0
+      with:
+        name: 'dist'
+        path: 'dist'

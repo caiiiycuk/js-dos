@@ -2,7 +2,6 @@
 
 You need to put `emulators@beta` into `public/emulators`.
 
-
 ```
 cp -rv node_modules/emulators/dist/* public/emulators
 ```
