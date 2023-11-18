@@ -1,3 +1,10 @@
+# js-dos v8
+[![Build](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml/badge.svg)](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml)
+
+The next major version of js-dos.
+
+[![Watch the video](https://img.youtube.com/vi/lhFrAe5YrJE/hqdefault.jpg)](https://youtu.be/lhFrAe5YrJE)
+
 # Requirments
 
 You need to put `emulators@beta` into `public/emulators`.
