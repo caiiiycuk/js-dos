@@ -49,22 +49,18 @@ function SaveButton(props: {
         {props.disabled !== true &&
             <div class={"text-badge " + props.textcolor + " " + props.bgcolor}>{props.label}</div>}
         {props.disabled === true && <LockBadge />}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-            fill="currentColor" class={"absolute bottom-1 w-3 h-3 rotate-90 " +
-                props.textcolor} >
-            <path d="M12 1.5a.75.75 0 01.75.75V7.5h-1.5V2.25A.75.75 0 0112 1.5zM11.25
-                7.5v5.69l-1.72-1.72a.75.75 0 00-1.06 1.06l3 3a.75.75 0 001.06 0l3-3a.75.75
-                0 10-1.06-1.06l-1.72 1.72V7.5h3.75a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3
-                0 01-3-3v-9a3 3 0 013-3h3.75z" />
-        </svg>
 
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="absolute bottom-1 w-3 h-3">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
     </div>;
 }
 
 function LoadButton(props: {
     label: number,
     bgcolor: string,
-    textcolor: string,
     disabled?: boolean,
 }) {
     const account = useSelector((state: State) => state.auth.account);
@@ -87,19 +83,13 @@ function LoadButton(props: {
 
     return <div class={"sidebar-button flex justify-center " + (props.disabled ? " opacity-50" : "")}
         onClick={onClick}>
-        <DisketteIcon />
-        {props.disabled !== true &&
-            <div class={"text-badge " + props.textcolor + " " + props.bgcolor}>{props.label}</div>}
+        <DisketteIcon class="opacity-10"/>
         {props.disabled === true && <LockBadge />}
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-            fill="currentColor" class={"absolute bottom-1 w-3 h-3 rotate-90 " +
-                props.textcolor}>
-            <path d="M11.47 1.72a.75.75 0 011.06 0l3 3a.75.75 0 01-1.06
-                1.06l-1.72-1.72V7.5h-1.5V4.06L9.53 5.78a.75.75 0
-                01-1.06-1.06l3-3zM11.25 7.5V15a.75.75 0 001.5
-                0V7.5h3.75a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3
-                0 01-3-3v-9a3 3 0 013-3h3.75z" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="absolute bottom-1 w-6 h-6 -scale-y-100">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="m15 15 6-6m0 0-6-6m6 6H9a6 6 0 0 0 0 12h3" />
         </svg>
-
     </div>;
 }
