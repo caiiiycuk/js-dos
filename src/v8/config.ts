@@ -12,7 +12,7 @@ export const xsollaPremiumId = "sumOxNVr";
 
 export const brCdn = "https://br.cdn.dos.zone";
 
-export const cancelSubscription = {
+export const cancelSubscriptionPage = {
     en: "https://v8.js-dos.com/cancel-your-subscription/",
     ru: "https://v8.js-dos.com/ru/cancel-your-subscription/",
 };

@@ -65,6 +65,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         close: "Закрыть",
         cancle: "Отказаться",
         manage: "Управлять",
+        unable_to_cancle_subscription: "Не удалось отменить подписку",
+        subscription_cancelled: "Подписка отменена",
     },
     en: {
         logout: "Logout",
@@ -128,6 +130,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         close: "Close",
         cancle: "Cancle",
         manage: "Manage",
+        unable_to_cancle_subscription: "Unable to cancle subscription",
+        subscription_cancelled: "Subscription cancelled",
     },
 };
 

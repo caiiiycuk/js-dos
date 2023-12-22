@@ -40,3 +40,23 @@ export async function havePremium(token: string): Promise<boolean> {
 
     return json.items.length > 0 && json.items[0].plan_external_id === xsollaPremiumId;
 }
+
+export async function cancle(token: string): Promise<boolean> {
+    // eslint-disable-next-line
+    // https://subscriptions.xsolla.com/api/doc/user#/Subscriptions/put_xsolla_subscription_apiuser_cancelusersubscription
+    const response = await fetch(xsollaSubscriptons + "/" + xsollaPremiumId + "/cancel", {
+        method: "PUT",
+        cache: "no-cache",
+        headers: {
+            "Authorization": "Bearer " + token,
+        },
+    });
+
+    const json = await response.json();
+    if (json.error) {
+        console.error("Unexpected subscriptions response:", json);
+        return false;
+    }
+
+    return true;
+}

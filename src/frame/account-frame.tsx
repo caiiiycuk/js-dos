@@ -4,8 +4,8 @@ import { uiSlice } from "../store/ui";
 import { authSlice } from "../store/auth";
 import { useT } from "../i18n";
 import { State } from "../store";
-import { linkToBuy } from "../v8/subscriptions";
-import { cancelSubscription } from "../v8/config";
+import { linkToBuy, cancle as cancelSubscription } from "../v8/subscriptions";
+import { cancelSubscriptionPage } from "../v8/config";
 
 export function AccountFrame(props: {}) {
     const t = useT();
@@ -38,6 +38,7 @@ function PremiumPlan(props: {}) {
     const lang = useSelector((state: State) => state.i18n.lang);
     const account = useSelector((state: State) => state.auth.account);
     const [locked, setLocked] = useState<boolean>(false);
+    const dispatch = useDispatch();
 
     if (account === null) {
         return null;
@@ -60,17 +61,43 @@ function PremiumPlan(props: {}) {
             .finally(() => setLocked(false));
     }
 
+    async function cancle() {
+        const openPage = () => {
+            dispatch(uiSlice.actions.showToast({
+                message: t("unable_to_cancle_subscription"),
+                intent: "error",
+            }));
+            window.open(cancelSubscriptionPage[lang] ?? cancelSubscriptionPage.en, "_blank");
+        };
+        if (!account) {
+            openPage();
+        } else {
+            try {
+                if (await cancelSubscription(account.token.access_token)) {
+                    dispatch(uiSlice.actions.showToast({
+                        message: t("subscription_cancelled"),
+                        intent: "success",
+                    }));
+                } else {
+                    openPage();
+                }
+            } catch (e) {
+                openPage();
+            }
+        }
+    }
+
     return <div class={"premium-plan-root " + (account.premium ? "have-premium" : "")}>
         <div class="premium-plan-head flex">
             <PremiumCheck />
             {t("premium")}
             <div class="flex-grow"></div>
             {account.premium &&
-                <a href={cancelSubscription[lang] ?? cancelSubscription.en}
-                    target="_blank"
+                <button
+                    onClick={cancle}
                     class="ml-2 btn btn-ghost btn-xs text-success-content">
                     {t("cancle")}
-                </a>}
+                </button>}
         </div>
         {!account.premium &&
             <>
