@@ -21,16 +21,27 @@ export interface Account {
     premium: boolean,
 };
 
-const initAccountJson = lStorage.getItem(cachedAccount);
-const initAccount = initAccountJson !== null ? JSON.parse(initAccountJson) : null;
+const initAccount = (() => {
+    const params = new URLSearchParams(location.search);
+    const refreshToken = params.get("jsdos_token");
+    if (refreshToken !== null) {
+        setRefreshToken(refreshToken);
+        history.replaceState(null, "", location.href.substring(0, location.href.indexOf("?")));
+        return null;
+    } else {
+        const json = lStorage.getItem(cachedAccount);
+        const account = json !== null ? JSON.parse(json) : null;
+        return account !== null && account.token.validUntilMs - Date.now() > 1 * 60 * 60 * 1000 ?
+            account : null;
+    }
+})();
 
 const initialState: {
     account: Account | null,
     ready: boolean,
 } = {
-    account: initAccount !== null && initAccount.token.validUntilMs - Date.now() > 1 * 60 * 60 * 1000 ?
-        initAccount : null,
-    ready: false,
+    account: initAccount,
+    ready: initAccount !== null,
 };
 
 export const authSlice = createSlice({
@@ -90,12 +101,4 @@ function setRefreshToken(refreshToken: string | null) {
 
 function clearRefreshToken() {
     lStorage.removeItem("cached.rt");
-}
-
-const params = new URLSearchParams(location.search);
-const refreshToken = params.get("jsdos_token");
-if (refreshToken !== null) {
-    params.delete("jsdos_token");
-    location.search = params.toString();
-    setRefreshToken(refreshToken);
 }

@@ -11,11 +11,11 @@ export function QuickSaveFrame() {
     return <div class="quick-save-frame flex flex-col justify-center items-center -my-2">
         <CloudSaveButton />
         <SaveButton label={1} bgcolor="bg-primary" textcolor="text-primary-content" />
-        <LoadButton label={1} bgcolor="bg-primary" textcolor="text-primary-content" />
+        <LoadButton label={1} bgcolor="bg-primary" />
         <SaveButton disabled={!premium} label={2} bgcolor="bg-secondary" textcolor="text-secondary-content" />
-        <LoadButton disabled={!premium} label={2} bgcolor="bg-secondary" textcolor="text-secondary-content" />
+        <LoadButton disabled={!premium} label={2} bgcolor="bg-secondary" />
         <SaveButton disabled={!premium} label={3} bgcolor="bg-accent" textcolor="text-accent-content" />
-        <LoadButton disabled={!premium} label={3} bgcolor="bg-accent" textcolor="text-accent-content" />
+        <LoadButton disabled={!premium} label={3} bgcolor="bg-accent" />
     </div>;
 }
 
