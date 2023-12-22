@@ -11,7 +11,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         buy: "Купить",
         experimental_features: "Доступ к экспериентальным функциям",
         cloud_saves: "Облачные сохранения",
-        game_no_limits: "Любой размер игры",
+        writeable_fat32: "FAT32 диски",
         net_no_limits: "Выбор сервера для стевой игры",
         unlock_options: "Доступ ко всем настройкам",
         error: "Упс... Что-то пошло не так...",
@@ -63,6 +63,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         read_only_access: "Диск FAT32 открыт только для чтения",
         fix: "Исправить",
         close: "Закрыть",
+        cancle: "Отказаться",
+        manage: "Управлять",
     },
     en: {
         logout: "Logout",
@@ -72,7 +74,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         buy: "Buy",
         experimental_features: "Access to all experimental features",
         cloud_saves: "Cloud saves",
-        game_no_limits: "Unlimited game size",
+        writeable_fat32: "Writable FAT32",
         net_no_limits: "Change the network region",
         unlock_options: "Unlock all configuration options",
         error: "Oops... Something went wrong...",
@@ -124,6 +126,8 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         read_only_access: "The FAT32 drive is open in read-only mode",
         fix: "Fix",
         close: "Close",
+        cancle: "Cancle",
+        manage: "Manage",
     },
 };
 

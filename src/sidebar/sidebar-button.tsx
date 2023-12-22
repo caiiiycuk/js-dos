@@ -1,9 +1,10 @@
 import { AnyAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 import { LockBadge } from "../components/lock";
-import { State } from "../store";
+import { State, store } from "../store";
 import { Frame, uiSlice } from "../store/ui";
 import { DisketteIcon } from "./diskette-icon";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 export function ImageRenderingButton(props: {
     class?: string,
@@ -112,6 +113,78 @@ export function CyclesButton() {
         action={uiSlice.actions.frameStats()}>
         <span>{cycles === 0 ? "~" : cycles}</span><sup>KC</sup>
     </SidebarButton>;
+}
+
+export function HddLed(props: {}) {
+    const ref = useRef<HTMLDivElement>(null);
+    const [state] = useState<{
+        recv: number, enabled: boolean, delayLedTo: number,
+    }>({ recv: 0, enabled: false, delayLedTo: 0 });
+
+    useEffect(() => {
+        if (ref.current) {
+            const el = ref.current;
+            el.classList.add("bg-base-300");
+
+            const id = setInterval(() => {
+                if (state.delayLedTo <= Date.now()) {
+                    const newRecv = store.getState().dos.stats.driveRecv;
+                    const newEnabled = state.recv !== newRecv;
+                    if (newEnabled !== state.enabled) {
+                        el.classList.remove("bg-base-300", "bg-green-300", "animate-led");
+                        if (newEnabled) {
+                            el.classList.add("bg-green-300", "animate-led");
+                        } else {
+                            el.classList.add("bg-base-300");
+                        }
+                        state.enabled = newEnabled;
+                    }
+
+                    if (newEnabled) {
+                        state.delayLedTo = Date.now() + 300 + Math.random() * 1500;
+                    } else {
+                        state.delayLedTo = 0;
+                    }
+
+                    state.recv = newRecv;
+                }
+            }, 150);
+
+            return () => {
+                el.classList.remove("bg-base-300", "bg-green-300", "animate-led");
+                clearInterval(id);
+            };
+        }
+    }, [ref, state]);
+    const [on, setOn] = useState<boolean>(false);
+    const [off, setOff] = useState<{ recv: number, timeoutId: number | null }>({
+        recv: 0,
+        timeoutId: null,
+    });
+    const statsRecv = useSelector((state: State) => state.dos.stats.driveRecv);
+    if (off.recv !== statsRecv) {
+        if (!on) {
+            setOn(true);
+        }
+
+        if (off.timeoutId) {
+            clearTimeout(off.timeoutId);
+        }
+
+        const id = setTimeout(() => {
+            setOn(false);
+            setOff({
+                recv: statsRecv,
+                timeoutId: null,
+            });
+        }, 1000);
+
+        setOff({
+            recv: statsRecv,
+            timeoutId: id,
+        });
+    }
+    return <div ref={ref} class="self-end mr-2 -mt-3 w-2 h-1"></div>;
 }
 
 export function SettingsButton(props: {

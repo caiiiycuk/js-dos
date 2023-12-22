@@ -5,6 +5,7 @@ import { authSlice } from "../store/auth";
 import { useT } from "../i18n";
 import { State } from "../store";
 import { linkToBuy } from "../v8/subscriptions";
+import { cancelSubscription } from "../v8/config";
 
 export function AccountFrame(props: {}) {
     const t = useT();
@@ -34,6 +35,7 @@ export function AccountFrame(props: {}) {
 
 function PremiumPlan(props: {}) {
     const t = useT();
+    const lang = useSelector((state: State) => state.i18n.lang);
     const account = useSelector((state: State) => state.auth.account);
     const [locked, setLocked] = useState<boolean>(false);
 
@@ -59,7 +61,17 @@ function PremiumPlan(props: {}) {
     }
 
     return <div class={"premium-plan-root " + (account.premium ? "have-premium" : "")}>
-        <div class="premium-plan-head">{t("premium")}</div>
+        <div class="premium-plan-head flex">
+            <PremiumCheck />
+            {t("premium")}
+            <div class="flex-grow"></div>
+            {account.premium &&
+                <a href={cancelSubscription[lang] ?? cancelSubscription.en}
+                    target="_blank"
+                    class="ml-2 btn btn-ghost btn-xs text-success-content">
+                    {t("cancle")}
+                </a>}
+        </div>
         {!account.premium &&
             <>
                 <div class="flex flex-row my-6 items-top">
@@ -87,7 +99,13 @@ function PremiumPlan(props: {}) {
             </div>
             <div class="premium-plan-highlight">
                 <PremiumCheck />
-                <div>{t("game_no_limits")}</div>
+                <div>{t("writeable_fat32")}</div>
+                <div class="flex-grow"></div>
+                <a href="https://make-vm.com"
+                    target="_blank"
+                    class="ml-2 btn btn-xs text-success-content">
+                    {t("manage")}
+                </a>
             </div>
             <div class="premium-plan-highlight">
                 <PremiumCheck />

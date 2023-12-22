@@ -5,7 +5,7 @@ import { FullscreenButton } from "./fullscreen-button";
 import { NetworkButton } from "./network-button";
 import { CloudSaveButton } from "./cloud-save-button";
 import { DosboxConfButton, SettingsButton, CyclesButton, FsButton,
-    HostCacheButton, QuickSaveButton, ImageRenderingButton } from "./sidebar-button";
+    HostCacheButton, QuickSaveButton, ImageRenderingButton, HddLed } from "./sidebar-button";
 
 export function SideBar(props: {}) {
     const window = useSelector((state: State) => state.ui.window);
@@ -23,6 +23,7 @@ export function SideBar(props: {}) {
         <div class="contentbar"></div>
         {window === "run" && <FullscreenButton />}
         {window === "run" && <CyclesButton />}
+        {window === "run" && <HddLed />}
         {(window === "prerun" || window === "run") && <SettingsButton />}
         {window !== "run" && <AccountButton />}
     </div>;

@@ -77,7 +77,7 @@ const initialState: {
     bundle: null,
     config: {},
     worker: lStorage.getItem("worker") !== "false",
-    backend: (lStorage.getItem("backend") ?? "dosbox") as Backend,
+    backend: (lStorage.getItem("backend") ?? "dosboxX") as Backend,
     renderBackend: (lStorage.getItem("renderBackend") ?? "webgl") as RenderBackend,
     renderAspect: (lStorage.getItem("renderAspect") ?? "AsIs") as RenderAspect,
     volume: (Number.parseFloat(lStorage.getItem("volume") ?? "1.0")),

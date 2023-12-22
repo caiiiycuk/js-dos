@@ -63,13 +63,15 @@ export function webGl(canvas: HTMLCanvasElement,
     let frameFormat: number = 0;
 
     const updateTexture = () => {
-        gl.texImage2D(gl.TEXTURE_2D, 0, frameFormat,
-            frameWidth, frameHeight, 0, frameFormat, gl.UNSIGNED_BYTE,
-            frame);
+        if (frame !== null) {
+            gl.texImage2D(gl.TEXTURE_2D, 0, frameFormat,
+                frameWidth, frameHeight, 0, frameFormat, gl.UNSIGNED_BYTE,
+                frame);
+            frame = null;
+        }
         gl.drawArrays(gl.TRIANGLES, 0, 6);
 
         requestAnimationFrameId = null;
-        frame = null;
     };
 
     const onResize = () => {
@@ -81,6 +83,7 @@ export function webGl(canvas: HTMLCanvasElement,
         frameHeight = h;
         canvas.width = frameWidth;
         canvas.height = frameHeight;
+        frame = null;
         gl.viewport(0, 0, frameWidth, frameHeight);
         onResize();
     };

@@ -22,8 +22,6 @@
     const params = new URLSearchParams(location.search);
     document.addEventListener("DOMContentLoaded", () => {
       /* eslint-disable max-len */
-      // const url = "https://cdn.dos.zone/original/2X/7/744842062905f72648a4d492ccc2526d039b3702.jsdos"; // sim-city
-      // const url = "https://cdn.dos.zone/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos"; // dhry2
       /* eslint-enable max-len */
       const props = Dos(document.getElementById("app"),
         {
@@ -34,6 +32,8 @@
           // url: "https://cdn.dos.zone/custom/dos/duke3d_ipx.jsdos",
           // url: "https://br.cdn.dos.zone/ipx/duke3d/duke3d_ipx.jsdos",
           // url: "https://br.cdn.dos.zone/ipx/doom_dm/doom_dm.jsdos",
+          // url: "https://cdn.dos.zone/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos", // dhry2
+          // url: "https://cdn.dos.zone/original/2X/7/744842062905f72648a4d492ccc2526d039b3702.jsdos", // sim-city
           pathPrefix: "/emulators/",
           server: params.get("server"),
           room: params.get("room"),
