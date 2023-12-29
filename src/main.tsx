@@ -80,6 +80,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.dosBackend(backend));
     }
 
+    function setBackendLocked(locked: boolean) {
+        store.dispatch(dosSlice.actions.dosBackendLocked(locked));
+    }
+
     function setWorkerThread(workerThread: DosOptions["workerThread"]) {
         store.dispatch(dosSlice.actions.dosWorker(workerThread));
     }
@@ -120,6 +124,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setBackend(options.backend);
     }
 
+    if (options.backendLoked) {
+        setBackendLocked(options.backendLoked);
+    }
+
     if (options.workerThread !== undefined) {
         setWorkerThread(options.workerThread);
     }
@@ -155,6 +163,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setTheme,
         setLang,
         setBackend,
+        setBackendLocked,
         setWorkerThread,
         setMouseCapture,
         setServer,

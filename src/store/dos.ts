@@ -53,6 +53,7 @@ const initialState: {
     emuVersion: string,
     worker: boolean,
     backend: Backend,
+    backendLocked: boolean,
     renderBackend: RenderBackend,
     renderAspect: RenderAspect,
     volume: number,
@@ -78,6 +79,7 @@ const initialState: {
     config: {},
     worker: lStorage.getItem("worker") !== "false",
     backend: (lStorage.getItem("backend") ?? "dosboxX") as Backend,
+    backendLocked: false,
     renderBackend: (lStorage.getItem("renderBackend") ?? "webgl") as RenderBackend,
     renderAspect: (lStorage.getItem("renderAspect") ?? "AsIs") as RenderAspect,
     volume: (Number.parseFloat(lStorage.getItem("volume") ?? "1.0")),
@@ -167,6 +169,9 @@ export const dosSlice = createSlice({
         dosBackend: (s, a: { payload: Backend }) => {
             s.backend = a.payload as Backend;
             lStorage.setItem("backend", s.backend);
+        },
+        dosBackendLocked: (s, a: { payload: boolean }) => {
+            s.backendLocked = a.payload;
         },
         renderBackend: (s, a: { payload: RenderBackend }) => {
             s.renderBackend = a.payload;

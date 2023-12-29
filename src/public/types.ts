@@ -10,6 +10,7 @@ export interface DosOptions {
     "night" | "coffee" | "winter",
     lang: "ru" | "en",
     backend: "dosbox" | "dosboxX",
+    backendLoked: boolean,
     workerThread: boolean,
     mouseCapture: boolean,
     onEvent: (event: "emu-ready" | "ci-ready" | "bnd-play", ci?: any) => void,
@@ -21,7 +22,8 @@ export interface DosOptions {
 export interface DosProps {
     setTheme(theme: DosOptions["theme"]): void;
     setLang(lang: DosOptions["lang"]): void;
-    setBackend(lang: DosOptions["backend"]): void;
+    setBackend(backend: DosOptions["backend"]): void;
+    setBackendLocked(locked: boolean): void;
     setWorkerThread(capture: DosOptions["workerThread"]): void;
     setMouseCapture(capture: DosOptions["mouseCapture"]): void;
     setServer(server: DosOptions["server"]): void;

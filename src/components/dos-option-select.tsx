@@ -10,9 +10,11 @@ import {
 import { ThemeValues, Theme, uiSlice } from "../store/ui";
 
 export function BackendSelect() {
+    const locked = useSelector((state: State) => state.dos.backendLocked);
     return <OptionSelect
         label="emulation_backend"
         values={[...BackendValues]}
+        disabled={locked}
         selector={(state: State) => state.dos.backend}
         dispatch={(newValue: Backend) => dosSlice.actions.dosBackend(newValue)}
     />;

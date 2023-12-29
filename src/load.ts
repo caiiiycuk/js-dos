@@ -40,7 +40,7 @@ export async function loadBundleFromConfg(config: DosConfig, dispatch: Dispatch)
     nonSerializableStore.loadedBundle = null;
 
     dispatch(editorSlice.actions.init(config));
-    dispatch(dosSlice.actions.mouseCapture(config.dosboxConf.indexOf("autolock=true") > 0));
+    syncWithConfig(config, dispatch);
 
     nonSerializableStore.loadedBundle = {
         bundleUrl: null,
@@ -80,7 +80,7 @@ async function doLoadBundle(bundleName: string,
     if (config === null) {
         dispatch(uiSlice.actions.frameConf());
     } else {
-        dispatch(dosSlice.actions.mouseCapture(config.dosboxConf.indexOf("autolock=true") > 0));
+        syncWithConfig(config, dispatch);
     }
 
     nonSerializableStore.loadedBundle = {
@@ -128,4 +128,12 @@ export async function updateBundleConf() {
 
     nonSerializableStore.loadedBundle!.bundle =
         await emulators.bundleUpdateConfig(bundle, config);
+}
+
+function syncWithConfig(config: DosConfig, dispatch: Dispatch) {
+    if (config.dosboxConf.indexOf("sockdrive") >= 0) {
+        dispatch(dosSlice.actions.dosBackendLocked(true));
+        dispatch(dosSlice.actions.dosBackend("dosboxX"));
+    }
+    dispatch(dosSlice.actions.mouseCapture(config.dosboxConf.indexOf("autolock=true") >= 0));
 }
