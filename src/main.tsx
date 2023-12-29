@@ -124,8 +124,8 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setBackend(options.backend);
     }
 
-    if (options.backendLoked) {
-        setBackendLocked(options.backendLoked);
+    if (options.backendLocked) {
+        setBackendLocked(options.backendLocked);
     }
 
     if (options.workerThread !== undefined) {

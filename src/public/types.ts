@@ -10,7 +10,7 @@ export interface DosOptions {
     "night" | "coffee" | "winter",
     lang: "ru" | "en",
     backend: "dosbox" | "dosboxX",
-    backendLoked: boolean,
+    backendLocked: boolean,
     workerThread: boolean,
     mouseCapture: boolean,
     onEvent: (event: "emu-ready" | "ci-ready" | "bnd-play", ci?: any) => void,
