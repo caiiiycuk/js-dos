@@ -8,6 +8,7 @@ import {
     RenderBackend, RenderBackendValues,
 } from "../store/dos";
 import { ThemeValues, Theme, uiSlice } from "../store/ui";
+import { lStorage } from "../host/lstorage";
 
 export function BackendSelect() {
     const locked = useSelector((state: State) => state.dos.backendLocked);
@@ -16,7 +17,10 @@ export function BackendSelect() {
         values={[...BackendValues]}
         disabled={locked}
         selector={(state: State) => state.dos.backend}
-        dispatch={(newValue: Backend) => dosSlice.actions.dosBackend(newValue)}
+        dispatch={(newValue: Backend) => {
+            lStorage.setItem("backend", newValue);
+            return dosSlice.actions.dosBackend(newValue);
+        }}
     />;
 }
 

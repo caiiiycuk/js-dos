@@ -168,7 +168,6 @@ export const dosSlice = createSlice({
         },
         dosBackend: (s, a: { payload: Backend }) => {
             s.backend = a.payload as Backend;
-            lStorage.setItem("backend", s.backend);
         },
         dosBackendLocked: (s, a: { payload: boolean }) => {
             s.backendLocked = a.payload;
