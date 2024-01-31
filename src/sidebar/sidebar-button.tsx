@@ -111,7 +111,9 @@ export function CyclesButton() {
         class="cycles"
         frame="stats"
         action={uiSlice.actions.frameStats()}>
-        <span>{cycles === 0 ? "~" : cycles}</span><sup>KC</sup>
+        { cycles <= 0 && <><span>~</span><sup>KC</sup></> }
+        { cycles > 0 && cycles <= 1000 && <><span>{cycles}</span><sup>KC</sup></> }
+        { cycles > 0 && cycles > 1000 && <><span>{Math.round(cycles / 1000)}</span><sup><strong>K</strong>KC</sup></> }
     </SidebarButton>;
 }
 

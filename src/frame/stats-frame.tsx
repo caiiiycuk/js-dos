@@ -3,6 +3,7 @@ import { State } from "../store";
 
 export function StatsFrame() {
     const stats = useSelector((state: State) => state.dos.stats);
+    const cycles = Math.round(useSelector((state: State) => state.dos.stats.cyclesPerMs) / 1000);
     const driveRecvMb = Math.round(stats.driveRecv / 1024 / 1024 * 100) / 100;
     const driveSpeedMb = (stats.driveRecvTime / 1000) > 1 ?
         Math.round(driveRecvMb / stats.driveRecvTime * 1000 * 100) / 100 : 0;
@@ -18,7 +19,9 @@ export function StatsFrame() {
                 <tbody>
                     <tr>
                         <td>Cycles/ms</td>
-                        <td>{stats.cyclesPerMs / 1000}K</td>
+                        { cycles <= 0 && <td>~ K</td> }
+                        { cycles > 0 && cycles <= 1000 && <td>{cycles} K</td> }
+                        { cycles > 1000 && <td>{Math.round(cycles / 1000)} KK</td> }
                     </tr>
                     <tr>
                         <td>NonSkipSleep COUNT/s</td>

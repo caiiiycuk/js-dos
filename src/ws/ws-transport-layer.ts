@@ -1,6 +1,8 @@
 
-import { TransportLayer, ClientMessage, MessageHandler,
-    ServerMessage, DataChunk } from "emulators/dist/types/protocol/protocol";
+import {
+    TransportLayer, ClientMessage, MessageHandler,
+    ServerMessage, DataChunk,
+} from "emulators/dist/types/protocol/protocol";
 
 export interface Hardware {
     readConfig(): string;
@@ -18,6 +20,7 @@ export interface Hardware {
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
+const fMultiplier = 2000000000;
 
 // eslint-disable-next-line max-len
 const clientMessageValues: ClientMessage[] = ["wc-install", "wc-run", "wc-pack-fs-to-bundle", "wc-add-key", "wc-mouse-move", "wc-mouse-button", "wc-mouse-sync", "wc-exit", "wc-sync-sleep", "wc-pause", "wc-resume", "wc-mute", "wc-unmute", "wc-connect", "wc-disconnect", "wc-backend-event", "wc-asyncify-stats", "wc-fs-tree", "wc-fs-get-file", "wc-send-data-chunk"];
@@ -38,6 +41,7 @@ export class WsTransportLayer implements TransportLayer {
     private alive = true;
     private frameWidth = 0;
     private frameHeight = 0;
+    private cycles = 0;
 
     private handler: MessageHandler = () => {/**/};
 
@@ -46,6 +50,18 @@ export class WsTransportLayer implements TransportLayer {
         container[offset + 1] = (value & 0x0000FF00) >> 8;
         container[offset + 2] = (value & 0x00FF0000) >> 16;
         container[offset + 3] = (value & 0xFF000000) >> 24;
+        return offset + 4;
+    }
+
+    private readUint32(container: Uint8Array, offset: number) {
+        return (container[offset] & 0x000000FF) |
+            ((container[offset + 1] << 8) & 0x0000FF00) |
+            ((container[offset + 2] << 16) & 0x00FF0000) |
+            ((container[offset + 3] << 24) & 0xFF000000);
+    }
+
+    private readUint64(container: Uint8Array, offset: number) {
+        return this.readUint32(container, offset) + this.readUint32(container, offset + 4) * 2**32;
     }
 
     private sendMessage(id: ClientMessage | number, ...payload: (Uint8Array | null)[]) {
@@ -73,11 +89,7 @@ export class WsTransportLayer implements TransportLayer {
         const out: Uint8Array[] = [];
         let position = 1;
         while (position + 4 <= payload.length) {
-            const length =
-                (payload[position] & 0x000000FF) |
-                ((payload[position + 1] << 8) & 0x0000FF00) |
-                ((payload[position + 2] << 16) & 0x00FF0000) |
-                ((payload[position + 3] << 24) & 0xFF000000);
+            const length = this.readUint32(payload, position);
             position += 4;
 
             if (position + length > payload.length) {
@@ -103,7 +115,10 @@ export class WsTransportLayer implements TransportLayer {
             case "ws-server-ready":
             case "ws-exit":
                 {
-                    this.handler(message, {});
+                    // delay ws-server-ready until ws-sound-init
+                    if (message !== "ws-server-ready") {
+                        this.handler(message, {});
+                    }
                 } break;
             case "ws-stdout":
             case "ws-log":
@@ -130,8 +145,9 @@ export class WsTransportLayer implements TransportLayer {
             } break;
             case "ws-sound-init": {
                 this.handler(message, {
-                    freq: 44100,
+                    freq: this.readUint32(payload[0]!, 0),
                 });
+                this.handler("ws-server-ready", {});
             } break;
             case "ws-sound-push": {
                 this.handler(message, {
@@ -139,10 +155,9 @@ export class WsTransportLayer implements TransportLayer {
                 });
             } break;
             case "ws-frame-set-size": {
-                const tuple = new Uint32Array(payload[0]!.buffer);
                 this.handler(message, {
-                    width: tuple[0],
-                    height: tuple[1],
+                    width: this.readUint32(payload[0]!, 0),
+                    height: this.readUint32(payload[0]!, 4),
                 });
             } break;
             case "ws-update-lines": {
@@ -150,15 +165,34 @@ export class WsTransportLayer implements TransportLayer {
                     const lines: { start: number, heapu8: Uint8Array }[] = [];
                     for (const next of payload) {
                         lines.push({
-                            start: (next![0] & 0x000000FF) |
-                                ((next![1] << 8) & 0x0000FF00) |
-                                ((next![2] << 16) & 0x00FF0000) |
-                                ((next![3] << 24) & 0xFF000000),
+                            start: this.readUint32(next!, 0),
                             heapu8: next!.slice(4),
                         });
                     }
                     this.handler(message, { lines });
                 }
+            } break;
+            case "ws-asyncify-stats": {
+                this.cycles += this.readUint32(payload[0]!, 0) * 100;
+                const stats = {
+                    messageSent: this.readUint32(payload[0]!, 4),
+                    messageReceived: this.readUint32(payload[0]!, 8),
+                    messageFrame: this.readUint32(payload[0]!, 12),
+                    messageSound: this.readUint32(payload[0]!, 16),
+                    nonSkippableSleepCount: 0,
+                    sleepCount: 0,
+                    sleepTime: 0,
+                    cycles: this.cycles,
+                    netSent: 0,
+                    netRecv: 0,
+                    driveSent: 0,
+                    driveRecv: 0,
+                    driveRecvTime: 0,
+                    driveCacheHit: 0,
+                    driveCacheMiss: 0,
+                    driveCacheUsed: 0,
+                };
+                this.handler(message, stats);
             } break;
             default:
                 console.warn("WARN! Unhandled server message", message);
@@ -255,8 +289,19 @@ export class WsTransportLayer implements TransportLayer {
                     textEncoder.encode(chunk.name),
                     chunk.data ? new Uint8Array(chunk.data) : null);
             } break;
+            case "wc-asyncify-stats": {
+                this.sendMessage(messageId);
+            } break;
+            case "wc-add-key": {
+                const payload = new Uint8Array(3 * 4);
+                let offset = 0;
+                offset = this.writeUint32(payload, props.key, offset);
+                offset = this.writeUint32(payload, props.pressed ? 1 : 0, offset);
+                offset = this.writeUint32(payload, props.timeMs, offset);
+                this.sendMessage(messageId, payload);
+            } break;
             default: {
-                console.log("Unhandled client message (wc):", name, props);
+                console.log("Unhandled client message (wc):", name, messageId, props);
             } break;
         }
     }
@@ -272,7 +317,7 @@ export class WsTransportLayer implements TransportLayer {
         this.alive = false;
     }
 
-    async onServerMessage(name: string, optProps?: { [key: string]: any }) {
+    async deprecatedOnServerMessage(name: string, optProps?: { [key: string]: any }) {
         const props = optProps || {};
         switch (name) {
             case "ws-server-ready": {
@@ -403,3 +448,38 @@ export class WsTransportLayer implements TransportLayer {
 // }
 // export const hardwareTransportLayerFactory = new HardwareTransportLayerFactory();
 
+export function createWsTransportLayer(url: string): Promise<TransportLayer> {
+    return new Promise<TransportLayer>((resolve) => {
+        let locked = false;
+        const inervalId = setInterval(() => {
+            if (locked) {
+                return;
+            }
+
+            locked = true;
+            const ws = new WebSocket(url);
+            const onSuccess = () => {
+                clearInterval(inervalId);
+                console.log("Connected to", url);
+                resolve(new WsTransportLayer(ws));
+            };
+
+            ws.addEventListener("error", (error) => {
+                console.error("Can't conect to ", url, error);
+                ws.removeEventListener("open", onSuccess);
+                ws.close();
+                locked = false;
+            });
+
+            ws.addEventListener("open", onSuccess);
+        }, 1000);
+    });
+}
+
+function decode(payload: string): Uint8Array {
+    return new Uint8Array(0);
+}
+
+function encode(payload: Uint8Array): string {
+    return "";
+}
