@@ -1,7 +1,9 @@
 # js-dos v8
 [![Build](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml/badge.svg)](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml)
 
-The next major version of js-dos.
+The **next** major version of js-dos. 
+
+**Not production ready. Please use 7.xx for production.**
 
 [![Watch the video](https://img.youtube.com/vi/lhFrAe5YrJE/hqdefault.jpg)](https://youtu.be/lhFrAe5YrJE)
 
