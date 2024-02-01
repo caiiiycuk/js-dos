@@ -3,7 +3,7 @@
 
 The **next** major version of js-dos. 
 
-**Not production ready. Please use 7.xx for production.**
+**Not production ready. [Please use 7.xx for production.](https://github.com/caiiiycuk/js-dos/tree/7.xx)**
 
 [![Watch the video](https://img.youtube.com/vi/lhFrAe5YrJE/hqdefault.jpg)](https://youtu.be/lhFrAe5YrJE)
 
