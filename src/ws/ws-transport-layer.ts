@@ -20,7 +20,7 @@ export interface Hardware {
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
-const fMultiplier = 2000000000;
+// const fMultiplier = 2000000000;
 
 // eslint-disable-next-line max-len
 const clientMessageValues: ClientMessage[] = ["wc-install", "wc-run", "wc-pack-fs-to-bundle", "wc-add-key", "wc-mouse-move", "wc-mouse-button", "wc-mouse-sync", "wc-exit", "wc-sync-sleep", "wc-pause", "wc-resume", "wc-mute", "wc-unmute", "wc-connect", "wc-disconnect", "wc-backend-event", "wc-asyncify-stats", "wc-fs-tree", "wc-fs-get-file", "wc-send-data-chunk"];
@@ -297,7 +297,7 @@ export class WsTransportLayer implements TransportLayer {
                 let offset = 0;
                 offset = this.writeUint32(payload, props.key, offset);
                 offset = this.writeUint32(payload, props.pressed ? 1 : 0, offset);
-                offset = this.writeUint32(payload, props.timeMs, offset);
+                this.writeUint32(payload, props.timeMs, offset);
                 this.sendMessage(messageId, payload);
             } break;
             default: {
@@ -478,8 +478,4 @@ export function createWsTransportLayer(url: string): Promise<TransportLayer> {
 
 function decode(payload: string): Uint8Array {
     return new Uint8Array(0);
-}
-
-function encode(payload: Uint8Array): string {
-    return "";
 }

@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BackendSelect, RenderAspectSelect, RenderSelect } from "../components/dos-option-select";
 import { dosSlice } from "../store/dos";
 import { State } from "../store";
-import { MouseCapture, WorkerCheckbox } from "../components/dos-option-checkbox";
+import { HardwareCheckbox, MouseCapture, WorkerCheckbox } from "../components/dos-option-checkbox";
 import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
 import { updateBundleConf } from "../load";
 import { useT } from "../i18n";
@@ -60,6 +60,7 @@ export function PreRunWindow() {
                 <RenderSelect />
             </div>
             <div class="ml-10 flex flex-col items-end">
+                <HardwareCheckbox />
                 <WorkerCheckbox />
                 <RenderAspectSelect />
                 <MouseCapture />

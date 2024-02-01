@@ -6,6 +6,7 @@ import { nonSerializableStore, postJsDosEvent } from "../../non-serializable-sto
 import { State } from "../../store";
 import { useDosRuntime } from "./dos-runtime";
 import { dhry2Bundle, Dhry2Results } from "./dos-dhry2";
+import { createWsTransportLayer } from "../../ws/ws-transport-layer";
 
 declare const emulators: Emulators;
 
@@ -16,6 +17,7 @@ export function DosWindow(props: {
     const token = useSelector((state: State) => state.auth.account?.token.access_token);
     const worker = useSelector((state: State) => state.dos.worker);
     const backend = useSelector((state: State) => state.dos.backend);
+    const backendHardware = useSelector((state: State) => state.dos.backendHardware);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -27,10 +29,22 @@ export function DosWindow(props: {
             nonSerializableStore.loadedBundle!.bundle = null;
             nonSerializableStore.loadedBundle!.bundleChanges = null;
 
-            const ci: Promise<CommandInterface> =
-                (emulators as any)[backend + (worker ? "Worker" : "Direct")](bundles, {
-                    token,
-                });
+            let ci: Promise<CommandInterface>;
+            if (backendHardware && nonSerializableStore.options.backendHardware) {
+                ci = nonSerializableStore.options.backendHardware(backend)
+                    .then((ws) => {
+                        return createWsTransportLayer(ws);
+                    })
+                    .then((layer) => {
+                        return emulators.backend(bundles as any, layer, { token });
+                    });
+            } else {
+                ci =
+                    (emulators as any)[backend + (worker ? "Worker" : "Direct")](bundles, {
+                        token,
+                    });
+            }
+
             ci
                 .then((ci) => {
                     setCi(ci);

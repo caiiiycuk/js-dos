@@ -4,6 +4,7 @@ import { State } from "../store";
 import { dosSlice } from "../store/dos";
 import { uiSlice } from "../store/ui";
 import { Checkbox } from "./checkbox";
+import { nonSerializableStore } from "../non-serializable-store";
 
 export function Editor() {
     const t = useT();
@@ -47,12 +48,25 @@ export function WorkerCheckbox() {
     const t = useT();
     const dispatch = useDispatch();
     const worker = useSelector((state: State) => state.dos.worker);
+    const hardware = useSelector((state: State) => state.dos.backendHardware);
     const disabled = useSelector((state: State) => state.ui.window) === "run";
-    return <Checkbox
+    return hardware && nonSerializableStore.options.backendHardware ? null : <Checkbox
         class="mt-4"
         label={t("worker")}
         checked={worker}
         disabled={disabled}
         onChange={(w) => dispatch(dosSlice.actions.dosWorker(w))}
     />;
+}
+
+export function HardwareCheckbox() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const hardware = useSelector((state: State) => state.dos.backendHardware);
+    return nonSerializableStore.options.backendHardware ? <Checkbox
+        class="mt-4"
+        label={t("hardware")}
+        checked={hardware}
+        onChange={(h) => dispatch(dosSlice.actions.dosBackendHardware(h))}
+    /> : null;
 }

@@ -67,6 +67,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         manage: "Управлять",
         unable_to_cancle_subscription: "Не удалось отменить подписку",
         subscription_cancelled: "Подписка отменена",
+        hardware: "Аппаратное ускорение",
     },
     en: {
         logout: "Logout",
@@ -132,6 +133,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         manage: "Manage",
         unable_to_cancle_subscription: "Unable to cancle subscription",
         subscription_cancelled: "Subscription cancelled",
+        hardware: "Hardware acceleration",
     },
 };
 
