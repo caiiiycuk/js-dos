@@ -20,15 +20,23 @@ export interface Hardware {
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
-// const fMultiplier = 2000000000;
+const fMultiplier = 200000000;
 
 // eslint-disable-next-line max-len
-const clientMessageValues: ClientMessage[] = ["wc-install", "wc-run", "wc-pack-fs-to-bundle", "wc-add-key", "wc-mouse-move", "wc-mouse-button", "wc-mouse-sync", "wc-exit", "wc-sync-sleep", "wc-pause", "wc-resume", "wc-mute", "wc-unmute", "wc-connect", "wc-disconnect", "wc-backend-event", "wc-asyncify-stats", "wc-fs-tree", "wc-fs-get-file", "wc-send-data-chunk"];
+const clientMessageValues: ClientMessage[] = [
+    "wc-install", "wc-run", "wc-pack-fs-to-bundle", "wc-add-key", "wc-mouse-move", "wc-mouse-button", "wc-mouse-sync", 
+    "wc-exit", "wc-sync-sleep", "wc-pause", "wc-resume", "wc-mute", "wc-unmute", "wc-connect", "wc-disconnect", 
+    "wc-backend-event", "wc-asyncify-stats", "wc-fs-tree", "wc-fs-get-file", "wc-send-data-chunk"
+];
 const clientMessageEnum: { [msg: string]: number } = {};
 clientMessageValues.forEach((v, i) => clientMessageEnum[v] = i);
 
 // eslint-disable-next-line max-len
-const serverMessageValues: ServerMessage[] = ["ws-extract-progress", "ws-ready", "ws-server-ready", "ws-frame-set-size", "ws-update-lines", "ws-log", "ws-warn", "ws-err", "ws-stdout", "ws-exit", "ws-persist", "ws-sound-init", "ws-sound-push", "ws-config", "ws-sync-sleep", "ws-connected", "ws-disconnected", "ws-asyncify-stats", "ws-fs-tree", "ws-send-data-chunk"];
+const serverMessageValues: ServerMessage[] = [
+    "ws-extract-progress", "ws-ready", "ws-server-ready", "ws-frame-set-size", "ws-update-lines", "ws-log", "ws-warn", "ws-err", 
+    "ws-stdout", "ws-exit", "ws-persist", "ws-sound-init", "ws-sound-push", "ws-config", "ws-sync-sleep", "ws-connected", "ws-disconnected", 
+    "ws-asyncify-stats", "ws-fs-tree", "ws-send-data-chunk"
+];
 const serverMessageEnum: { [num: string]: ServerMessage } = {};
 serverMessageValues.forEach((v, i) => serverMessageEnum[i] = v);
 
@@ -300,6 +308,29 @@ export class WsTransportLayer implements TransportLayer {
                 this.writeUint32(payload, props.timeMs, offset);
                 this.sendMessage(messageId, payload);
             } break;
+            case "wc-mouse-move": {
+                const payload = new Uint8Array(3 * 4 + 3);
+                let offset = 0;
+                offset = this.writeUint32(payload, Math.abs(props.x) * fMultiplier, offset);
+                offset = this.writeUint32(payload, Math.abs(props.y) * fMultiplier, offset);
+                offset = this.writeUint32(payload, props.timeMs, offset);
+                payload[offset] = props.relative ? 1 : 0;
+                payload[offset + 1] = props.x >= 0 ? 0 : 1;
+                payload[offset + 2] = props.y >= 0 ? 0 : 1;
+                this.sendMessage(messageId, payload);
+            } break;
+            case "wc-mouse-button": {
+                const payload = new Uint8Array(4 + 2);
+                payload[0] = props.button;
+                payload[1] = props.pressed ? 1 : 0;
+                this.writeUint32(payload, props.timeMs, 2);
+                this.sendMessage(messageId, payload);
+            } break;
+            case "wc-mouse-sync": {
+                const payload = new Uint8Array(4);
+                this.writeUint32(payload, props.timeMs, 0);
+                this.sendMessage(messageId, payload);
+            }
             default: {
                 console.log("Unhandled client message (wc):", name, messageId, props);
             } break;
