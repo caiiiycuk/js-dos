@@ -24,18 +24,19 @@ const fMultiplier = 200000000;
 
 // eslint-disable-next-line max-len
 const clientMessageValues: ClientMessage[] = [
-    "wc-install", "wc-run", "wc-pack-fs-to-bundle", "wc-add-key", "wc-mouse-move", "wc-mouse-button", "wc-mouse-sync", 
-    "wc-exit", "wc-sync-sleep", "wc-pause", "wc-resume", "wc-mute", "wc-unmute", "wc-connect", "wc-disconnect", 
-    "wc-backend-event", "wc-asyncify-stats", "wc-fs-tree", "wc-fs-get-file", "wc-send-data-chunk"
+    "wc-install", "wc-run", "wc-pack-fs-to-bundle", "wc-add-key", "wc-mouse-move", "wc-mouse-button", "wc-mouse-sync",
+    "wc-exit", "wc-sync-sleep", "wc-pause", "wc-resume", "wc-mute", "wc-unmute", "wc-connect", "wc-disconnect",
+    "wc-backend-event", "wc-asyncify-stats", "wc-fs-tree", "wc-fs-get-file", "wc-send-data-chunk",
 ];
 const clientMessageEnum: { [msg: string]: number } = {};
 clientMessageValues.forEach((v, i) => clientMessageEnum[v] = i);
 
-// eslint-disable-next-line max-len
 const serverMessageValues: ServerMessage[] = [
-    "ws-extract-progress", "ws-ready", "ws-server-ready", "ws-frame-set-size", "ws-update-lines", "ws-log", "ws-warn", "ws-err", 
-    "ws-stdout", "ws-exit", "ws-persist", "ws-sound-init", "ws-sound-push", "ws-config", "ws-sync-sleep", "ws-connected", "ws-disconnected", 
-    "ws-asyncify-stats", "ws-fs-tree", "ws-send-data-chunk"
+    "ws-extract-progress", "ws-ready", "ws-server-ready", "ws-frame-set-size",
+    "ws-update-lines", "ws-log", "ws-warn", "ws-err",
+    "ws-stdout", "ws-exit", "ws-persist", "ws-sound-init", "ws-sound-push",
+    "ws-config", "ws-sync-sleep", "ws-connected", "ws-disconnected",
+    "ws-asyncify-stats", "ws-fs-tree", "ws-send-data-chunk",
 ];
 const serverMessageEnum: { [num: string]: ServerMessage } = {};
 serverMessageValues.forEach((v, i) => serverMessageEnum[i] = v);
@@ -202,6 +203,12 @@ export class WsTransportLayer implements TransportLayer {
                 };
                 this.handler(message, stats);
             } break;
+            case "ws-connected": {
+                this.handler(message, { networkType: payload[0]![0], address: "" });
+            } break;
+            case "ws-disconnected": {
+                this.handler(message, { networkType: payload[0]![0] });
+            } break;
             default:
                 console.warn("WARN! Unhandled server message", message);
         }
@@ -330,7 +337,10 @@ export class WsTransportLayer implements TransportLayer {
                 const payload = new Uint8Array(4);
                 this.writeUint32(payload, props.timeMs, 0);
                 this.sendMessage(messageId, payload);
-            }
+            } break;
+            case "wc-connect": {
+                this.sendMessage(messageId, new Uint8Array([props.networkType]), textEncoder.encode(props.address));
+            } break;
             default: {
                 console.log("Unhandled client message (wc):", name, messageId, props);
             } break;
