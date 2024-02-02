@@ -1,0 +1,4 @@
+[submodule "src/sockdrive"]
+	path = src/sockdrive
+	url = git@github.com:makevm/sockdrive.git
+	branch = main

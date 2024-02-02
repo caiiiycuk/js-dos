@@ -1,8 +1,9 @@
-
 import {
     TransportLayer, ClientMessage, MessageHandler,
     ServerMessage, DataChunk,
 } from "emulators/dist/types/protocol/protocol";
+
+import { ReadResponse, createSockdrive } from "./ws-sockdrive";
 
 export interface Hardware {
     readConfig(): string;
@@ -46,11 +47,8 @@ export class WsTransportLayer implements TransportLayer {
     sessionId: string = Date.now() + "";
     hardware: Hardware;
 
-
-    private alive = true;
-    private frameWidth = 0;
-    private frameHeight = 0;
     private cycles = 0;
+    private sockdrive = createSockdrive(this.onSockdriveOpen.bind(this), this.onSockdriveError.bind(this));
 
     private handler: MessageHandler = () => {/**/};
 
@@ -70,10 +68,10 @@ export class WsTransportLayer implements TransportLayer {
     }
 
     private readUint64(container: Uint8Array, offset: number) {
-        return this.readUint32(container, offset) + this.readUint32(container, offset + 4) * 2**32;
+        return this.readUint32(container, offset) + this.readUint32(container, offset + 4) * 2 ** 32;
     }
 
-    private sendMessage(id: ClientMessage | number, ...payload: (Uint8Array | null)[]) {
+    private sendMessageToSocket(id: ClientMessage | number, ...payload: (Uint8Array | null)[]) {
         let length = 1;
         for (const next of payload) {
             length += 4 + (next?.length ?? 0);
@@ -194,23 +192,77 @@ export class WsTransportLayer implements TransportLayer {
                     cycles: this.cycles,
                     netSent: 0,
                     netRecv: 0,
-                    driveSent: 0,
-                    driveRecv: 0,
-                    driveRecvTime: 0,
-                    driveCacheHit: 0,
-                    driveCacheMiss: 0,
-                    driveCacheUsed: 0,
+                    driveSent: this.sockdrive.stats.write,
+                    driveRecv: this.sockdrive.stats.read,
+                    driveRecvTime: this.sockdrive.stats.readTotalTime,
+                    driveCacheHit: this.sockdrive.stats.cacheHit,
+                    driveCacheMiss: this.sockdrive.stats.cacheMiss,
+                    driveCacheUsed: this.sockdrive.stats.cacheUsed,
                 };
                 this.handler(message, stats);
             } break;
             case "ws-connected": {
-                this.handler(message, { networkType: payload[0]![0], address: "" });
+                this.handler(message, { networkType: payload[0]![0], address: textDecoder.decode(payload[1]!) });
             } break;
             case "ws-disconnected": {
                 this.handler(message, { networkType: payload[0]![0] });
             } break;
-            default:
-                console.warn("WARN! Unhandled server message", message);
+            default: {
+                if (message === undefined) { // not standard messages
+                    (async () => {
+                        switch (id) {
+                            case 100/* ws-sockdrive-open */: {
+                                const url = textDecoder.decode(payload[0]!);
+                                const owner = textDecoder.decode(payload[1]!);
+                                const name = textDecoder.decode(payload[2]!);
+                                const token = textDecoder.decode(payload[3]!);
+                                const handle = await this.sockdrive.open(url, owner, name, token);
+                                const template = this.sockdrive.template(handle);
+                                const packet = new Uint8Array(4 * 6);
+                                let offset = 0;
+                                offset = this.writeUint32(packet, handle, offset);
+                                offset = this.writeUint32(packet, template.size, offset);
+                                offset = this.writeUint32(packet, template.heads, offset);
+                                offset = this.writeUint32(packet, template.cylinders, offset);
+                                offset = this.writeUint32(packet, template.sectors, offset);
+                                this.writeUint32(packet, template.sectorSize, offset);
+                                this.sendMessageToSocket(100, packet);
+                            } break;
+                            case 101/* ws-sockdrive-read */: {
+                                const handle = this.readUint32(payload[0]!, 0);
+                                const sector = this.readUint32(payload[0]!, 4);
+                                let response = this.sockdrive.read(handle, sector, true) as ReadResponse;
+                                if (response.code == 255) {
+                                    response = await this.sockdrive.read(handle, sector, false);
+                                }
+                                const packet = new Uint8Array(4);
+                                this.writeUint32(packet, response.code, 0);
+                                this.sendMessageToSocket(101, packet, response.buffer ?? null);
+                            } break;
+                            case 102/* ws-sockdrive-write */: {
+                                const handle = this.readUint32(payload[0]!, 0);
+                                const sector = this.readUint32(payload[0]!, 4);
+                                const code = this.sockdrive.write(handle, sector, payload[1]!);
+                                const packet = new Uint8Array(4);
+                                this.writeUint32(packet, code, 0);
+                                this.sendMessageToSocket(102, packet);
+                            } break;
+                            case 103/* ws-sockdrive-close */: {
+                                this.sockdrive.close(this.readUint32(payload[0]!, 0));
+                            } break;
+                            default:
+                                console.log("WARN! Unhandled server non standard message", id, payload);
+                        }
+                    })().catch((e) => {
+                        this.handler("ws-err", {
+                            tag: "panic",
+                            message: "sockdrive error: " + (e.message ?? "???"),
+                        });
+                    });
+                } else {
+                    console.warn("WARN! Unhandled server message", message);
+                }
+            }
         }
     }
 
@@ -225,7 +277,7 @@ export class WsTransportLayer implements TransportLayer {
             const blob: Blob = ev.data;
             this.onMessage(new Uint8Array(await blob.arrayBuffer()));
         });
-        this.sendMessage("wc-install");
+        this.sendMessageToSocket("wc-install");
         this.hardware = (null) as any;
     }
 
@@ -238,7 +290,7 @@ export class WsTransportLayer implements TransportLayer {
         switch (name) {
             case "wc-run": {
                 const token = props.token ?? "";
-                this.sendMessage(messageId, textEncoder.encode(token));
+                this.sendMessageToSocket(messageId, textEncoder.encode(token));
             } break;
                 // case "wc-run": {
                 //     let errorMessage = writeFile(this.hardware, "bundle_0.zip", props.bundles[0]);
@@ -299,13 +351,13 @@ export class WsTransportLayer implements TransportLayer {
             // } break;
             case "wc-send-data-chunk": {
                 const chunk: DataChunk = props.chunk;
-                this.sendMessage(messageId,
+                this.sendMessageToSocket(messageId,
                     textEncoder.encode(chunk.type),
                     textEncoder.encode(chunk.name),
                     chunk.data ? new Uint8Array(chunk.data) : null);
             } break;
             case "wc-asyncify-stats": {
-                this.sendMessage(messageId);
+                this.sendMessageToSocket(messageId);
             } break;
             case "wc-add-key": {
                 const payload = new Uint8Array(3 * 4);
@@ -313,7 +365,7 @@ export class WsTransportLayer implements TransportLayer {
                 offset = this.writeUint32(payload, props.key, offset);
                 offset = this.writeUint32(payload, props.pressed ? 1 : 0, offset);
                 this.writeUint32(payload, props.timeMs, offset);
-                this.sendMessage(messageId, payload);
+                this.sendMessageToSocket(messageId, payload);
             } break;
             case "wc-mouse-move": {
                 const payload = new Uint8Array(3 * 4 + 3);
@@ -324,22 +376,23 @@ export class WsTransportLayer implements TransportLayer {
                 payload[offset] = props.relative ? 1 : 0;
                 payload[offset + 1] = props.x >= 0 ? 0 : 1;
                 payload[offset + 2] = props.y >= 0 ? 0 : 1;
-                this.sendMessage(messageId, payload);
+                this.sendMessageToSocket(messageId, payload);
             } break;
             case "wc-mouse-button": {
                 const payload = new Uint8Array(4 + 2);
                 payload[0] = props.button;
                 payload[1] = props.pressed ? 1 : 0;
                 this.writeUint32(payload, props.timeMs, 2);
-                this.sendMessage(messageId, payload);
+                this.sendMessageToSocket(messageId, payload);
             } break;
             case "wc-mouse-sync": {
                 const payload = new Uint8Array(4);
                 this.writeUint32(payload, props.timeMs, 0);
-                this.sendMessage(messageId, payload);
+                this.sendMessageToSocket(messageId, payload);
             } break;
             case "wc-connect": {
-                this.sendMessage(messageId, new Uint8Array([props.networkType]), textEncoder.encode(props.address));
+                this.sendMessageToSocket(messageId, new Uint8Array([props.networkType]),
+                    textEncoder.encode(props.address));
             } break;
             default: {
                 console.log("Unhandled client message (wc):", name, messageId, props);
@@ -355,139 +408,23 @@ export class WsTransportLayer implements TransportLayer {
     }
 
     exit() {
-        this.alive = false;
+        this.sendMessageToSocket("wc-exit");
     }
 
-    async deprecatedOnServerMessage(name: string, optProps?: { [key: string]: any }) {
-        const props = optProps || {};
-        switch (name) {
-            case "ws-server-ready": {
-                const config = this.hardware.readConfig();
-                this.handler("ws-config", { sessionId: this.sessionId, content: config });
-                // delay ws-server-ready until ws-sound-init
-            } break;
-            case "ws-sound-init": {
-                this.handler(name, props);
-                this.handler("ws-server-ready", { sessionId: this.sessionId });
-            } break;
-            case "ws-frame-set-size": {
-                this.frameWidth = props.width;
-                this.frameHeight = props.height;
-                this.handler(name, props);
-            } break;
-            case "ws-sound-push": {
-                this.handler(name, props);
-            } break;
-            case "ws-update-lines": {
-                this.handler(name, props);
-            } break;
-            case "ws-persist": {
-                props.bundle = decode(props.bundle);
-                this.handler(name, props);
-            } break;
-            case "ws-log":
-            case "ws-warn":
-            case "ws-err":
-            case "ws-stdout": {
-                if (props.message !== undefined && props.message !== null && props.message.length > 0) {
-                    props.message = textDecoder.decode(decode(props.message));
-                }
-                this.handler(name, props);
-            } break;
-            default: {
-                this.handler(name as ServerMessage, props);
-            }
-        }
+    onSockdriveOpen(drive: string, read: boolean, write: boolean) {
+        this.handler("ws-log", {
+            tag: "worker",
+            message: "sockdrive: " + drive + ", read=" + read + ", write=" + write,
+        });
     }
 
-    private update() {
-        if (this.alive) {
-            requestAnimationFrame(this.update.bind(this));
-        }
-        this.updateFrame();
-    }
-
-    private updateFrame() {
-        if (this.frameWidth === 0 || this.frameHeight === 0) {
-            return;
-        }
-
-        const framePayload = this.hardware.getFramePayload();
-        if (framePayload.length === 0) {
-            return;
-        }
-
-        const framePayloadU8 = decode(framePayload);
-        if (framePayloadU8.length === 0) {
-            return;
-        }
-
-        const lines: {
-            start: number,
-            heapu8: Uint8Array,
-        }[] = [];
-
-        const pitch = this.frameWidth * 3;
-        let offset = this.frameHeight;
-        let upBorder = -1;
-        for (let line = 0; line < this.frameHeight; ++line) {
-            const lastLine = line === this.frameHeight - 1;
-
-
-            if (framePayloadU8[line] === 1 && upBorder === -1) {
-                upBorder = line;
-            } else if ((lastLine || framePayloadU8[line] === 0) && upBorder !== -1) {
-                const downBorder = framePayloadU8[line] === 1 ? line : line - 1;
-                const range = (downBorder - upBorder + 1) * pitch;
-                const heapu8 = framePayloadU8.slice(offset, offset + range);
-                lines.push({
-                    start: upBorder,
-                    heapu8,
-                });
-                offset += range;
-                upBorder = -1;
-            }
-        }
-
-        this.handler("ws-update-lines", {
-            sessionId: this.sessionId,
-            lines,
+    onSockdriveError(e: Error) {
+        this.handler("ws-err", {
+            tag: "panic",
+            message: e.message ?? "unable to open sockdrive",
         });
     }
 }
-
-// export class HardwareTransportLayerFactory {
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     private serverMessageHandler: (name: string, props?: { [key: string]: any }) => void = () => {/**/};
-//
-//     constructor() {
-//         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//         (window as any).serverMessage = (payload: string | { name: string }) => {
-//             if (typeof payload === "string") {
-//                 const json = "{" + textDecoder.decode(decode(payload)).slice(0, -1) + "}";
-//                 try {
-//                     const data = JSON.parse(json);
-//                     this.serverMessageHandler(data.name, data);
-//                 } catch (e) {
-//                     console.error("Can't parse", json, e);
-//                     throw e;
-//                 }
-//             } else {
-//                 this.serverMessageHandler(payload.name, payload);
-//             }
-//         };
-//
-//         this.createTransportLayer = this.createTransportLayer.bind(this);
-//     }
-//
-//     createTransportLayer(realtime: Hardware): TransportLayer {
-//         const transport = new WsTransportLayer(realtime);
-//         this.serverMessageHandler = transport.onServerMessage.bind(transport);
-//         transport.callMain();
-//         return transport;
-//     }
-// }
-// export const hardwareTransportLayerFactory = new HardwareTransportLayerFactory();
 
 export function createWsTransportLayer(url: string): Promise<TransportLayer> {
     return new Promise<TransportLayer>((resolve) => {
@@ -515,8 +452,4 @@ export function createWsTransportLayer(url: string): Promise<TransportLayer> {
             ws.addEventListener("open", onSuccess);
         }, 1000);
     });
-}
-
-function decode(payload: string): Uint8Array {
-    return new Uint8Array(0);
 }
