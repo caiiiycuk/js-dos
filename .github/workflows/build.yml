@@ -15,7 +15,9 @@ jobs:
         node-version: [18.x]
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
     - name: build js-dos
       uses: actions/setup-node@v3
       with:
