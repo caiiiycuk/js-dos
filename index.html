@@ -34,9 +34,14 @@
           // url: "https://br.cdn.dos.zone/ipx/doom_dm/doom_dm.jsdos",
           // url: "https://cdn.dos.zone/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos", // dhry2
           // url: "https://cdn.dos.zone/original/2X/7/744842062905f72648a4d492ccc2526d039b3702.jsdos", // sim-city
+          // dosboxConf: diabloConf,
           pathPrefix: "/emulators/",
           server: params.get("server"),
           room: params.get("room"),
+          //backendHardware: (backend) => {
+          //  console.log("Hardware backend for", backend);
+          //  return Promise.resolve("ws://127.0.0.1:8080");
+          //},
           onEvent: (event) => {
             console.log("Event", event)
             if (event === "ci-ready") {
@@ -46,6 +51,55 @@
           },
         });
     });
+
+    const diabloConf = `
+[sdl]
+autolock=false
+mouse_emulation=integration
+
+[dosbox]
+title=Windows 95
+memsize=128
+
+[video]
+vmemsize=8
+vesa modelist width limit=0
+vesa modelist height limit=0
+
+[dos]
+ver=7.1
+hard drive data rate limit=0
+floppy drive data rate limit=0
+
+[cpu]
+cputype=pentium_mmx
+core=normal
+integration device=true
+
+[sblaster]
+sbtype=sb16vibra
+
+[fdc, primary]
+int13fakev86io=true
+
+[ide, primary]
+int13fakeio=true
+int13fakev86io=true
+
+[ide, secondary]
+int13fakeio=true
+int13fakev86io=true
+cd-rom insertion delay=4000
+
+[render]
+scaler=none
+
+[autoexec]
+echo off
+imgmount 2 sockdrive wss://backend.make-vm.com:8001 dos.zone diablo_109_c
+imgmount 3 sockdrive wss://backend.make-vm.com:8001 dos.zone diablo_109_d
+boot c:
+`;
   </script>
 </body>
 

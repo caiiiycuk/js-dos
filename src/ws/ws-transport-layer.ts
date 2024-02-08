@@ -3,7 +3,9 @@ import {
     ServerMessage, DataChunk,
 } from "emulators/dist/types/protocol/protocol";
 
-import { ReadResponse, createSockdrive } from "./ws-sockdrive";
+import { createSockdrive } from "./ws-sockdrive";
+
+const sockdriveConfirmWrite = false;
 
 export interface Hardware {
     readConfig(): string;
@@ -216,7 +218,8 @@ export class WsTransportLayer implements TransportLayer {
                                 const owner = textDecoder.decode(payload[1]!);
                                 const name = textDecoder.decode(payload[2]!);
                                 const token = textDecoder.decode(payload[3]!);
-                                const handle = await this.sockdrive.open(url, owner, name, token);
+                                const aheadRange = this.readUint32(payload[4]!, 0);
+                                const handle = await this.sockdrive.open(url, owner, name, token, aheadRange);
                                 const template = this.sockdrive.template(handle);
                                 const packet = new Uint8Array(4 * 6);
                                 let offset = 0;
@@ -231,10 +234,7 @@ export class WsTransportLayer implements TransportLayer {
                             case 101/* ws-sockdrive-read */: {
                                 const handle = this.readUint32(payload[0]!, 0);
                                 const sector = this.readUint32(payload[0]!, 4);
-                                let response = this.sockdrive.read(handle, sector, true) as ReadResponse;
-                                if (response.code == 255) {
-                                    response = await this.sockdrive.read(handle, sector, false);
-                                }
+                                const response = await this.sockdrive.read(handle, sector);
                                 const packet = new Uint8Array(4);
                                 this.writeUint32(packet, response.code, 0);
                                 this.sendMessageToSocket(101, packet, response.buffer ?? null);
@@ -245,7 +245,9 @@ export class WsTransportLayer implements TransportLayer {
                                 const code = this.sockdrive.write(handle, sector, payload[1]!);
                                 const packet = new Uint8Array(4);
                                 this.writeUint32(packet, code, 0);
-                                this.sendMessageToSocket(102, packet);
+                                if (sockdriveConfirmWrite) {
+                                    this.sendMessageToSocket(102, packet);
+                                }
                             } break;
                             case 103/* ws-sockdrive-close */: {
                                 this.sockdrive.close(this.readUint32(payload[0]!, 0));

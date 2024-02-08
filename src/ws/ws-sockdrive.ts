@@ -1,8 +1,6 @@
 import { Handle, Stats } from "../sockdrive/js/src/sockdrive/types";
 import { Drive } from "../sockdrive/js/src/sockdrive/drive";
 
-const aheadRange = 255;
-
 interface Template {
     name: string,
     size: number,
@@ -34,7 +32,7 @@ export function createSockdrive(
     };
     const sockdrive = {
         stats,
-        open: async (url: string, owner: string, name: string, token: string): Promise<Handle> => {
+        open: async (url: string, owner: string, name: string, token: string, aheadRange: number): Promise<Handle> => {
             const response = await fetch(url.replace("wss://", "https://")
                 .replace("ws://", "http://") + "/template/" + owner + "/" + name);
             const template = await response.json();
@@ -54,33 +52,25 @@ export function createSockdrive(
             const sectorSize = templates[seq].sectorSize;
             memory[seq] = new Uint8Array(sectorSize + sectorSize * aheadRange);
             mapping[seq] = new Drive(url, owner, name, token, stats,
-                { HEAPU8: memory[seq] }, sectorSize, aheadRange, sectorSize);
+                { HEAPU8: memory[seq] }, sectorSize, aheadRange, sectorSize, 1); // cache is on server
             mapping[seq].onOpen((read, write) => {
                 onOpen(owner + "/" + name, read, write);
             });
             mapping[seq].onError(onError);
             return seq;
         },
-        read: (handle: Handle, sector: number, sync: boolean): Promise<ReadResponse> | ReadResponse => {
+        read: (handle: Handle, sector: number): Promise<ReadResponse> => {
             if (mapping[handle]) {
-                const code = mapping[handle].read(sector, 0, sync);
-                if (typeof code == "number") {
+                return (mapping[handle].read(sector, 0, false) as Promise<number>).then((code) => {
                     return {
                         code,
-                        buffer: memory[handle].slice(0, templates[seq].sectorSize),
+                        buffer: memory[handle].slice(templates[seq].sectorSize),
                     };
-                } else {
-                    return code.then((code) => {
-                        return {
-                            code,
-                            buffer: memory[handle].slice(0, templates[seq].sectorSize),
-                        };
-                    });
-                }
+                });
             }
 
             console.error("ERROR! sockdrive handle", handle, "not found");
-            return sync ? { code: 1 } : Promise.resolve({ code: 1 });
+            return Promise.resolve({ code: 1 });
         },
         write: (handle: Handle, sector: number, buffer: Uint8Array): number => {
             if (buffer.byteLength != templates[handle].sectorSize) {
