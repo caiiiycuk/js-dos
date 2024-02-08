@@ -1,5 +1,5 @@
 # js-dos v8
-[![Build](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml/badge.svg)](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml)
+[![Build](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml/badge.svg?branch=8.xx)](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml)
 
 The **next** major version of js-dos. 
 
