@@ -143,35 +143,38 @@ function useStats(ci: CommandInterface): void {
             ci.asyncifyStats().then((stats) => {
                 const dtMs = Date.now() - intervalStartedAt;
                 const dtSec = dtMs / 1000;
-                dispatch(dosSlice.actions.stats({
-                    cyclesPerMs: Math.round((stats.cycles - prevCycles) / dtMs),
-                    nonSkippableSleepPreSec: Math.round((stats.nonSkippableSleepCount -
-                        prevNonSkippableSleepCount) / dtSec),
-                    sleepPerSec: Math.round((stats.sleepCount - prevSleepCount) / dtSec),
-                    sleepTimePerSec: Math.round((stats.sleepTime - prevSleepTime) / dtSec),
-                    framePerSec: Math.round((stats.messageFrame - prevFrame) / dtSec),
-                    soundPerSec: Math.round((stats.messageSound - prevSound) / dtSec),
-                    msgSentPerSec: Math.round((stats.messageSent - prevMsgSent) / dtSec),
-                    msgRecvPerSec: Math.round((stats.messageReceived - prevMsgRecv) / dtSec),
-                    netSent: stats.netSent,
-                    netRecv: stats.netRecv,
-                    driveSent: stats.driveSent,
-                    driveRecv: stats.driveRecv,
-                    driveRecvTime: stats.driveRecvTime,
-                    driveCacheHit: stats.driveCacheHit,
-                    driveCacheMiss: stats.driveCacheMiss,
-                    driveCacheUsed: stats.driveCacheUsed,
-                }));
+                if (dtSec > 0) {
+                    const dStats = {
+                        cyclesPerMs: Math.round((stats.cycles - prevCycles) / dtMs),
+                        nonSkippableSleepPreSec: Math.round((stats.nonSkippableSleepCount -
+                            prevNonSkippableSleepCount) / dtSec),
+                        sleepPerSec: Math.round((stats.sleepCount - prevSleepCount) / dtSec),
+                        sleepTimePerSec: Math.round((stats.sleepTime - prevSleepTime) / dtSec),
+                        framePerSec: Math.round((stats.messageFrame - prevFrame) / dtSec),
+                        soundPerSec: Math.round((stats.messageSound - prevSound) / dtSec),
+                        msgSentPerSec: Math.round((stats.messageSent - prevMsgSent) / dtSec),
+                        msgRecvPerSec: Math.round((stats.messageReceived - prevMsgRecv) / dtSec),
+                        netSent: stats.netSent,
+                        netRecv: stats.netRecv,
+                        driveSent: stats.driveSent,
+                        driveRecv: stats.driveRecv,
+                        driveRecvTime: stats.driveRecvTime,
+                        driveCacheHit: stats.driveCacheHit,
+                        driveCacheMiss: stats.driveCacheMiss,
+                        driveCacheUsed: stats.driveCacheUsed,
+                    };
+                    dispatch(dosSlice.actions.stats(dStats));
 
-                prevCycles = stats.cycles;
-                prevNonSkippableSleepCount = stats.nonSkippableSleepCount;
-                prevSleepCount = stats.sleepCount;
-                prevSleepTime = stats.sleepTime;
-                prevFrame = stats.messageFrame;
-                prevSound = stats.messageSound;
-                prevMsgSent = stats.messageSent;
-                prevMsgRecv = stats.messageReceived;
-                intervalStartedAt = Date.now();
+                    prevCycles = stats.cycles;
+                    prevNonSkippableSleepCount = stats.nonSkippableSleepCount;
+                    prevSleepCount = stats.sleepCount;
+                    prevSleepTime = stats.sleepTime;
+                    prevFrame = stats.messageFrame;
+                    prevSound = stats.messageSound;
+                    prevMsgSent = stats.messageSent;
+                    prevMsgRecv = stats.messageReceived;
+                    intervalStartedAt = Date.now();
+                }
             });
         }, 3000);
 

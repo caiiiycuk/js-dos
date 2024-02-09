@@ -182,7 +182,7 @@ export class WsTransportLayer implements TransportLayer {
                 }
             } break;
             case "ws-asyncify-stats": {
-                this.cycles += this.readUint32(payload[0]!, 0) * 100;
+                this.cycles += this.readUint32(payload[0]!, 0);
                 const stats = {
                     messageSent: this.readUint32(payload[0]!, 4),
                     messageReceived: this.readUint32(payload[0]!, 8),

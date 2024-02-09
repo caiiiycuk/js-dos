@@ -227,7 +227,7 @@ floppy drive data rate limit=0
 
 [cpu]
 cputype=pentium_mmx
-core=normal
+core=auto
 
 [sblaster]
 sbtype=sb16vibra
@@ -289,7 +289,7 @@ floppy drive data rate limit=0
 
 [cpu]
 cputype=pentium_mmx
-core=normal
+core=auto
 integration device=true
 
 [sblaster]
