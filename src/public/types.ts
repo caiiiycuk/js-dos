@@ -11,7 +11,7 @@ export interface DosOptions {
     lang: "ru" | "en",
     backend: "dosbox" | "dosboxX",
     backendLocked: boolean,
-    backendHardware: ((backend: "dosbox" | "dosboxX") => Promise<string>),
+    backendHardware: ((backend: "dosbox" | "dosboxX") => Promise<string | null>),
     workerThread: boolean,
     mouseCapture: boolean,
     onEvent: (event: "emu-ready" | "ci-ready" | "bnd-play", ci?: any) => void,

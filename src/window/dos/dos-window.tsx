@@ -29,21 +29,18 @@ export function DosWindow(props: {
             nonSerializableStore.loadedBundle!.bundle = null;
             nonSerializableStore.loadedBundle!.bundleChanges = null;
 
-            let ci: Promise<CommandInterface>;
-            if (backendHardware && nonSerializableStore.options.backendHardware) {
-                ci = nonSerializableStore.options.backendHardware(backend)
-                    .then((ws) => {
-                        return createWsTransportLayer(ws);
-                    })
-                    .then((layer) => {
-                        return emulators.backend(bundles as any, layer, { token });
-                    });
-            } else {
-                ci =
-                    (emulators as any)[backend + (worker ? "Worker" : "Direct")](bundles, {
-                        token,
-                    });
-            }
+            const ci: Promise<CommandInterface> = (async () => {
+                if (backendHardware && nonSerializableStore.options.backendHardware) {
+                    const ws = await nonSerializableStore.options.backendHardware(backend);
+                    if (ws !== null) {
+                        return emulators.backend(bundles as any, await createWsTransportLayer(ws), { token });
+                    }
+                }
+
+                return (emulators as any)[backend + (worker ? "Worker" : "Direct")](bundles, {
+                    token,
+                });
+            })();
 
             ci
                 .then((ci) => {
