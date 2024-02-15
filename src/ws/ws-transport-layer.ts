@@ -1,6 +1,6 @@
 import {
     TransportLayer, ClientMessage, MessageHandler,
-    ServerMessage, DataChunk,
+    ServerMessage, DataChunk, FsNode,
 } from "emulators/dist/types/protocol/protocol";
 
 import { createSockdrive } from "./ws-sockdrive";
@@ -52,7 +52,7 @@ export class WsTransportLayer implements TransportLayer {
     private cycles = 0;
     private sockdrive = createSockdrive(this.onSockdriveOpen.bind(this), this.onSockdriveError.bind(this));
 
-    private handler: MessageHandler = () => {/**/};
+    private handler: MessageHandler = () => {/**/ };
 
     private writeUint32(container: Uint8Array, value: number, offset: number) {
         container[offset] = value & 0xFF;
@@ -209,6 +209,55 @@ export class WsTransportLayer implements TransportLayer {
             case "ws-disconnected": {
                 this.handler(message, { networkType: payload[0]![0] });
             } break;
+            case "ws-fs-tree": {
+                const info: { name: string, size: number | null }[] = [];
+                for (let i = 0; i < payload.length - 1; ++i) {
+                    info.push({ name: textDecoder.decode(payload[i]!), size: null });
+                }
+
+                const sizes = payload[payload.length - 1]!;
+                for (let i = 0; i < info.length; ++i) {
+                    const size = this.readUint32(sizes, i * 4);
+                    info[i].size = size < 0 ? null : size;
+                }
+
+                const fsTree: FsNode = {
+                    name: ".",
+                    nodes: [],
+                    size: null,
+                };
+
+                function lookupNode(name: string): [FsNode, string] {
+                    const parts = name.split("/");
+                    let node: FsNode | undefined = fsTree;
+                    for (let i = 1; i < parts.length - 1; ++i) {
+                        const dir = parts[i];
+                        node = node!.nodes?.find((n) => n.name == dir);
+                        if (!node) {
+                            throw new Error("Unable to find node " + name + ", subdir " + dir);
+                        }
+                    }
+                    return [node, parts[parts.length - 1]];
+                };
+
+                for (const { name, size } of info) {
+                    const [node, basename] = lookupNode(name);
+                    node.nodes?.push({
+                        name: basename,
+                        size,
+                        nodes: size === null ? [] : null,
+                    });
+                }
+
+                this.handler("ws-fs-tree", {
+                    fsTree,
+                });
+            } break;
+            case "ws-persist": {
+                this.handler("ws-persist", {
+                    bundle: payload.length > 0 ? payload[0]! : null,
+                });
+            } break;
             default: {
                 if (message === undefined) { // not standard messages
                     (async () => {
@@ -294,63 +343,6 @@ export class WsTransportLayer implements TransportLayer {
                 const token = props.token ?? "";
                 this.sendMessageToSocket(messageId, textEncoder.encode(token));
             } break;
-                // case "wc-run": {
-                //     let errorMessage = writeFile(this.hardware, "bundle_0.zip", props.bundles[0]);
-
-                //     if (errorMessage.length > 0) {
-                //         console.error(errorMessage);
-                //         throw new Error(errorMessage);
-                //     }
-
-                //     if (props.bundles[1] !== undefined) {
-                //         errorMessage = writeFile(this.hardware, "bundle_1.zip", props.bundles[1]);
-                //         if (errorMessage.length > 0) {
-                //             console.error(errorMessage);
-                //             throw new Error(errorMessage);
-                //         }
-                //     }
-
-            //     const payload = "wc-run\n";
-            //     this.hardware.sendMessage(payload);
-            // } break;
-            // case "wc-add-key": {
-            //     this.hardware.addKey(props.key, props.pressed ? 1 : 0, props.timeMs);
-            // } break;
-            // case "wc-pause": {
-            //     this.hardware.sendMessage("wc-pause\n" + this.sessionId + "\n");
-            // } break;
-            // case "wc-resume": {
-            //     this.hardware.sendMessage("wc-resume\n" + this.sessionId + "\n");
-            // } break;
-            // case "wc-mute": {
-            //     this.hardware.sendMessage("wc-mute\n" + this.sessionId + "\n");
-            // } break;
-            // case "wc-unmute": {
-            //     this.hardware.sendMessage("wc-unmute\n" + this.sessionId + "\n");
-            // } break;
-            // case "wc-exit": {
-            //     this.alive = false;
-            //     this.hardware.sendMessage("wc-exit\n" + this.sessionId + "\n");
-            // } break;
-            // case "wc-mouse-move": {
-            //     this.hardware.mouseMove(props.x, props.y, props.relative, props.timeMs);
-            // } break;
-            // case "wc-mouse-button": {
-            //     this.hardware.mouseButton(props.button, props.pressed ? 1 : 0, props.timeMs);
-            // } break;
-            // case "wc-pack-fs-to-bundle": {
-            //     this.hardware.sendMessage("wc-pack-fs-to-bundle\n" + this.sessionId + "\n");
-            // } break;
-            // case "wc-connect": {
-            //     this.hardware.sendMessage("wc-connect\n" + this.sessionId + "\n" +
-            //         props.networkType + "\n" +
-            //         props.address.replace("ws://", "").replace("wss://", "") + "\n" +
-            //         (props.port - 1) + "\n");
-            // } break;
-            // case "wc-disconnect": {
-            //     this.hardware.sendMessage("wc-disconnect\n" + this.sessionId + "\n" +
-            //         props.networkType + "\n");
-            // } break;
             case "wc-send-data-chunk": {
                 const chunk: DataChunk = props.chunk;
                 this.sendMessageToSocket(messageId,
@@ -395,6 +387,12 @@ export class WsTransportLayer implements TransportLayer {
             case "wc-connect": {
                 this.sendMessageToSocket(messageId, new Uint8Array([props.networkType]),
                     textEncoder.encode(props.address));
+            } break;
+            case "wc-fs-tree": {
+                this.sendMessageToSocket(messageId);
+            } break;
+            case "wc-pack-fs-to-bundle": {
+                this.sendMessageToSocket(messageId, new Uint8Array([props.onlyChanges ? 1 : 0]));
             } break;
             default: {
                 console.log("Unhandled client message (wc):", name, messageId, props);
