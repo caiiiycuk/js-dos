@@ -7,18 +7,18 @@ The **next** major version of js-dos.
 
 [![Watch the video](https://github.com/caiiiycuk/js-dos/assets/1727152/a2b481cb-43b1-44aa-8b71-2181d351bb1a)](https://youtu.be/lhFrAe5YrJE)
 
-# Requirments
+# Development
 
-You need to put `emulators@beta` into `public/emulators`.
+## Install dependencies
+
+You need to install node dependencies and put `emulators@beta` into `public/emulators`.
 
 ```
+yarn
 cp -rv node_modules/emulators/dist/* public/emulators
 ```
 
-# Deployment
+## Development
 
-```
-yarn run vite build --base /latest --sourcemap true --minify terser && \
-    aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
-    dist s3://jsdos/latest --delete 
-```
+Frontend is written in preact + vite.
+Run `yarn run vite` and open [http://localhost:3000](http://localhost:3000) js-dos is ready!
