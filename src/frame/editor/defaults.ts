@@ -340,5 +340,80 @@ echo on
 # ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
 #
 `.replace(/\n/g, "\r\n"),
+}, {
+    name: "X - Win 98",
+    backend: "dosboxX",
+    contents: `
+[sdl]
+autolock=false
+mouse_emulation=integration
+
+[dosbox]
+title=Windows 98
+memsize=128
+
+[video]
+vmemsize=8
+vesa modelist width limit=0
+vesa modelist height limit=0
+
+[dos]
+ver=7.1
+hard drive data rate limit=0
+floppy drive data rate limit=0
+
+[cpu]
+cputype=pentium_mmx
+core=auto
+integration device=true
+
+[sblaster]
+sbtype=sb16vibra
+
+[fdc, primary]
+int13fakev86io=true
+
+[ide, primary]
+int13fakeio=true
+int13fakev86io=true
+
+[ide, secondary]
+int13fakeio=true
+int13fakev86io=true
+cd-rom insertion delay=4000
+
+[render]
+scaler=none
+
+[autoexec]
+echo off
+imgmount 2 sockdrive wss://backend.make-vm.com:8001 dos.zone win98
+echo Please visit our website:
+echo 
+echo         _                __
+echo        (_)____      ____/ /___  _____ _________  ____ ___
+echo       / / ___/_____/ __  / __ \\/ ___// ___/ __ \\/ __ \`__ \\
+echo      / (__  )_____/ /_/ / /_/ (__  )/ /__/ /_/ / / / / / /
+echo   __/ /____/      \\__,_/\\____/____(_)___/\\____/_/ /_/ /_/
+echo  /___/
+echo
+echo type 'boot c:' to load windows 98
+echo on
+# 
+# █▀▀▀▀▀█ █  ▄▄▄▀▀█ █▀▀▀▀▀█
+# █ ███ █ ██▄ █ ▀ ▄ █ ███ █
+# █ ▀▀▀ █ ▄██ ▀ ▀▀█ █ ▀▀▀ █
+# ▀▀▀▀▀▀▀ ▀ █▄▀▄▀ █ ▀▀▀▀▀▀▀
+# █▀▄▄█▀▀▄▄ ▀ ▀█▄▄▄▄ ▀▄█▀█▀
+# █▀ ▀ ▀▀▄ █▀ ▄ ▄▀▀▀▄ █▀█▄
+# ▄ ▄▄ █▀▀▄ ▄▀▄▀▀█  ▀▀▄▀▀█▀
+#   ▄▀▀█▀▀ █▀█▀█▀▀▄ ▀██▀█▄
+# ▀▀▀ ▀ ▀ █▄█ ▀█▄▄█▀▀▀█▀▀
+# █▀▀▀▀▀█ ▄▄▄ ▄ ▄ █ ▀ █▄▄▄▄
+# █ ███ █ ▀█▀▀▄▀▀▄████▀▀█▄█
+# █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█
+# ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
+#
+`.replace(/\n/g, "\r\n"),
 },
 ];

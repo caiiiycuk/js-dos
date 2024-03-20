@@ -15,6 +15,7 @@ export function AccountButton(props: {
     }
 
     return <div class={"sidebar-button " + (hightlight ? "sidebar-highlight " : "") +
+        (account?.email === "dz.caiiiycuk@gmail.com" ? "bg-accent " : "") +
         props.class} onClick={onClick}>
 
         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
