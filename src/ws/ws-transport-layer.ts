@@ -52,7 +52,7 @@ export class WsTransportLayer implements TransportLayer {
     private cycles = 0;
     private sockdrive = createSockdrive(this.onSockdriveOpen.bind(this), this.onSockdriveError.bind(this));
 
-    private handler: MessageHandler = () => {/**/ };
+    private handler: MessageHandler = () => {/**/};
 
     private writeUint32(container: Uint8Array, value: number, offset: number) {
         container[offset] = value & 0xFF;
