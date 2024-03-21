@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 export const dosboxconf = [{
-    name: "DOS",
+    name: "7.xx",
     backend: "dosbox",
     contents: `[sdl]
 autolock=false
@@ -210,7 +210,7 @@ echo on
 # ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
 `.replace(/\n/g, "\r\n"),
 }, {
-    name: "X - DOS 7.1",
+    name: "DOS 7.1",
     backend: "dosboxX",
     contents: `
 [sdl]
@@ -266,7 +266,7 @@ echo on
 #
 `.replace(/\n/g, "\r\n"),
 }, {
-    name: "X - Win 95",
+    name: "Win 95",
     backend: "dosboxX",
     contents: `
 [sdl]
@@ -341,7 +341,7 @@ echo on
 #
 `.replace(/\n/g, "\r\n"),
 }, {
-    name: "X - Win 98",
+    name: "Win 98",
     backend: "dosboxX",
     contents: `
 [sdl]

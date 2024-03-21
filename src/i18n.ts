@@ -4,6 +4,7 @@ import { State } from "./store";
 
 const translations: {[lang: string]: {[key: string]: string} } = {
     ru: {
+        add: "Добавить",
         logout: "Выйти",
         please_login: "Войдите в аккаунт",
         features: "Функции",
@@ -68,8 +69,10 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         unable_to_cancle_subscription: "Не удалось отменить подписку",
         subscription_cancelled: "Подписка отменена",
         hardware: "Аппаратное ускорение",
+        net_drives: "Сетевые диски",
     },
     en: {
+        add: "Add",
         logout: "Logout",
         please_login: "Please login",
         features: "Features",
@@ -134,6 +137,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         unable_to_cancle_subscription: "Unable to cancle subscription",
         subscription_cancelled: "Subscription cancelled",
         hardware: "Hardware acceleration",
+        net_drives: "Net drives",
     },
 };
 

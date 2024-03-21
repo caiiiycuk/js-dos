@@ -1,6 +1,6 @@
 .jsdos-rso {
     .editor-conf-frame {
-        @apply w-full overflow-hidden flex-grow flex flex-col items-center justify-center h-full px-4;
+        @apply w-full overflow-hidden flex-grow flex flex-col items-start justify-center h-full px-4;
 
         textarea {
             @apply w-full textarea;
