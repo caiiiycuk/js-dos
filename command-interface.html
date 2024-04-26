@@ -1,0 +1,67 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2024-04-26T17:07:30.6649483"><title>Command Interface (CI) | js-dos</title><script type="application/json" id="virtual-toc-data">[]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b259/app.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="16x16" href="images/logo-16.png"><link rel="icon" type="image/png" sizes="32x32" href="images/logo-32.png"><link rel="icon" type="image/png" sizes="96x96" href="images/logo-192.png"><link rel="icon" type="image/png" sizes="300x300" href="images/logo-512.png"><meta name="image" content=""><!-- Open Graph --><meta property="og:title" content="Command Interface (CI) | js-dos"><meta property="og:description" content=""><meta property="og:image" content=""><meta property="og:site_name" content="js-dos Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://js-dos.com//8.xx/command-interface.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content=""><meta name="twitter:title" content="Command Interface (CI) | js-dos"><meta name="twitter:description" content=""><meta name="twitter:creator" content=""><meta name="twitter:image:src" content=""><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "@id": "https://js-dos.com//8.xx/command-interface.html#webpage",
+    "url": "https://js-dos.com//8.xx/command-interface.html",
+    "name": "Command Interface (CI) | js-dos",
+    "description": "",
+    "image": "",
+    "inLanguage":"en-US"
+}</script><!-- End Schema.org --><!-- Schema.org WebSite --><script type="application/ld+json">{
+    "@type": "WebSite",
+    "@id": "https://js-dos.com/#website",
+    "url": "https://js-dos.com/",
+    "name": "js-dos Help"
+}</script><!-- End Schema.org --></head><body data-id="command-interface" data-main-title="Command Interface (CI)" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="emulators.md|emulators"><div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos 8.xx Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="command-interface" id="command-interface.md">Command Interface (CI)</h1><p id="i8fenhv_224">The <code class="code" id="i8fenhv_227">Command Interface</code> is only one object that allows you to communicate with js-dos instance. Once you run some <a href="jsdos-bundle.html" id="i8fenhv_225" data-tooltip="Starting from js-dos v7, the API expects a js-dos bundle that already contains all configuration needed to start the DOS program. js-dos bundle is just a ZIP archive that contains the game itself and a js-dos configuration file (same as dosbox.conf file). For example, digger.jsdos…">js-dos bundle</a> you will receive <code class="code" id="i8fenhv_228">Command Interface</code> instance.</p><div class="tabs" id="i8fenhv_229" data-anchors="[i8fenhv_230,i8fenhv_232]"><div class="tabs__content" data-gtm="tab" id="i8fenhv_230" data-title="v8"><div class="code-block" data-lang="ts" data-title="Typescript">
+            Dos(/*element*/, {
+                url: /* bundle url */,
+                onEvent: (&quot;ci-ready&quot;, ci: CommandInterface) {
+                    // now ci s ready
+                },
+            );
+        </div></div><div class="tabs__content" data-gtm="tab" id="i8fenhv_232" data-title="v7"><div class="code-block" data-lang="javascript" data-title="Javascript">
+            const ci = await Dos(/*element*/).run(/*bundle url*/);
+        </div></div></div><p id="i8fenhv_234">CI interface:</p><div class="code-block" data-lang="ts">
+export interface CommandInterface {
+    config: () =&gt; Promise&lt;DosConfig&gt;;
+    height: () =&gt; number;
+    width: () =&gt; number;
+    soundFrequency: () =&gt; number;
+    screenshot: () =&gt; Promise&lt;ImageData&gt;;
+    pause: () =&gt; void;
+    resume: () =&gt; void;
+    mute: () =&gt; void;
+    unmute: () =&gt; void;
+    exit: () =&gt; Promise&lt;void&gt;;
+    simulateKeyPress: (...keyCodes: number[]) =&gt; void;
+    sendKeyEvent: (keyCode: number, pressed: boolean) =&gt; void;
+    sendMouseMotion: (x: number, y: number) =&gt; void;
+    sendMouseRelativeMotion: (x: number, y: number) =&gt; void;
+    sendMouseButton: (button: number, pressed: boolean) =&gt; void;
+    sendMouseSync: () =&gt; void;
+    sendBackendEvent: (event: any) =&gt; void;
+    persist(onlyChanges?: boolean): Promise&lt;Uint8Array | null&gt;;
+    events(): CommandInterfaceEvents;
+    networkConnect(networkType: NetworkType, address: string): Promise&lt;void&gt;;
+    networkDisconnect(networkType: NetworkType): Promise&lt;void&gt;;
+    asyncifyStats(): Promise&lt;AsyncifyStats&gt;;
+    fsTree(): Promise&lt;FsNode&gt;;
+    fsReadFile(file: string): Promise&lt;Uint8Array&gt;;
+    fsWriteFile(file: string, contents: ReadableStream&lt;Uint8Array&gt; | Uint8Array): Promise&lt;void&gt;;
+    fsDeleteFile(file: string): Promise&lt;void&gt;;
+}
+</div><p id="i8fenhv_236">Events interface:</p><div class="code-block" data-lang="ts">
+export type MessageType = &quot;log&quot; | &quot;warn&quot; | &quot;error&quot; | string;
+
+export interface CommandInterfaceEvents {
+    onStdout: (consumer: (message: string) =&gt; void) =&gt; void;
+    onFrameSize: (consumer: (width: number, height: number) =&gt; void) =&gt; void;
+    onFrame: (consumer: (rgb: Uint8Array | null, rgba: Uint8Array | null) =&gt; void) =&gt; void;
+    onSoundPush: (consumer: (samples: Float32Array) =&gt; void) =&gt; void;
+    onExit: (consumer: () =&gt; void) =&gt; void;
+    onMessage: (consumer: (msgType: MessageType, ...args: any[]) =&gt; void) =&gt; void;
+    onNetworkConnected: (consumer: (networkType: NetworkType, address: string) =&gt; void) =&gt; void;
+    onNetworkDisconnected: (consumer: (networkType: NetworkType) =&gt; void) =&gt; void;
+}
+</div><div class="last-modified">Last modified: 26 апреля 2024</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="save-load.html" class="navigation-links__prev">Persist FS</a><a href="dosbox-direct.html" class="navigation-links__next">DOSBox Direct</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b259/app.js"></script></body></html>
