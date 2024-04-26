@@ -1,24 +1,36 @@
 # js-dos v8
 [![Build](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml/badge.svg?branch=8.xx)](https://github.com/caiiiycuk/js-dos/actions/workflows/build.yml)
 
-The **next** major version of js-dos. 
+The simplest API to run **DOS/Win** 9x programs in browser or node. js-dos provides full-featured DOS player that can be easily installed and used to get your DOS program up
+and running in browser quickly. js-dos provide many advanced features like multiplayer and cloud storage. All available features are enabled for any integration and free.
 
-**Not production ready. [Please use 7.xx for production.](https://github.com/caiiiycuk/js-dos/tree/7.xx)**
+The key features:
+* Works in **worker** or render thread
+* Support execution in Node and Browsers
+* Multiple backends: DOSBox, DOSBox-X
+* Mobile support (v8 - WIP, v7 - production)
+* Able to run very big games (like Diablo, etc.)
+* Multiplayer support
+* Cloud storage
+* WebAssembly and pure JS versions
+  
+
 
 [![Watch the video](https://github.com/caiiiycuk/js-dos/assets/1727152/a2b481cb-43b1-44aa-8b71-2181d351bb1a)](https://youtu.be/lhFrAe5YrJE)
 
-# Development
+## Documentation
 
-## Install dependencies
+[Documentation](https://js-dos.com)
 
-You need to install node dependencies and put `emulators@beta` into `public/emulators`.
+Demo:
 
+[DOS.Zone](https://dos.zone)
+
+## Development
+
+1. You need to install node dependencies and put `emulators@beta` into `public/emulators`.
 ```
 yarn
 cp -rv node_modules/emulators/dist/* public/emulators
 ```
-
-## Development
-
-Frontend is written in preact + vite.
-Run `yarn run vite` and open [http://localhost:3000](http://localhost:3000) js-dos is ready!
+2. Run `yarn run vite` and open [http://localhost:3000](http://localhost:3000) js-dos is ready!
