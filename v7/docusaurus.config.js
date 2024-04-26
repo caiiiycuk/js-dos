@@ -103,4 +103,9 @@ module.exports = {
       },
     ],
   ],
+  scripts: [{
+    src: "/v7/build/js/deprecated.js",
+    //src: "js/deprecated.js",
+    async: false,
+  }]
 };

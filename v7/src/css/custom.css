@@ -23,3 +23,33 @@
   margin: 0 calc(-1 * var(--ifm-pre-padding));
   padding: 0 var(--ifm-pre-padding);
 }
+
+
+.deprecated {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: 999;
+  padding: 0;
+  
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.deprecated > div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+
+  background-image: linear-gradient(rgb(255, 248, 197), rgb(255, 248, 197));
+  border-color: rgba(212, 167, 44, 0.4);
+  color: rgb(31, 35, 40);
+  border: 1px solid #eed888;
+  border-top: none;
+  padding: 5px 25px;
+  border-radius: 0 0 5px 5px;
+}
