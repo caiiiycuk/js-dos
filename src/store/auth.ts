@@ -61,7 +61,7 @@ export const authSlice = createSlice({
                 .then((cache) => nonSerializableStore.cache = cache)
                 .catch(console.error)
                 .finally(() => {
-                    nonSerializableStore.dispatch!(authSlice.actions.ready());
+                    (action as any).asyncDispatch(authSlice.actions.ready());
                 });
         },
         logout: (state) => {

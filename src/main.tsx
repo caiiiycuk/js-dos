@@ -21,7 +21,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
     const store = makeStore();
     nonSerializableStore.options = options;
-    nonSerializableStore.dispatch = store.dispatch;
     setupRootElement(element, store);
 
     let pollStep = "none";

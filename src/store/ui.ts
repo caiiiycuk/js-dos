@@ -1,6 +1,5 @@
 import { Dispatch, createAction, createSlice } from "@reduxjs/toolkit";
 import { lStorage } from "../host/lstorage";
-import { nonSerializableStore } from "../non-serializable-store";
 import { Account } from "./auth";
 
 export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
@@ -124,7 +123,7 @@ export const uiSlice = createSlice({
             state.toastIntent = a.payload.intent ?? "none";
             if (a.payload.intent !== "panic") {
                 state.toastTimeoutId = setTimeout(() => {
-                    nonSerializableStore.dispatch!(uiSlice.actions.hideToast());
+                    (a as any).asyncDispatch(uiSlice.actions.hideToast());
                 }, 1500);
             }
         },
