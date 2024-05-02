@@ -1,11 +1,10 @@
-import { Dispatch, Unsubscribe } from "@reduxjs/toolkit";
+import { Dispatch, Store, Unsubscribe } from "@reduxjs/toolkit";
 import { DosConfig, Emulators } from "emulators";
 import { dosSlice } from "./store/dos";
 import { nonSerializableStore } from "./non-serializable-store";
 import { bundleFromChanges, bundleFromFile, bundleFromUrl } from "./host/bundle-storage";
 import { uiSlice } from "./store/ui";
 import { editorSlice } from "./store/editor";
-import { store } from "./store";
 import { getChangesUrl } from "./v8/changes";
 import { storageSlice } from "./store/storage";
 
@@ -51,14 +50,14 @@ export async function loadBundleFromConfg(config: DosConfig, dispatch: Dispatch)
     dispatch(dosSlice.actions.bndReady({}));
 }
 
-export async function loadBundleFromUrl(url: string, dispatch: Dispatch) {
+export async function loadBundleFromUrl(url: string, store: Store) {
     const owner = store.getState().auth.account?.email ?? "guest";
     const changesUrl = await getChangesUrl(owner, url);
     return doLoadBundle(url,
-        bundleFromUrl(url, dispatch),
-        changesProducer(changesUrl),
+        bundleFromUrl(url, store.dispatch),
+        changesProducer(changesUrl, store),
         url,
-        dispatch);
+        store.dispatch);
 }
 
 async function doLoadBundle(bundleName: string,
@@ -92,7 +91,7 @@ async function doLoadBundle(bundleName: string,
     dispatch(dosSlice.actions.bndReady({}));
 }
 
-async function changesProducer(bundleUrl: string): Promise<{
+async function changesProducer(bundleUrl: string, store: Store): Promise<{
     url: string,
     bundle: Uint8Array | null,
 }> {
@@ -117,17 +116,6 @@ async function changesProducer(bundleUrl: string): Promise<{
         url,
         bundle,
     };
-}
-
-export async function updateBundleConf() {
-    const config = store.getState().editor.bundleConfig;
-    const bundle = nonSerializableStore.loadedBundle?.bundle;
-    if (bundle === null || config === null || !ArrayBuffer.isView(bundle)) {
-        throw new Error("Unexpected behaviour (internal state is broken), bundle is null");
-    }
-
-    nonSerializableStore.loadedBundle!.bundle =
-        await emulators.bundleUpdateConfig(bundle, config);
 }
 
 function syncWithConfig(config: DosConfig, dispatch: Dispatch) {

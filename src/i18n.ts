@@ -151,6 +151,8 @@ const initialState: {
     keys: translations[initialLang],
 };
 
+export type I18NState = typeof initialState;
+
 export const i18nSlice = createSlice({
     name: "i18n",
     initialState,

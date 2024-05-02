@@ -17,6 +17,8 @@ const initialState: {
     fs: [],
 };
 
+export type EditorState = typeof initialState;
+
 export const editorSlice = createSlice({
     name: "editor",
     initialState,

@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import { dosSlice } from "../store/dos";
 import { useT } from "../i18n";
 import { loadBundleFromFile, loadBundleFromUrl, loadEmptyBundle } from "../load";
@@ -40,6 +40,7 @@ export function SelectWindow() {
 
 function Load() {
     const t = useT();
+    const store = useStore();
     const dispatch = useDispatch();
     const [url, setUrl] = useState<string>("");
     const [error, setError] = useState<string | null>(null);
@@ -56,7 +57,7 @@ function Load() {
         }
 
         try {
-            await loadBundleFromUrl(validUrl.toString(), dispatch);
+            await loadBundleFromUrl(validUrl.toString(), store);
         } catch (e: any) {
             dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error"));
         }

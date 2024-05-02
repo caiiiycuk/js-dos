@@ -44,6 +44,8 @@ const initialState: {
     ready: initAccount !== null,
 };
 
+export type AuthState = typeof initialState;
+
 export const authSlice = createSlice({
     name: "auth",
     initialState,

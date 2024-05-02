@@ -1,7 +1,7 @@
 import { AnyAction } from "@reduxjs/toolkit";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { LockBadge } from "../components/lock";
-import { State, store } from "../store";
+import { State, Store } from "../store";
 import { Frame, uiSlice } from "../store/ui";
 import { DisketteIcon } from "./diskette-icon";
 import { useEffect, useRef, useState } from "preact/hooks";
@@ -118,6 +118,7 @@ export function CyclesButton() {
 }
 
 export function HddLed(props: {}) {
+    const store: Store = useStore();
     const ref = useRef<HTMLDivElement>(null);
     const [state] = useState<{
         recv: number, enabled: boolean, delayLedTo: number,

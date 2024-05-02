@@ -115,6 +115,8 @@ const initialState: {
     imageRendering: (lStorage.getItem("imageRendering") ?? "pixelated") as any,
 };
 
+export type DosState = typeof initialState;
+
 const connectIpx = createAsyncThunk("dos/connectIpx",
     async (payload: { room: string, address: string }, thunkApi) => {
         const dos = (thunkApi.getState() as State).dos;

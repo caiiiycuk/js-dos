@@ -4,7 +4,6 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { Ui } from "./ui";
 import { dosSlice } from "./store/dos";
-import { store } from "./store";
 import { initEmulators } from "./store/dos";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
@@ -15,53 +14,55 @@ import { loadBundleFromConfg, loadBundleFromUrl } from "./load";
 
 import { DosOptions, DosProps, DosFn } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
-
-let pollStep = "none";
-
-async function pollEvents() {
-    const state = store.getState();
-    const step = state.dos.step;
-
-    if (step === pollStep) {
-        return;
-    }
-    pollStep = step;
-
-    switch (state.dos.step) {
-        case "emu-ready": {
-            const cachedEmail = state.auth.account?.email;
-            nonSerializableStore.cache = await getCache(cachedEmail ?? "guest");
-
-            if (nonSerializableStore.options.url) {
-                try {
-                    await loadBundleFromUrl(nonSerializableStore.options.url, store.dispatch);
-                } catch (e: any) {
-                    store.dispatch(dosSlice.actions.bndError(e.message));
-                }
-            } else if (nonSerializableStore.options.dosboxConf) {
-                loadBundleFromConfg({
-                    dosboxConf: nonSerializableStore.options.dosboxConf,
-                    jsdosConf: {
-                        version: "8",
-                    },
-                }, store.dispatch);
-            } else {
-                store.dispatch(uiSlice.actions.windowSelect());
-            }
-
-            postJsDosEvent("emu-ready");
-        } break;
-    };
-}
-
-store.subscribe(pollEvents);
-
+import { Store, makeStore } from "./store";
 
 let skipEmulatorsInit = false;
 export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
+    const store = makeStore();
     nonSerializableStore.options = options;
-    setupRootElement(element);
+    nonSerializableStore.dispatch = store.dispatch;
+    setupRootElement(element, store);
+
+    let pollStep = "none";
+    function pollEvents() {
+        (async () => {
+            const state = store.getState();
+            const step = state.dos.step;
+
+            if (step === pollStep) {
+                return;
+            }
+            pollStep = step;
+
+            switch (state.dos.step) {
+                case "emu-ready": {
+                    const cachedEmail = state.auth.account?.email;
+                    nonSerializableStore.cache = await getCache(cachedEmail ?? "guest");
+
+                    if (nonSerializableStore.options.url) {
+                        try {
+                            await loadBundleFromUrl(nonSerializableStore.options.url, store);
+                        } catch (e: any) {
+                            store.dispatch(dosSlice.actions.bndError(e.message));
+                        }
+                    } else if (nonSerializableStore.options.dosboxConf) {
+                        loadBundleFromConfg({
+                            dosboxConf: nonSerializableStore.options.dosboxConf,
+                            jsdosConf: {
+                                version: "8",
+                            },
+                        }, store.dispatch);
+                    } else {
+                        store.dispatch(uiSlice.actions.windowSelect());
+                    }
+
+                    postJsDosEvent("emu-ready");
+                } break;
+            };
+        })().catch(console.error);
+    }
+    store.subscribe(pollEvents);
 
     if (!skipEmulatorsInit) {
         skipEmulatorsInit = true;
@@ -174,7 +175,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     };
 };
 
-function setupRootElement(root: HTMLDivElement) {
+function setupRootElement(root: HTMLDivElement, store: Store) {
     nonSerializableStore.root = root;
     root.classList.add("jsdos-rso");
     root.addEventListener("contextmenu", (e) => {

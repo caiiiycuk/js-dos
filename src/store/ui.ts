@@ -45,6 +45,8 @@ const initialState: {
     cloudSaves: true,
 };
 
+export type UiState = typeof initialState;
+
 export const uiSlice = createSlice({
     name: "js-dos v8s",
     initialState,

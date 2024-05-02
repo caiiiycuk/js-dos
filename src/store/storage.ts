@@ -10,6 +10,8 @@ const initialState: {
     ready: false,
 };
 
+export type StorageState = typeof initialState;
+
 export const storageSlice = createSlice({
     name: "storage",
     initialState,

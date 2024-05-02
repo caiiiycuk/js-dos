@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import { getChangesUrlPrefix } from "../v8/changes";
 import { downloadArrayToFs, downloadUrlToFs } from "../download-file";
 import { useT } from "../i18n";
@@ -12,6 +12,7 @@ export function HostCacheFrame() {
     const [cached, _setCached] = useState<string[] | null>(null);
     const [saves, setSaves] = useState<{ [url: string]: string }>({});
     const t = useT();
+    const store = useStore();
     const dispatch = useDispatch();
 
     function setCached(cached: string[], owner: string) {
@@ -55,7 +56,7 @@ export function HostCacheFrame() {
         }
 
         try {
-            await loadBundleFromUrl(validUrl.toString(), dispatch);
+            await loadBundleFromUrl(validUrl.toString(), store);
         } catch (e: any) {
             dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error"));
         }

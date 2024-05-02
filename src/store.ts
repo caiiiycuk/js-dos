@@ -1,11 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { uiSlice } from "./store/ui";
-import { authSlice } from "./store/auth";
-import { dosSlice } from "./store/dos";
-import { i18nSlice } from "./i18n";
-import { storageSlice } from "./store/storage";
-import { editorSlice } from "./store/editor";
-import { nonSerializableStore } from "./non-serializable-store";
+import { UiState, uiSlice } from "./store/ui";
+import { AuthState, authSlice } from "./store/auth";
+import { DosState, dosSlice } from "./store/dos";
+import { I18NState, i18nSlice } from "./i18n";
+import { StorageState, storageSlice } from "./store/storage";
+import { EditorState, editorSlice } from "./store/editor";
 
 export function makeStore() {
     return configureStore({
@@ -20,8 +19,13 @@ export function makeStore() {
     });
 };
 
-export const store = makeStore();
+export interface State {
+    ui: UiState,
+    auth: AuthState,
+    dos: DosState,
+    i18n: I18NState,
+    editor: EditorState,
+    storage: StorageState,
+}
 
-export type State = ReturnType<typeof store.getState>;
-
-nonSerializableStore.dispatch = store.dispatch;
+export type Store = ReturnType<typeof makeStore>;

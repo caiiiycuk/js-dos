@@ -1,6 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { dosSlice, FitConstant } from "../../store/dos";
-import { State, store } from "../../store";
+import { State, Store } from "../../store";
 import { CommandInterface } from "emulators";
 import { keyboard } from "./controls/keyboard";
 import { webGl as webglRender } from "./render/webgl";
@@ -100,6 +100,8 @@ function useRenderBackend(canvas: HTMLCanvasElement,
 }
 
 function useAudioBackend(ci: CommandInterface): void {
+    const store: Store = useStore();
+
     useEffect(() => {
         const unbind = audioNode(ci, (setVolume) => {
             let volume = 1;
