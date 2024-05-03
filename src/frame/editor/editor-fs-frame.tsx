@@ -1,11 +1,10 @@
 import { FsNode } from "emulators/dist/types/protocol/protocol";
 import { useEffect, useRef, useState } from "preact/hooks";
 import CheckboxTree, { Node, OnCheckNode, OnExpandNode } from "react-checkbox-tree";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useStore } from "react-redux";
 import { useT } from "../../i18n";
 import { loadBundle } from "../../load";
-import { State } from "../../store";
-import { nonSerializableStore } from "../../non-serializable-store";
+import { State, useNonSerializableStore } from "../../store";
 import { downloadArrayToFs } from "../../download-file";
 
 interface NodeExt extends Node {
@@ -15,6 +14,7 @@ interface NodeExt extends Node {
 export function EditorFsFrame() {
     const t = useT();
     const haveCi = useSelector((state: State) => state.dos.ci);
+    const nonSerializableStore = useNonSerializableStore();
     const [fsSize, setFsSize] = useState<number>(0);
     const [fsTree, _setFsTree] = useState<NodeExt[] | null>(null);
     const [expanded, setExpanded] = useState<string[]>([]);
@@ -28,13 +28,12 @@ export function EditorFsFrame() {
     }
 
     useEffect(() => {
-        const ci = nonSerializableStore.ci;
-        if (ci === null || !haveCi) {
+        if (nonSerializableStore.ci === null || !haveCi) {
             return;
         }
 
         let cancled = false;
-        ci.fsTree()
+        nonSerializableStore.ci.fsTree()
             .then((tree) => {
                 if (!cancled) {
                     setFsTree(toNodes(tree));
@@ -63,11 +62,10 @@ export function EditorFsFrame() {
 
     async function onRefresh() {
         setFsTree(null);
-        const ci = nonSerializableStore.ci;
-        if (ci === null || !haveCi) {
+        if (nonSerializableStore.ci === null || !haveCi) {
             return;
         }
-        const tree = await ci.fsTree();
+        const tree = await nonSerializableStore.ci.fsTree();
         setFsTree(toNodes(tree));
     }
 
@@ -148,7 +146,8 @@ function Actions(props: {
     const t = useT();
     const uploadDirRef = useRef<HTMLInputElement>(null);
     const uploadFileRef = useRef<HTMLInputElement>(null);
-    const dispatch = useDispatch();
+    const store = useStore();
+    const nonSerializableStore = useNonSerializableStore();
     const { onRefresh, onUploadingFile, onMakingBundle } = props;
 
     useEffect(() => {
@@ -199,7 +198,7 @@ function Actions(props: {
         try {
             const bundle = await ci.persist(false);
             if (bundle) {
-                loadBundle(bundle, true, dispatch);
+                loadBundle(bundle, true, store);
             }
         } finally {
             onMakingBundle(false);

@@ -100,7 +100,7 @@ function useRenderBackend(canvas: HTMLCanvasElement,
 }
 
 function useAudioBackend(ci: CommandInterface): void {
-    const store: Store = useStore();
+    const store = useStore() as Store;
 
     useEffect(() => {
         const unbind = audioNode(ci, (setVolume) => {

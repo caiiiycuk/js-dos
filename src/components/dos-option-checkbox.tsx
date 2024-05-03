@@ -1,10 +1,9 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useT } from "../i18n";
-import { State } from "../store";
+import { State, useNonSerializableStore } from "../store";
 import { dosSlice } from "../store/dos";
 import { uiSlice } from "../store/ui";
 import { Checkbox } from "./checkbox";
-import { nonSerializableStore } from "../non-serializable-store";
 
 export function Editor() {
     const t = useT();
@@ -50,6 +49,7 @@ export function WorkerCheckbox() {
     const worker = useSelector((state: State) => state.dos.worker);
     const hardware = useSelector((state: State) => state.dos.backendHardware);
     const disabled = useSelector((state: State) => state.ui.window) === "run";
+    const nonSerializableStore = useNonSerializableStore();
     return hardware && nonSerializableStore.options.backendHardware ? null : <Checkbox
         class="mt-4"
         label={t("worker")}
@@ -63,6 +63,7 @@ export function HardwareCheckbox() {
     const t = useT();
     const dispatch = useDispatch();
     const hardware = useSelector((state: State) => state.dos.backendHardware);
+    const nonSerializableStore = useNonSerializableStore();
     return nonSerializableStore.options.backendHardware ? <Checkbox
         class="mt-4"
         label={t("hardware")}

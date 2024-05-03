@@ -4,13 +4,14 @@ import { useT } from "../i18n";
 import { loadBundleFromFile, loadBundleFromUrl, loadEmptyBundle } from "../load";
 import { useState } from "preact/hooks";
 import { uiSlice } from "../store/ui";
+import { Store } from "../store";
 
 const fileInput = document.createElement("input");
 fileInput.type = "file";
 
 export function SelectWindow() {
     const t = useT();
-    const dispatch = useDispatch();
+    const store = useStore() as Store;
     const [useUrl, setUseUrl] = useState<boolean>(false);
 
     if (useUrl) {
@@ -21,10 +22,9 @@ export function SelectWindow() {
 
     async function createEmpty() {
         try {
-            await loadEmptyBundle(dispatch)
-                .catch(console.error);
+            await loadEmptyBundle(store).catch(console.error);
         } catch (e: any) {
-            dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error"));
+            store.dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error"));
         }
     }
 
@@ -84,7 +84,7 @@ function Load() {
 }
 
 function Upload() {
-    const dispatch = useDispatch();
+    const store = useStore() as Store;
 
     async function onFileChange() {
         fileInput.removeEventListener("change", onFileChange);
@@ -95,10 +95,9 @@ function Upload() {
 
         const file = fileInput.files[0];
         try {
-            await loadBundleFromFile(file, dispatch)
-                .catch((e) => dispatch(dosSlice.actions.bndError(e.message)));
+            await loadBundleFromFile(file, store).catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
         } catch (e: any) {
-            dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error"));
+            store.dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error"));
         }
     }
 

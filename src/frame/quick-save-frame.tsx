@@ -1,9 +1,8 @@
 import { useDispatch, useSelector } from "react-redux";
 import { LockBadge } from "../components/lock";
-import { nonSerializableStore } from "../non-serializable-store";
 import { CloudSaveButton } from "../sidebar/cloud-save-button";
 import { DisketteIcon } from "../sidebar/diskette-icon";
-import { State } from "../store";
+import { State, useNonSerializableStore } from "../store";
 import { dispatchLoginAction } from "../store/ui";
 
 export function QuickSaveFrame() {
@@ -27,6 +26,7 @@ function SaveButton(props: {
 }) {
     const account = useSelector((state: State) => state.auth.account);
     const dispatch = useDispatch();
+    const nonSerializableStore = useNonSerializableStore();
     function onClick() {
         if (props.disabled === true) {
             dispatchLoginAction(account, dispatch);
@@ -65,6 +65,7 @@ function LoadButton(props: {
 }) {
     const account = useSelector((state: State) => state.auth.account);
     const dispatch = useDispatch();
+    const nonSerializableStore = useNonSerializableStore();
     function onClick() {
         if (props.disabled === true) {
             dispatchLoginAction(account, dispatch);

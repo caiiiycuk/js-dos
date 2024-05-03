@@ -20,7 +20,7 @@ export function Login() {
 
         const iframe = iframeRef.current;
         if (iframe === null) {
-            dispatch(authSlice.actions.logout());
+            dispatch(authSlice.actions.logout({}));
             dispatch(authSlice.actions.ready());
             console.error("Unable to inialize authentificator!");
             return;
@@ -40,7 +40,7 @@ export function Login() {
                     }
                     dispatch(authSlice.actions.login(e.data.account));
                 } else {
-                    dispatch(authSlice.actions.logout());
+                    dispatch(authSlice.actions.logout({}));
                     dispatch(authSlice.actions.ready());
                 }
             }

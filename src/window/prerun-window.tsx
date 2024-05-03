@@ -1,12 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import { BackendSelect, RenderAspectSelect, RenderSelect } from "../components/dos-option-select";
 import { dosSlice } from "../store/dos";
-import { State } from "../store";
+import { State, useNonSerializableStore } from "../store";
 import { HardwareCheckbox, MouseCapture, WorkerCheckbox } from "../components/dos-option-checkbox";
 import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
 import { useT } from "../i18n";
 import { dispatchLoginAction } from "../store/ui";
-import { nonSerializableStore } from "../non-serializable-store";
 import { Emulators } from "emulators";
 
 declare const emulators: Emulators;
@@ -80,6 +79,7 @@ export function PreRunWindow() {
 function Play(props: { class?: string }) {
     const configChanged = useSelector((state: State) => state.editor.configChanged);
     const bundleConfig = useSelector((state: State) => state.editor.bundleConfig);
+    const nonSerializableStore = useNonSerializableStore();
     const dispatch = useDispatch();
 
     async function onPlay() {
@@ -93,12 +93,12 @@ function Play(props: { class?: string }) {
             try {
                 nonSerializableStore.loadedBundle!.bundle =
                     await emulators.bundleUpdateConfig(bundle, config);
-                dispatch(dosSlice.actions.bndPlay());
+                dispatch(dosSlice.actions.bndPlay({}));
             } catch (e) {
                 dispatch(dosSlice.actions.bndError((e as Error).message ?? "unexpected error"));
             }
         } else {
-            dispatch(dosSlice.actions.bndPlay());
+            dispatch(dosSlice.actions.bndPlay({}));
         }
     }
 

@@ -1,8 +1,7 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { makeStore, State } from "../store";
+import { createSlice } from "@reduxjs/toolkit";
+import { DosAction, getNonSerializableStore, makeStore, postJsDosEvent } from "../store";
 import { Emulators } from "emulators";
 import { lStorage } from "../host/lstorage";
-import { nonSerializableStore, postJsDosEvent } from "../non-serializable-store";
 
 const alphabet = "qwertyuiopasdfghjklzxcvbnm1234567890";
 declare const emulators: Emulators;
@@ -117,24 +116,6 @@ const initialState: {
 
 export type DosState = typeof initialState;
 
-const connectIpx = createAsyncThunk("dos/connectIpx",
-    async (payload: { room: string, address: string }, thunkApi) => {
-        const dos = (thunkApi.getState() as State).dos;
-        if (dos.network.ipx === "connected") {
-            throw new Error("Already connected");
-        }
-        if (dos.ci === false || !nonSerializableStore.ci) {
-            throw new Error("DOS is not started");
-        }
-
-        const canonicalAddress = payload.address.endsWith("/") ?
-            payload.address.substring(0, payload.address.length - 1) :
-            payload.address;
-
-        return nonSerializableStore.ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */,
-            canonicalAddress + ":1900/ipx/" + payload.room.replaceAll("@", "_"));
-    });
-
 export const dosSlice = createSlice({
     name: "dos",
     initialState,
@@ -162,9 +143,11 @@ export const dosSlice = createSlice({
             s.step = "bnd-ready";
             s.config = a.payload;
         },
-        bndPlay: (s) => {
+        bndPlay: (s, a) => {
             s.step = "bnd-play";
-            postJsDosEvent("bnd-play");
+            (a as unknown as DosAction).asyncStore((store) => {
+                postJsDosEvent(getNonSerializableStore(store), "bnd-play");
+            });
         },
         dosWorker: (s, a: { payload: boolean }) => {
             s.worker = a.payload;
@@ -212,9 +195,46 @@ export const dosSlice = createSlice({
         ci: (s, a: { payload: boolean }) => {
             s.ci = a.payload;
         },
-        disconnectIpx: (s) => {
+        connectIpx: (s, a: { payload: { room: string, address: string } }) => {
+            if (s.network.ipx === "connected") {
+                throw new Error("Already connected");
+            }
+
+            if (!s.ci) {
+                throw new Error("DOS is not started");
+            }
+
+            const { room, address } = a.payload;
+            s.network.ipx = "connecting";
+            (a as unknown as DosAction).asyncStore((store) => {
+                const nonSerializableStore = getNonSerializableStore(store);
+                if (!nonSerializableStore.ci) {
+                    throw new Error("DOS is not started");
+                }
+
+                const canonicalAddress = address.endsWith("/") ?
+                    address.substring(0, address.length - 1) :
+                    address;
+
+                nonSerializableStore.ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */,
+                    canonicalAddress + ":1900/ipx/" + room.replaceAll("@", "_"))
+                    .then(() => {
+                        store.dispatch(dosSlice.actions.statusIpx("connected"));
+                    })
+                    .catch((e) => {
+                        store.dispatch(dosSlice.actions.statusIpx("error"));
+                        console.error(e);
+                    });
+            });
+        },
+        statusIpx: (s, a: { payload: "error" | "connected" | "connecting" }) => {
+            s.network.ipx = a.payload;
+        },
+        disconnectIpx: (s, a) => {
             s.network.ipx = "disconnected";
-            nonSerializableStore.ci?.networkDisconnect(0 /* IPX */);
+            (a as unknown as DosAction).asyncStore((store) => {
+                getNonSerializableStore(store).ci?.networkDisconnect(0 /* IPX */);
+            });
         },
         setRoom: (s, a: { payload: string }) => {
             s.network.room = a.payload;
@@ -224,27 +244,16 @@ export const dosSlice = createSlice({
             lStorage.setItem("net.server", a.payload);
         },
     },
-    extraReducers: {
-        [connectIpx.fulfilled.type]: (state) => {
-            state.network.ipx = "connected";
-        },
-        [connectIpx.pending.type]: (state) => {
-            state.network.ipx = "connecting";
-        },
-        [connectIpx.rejected.type]: (state) => {
-            state.network.ipx = "error";
-        },
-    },
 });
 
-export const dosExtraActions = {
-    connectIpx,
-};
-
+let emulatorsReady = false;
 export function initEmulators(store: ReturnType<typeof makeStore>, pathPrefix: string) {
     store.dispatch(async (dispatch) => {
         try {
-            await initEmulatorsJs(pathPrefix);
+            if (!emulatorsReady) {
+                await initEmulatorsJs(pathPrefix);
+                emulatorsReady = true;
+            }
             dispatch(dosSlice.actions.emuReady(emulators.version));
         } catch (e) {
             console.error("Unable to init emulators.js", e);

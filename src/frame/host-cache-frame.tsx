@@ -4,15 +4,16 @@ import { getChangesUrlPrefix } from "../v8/changes";
 import { downloadArrayToFs, downloadUrlToFs } from "../download-file";
 import { useT } from "../i18n";
 import { loadBundleFromUrl } from "../load";
-import { nonSerializableStore } from "../non-serializable-store";
 import { dosSlice } from "../store/dos";
 import { uiSlice } from "../store/ui";
+import { useNonSerializableStore } from "../store";
 
 export function HostCacheFrame() {
     const [cached, _setCached] = useState<string[] | null>(null);
     const [saves, setSaves] = useState<{ [url: string]: string }>({});
     const t = useT();
     const store = useStore();
+    const nonSerializableStore = useNonSerializableStore();
     const dispatch = useDispatch();
 
     function setCached(cached: string[], owner: string) {

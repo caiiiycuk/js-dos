@@ -1,8 +1,7 @@
 import { useState } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { LockBadge } from "../components/lock";
-import { nonSerializableStore } from "../non-serializable-store";
-import { State } from "../store";
+import { State, useNonSerializableStore } from "../store";
 import { uiSlice } from "../store/ui";
 import { DisketteIcon } from "./diskette-icon";
 import { useT } from "../i18n";
@@ -17,6 +16,7 @@ export function CloudSaveButton(props: {
     const dispatch = useDispatch();
     const t = useT();
     const cloudSaves = useSelector((state: State) => state.ui.cloudSaves);
+    const nonSerializableStore = useNonSerializableStore();
 
     if (!cloudSaves ||
         nonSerializableStore.loadedBundle === null ||

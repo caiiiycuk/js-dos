@@ -1,9 +1,8 @@
-import { Dispatch } from "@reduxjs/toolkit";
-import { nonSerializableStore } from "../non-serializable-store";
+import { Store, getNonSerializableStore } from "../store";
 import { uiSlice } from "../store/ui";
 
-export function browserSetFullScreen(fullScreen: boolean, dispatch: Dispatch) {
-    const root = nonSerializableStore.root as any;
+export function browserSetFullScreen(fullScreen: boolean, store: Store) {
+    const root = getNonSerializableStore(store).root as any;
     if (fullScreen) {
         if (root.requestFullscreen) {
             root.requestFullscreen();
@@ -32,5 +31,5 @@ export function browserSetFullScreen(fullScreen: boolean, dispatch: Dispatch) {
         }
     }
 
-    dispatch(uiSlice.actions.setFullScreen(fullScreen));
+    store.dispatch(uiSlice.actions.setFullScreen(fullScreen));
 }

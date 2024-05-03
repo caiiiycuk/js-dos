@@ -1,20 +1,20 @@
-import { useDispatch, useSelector } from "react-redux";
-import { State } from "../store";
+import { useSelector, useStore } from "react-redux";
+import { State, Store } from "../store";
 import { browserSetFullScreen } from "../host/fullscreen";
 
 export function FullscreenButton(props: {
     class?: string,
 }) {
     const fullScreen = useSelector((state: State) => state.ui.fullScreen);
-    const dispatch = useDispatch();
+    const store = useStore() as Store;
 
     function onClick() {
-        browserSetFullScreen(!fullScreen, dispatch);
+        browserSetFullScreen(!fullScreen, store);
     }
     /* eslint-disable max-len */
     return <div class={"fullscreen-button sidebar-button " + props.class} onClick={onClick}>
         <div class={"w-full h-full scale-75 hover:scale-90"}>
-            { !fullScreen &&
+            {!fullScreen &&
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                     viewBox="0 0 16 16" fill="currentColor" stroke="none" enable-background="new 0 0 16 16" >
                     <g>
@@ -26,7 +26,7 @@ export function FullscreenButton(props: {
                     </g>
                 </svg>
             }
-            { fullScreen &&
+            {fullScreen &&
                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                     viewBox="0 0 16 16" fill="currentColor" stroke="none" enable-background="new 0 0 16 16">
                     <g>

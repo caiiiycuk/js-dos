@@ -1,3 +1,5 @@
+export type DosEvent = "emu-ready" | "ci-ready" | "bnd-play";
+
 export interface DosOptions {
     url: string,
     dosboxConf: string,
@@ -14,7 +16,7 @@ export interface DosOptions {
     backendHardware: ((backend: "dosbox" | "dosboxX") => Promise<string | null>),
     workerThread: boolean,
     mouseCapture: boolean,
-    onEvent: (event: "emu-ready" | "ci-ready" | "bnd-play", ci?: any) => void,
+    onEvent: (event: DosEvent, ci?: any /* CommandInterface */) => void,
     server: "netherlands" | "newyork" | "singapore",
     room: string,
     fullScreen: boolean,

@@ -8,20 +8,18 @@ import { initEmulators } from "./store/dos";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
-import { nonSerializableStore, postJsDosEvent } from "./non-serializable-store";
 import { getCache } from "./host/lcache";
 import { loadBundleFromConfg, loadBundleFromUrl } from "./load";
 
 import { DosOptions, DosProps, DosFn } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
-import { Store, makeStore } from "./store";
+import { NonSerializableStore, Store, makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
 
-let skipEmulatorsInit = false;
 export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
-    const store = makeStore();
-    nonSerializableStore.options = options;
-    setupRootElement(element, store);
+    const nonSerializableStore = makeNonSerializableStore(options);
+    const store = makeStore(nonSerializableStore);
+    setupRootElement(element, nonSerializableStore, store);
 
     let pollStep = "none";
     function pollEvents() {
@@ -51,22 +49,19 @@ export const Dos: DosFn = (element: HTMLDivElement,
                             jsdosConf: {
                                 version: "8",
                             },
-                        }, store.dispatch);
+                        }, store);
                     } else {
                         store.dispatch(uiSlice.actions.windowSelect());
                     }
 
-                    postJsDosEvent("emu-ready");
+                    postJsDosEvent(nonSerializableStore, "emu-ready");
                 } break;
             };
         })().catch(console.error);
     }
     store.subscribe(pollEvents);
 
-    if (!skipEmulatorsInit) {
-        skipEmulatorsInit = true;
-        initEmulators(store, options.pathPrefix ?? "https://v8.js-dos.com/latest/emulators/");
-    }
+    initEmulators(store, options.pathPrefix ?? "https://v8.js-dos.com/latest/emulators/");
 
     function setTheme(theme: DosOptions["theme"]) {
         store.dispatch(uiSlice.actions.theme(theme));
@@ -109,7 +104,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     }
 
     function setFullScreen(fullScreen: boolean) {
-        browserSetFullScreen(fullScreen, store.dispatch);
+        browserSetFullScreen(fullScreen, store);
     }
 
     if (options.theme) {
@@ -174,7 +169,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     };
 };
 
-function setupRootElement(root: HTMLDivElement, store: Store) {
+function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSerializableStore, store: Store) {
     nonSerializableStore.root = root;
     root.classList.add("jsdos-rso");
     root.addEventListener("contextmenu", (e) => {

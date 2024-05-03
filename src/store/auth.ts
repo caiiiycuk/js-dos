@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { nonSerializableStore } from "../non-serializable-store";
 import { getCache } from "../host/lcache";
 import { lStorage } from "../host/lstorage";
+import { DosAction, getNonSerializableStore } from "../store";
 
 const cachedAccount = "cached.account";
 
@@ -57,19 +57,23 @@ export const authSlice = createSlice({
                 state.account.email === "dz.caiiiycuk@gmail.com" ||
                 state.account.email === "caiiiycuk@gmail.com";
             lStorage.setItem(cachedAccount, JSON.stringify(action.payload));
-            getCache(state.account.email)
-                .then((cache) => nonSerializableStore.cache = cache)
-                .catch(console.error)
-                .finally(() => {
-                    (action as any).asyncDispatch(authSlice.actions.ready());
-                });
+            (action as unknown as DosAction).asyncStore((store) => {
+                getCache(action.payload.email)
+                    .then((cache) => getNonSerializableStore(store).cache = cache)
+                    .catch(console.error)
+                    .finally(() => {
+                        store.dispatch(authSlice.actions.ready());
+                    });
+            });
         },
-        logout: (state) => {
+        logout: (state, action) => {
             clearRefreshToken();
             lStorage.removeItem(cachedAccount);
-            getCache("guest")
-                .then((cache) => nonSerializableStore.cache = cache)
-                .catch(console.error);
+            (action as unknown as DosAction).asyncStore((store) => {
+                getCache("guest")
+                    .then((cache) => getNonSerializableStore(store).cache = cache)
+                    .catch(console.error);
+            });
             state.account = null;
         },
         ready: (state) => {

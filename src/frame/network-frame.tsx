@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Checkbox } from "../components/checkbox";
 import { useT } from "../i18n";
 import { State } from "../store";
-import { dosExtraActions, dosSlice } from "../store/dos";
+import { dosSlice } from "../store/dos";
 import { Select } from "../components/select";
 import { dispatchLoginAction, uiSlice } from "../store/ui";
 import { LockBadge } from "../components/lock";
@@ -40,9 +40,9 @@ export function NetworkFrame() {
 
     function toggleIpx() {
         if (network.ipx === "connected") {
-            dispatch(dosSlice.actions.disconnectIpx());
+            dispatch(dosSlice.actions.disconnectIpx({}));
         } else {
-            dispatch(dosExtraActions.connectIpx({
+            dispatch(dosSlice.actions.connectIpx({
                 room,
                 address: "wss://" + (premium ? server : "netherlands") + ".dos.zone",
             }) as any);

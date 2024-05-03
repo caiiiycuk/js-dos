@@ -17,7 +17,7 @@ export function AccountFrame(props: {}) {
     }
 
     function logout() {
-        dispatch(authSlice.actions.logout());
+        dispatch(authSlice.actions.logout({}));
         dispatch(uiSlice.actions.frameNone());
     }
 

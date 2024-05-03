@@ -1,41 +1,43 @@
 import { Dispatch, Store, Unsubscribe } from "@reduxjs/toolkit";
 import { DosConfig, Emulators } from "emulators";
 import { dosSlice } from "./store/dos";
-import { nonSerializableStore } from "./non-serializable-store";
 import { bundleFromChanges, bundleFromFile, bundleFromUrl } from "./host/bundle-storage";
 import { uiSlice } from "./store/ui";
 import { editorSlice } from "./store/editor";
 import { getChangesUrl } from "./v8/changes";
 import { storageSlice } from "./store/storage";
+import { getNonSerializableStore } from "./store";
 
 declare const emulators: Emulators;
 
-export async function loadEmptyBundle(dispatch: Dispatch) {
+export async function loadEmptyBundle(store: Store) {
     await doLoadBundle("empty.jsdos",
         (async () => {
             const bundle = await emulators.bundle();
             return bundle.toUint8Array();
-        })(), null, null, dispatch);
+        })(), null, null, store);
 
-    dispatch(uiSlice.actions.frameConf());
-    dispatch(uiSlice.actions.setEditor(true));
+    store.dispatch(uiSlice.actions.frameConf());
+    store.dispatch(uiSlice.actions.setEditor(true));
 }
 
-export async function loadBundle(bundle: Uint8Array, openConfig: boolean, dispatch: Dispatch) {
+export async function loadBundle(bundle: Uint8Array, openConfig: boolean, store: Store) {
     await doLoadBundle("bundle.jsdos", Promise.resolve(bundle),
-        null, null, dispatch);
+        null, null, store);
     if (openConfig) {
-        dispatch(uiSlice.actions.frameConf());
+        store.dispatch(uiSlice.actions.frameConf());
     }
 }
 
-export function loadBundleFromFile(file: File, dispatch: Dispatch) {
+export function loadBundleFromFile(file: File, store: Store) {
     return doLoadBundle(file.name,
-        bundleFromFile(file, dispatch),
-        null, null, dispatch);
+        bundleFromFile(file, store),
+        null, null, store);
 }
 
-export async function loadBundleFromConfg(config: DosConfig, dispatch: Dispatch) {
+export async function loadBundleFromConfg(config: DosConfig, store: Store) {
+    const nonSerializableStore = getNonSerializableStore(store);
+    const dispatch = store.dispatch;
     nonSerializableStore.loadedBundle = null;
 
     dispatch(editorSlice.actions.init(config));
@@ -54,18 +56,21 @@ export async function loadBundleFromUrl(url: string, store: Store) {
     const owner = store.getState().auth.account?.email ?? "guest";
     const changesUrl = await getChangesUrl(owner, url);
     return doLoadBundle(url,
-        bundleFromUrl(url, store.dispatch),
+        bundleFromUrl(url, store),
         changesProducer(changesUrl, store),
         url,
-        store.dispatch);
+        store);
 }
 
 async function doLoadBundle(bundleName: string,
                             bundlePromise: Promise<Uint8Array>,
                             bundleChangesPromise: (ReturnType<typeof changesProducer>) | null,
                             bundleUrl: string | null,
-                            dispatch: Dispatch) {
+                            store: Store) {
+    const nonSerializableStore = getNonSerializableStore(store);
+    const dispatch = store.dispatch;
     nonSerializableStore.loadedBundle = null;
+
 
     dispatch(dosSlice.actions.bndLoad(bundleName));
 
@@ -111,7 +116,7 @@ async function changesProducer(bundleUrl: string, store: Store): Promise<{
     const account = store.getState().auth.account;
     const owner = account?.email ?? "guest";
     const url = getChangesUrl(owner, bundleUrl);
-    const bundle = await bundleFromChanges(url, account);
+    const bundle = await bundleFromChanges(url, account, store);
     return {
         url,
         bundle,

@@ -1,6 +1,7 @@
 import { Dispatch, createAction, createSlice } from "@reduxjs/toolkit";
 import { lStorage } from "../host/lstorage";
 import { Account } from "./auth";
+import { DosAction } from "../store";
 
 export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
     "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua", "lofi",
@@ -123,7 +124,7 @@ export const uiSlice = createSlice({
             state.toastIntent = a.payload.intent ?? "none";
             if (a.payload.intent !== "panic") {
                 state.toastTimeoutId = setTimeout(() => {
-                    (a as any).asyncDispatch(uiSlice.actions.hideToast());
+                    (a as unknown as DosAction).asyncStore((store) => store.dispatch(uiSlice.actions.hideToast()));
                 }, 1500);
             }
         },
