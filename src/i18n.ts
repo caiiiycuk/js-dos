@@ -139,7 +139,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         subscription_cancelled: "Subscription cancelled",
         hardware: "Hardware acceleration",
         net_drives: "Net drives",
-        fat_readonly: "Writeable FAT",
+        fat_write: "Writeable FAT",
     },
 };
 
