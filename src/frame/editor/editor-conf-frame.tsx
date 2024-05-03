@@ -121,7 +121,7 @@ export function EditorConf() {
                 </svg>
             </a>
             {["2", "3"].map((num) => {
-                return <div class="flex flex-row justify-center items-center gap-3 w-full">
+                return <div class="flex flex-row justify-start items-center gap-3 w-full">
                     <p>{num === "2" ? "C:" : "D:"}</p>
                     <div class="flex flex-col gap-2">
                         <div class="flex flex-row gap-1 items-center">

@@ -71,6 +71,7 @@ const initialState: {
         ipx: "connecting" | "connected" | "disconnected" | "error",
     },
     imageRendering: ImageRendering,
+    sockdriveWrite: boolean,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -112,6 +113,7 @@ const initialState: {
     },
     ci: false,
     imageRendering: (lStorage.getItem("imageRendering") ?? "pixelated") as any,
+    sockdriveWrite: true,
 };
 
 export type DosState = typeof initialState;
@@ -242,6 +244,9 @@ export const dosSlice = createSlice({
         setServer: (s, a: { payload: typeof initialState.network.server }) => {
             s.network.server = a.payload;
             lStorage.setItem("net.server", a.payload);
+        },
+        setSockdriveWrite: (s, a: { payload: boolean }) => {
+            s.sockdriveWrite = a.payload;
         },
     },
 });

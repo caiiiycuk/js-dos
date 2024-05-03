@@ -19,6 +19,13 @@ export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
     const nonSerializableStore = makeNonSerializableStore(options);
     const store = makeStore(nonSerializableStore);
+
+
+    if (store.getState().auth.account?.email === "dz.caiiiycuk@gmail.com" ||
+        store.getState().auth.account?.email === "caiiiycuk@gmail.com") {
+        store.dispatch(dosSlice.actions.setSockdriveWrite(false));
+    }
+
     setupRootElement(element, nonSerializableStore, store);
 
     let pollStep = "none";

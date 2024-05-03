@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getCache } from "../host/lcache";
 import { lStorage } from "../host/lstorage";
 import { DosAction, getNonSerializableStore } from "../store";
+import { dosSlice } from "./dos";
 
 const cachedAccount = "cached.account";
 
@@ -58,6 +59,10 @@ export const authSlice = createSlice({
                 state.account.email === "caiiiycuk@gmail.com";
             lStorage.setItem(cachedAccount, JSON.stringify(action.payload));
             (action as unknown as DosAction).asyncStore((store) => {
+                if (action.payload.email === "dz.caiiiycuk@gmail.com" ||
+                    action.payload.email === "caiiiycuk@gmail.com") {
+                    store.dispatch(dosSlice.actions.setSockdriveWrite(false));
+                }
                 getCache(action.payload.email)
                     .then((cache) => getNonSerializableStore(store).cache = cache)
                     .catch(console.error)

@@ -70,6 +70,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         subscription_cancelled: "Подписка отменена",
         hardware: "Аппаратное ускорение",
         net_drives: "Сетевые диски",
+        fat_write: "FAT запись",
     },
     en: {
         add: "Add",
@@ -138,6 +139,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         subscription_cancelled: "Subscription cancelled",
         hardware: "Hardware acceleration",
         net_drives: "Net drives",
+        fat_readonly: "Writeable FAT",
     },
 };
 

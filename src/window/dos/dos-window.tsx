@@ -13,7 +13,9 @@ export function DosWindow(props: {
 }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ci, setCi] = useState<CommandInterface | null>(null);
-    const token = useSelector((state: State) => state.auth.account?.token.access_token);
+    const sockdriveWrite = useSelector((state: State) => state.dos.sockdriveWrite);
+    const accessToken = useSelector((state: State) => state.auth.account?.token.access_token);
+    const token = sockdriveWrite ? accessToken : undefined;
     const worker = useSelector((state: State) => state.dos.worker);
     const backend = useSelector((state: State) => state.dos.backend);
     const backendHardware = useSelector((state: State) => state.dos.backendHardware);

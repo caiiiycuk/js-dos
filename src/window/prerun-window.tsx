@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BackendSelect, RenderAspectSelect, RenderSelect } from "../components/dos-option-select";
 import { dosSlice } from "../store/dos";
 import { State, useNonSerializableStore } from "../store";
-import { HardwareCheckbox, MouseCapture, WorkerCheckbox } from "../components/dos-option-checkbox";
+import { HardwareCheckbox, MouseCapture, SockdriveWrite, WorkerCheckbox } from "../components/dos-option-checkbox";
 import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
 import { useT } from "../i18n";
 import { dispatchLoginAction } from "../store/ui";
@@ -30,20 +30,16 @@ export function PreRunWindow() {
     return <div class="pre-run-window">
         <Play class="mb-8" />
 
-        {(account === null || !account.premium) &&
+        {(account === null) &&
             <div class="flex flex-row mb-4 -mt-4 items-center">
                 <div class="btn btn-accent" onClick={login}>
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        fill="red"
-                        viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor"
-                        class="stroke-current flex-shrink-0 h-6 w-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597
-                                    1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75
-                                    3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25
+                             0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786
+                             0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
                     </svg>
-                    {t("not_premium")}
+
+                    {t("please_login")}
                 </div>
                 <div class="ml-2 cursor-pointer" onClick={openPremiumPage}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -55,11 +51,25 @@ export function PreRunWindow() {
                 </div>
             </div>
         }
+        {account &&
+            <div class="flex flex-row mb-4 -mt-4 items-center">
+                <div class="btn btn-ghost" onClick={login}>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25
+                             0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 
+                             0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+                    </svg>
+
+                    {account.name ?? account.email}
+                </div>
+            </div>
+        }
 
         <div class="flex flex-row flex-wrap justify-end">
             <div class="flex flex-col items-end">
                 <BackendSelect />
                 <RenderSelect />
+                <SockdriveWrite />
             </div>
             <div class="ml-10 flex flex-col items-end">
                 <HardwareCheckbox />
