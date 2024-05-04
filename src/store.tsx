@@ -1,4 +1,4 @@
-import { ThunkMiddleware, configureStore, createSlice } from "@reduxjs/toolkit";
+import { ThunkMiddleware, configureStore } from "@reduxjs/toolkit";
 import { UiState, uiSlice } from "./store/ui";
 import { AuthState, authSlice } from "./store/auth";
 import { DosState, dosSlice } from "./store/dos";
@@ -9,6 +9,7 @@ import { DosEvent, DosOptions } from "./public/types";
 import { CommandInterface, InitFs } from "emulators";
 import { useStore } from "react-redux";
 import { Cache, CacheNoop } from "./host/lcache";
+import { InitState, createInitSlice } from "./store/init";
 
 export interface LoadedBundle {
     bundleUrl: string | null,
@@ -40,7 +41,6 @@ const dosMiddleware: ThunkMiddleware<any> = (store) => (next) => (action) => {
     next(actionWithAsyncDispatch);
 };
 
-let storeUid = -1;
 const nonSerializableStoreMap: { [uid: string]: NonSerializableStore } = {};
 
 export function makeNonSerializableStore(options: Partial<DosOptions>): NonSerializableStore {
@@ -54,14 +54,10 @@ export function makeNonSerializableStore(options: Partial<DosOptions>): NonSeria
 }
 
 export function makeStore(nonSerializableStore: NonSerializableStore) {
-    storeUid += 1;
+    const { storeUid, slice } = createInitSlice();
     const store = configureStore({
         reducer: {
-            init: createSlice({
-                name: "init",
-                initialState: { uid: storeUid },
-                reducers: {},
-            }).reducer,
+            init: slice.reducer,
             i18n: i18nSlice.reducer,
             auth: authSlice.reducer,
             ui: uiSlice.reducer,
@@ -80,7 +76,7 @@ export function makeStore(nonSerializableStore: NonSerializableStore) {
 };
 
 export interface State {
-    init: { uid: string },
+    init: InitState,
     ui: UiState,
     auth: AuthState,
     dos: DosState,

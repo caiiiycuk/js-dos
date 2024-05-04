@@ -5,7 +5,7 @@ import { editorSlice } from "../../store/editor";
 import { dosboxconf } from "./defaults";
 import { dosSlice } from "../../store/dos";
 import { useEffect, useState } from "preact/hooks";
-import { makevmEndpoint, makevmWssEndpoint } from "../../v8/config";
+import { makeVMBackend } from "../../store/init";
 
 const imgmount = "imgmount\\s+(\\d+)\\s+sockdrive\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s*$";
 const cleanup = "imgmount\\s+(\\d+)\\s+sockdrive\\s+.*$";
@@ -22,6 +22,8 @@ export function EditorConf() {
     const bundleConfig = useSelector((state: State) => state.editor.bundleConfig);
     const account = useSelector((state: State) => state.auth.account);
     const backend = useSelector((state: State) => state.dos.backend);
+    const { makevmEndpoint, makevmWssEndpoint } = useSelector((state: State) =>
+        makeVMBackend[state.init.makevmBackendName]);
     const dispatch = useDispatch();
     const [myDrives, setMyDrives] = useState<{ name: string, owner: string }[]>([]);
 
@@ -105,7 +107,7 @@ export function EditorConf() {
                     return <button class="btn btn-sm"
                         onClick={() => {
                             dispatch(dosSlice.actions.dosBackend(backend === "dosboxX" ? "dosboxX" : "dosbox"));
-                            changeConfig(contents);
+                            changeConfig(contents.replaceAll("{wss-makevm}", makevmWssEndpoint));
                         }}>
                         {name}
                     </button>;
@@ -181,7 +183,8 @@ export function EditorConf() {
                                         1.06.44H18A2.25 2.25 0 0 1 20.25 9v.776" />
                             </svg>
                         </button>
-                        <ul tabIndex={0} class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                        <ul tabIndex={0} class="dropdown-content z-[1] menu p-2 shadow bg-base-100
+                            rounded-box w-52 max-h-80 overflow-auto">
                             {myDrives.map(({ name, owner }) => {
                                 return <li onClick={(e) => {
                                     const newSockdrives = { ...sockdrives };

@@ -1,5 +1,5 @@
 import { Editor, MouseCapture, PauseCheckbox } from "../components/dos-option-checkbox";
-import { ThemeSelect } from "../components/dos-option-select";
+import { MakeVMBackend, ThemeSelect } from "../components/dos-option-select";
 import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
 
 export function SettingsFrame(props: {}) {
@@ -10,5 +10,6 @@ export function SettingsFrame(props: {}) {
         <VolumeSlider />
         <Editor />
         <ThemeSelect multiline={true} />
+        <MakeVMBackend multiline={true} />
     </div>;
 }

@@ -9,6 +9,7 @@ import {
 } from "../store/dos";
 import { ThemeValues, Theme, uiSlice } from "../store/ui";
 import { lStorage } from "../host/lstorage";
+import { MakevmBackendName, initSlice, makeVMBackendNames } from "../store/init";
 
 export function BackendSelect() {
     const locked = useSelector((state: State) => state.dos.backendLocked);
@@ -66,8 +67,20 @@ export function ThemeSelect(props: { class?: string, multiline?: boolean }) {
     />;
 }
 
+export function MakeVMBackend(props: { class?: string, multiline?: boolean }) {
+    return <OptionSelect<MakevmBackendName>
+        class={props.class}
+        label="FAT16/32"
+        values={makeVMBackendNames}
+        selector={(state: State) => state.init.makevmBackendName}
+        dispatch={(newValue) => initSlice.actions.setMakeVMBackendName(newValue)}
+        multiline={props.multiline}
+    />;
+}
+
 function OptionSelect<T>(props: {
     class?: string,
+    selectClass?: string,
     label: string,
     values: string[]
     selector: (state: State) => T,
@@ -84,6 +97,7 @@ function OptionSelect<T>(props: {
     }
     return <Select
         class={"mt-4 " + props.class}
+        selectClass={props.selectClass}
         disabled={props.disabled}
         multiline={props.multiline}
         label={t(props.label)}
