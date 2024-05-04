@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import { State } from "../store";
 
 export function StatsFrame() {
+    const startedAt = useSelector((state: State) => state.dos.ciStartedAt);
     const stats = useSelector((state: State) => state.dos.stats);
     const cycles = Math.round(useSelector((state: State) => state.dos.stats.cyclesPerMs) / 1000);
     const driveRecvMb = Math.round(stats.driveRecv / 1024 / 1024 * 100) / 100;
@@ -17,6 +18,10 @@ export function StatsFrame() {
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td>Uptime</td>
+                        <td>{Math.round((Date.now() - startedAt) / 100) / 10} s</td>
+                    </tr>
                     <tr>
                         <td>Cycles/ms</td>
                         { cycles <= 0 && <td>~ K</td> }

@@ -65,6 +65,7 @@ const initialState: {
     config: BundleConfig,
     stats: EmulatorStats,
     ci: boolean,
+    ciStartedAt: number,
     network: {
         server: "netherlands" | "newyork" | "singapore",
         room: string,
@@ -112,6 +113,7 @@ const initialState: {
         ipx: "disconnected",
     },
     ci: false,
+    ciStartedAt: 0,
     imageRendering: (lStorage.getItem("imageRendering") ?? "pixelated") as any,
     sockdriveWrite: true,
 };
@@ -196,6 +198,9 @@ export const dosSlice = createSlice({
         },
         ci: (s, a: { payload: boolean }) => {
             s.ci = a.payload;
+            if (a.payload) {
+                s.ciStartedAt = Date.now();
+            }
         },
         connectIpx: (s, a: { payload: { room: string, address: string } }) => {
             if (s.network.ipx === "connected") {
