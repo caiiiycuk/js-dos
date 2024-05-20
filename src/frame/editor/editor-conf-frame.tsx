@@ -5,7 +5,8 @@ import { editorSlice } from "../../store/editor";
 import { dosboxconf } from "./defaults";
 import { dosSlice } from "../../store/dos";
 import { useEffect, useState } from "preact/hooks";
-import { makeVMBackend } from "../../store/init";
+import { sockdriveBackend } from "../../store/init";
+import { uiSlice } from "../../store/ui";
 
 const imgmount = "imgmount\\s+(\\d+)\\s+sockdrive\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s*$";
 const cleanup = "imgmount\\s+(\\d+)\\s+sockdrive\\s+.*$";
@@ -22,8 +23,8 @@ export function EditorConf() {
     const bundleConfig = useSelector((state: State) => state.editor.bundleConfig);
     const account = useSelector((state: State) => state.auth.account);
     const backend = useSelector((state: State) => state.dos.backend);
-    const { makevmEndpoint, makevmWssEndpoint } = useSelector((state: State) =>
-        makeVMBackend[state.init.makevmBackendName]);
+    const { sockdriveEndpoint, sockdriveWssEndpoint } = useSelector((state: State) =>
+        sockdriveBackend[state.init.sockdriveBackendName]);
     const dispatch = useDispatch();
     const [myDrives, setMyDrives] = useState<{ name: string, owner: string }[]>([]);
 
@@ -31,11 +32,12 @@ export function EditorConf() {
         if (!account || !account.token) {
             setMyDrives([]);
         } else {
-            fetch(makevmEndpoint + "/list/drives/" + account.token.access_token)
+            fetch(sockdriveEndpoint + "/list/drives/" + account.token.access_token)
                 .then((r) => r.json())
-                .then(setMyDrives);
+                .then(setMyDrives)
+                .catch(console.error);
         }
-    }, [account?.token, makevmEndpoint]);
+    }, [account?.token, sockdriveEndpoint]);
 
     function parseSockDrives(conf: string) {
         const drives: { [num: string]: Sockdrive } = {};
@@ -107,21 +109,22 @@ export function EditorConf() {
                     return <button class="btn btn-sm"
                         onClick={() => {
                             dispatch(dosSlice.actions.dosBackend(backend === "dosboxX" ? "dosboxX" : "dosbox"));
-                            changeConfig(contents.replaceAll("{wss-makevm}", makevmWssEndpoint));
+                            changeConfig(contents.replaceAll("{wss-makevm}", sockdriveWssEndpoint));
                         }}>
                         {name}
                     </button>;
                 })}
         </div>
         {backend === "dosboxX" && <>
-            <a href="https://make-vm.com" class="btn btn-ghost btn-xs self-start" target="_blank">
+            <button class="btn btn-ghost btn-xs self-start" target="_blank"
+                onClick={() => dispatch(uiSlice.actions.frameFatDrives())}>
                 {t("net_drives")}:
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m12.75 15 3-3m0 0-3-3m3
                          3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
-            </a>
+            </button>
             {["2", "3"].map((num) => {
                 return <div class="flex flex-row justify-start items-center gap-3 w-full">
                     <p>{num === "2" ? "C:" : "D:"}</p>
@@ -139,7 +142,7 @@ export function EditorConf() {
                                     const newSockdrives = { ...sockdrives };
                                     newSockdrives[num] = {
                                         num,
-                                        backend: sockdrives[num]?.backend ?? makevmWssEndpoint,
+                                        backend: sockdrives[num]?.backend ?? sockdriveWssEndpoint,
                                         owner: e.currentTarget.value,
                                         drive: sockdrives[num]?.drive ?? "",
                                     };
@@ -163,7 +166,7 @@ export function EditorConf() {
                                     const newSockdrives = { ...sockdrives };
                                     newSockdrives[num] = {
                                         num,
-                                        backend: sockdrives[num]?.backend ?? makevmWssEndpoint,
+                                        backend: sockdrives[num]?.backend ?? sockdriveWssEndpoint,
                                         owner: sockdrives[num]?.owner ?? "",
                                         drive: e.currentTarget.value,
                                     };
@@ -191,7 +194,7 @@ export function EditorConf() {
                                     newSockdrives[num] = {
                                         num,
                                         owner,
-                                        backend: makevmWssEndpoint,
+                                        backend: sockdriveWssEndpoint,
                                         drive: name,
                                     };
                                     setSockdrivesAndUpdateConf(newSockdrives);

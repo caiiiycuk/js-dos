@@ -9,7 +9,7 @@ import {
 } from "../store/dos";
 import { ThemeValues, Theme, uiSlice } from "../store/ui";
 import { lStorage } from "../host/lstorage";
-import { MakevmBackendName, initSlice, makeVMBackendNames } from "../store/init";
+import { SockdriveBackendName, initSlice, sockdriveBackendNames } from "../store/init";
 
 export function BackendSelect() {
     const locked = useSelector((state: State) => state.dos.backendLocked);
@@ -67,13 +67,13 @@ export function ThemeSelect(props: { class?: string, multiline?: boolean }) {
     />;
 }
 
-export function MakeVMBackend(props: { class?: string, multiline?: boolean }) {
-    return <OptionSelect<MakevmBackendName>
+export function SockdriveBackend(props: { class?: string, multiline?: boolean }) {
+    return <OptionSelect<SockdriveBackendName>
         class={props.class}
-        label="FAT16/32"
-        values={makeVMBackendNames}
-        selector={(state: State) => state.init.makevmBackendName}
-        dispatch={(newValue) => initSlice.actions.setMakeVMBackendName(newValue)}
+        label="FAT16/32 Backend"
+        values={sockdriveBackendNames}
+        selector={(state: State) => state.init.sockdriveBackendName}
+        dispatch={(newValue) => initSlice.actions.setSockdriveBackendName(newValue)}
         multiline={props.multiline}
     />;
 }

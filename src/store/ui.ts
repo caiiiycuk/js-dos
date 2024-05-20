@@ -11,7 +11,7 @@ export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "account" | "settings" |
     "editor-conf" | "editor-fs" | "network" |
-    "stats" | "host-cache" | "quick-save" | "image-rendering";
+    "stats" | "fat-drives" | "quick-save" | "image-rendering";
 
 const initialState: {
     modal: "none" | "login",
@@ -89,8 +89,8 @@ export const uiSlice = createSlice({
             state.frame = "editor-fs";
             state.frameXs = false;
         },
-        frameHostCache: (state) => {
-            state.frame = "host-cache";
+        frameFatDrives: (state) => {
+            state.frame = "fat-drives";
             state.frameXs = false;
         },
         frameQuickSave: (state) => {

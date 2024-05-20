@@ -1,27 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { lStorage } from "../host/lstorage";
 
-export const makeVMBackendNames = ["localhost", "make-vm.com"];
-export type MakevmBackendName = typeof makeVMBackendNames[number];
-export const makeVMBackend: {
-    [key: MakevmBackendName]: {
-        makevmEndpoint: string,
-        makevmWssEndpoint: string,
+export const sockdriveBackendNames = ["localhost", "js-dos"];
+export type SockdriveBackendName = typeof sockdriveBackendNames[number];
+export const sockdriveBackend: {
+    [key: SockdriveBackendName]: {
+        sockdriveEndpoint: string,
+        sockdriveWssEndpoint: string,
     }
 } = {
-    "make-vm.com": {
-        makevmEndpoint: "https://backend.make-vm.com:8001",
-        makevmWssEndpoint: "wss://backend.make-vm.com:8001",
+    "js-dos": {
+        sockdriveEndpoint: "https://backend.make-vm.com:8001",
+        sockdriveWssEndpoint: "wss://backend.make-vm.com:8001",
     },
     "localhost": {
-        makevmEndpoint: "http://localhost:8001",
-        makevmWssEndpoint: "ws://localhost:8001",
+        sockdriveEndpoint: "http://localhost:8001",
+        sockdriveWssEndpoint: "ws://localhost:8001",
     },
 };
 
 export interface InitState {
     uid: string,
-    makevmBackendName: MakevmBackendName,
+    sockdriveBackendName: SockdriveBackendName,
 };
 
 let storeUid = -1;
@@ -33,12 +33,12 @@ export function createInitSlice() {
             name: "init",
             initialState: {
                 uid: storeUid,
-                makevmBackendName: lStorage.getItem("makevm.backend.name") ?? "make-vm.com",
+                sockdriveBackendName: lStorage.getItem("sockdrive.backend.name") ?? "js-dos",
             },
             reducers: {
-                setMakeVMBackendName: (state, a: { payload: MakevmBackendName }) => {
-                    state.makevmBackendName = a.payload;
-                    lStorage.setItem("makevm.backend.name", a.payload);
+                setSockdriveBackendName: (state, a: { payload: SockdriveBackendName }) => {
+                    state.sockdriveBackendName = a.payload;
+                    lStorage.setItem("sockdrive.backend.name", a.payload);
                 },
             },
         }),

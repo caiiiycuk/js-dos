@@ -110,14 +110,6 @@
     }
   }
 
-  .host-cache-frame {
-    .url {
-      word-wrap: break-word;
-      word-break: break-all;
-      white-space: normal;
-    }
-  }
-
   .quick-save-frame {
     .text-badge {
       @apply absolute left-0 top-0 w-3 h-3 font-bold rounded-full flex items-center justify-center;

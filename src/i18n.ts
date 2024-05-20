@@ -4,6 +4,7 @@ import { State } from "./store";
 
 const translations: {[lang: string]: {[key: string]: string} } = {
     ru: {
+        filter: "Фильтр",
         add: "Добавить",
         logout: "Выйти",
         please_login: "Войдите в аккаунт",
@@ -73,6 +74,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         fat_write: "FAT запись",
     },
     en: {
+        filter: "Filter",
         add: "Add",
         logout: "Logout",
         please_login: "Please login",

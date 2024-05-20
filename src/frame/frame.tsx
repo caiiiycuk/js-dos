@@ -3,7 +3,7 @@ import { State } from "../store";
 import { AccountFrame } from "./account-frame";
 import { EditorConf } from "./editor/editor-conf-frame";
 import { EditorFsFrame } from "./editor/editor-fs-frame";
-import { HostCacheFrame } from "./host-cache-frame";
+import { FatDrivesFrame } from "./fat-drives-frame";
 import { NetworkFrame } from "./network-frame";
 import { QuickSaveFrame } from "./quick-save-frame";
 import { SettingsFrame } from "./settings-frame";
@@ -27,7 +27,7 @@ export function Frame(props: {}) {
         { frame === "editor-fs" && <EditorFsFrame /> }
         { frame === "network" && <NetworkFrame /> }
         { frame === "stats" && <StatsFrame /> }
-        { frame === "host-cache" && <HostCacheFrame /> }
+        { frame === "fat-drives" && <FatDrivesFrame /> }
         { frame === "quick-save" && <QuickSaveFrame /> }
         { frame === "image-rendering" && <ImageRenderingFrame /> }
     </div>;

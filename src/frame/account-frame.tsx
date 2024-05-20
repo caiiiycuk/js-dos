@@ -128,11 +128,12 @@ function PremiumPlan(props: {}) {
                 <PremiumCheck />
                 <div>{t("writeable_fat32")}</div>
                 <div class="flex-grow"></div>
-                <a href="https://make-vm.com"
+                <button
+                    onClick={() => dispatch(uiSlice.actions.frameFatDrives())}
                     target="_blank"
                     class="ml-2 btn btn-xs text-success-content">
                     {t("manage")}
-                </a>
+                </button>
             </div>
             <div class="premium-plan-highlight">
                 <PremiumCheck />

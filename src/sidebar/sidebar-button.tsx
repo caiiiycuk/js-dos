@@ -45,13 +45,13 @@ export function QuickSaveButton(props: {
     </SidebarButton>;
 }
 
-export function HostCacheButton(props: {
+export function FatDrivesButton(props: {
     class?: string,
 }) {
     return <SidebarButton
         class={props.class}
-        frame="host-cache"
-        action={uiSlice.actions.frameHostCache()}
+        frame="fat-drives"
+        action={uiSlice.actions.frameFatDrives()}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
             stroke-width="1.5" stroke="currentColor" class="w-full h-full">
