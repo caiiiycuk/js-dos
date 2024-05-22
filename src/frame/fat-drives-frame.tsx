@@ -74,7 +74,7 @@ export function FatDrivesFrame() {
                                             <p class="text-xs">{owner}</p>}
                                     </td>
                                     {preimium && <td>
-                                        {account?.token && <div class="cursor-pointer hover:text-accent"
+                                        {account?.token && <div class="btn btn-ghost btn-xs"
                                             onClick={() => {
                                                 const newName = prompt("Enter drive name");
                                                 if (newName && newName.length > 0) {
@@ -98,7 +98,7 @@ export function FatDrivesFrame() {
                                                         });
                                                 }
                                             }}>Fork</div>}
-                                        {account?.token && owner === me && <div class="cursor-pointer hover:text-accent"
+                                        {account?.token && owner === me && <div class="btn btn-xs btn-ghost"
                                             onClick={() => {
                                                 // eslint-disable-next-line max-len
                                                 fetch(`${sockdriveEndpoint}/fork/delete/${owner}/${name}/${account.token.access_token}`, { method: "POST" })

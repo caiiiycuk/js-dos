@@ -37,6 +37,7 @@ function useLog(ci: CommandInterface): void {
                 if (args[0]?.indexOf("write=false") !== -1) {
                     dispatch(uiSlice.actions.readOnlyWarning(true));
                 }
+                console.log(...args);
             }
         });
     }, [ci, dispatch]);
