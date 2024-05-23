@@ -4,6 +4,7 @@ import { State } from "./store";
 
 const translations: {[lang: string]: {[key: string]: string} } = {
     ru: {
+        preloading_sockdrive: "Загрузка FAT",
         filter: "Фильтр",
         add: "Добавить",
         logout: "Выйти",
@@ -74,6 +75,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         fat_write: "FAT запись",
     },
     en: {
+        preloading_sockdrive: "Preloading FAT",
         filter: "Filter",
         add: "Add",
         logout: "Logout",

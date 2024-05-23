@@ -31,9 +31,10 @@ jobs:
     - run: yarn run eslint . --ext ts,tsx --max-warnings 0
     - run: mkdir -p public/emulators && cp -rv node_modules/emulators/dist/* public/emulators
     - run: NODE_ENV=production yarn run vite build --base /latest --sourcemap true --minify terser
+    - run: zip -9r release.zip dist/*
     - name: publish
       if: startsWith(github.ref, 'refs/tags/')
-      run: npm publish --tag beta
+      run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}
     - name: upload
@@ -41,3 +42,10 @@ jobs:
       with:
         name: 'dist'
         path: 'dist'
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        name: ${{ github.ref_name }}
+        files: |
+          ${{github.workspace}}/release.zip

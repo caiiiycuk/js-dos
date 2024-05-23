@@ -116,7 +116,8 @@ export const uiSlice = createSlice({
         setFullScreen: (state, a: { payload: boolean }) => {
             state.fullScreen = a.payload;
         },
-        showToast: (state, a: { payload: { message: string, intent?: typeof initialState.toastIntent } }) => {
+        showToast: (state, a: { payload: { message: string, intent?: typeof initialState.toastIntent,
+            long?: boolean } }) => {
             if (state.toastTimeoutId !== 0) {
                 clearInterval(state.toastTimeoutId);
             }
@@ -125,7 +126,7 @@ export const uiSlice = createSlice({
             if (a.payload.intent !== "panic") {
                 state.toastTimeoutId = setTimeout(() => {
                     (a as unknown as DosAction).asyncStore((store) => store.dispatch(uiSlice.actions.hideToast()));
-                }, 1500);
+                }, a.payload.long ? 5000 : 1500);
             }
         },
         hideToast: (state) => {

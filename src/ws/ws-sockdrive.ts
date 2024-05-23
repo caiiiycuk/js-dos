@@ -51,8 +51,7 @@ export function createSockdrive(
 
             const sectorSize = templates[seq].sectorSize;
             memory[seq] = new Uint8Array(sectorSize + sectorSize * aheadRange);
-            mapping[seq] = new Drive(url, owner, name, token, stats,
-                { HEAPU8: memory[seq] }, sectorSize, aheadRange, sectorSize, 1); // cache is on server
+            mapping[seq] = new Drive(url, owner, name, token, stats, { HEAPU8: memory[seq] });
             mapping[seq].onOpen((read, write) => {
                 onOpen(owner + "/" + name, read, write);
             });

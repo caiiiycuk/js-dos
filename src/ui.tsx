@@ -55,12 +55,13 @@ export function Ui() {
 function Toast() {
     const toast = useSelector((state: State) => state.ui.toast);
     const intent = useSelector((state: State) => state.ui.toastIntent);
+    const readOnlyWarning = useSelector((state: State) => state.ui.readOnlyWarning);
 
     if (toast === null) {
         return null;
     }
 
-    return <div class="absolute right-10 bottom-10">
+    return <div class={"absolute right-10 " + (readOnlyWarning ? "bottom-32" : "bottom-10")}>
         <div class={"alert alert-" + (intent === "panic" ? "error" : intent)} >
             {toast}
         </div>

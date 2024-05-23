@@ -10,6 +10,7 @@ import { useEffect } from "preact/hooks";
 import { mouse } from "./controls/mouse";
 import { KBD_0 } from "./controls/keys";
 import { uiSlice } from "../../store/ui";
+import { useT } from "../../i18n";
 
 export function useDosRuntime(canvas: HTMLCanvasElement,
                               ci: CommandInterface): void {
@@ -25,19 +26,44 @@ export function useDosRuntime(canvas: HTMLCanvasElement,
 
 function useLog(ci: CommandInterface): void {
     const dispatch = useDispatch();
+    const t = useT();
     useEffect(() => {
-        ci.events().onMessage((msgType, ...args) => {
+        let totalPreload = 0;
+        const preloadProgress: { [drive: string]: number } = {};
+        ci.events().onMessage((msgType, ...args: string[]) => {
             if (msgType === "error" && args[0]?.startsWith("[panic]")) {
                 dispatch(uiSlice.actions.showToast({
                     message: args[0],
                     intent: "panic",
                 }));
             } else if (msgType === "log" && args[0]?.indexOf("sockdrive:") !== -1) {
+                const drive = args[0].substring(args[0].indexOf(" ") + 1, args[0].indexOf(","));
                 dispatch(uiSlice.actions.cloudSaves(false));
                 if (args[0]?.indexOf("write=false") !== -1) {
+                    console.log("drive", drive, "config:", args[0]);
                     dispatch(uiSlice.actions.readOnlyWarning(true));
                 }
-                console.log(...args);
+                if (args[0]?.indexOf("preload=") !== -1) {
+                    const rest = Number.parseInt(args[0].substring(args[0].indexOf("preload=") + "preload=".length));
+                    if (preloadProgress[drive] === undefined) {
+                        preloadProgress[drive] = rest;
+                        totalPreload += rest;
+                    } else {
+                        preloadProgress[drive] = rest;
+                    }
+
+                    let downloaded = totalPreload;
+                    for (const rest of Object.values(preloadProgress)) {
+                        downloaded -= rest;
+                    }
+
+                    dispatch(uiSlice.actions.showToast({
+                        message: t("preloading_sockdrive") + " " +
+                            (Math.round(downloaded / 1024 / 1024 * 100) / 100) + "/" +
+                            (Math.round(totalPreload / 1024 / 1024 * 100) / 100) + "Mb",
+                        long: true,
+                    }));
+                }
             }
         });
     }, [ci, dispatch]);
