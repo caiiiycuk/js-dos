@@ -16,8 +16,10 @@ export interface ReadResponse {
 }
 
 export function createSockdrive(
-    onOpen: (drive: string, read: boolean, write: boolean) => void,
-    onError: (e: Error) => void) {
+    onOpen: (drive: string, read: boolean, write: boolean, imageSize: number, preloadQueue: number[]) => void,
+    onError: (e: Error) => void,
+    onPreloadProgress: (drive: string, restBytes: number) => void,
+) {
     let seq = 0;
     const mapping: { [handle: Handle]: Drive } = {};
     const templates: { [handle: number]: Template } = {};
@@ -32,7 +34,10 @@ export function createSockdrive(
     };
     const sockdrive = {
         stats,
-        open: async (url: string, owner: string, name: string, token: string, aheadRange: number): Promise<Handle> => {
+        open: async (url: string, owner: string, name: string, token: string): Promise<{
+            handle: Handle,
+            aheadRange: number,
+        }> => {
             const response = await fetch(url.replace("wss://", "https://")
                 .replace("ws://", "http://") + "/template/" + owner + "/" + name);
             const template = await response.json();
@@ -50,22 +55,39 @@ export function createSockdrive(
             };
 
             const sectorSize = templates[seq].sectorSize;
-            memory[seq] = new Uint8Array(sectorSize + sectorSize * aheadRange);
-            mapping[seq] = new Drive(url, owner, name, token, stats, { HEAPU8: memory[seq] });
-            mapping[seq].onOpen((read, write) => {
-                onOpen(owner + "/" + name, read, write);
-            });
-            mapping[seq].onError(onError);
-            return seq;
-        },
-        read: (handle: Handle, sector: number): Promise<ReadResponse> => {
-            if (mapping[handle]) {
-                return (mapping[handle].read(sector, 0, false) as Promise<number>).then((code) => {
-                    return {
-                        code,
-                        buffer: memory[handle].slice(templates[seq].sectorSize),
-                    };
+            const module = { HEAPU8: new Uint8Array(0) };
+            mapping[seq] = new Drive(url, owner, name, token, stats, module, true, true);
+            return new Promise<{ handle: Handle, aheadRange: number }>((resolve, reject) => {
+                const drive = owner + "/" + name;
+                mapping[seq].onOpen((read, write, imageSize, preloadQueue, aheadRange) => {
+                    memory[seq] = new Uint8Array(sectorSize /* write */ + sectorSize * aheadRange);
+                    module.HEAPU8 = memory[seq];
+                    onOpen(drive, read, write, imageSize, preloadQueue);
+                    resolve({
+                        handle: seq,
+                        aheadRange,
+                    });
                 });
+                mapping[seq].onPreloadProgress((restBytes) => {
+                    onPreloadProgress(drive, restBytes);
+                });
+                mapping[seq].onError((e) => {
+                    onError(e);
+                    reject(e);
+                });
+            });
+        },
+        read: async (handle: Handle, sector: number): Promise<ReadResponse> => {
+            if (mapping[handle]) {
+                const ptr = templates[seq].sectorSize;
+                let code = mapping[handle].read(sector, ptr, true) as number;
+                if (code = 255) {
+                    code = await mapping[handle].read(sector, ptr, false);
+                }
+                return {
+                    code,
+                    buffer: memory[handle].slice(ptr),
+                };
             }
 
             console.error("ERROR! sockdrive handle", handle, "not found");

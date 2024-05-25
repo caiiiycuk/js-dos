@@ -48,9 +48,11 @@ export class WsTransportLayer implements TransportLayer {
     socket: WebSocket;
     sessionId: string = Date.now() + "";
     hardware: Hardware;
+    onInit: (version: number) => void = {/**/};
 
     private cycles = 0;
-    private sockdrive = createSockdrive(this.onSockdriveOpen.bind(this), this.onSockdriveError.bind(this));
+    private sockdrive = createSockdrive(this.onSockdriveOpen.bind(this),
+        this.onSockdriveError.bind(this), this.onSockdrivePreloadProgress.bind(this));
 
     private handler: MessageHandler = () => {/**/};
 
@@ -120,15 +122,17 @@ export class WsTransportLayer implements TransportLayer {
         const { id, payload } = this.readMessage(msg);
         const message = serverMessageEnum[id];
         switch (message) {
-            case "ws-ready":
+            case "ws-ready": {
+                this.onInit((payload && payload[0] && payload.length > 0) ? payload[0][0] : 0);
+                this.handler(message, {});
+            } break;
             case "ws-server-ready":
-            case "ws-exit":
-                {
-                    // delay ws-server-ready until ws-sound-init
-                    if (message !== "ws-server-ready") {
-                        this.handler(message, {});
-                    }
-                } break;
+            case "ws-exit": {
+                // delay ws-server-ready until ws-sound-init
+                if (message !== "ws-server-ready") {
+                    this.handler(message, {});
+                }
+            } break;
             case "ws-stdout":
             case "ws-log":
             case "ws-warn":
@@ -267,17 +271,17 @@ export class WsTransportLayer implements TransportLayer {
                                 const owner = textDecoder.decode(payload[1]!);
                                 const name = textDecoder.decode(payload[2]!);
                                 const token = textDecoder.decode(payload[3]!);
-                                const aheadRange = this.readUint32(payload[4]!, 0);
-                                const handle = await this.sockdrive.open(url, owner, name, token, aheadRange);
+                                const { handle, aheadRange } = await this.sockdrive.open(url, owner, name, token);
                                 const template = this.sockdrive.template(handle);
-                                const packet = new Uint8Array(4 * 6);
+                                const packet = new Uint8Array(4 * 7);
                                 let offset = 0;
                                 offset = this.writeUint32(packet, handle, offset);
                                 offset = this.writeUint32(packet, template.size, offset);
                                 offset = this.writeUint32(packet, template.heads, offset);
                                 offset = this.writeUint32(packet, template.cylinders, offset);
                                 offset = this.writeUint32(packet, template.sectors, offset);
-                                this.writeUint32(packet, template.sectorSize, offset);
+                                offset = this.writeUint32(packet, template.sectorSize, offset);
+                                this.writeUint32(packet, aheadRange, offset);
                                 this.sendMessageToSocket(100, packet);
                             } break;
                             case 101/* ws-sockdrive-read */: {
@@ -317,7 +321,7 @@ export class WsTransportLayer implements TransportLayer {
         }
     }
 
-    constructor(socket: WebSocket) {
+    constructor(socket: WebSocket, onInit: (version: number) => void) {
         this.socket = socket;
         this.socket.addEventListener("error", (e) => {
             this.handler("ws-err", { tag: "ws", message: (e as any).message ?? "Unknown transport layer error" });
@@ -330,6 +334,7 @@ export class WsTransportLayer implements TransportLayer {
         });
         this.sendMessageToSocket("wc-install");
         this.hardware = (null) as any;
+        this.onInit = onInit;
     }
 
     async sendMessageToServer(name: ClientMessage, props?: { [key: string]: any; }) {
@@ -411,10 +416,11 @@ export class WsTransportLayer implements TransportLayer {
         this.sendMessageToSocket("wc-exit");
     }
 
-    onSockdriveOpen(drive: string, read: boolean, write: boolean) {
+    onSockdriveOpen(drive: string, read: boolean, write: boolean, imageSize: number, preloadQueue: number[]) {
         this.handler("ws-log", {
             tag: "worker",
-            message: "sockdrive: " + drive + ", read=" + read + ", write=" + write,
+            message: "sockdrive: " + drive + ", read=" + read + ", write=" + write +
+                ", imageSize=" + Math.round(imageSize / 1024 / 1024) + "Mb" + ", preloadQueue=" + preloadQueue.length,
         });
     }
 
@@ -424,9 +430,16 @@ export class WsTransportLayer implements TransportLayer {
             message: e.message ?? "unable to open sockdrive",
         });
     }
+
+    onSockdrivePreloadProgress(drive: string, restBytes: number) {
+        this.handler("ws-log", {
+            tag: "worker",
+            message: "sockdrive: " + drive + ", preload=" + restBytes,
+        });
+    }
 }
 
-export function createWsTransportLayer(url: string): Promise<TransportLayer> {
+export function createWsTransportLayer(url: string, onInit: (version: number) => void): Promise<TransportLayer> {
     return new Promise<TransportLayer>((resolve) => {
         let locked = false;
         const inervalId = setInterval(() => {
@@ -439,7 +452,7 @@ export function createWsTransportLayer(url: string): Promise<TransportLayer> {
             const onSuccess = () => {
                 clearInterval(inervalId);
                 console.log("Connected to", url);
-                resolve(new WsTransportLayer(ws));
+                resolve(new WsTransportLayer(ws, onInit));
             };
 
             ws.addEventListener("error", (error) => {

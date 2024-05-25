@@ -49,6 +49,7 @@ export function Ui() {
         <Login />
         <Toast />
         <ReadOnlyWarning />
+        <UpdateWsWarning />
     </div>;
 };
 
@@ -97,6 +98,41 @@ function ReadOnlyWarning() {
             <span>{t("read_only_access")}</span>
             <div>
                 <button class="btn btn-sm btn-primary mr-2" onClick={fix}>{t("fix")}</button>
+                <button class="btn btn-sm" onClick={close}>{t("close")}</button>
+            </div>
+        </div>
+    </div>;
+}
+
+function UpdateWsWarning() {
+    const updateWsWarning = useSelector((state: State) => state.ui.updateWsWarning);
+    const t = useT();
+    const dispatch = useDispatch();
+
+    if (!updateWsWarning) {
+        return null;
+    }
+
+    function fix() {
+        window.open("https://dos.zone/download/", "_blank");
+        dispatch(uiSlice.actions.updateWsWarning(false));
+    }
+
+    function close() {
+        dispatch(uiSlice.actions.updateWsWarning(false));
+    }
+
+    return <div class="absolute left-20 right-10 top-10 flex justify-center">
+        <div class="alert w-auto">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor" class="size-6 text-error">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217
+                    3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898
+                    0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+            <span>{t("ws_outdated")}</span>
+            <div>
+                <button class="btn btn-sm btn-primary mr-2" onClick={fix}>{t("update")}</button>
                 <button class="btn btn-sm" onClick={close}>{t("close")}</button>
             </div>
         </div>

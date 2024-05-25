@@ -6,6 +6,8 @@ import { State, useNonSerializableStore, postJsDosEvent } from "../../store";
 import { useDosRuntime } from "./dos-runtime";
 import { dhry2Bundle, Dhry2Results } from "./dos-dhry2";
 import { createWsTransportLayer } from "../../ws/ws-transport-layer";
+import { actualWsVersion } from "../../v8/config";
+import { uiSlice } from "../../store/ui";
 
 declare const emulators: Emulators;
 
@@ -35,7 +37,12 @@ export function DosWindow(props: {
                 if (backendHardware && nonSerializableStore.options.backendHardware) {
                     const ws = await nonSerializableStore.options.backendHardware(backend);
                     if (ws !== null) {
-                        return emulators.backend(bundles as any, await createWsTransportLayer(ws), { token });
+                        return emulators.backend(bundles as any, await createWsTransportLayer(ws, (version) => {
+                            if (version < actualWsVersion) {
+                                dispatch(uiSlice.actions.updateWsWarning(true));
+                            }
+                            console.log("wsServer:", version, " expected:", actualWsVersion);
+                        }), { token });
                     }
                 }
 

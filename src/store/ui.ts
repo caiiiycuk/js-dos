@@ -27,6 +27,7 @@ const initialState: {
     toastTimeoutId: number,
     background: string | null,
     readOnlyWarning: boolean,
+    updateWsWarning: boolean,
     cloudSaves: boolean,
 } = {
     modal: "none",
@@ -42,6 +43,7 @@ const initialState: {
     toastTimeoutId: 0,
     background: null,
     readOnlyWarning: false,
+    updateWsWarning: false,
     cloudSaves: true,
 };
 
@@ -135,6 +137,9 @@ export const uiSlice = createSlice({
         },
         readOnlyWarning: (state, a: { payload: boolean }) => {
             state.readOnlyWarning = a.payload;
+        },
+        updateWsWarning: (state, a: { payload: boolean }) => {
+            state.updateWsWarning = a.payload;
         },
         cloudSaves: (state, a: { payload: boolean }) => {
             state.cloudSaves = a.payload;
