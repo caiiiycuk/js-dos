@@ -14,9 +14,14 @@ The key features:
 * Cloud storage
 * WebAssembly and pure JS versions
   
+## Demo
 
-
-[![Watch the video](https://github.com/caiiiycuk/js-dos/assets/1727152/a2b481cb-43b1-44aa-8b71-2181d351bb1a)](https://youtu.be/lhFrAe5YrJE)
+* [Win 95](https://v8.js-dos.com) - plain Windows 95 with D3D & 3Dfx
+* [DOS.Zone](https://dos.zone) - community portal with 1900+ dos games
+* [Multiplayer](https://dos.zone/multiplayer) - multiplayer games (Doom, Heroes 2, etc.)
+* [Diablo I](https://dos.zone/diablo-1996/)
+* Dune 2000
+  [![Watch the video](https://github.com/caiiiycuk/js-dos/assets/1727152/a2b481cb-43b1-44aa-8b71-2181d351bb1a)](https://youtu.be/lhFrAe5YrJE)
 
 ## Documentation
 
@@ -25,10 +30,6 @@ The key features:
 * [js-dos 6.22](https://js-dos.com/index_6.22.html)
 * [js-dos 3.xx](https://js-dos.com/index_v3.html)
 * [Repository](https://github.com/caiiiycuk/js-dos-docs)
-
-Demo:
-
-[DOS.Zone](https://dos.zone)
 
 ## Development
 
