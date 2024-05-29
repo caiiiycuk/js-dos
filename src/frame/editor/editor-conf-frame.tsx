@@ -24,7 +24,8 @@ export function EditorConf() {
     const account = useSelector((state: State) => state.auth.account);
     const backend = useSelector((state: State) => state.dos.backend);
     const { sockdriveEndpoint, sockdriveWssEndpoint } = useSelector((state: State) =>
-        sockdriveBackend[state.init.sockdriveBackendName]);
+        sockdriveBackend[state.init.sockdriveBackendName] ??
+        sockdriveBackend["js-dos"]);
     const dispatch = useDispatch();
     const [myDrives, setMyDrives] = useState<{ name: string, owner: string }[]>([]);
 

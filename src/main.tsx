@@ -18,7 +18,7 @@ import { NonSerializableStore, Store, makeNonSerializableStore, makeStore, postJ
 export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
     const nonSerializableStore = makeNonSerializableStore(options);
-    const store = makeStore(nonSerializableStore);
+    const store = makeStore(nonSerializableStore, options);
 
 
     if (store.getState().auth.account?.email === "dz.caiiiycuk@gmail.com" ||

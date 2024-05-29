@@ -10,8 +10,8 @@ export const sockdriveBackend: {
     }
 } = {
     "js-dos": {
-        sockdriveEndpoint: "https://backend.make-vm.com:8001",
-        sockdriveWssEndpoint: "wss://backend.make-vm.com:8001",
+        sockdriveEndpoint: "https://sockdrive.js-dos.com:8001",
+        sockdriveWssEndpoint: "wss://sockdrive.js-dos.com:8001",
     },
     "localhost": {
         sockdriveEndpoint: "http://localhost:8001",

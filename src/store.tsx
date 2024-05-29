@@ -9,7 +9,7 @@ import { DosEvent, DosOptions } from "./public/types";
 import { CommandInterface, InitFs } from "emulators";
 import { useStore } from "react-redux";
 import { Cache, CacheNoop } from "./host/lcache";
-import { InitState, createInitSlice } from "./store/init";
+import { InitState, createInitSlice, initSlice, sockdriveBackend, sockdriveBackendNames } from "./store/init";
 
 export interface LoadedBundle {
     bundleUrl: string | null,
@@ -53,7 +53,7 @@ export function makeNonSerializableStore(options: Partial<DosOptions>): NonSeria
     };
 }
 
-export function makeStore(nonSerializableStore: NonSerializableStore) {
+export function makeStore(nonSerializableStore: NonSerializableStore, options: Partial<DosOptions>) {
     const { storeUid, slice } = createInitSlice();
     const store = configureStore({
         reducer: {
@@ -72,6 +72,14 @@ export function makeStore(nonSerializableStore: NonSerializableStore) {
         },
     });
     nonSerializableStoreMap[storeUid] = nonSerializableStore;
+    if (options.sockdriveBackend && sockdriveBackendNames.indexOf(options.sockdriveBackend.name) === -1) {
+        sockdriveBackendNames.push(options.sockdriveBackend.name);
+        sockdriveBackend[options.sockdriveBackend.name] = {
+            sockdriveEndpoint: "https://" + options.sockdriveBackend.host,
+            sockdriveWssEndpoint: "wss://" + options.sockdriveBackend.host,
+        };
+        store.dispatch(initSlice.actions.setSockdriveBackendName(options.sockdriveBackend.name));
+    }
     return store;
 };
 

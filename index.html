@@ -42,6 +42,10 @@
           //  console.log("Hardware backend for", backend);
           //  return Promise.resolve("ws://127.0.0.1:8080");
           //},
+          // sockdriveBackend: {
+          //   name: "makevm",
+          //   host: "backend.make-vm.com:8001",
+          // },
           onEvent: (event) => {
             console.log("Event", event)
             if (event === "ci-ready") {
@@ -96,8 +100,8 @@ scaler=none
 
 [autoexec]
 echo off
-imgmount 2 sockdrive wss://backend.make-vm.com:8001 dos.zone diablo_109_c
-imgmount 3 sockdrive wss://backend.make-vm.com:8001 dos.zone diablo_109_d
+imgmount 2 sockdrive wss://sockdrive.js-dos.com:8001 dos.zone diablo_109_c
+imgmount 3 sockdrive wss://sockdrive.js-dos.com:8001 dos.zone diablo_109_d
 boot c:
 `;
   </script>

@@ -20,6 +20,10 @@ export interface DosOptions {
     server: "netherlands" | "newyork" | "singapore",
     room: string,
     fullScreen: boolean,
+    sockdriveBackend: {
+        name: string,
+        host: string,
+    }
 }
 
 export interface DosProps {
