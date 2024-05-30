@@ -237,7 +237,7 @@ scaler=none
 
 [autoexec]
 echo off
-imgmount 2 sockdrive {wss-makevm} dos.zone dos7.1
+imgmount 2 sockdrive {wss-makevm} system dos7.1-v1
 echo Please visit our website:
 echo 
 echo         _                __
@@ -312,7 +312,7 @@ scaler=none
 
 [autoexec]
 echo off
-imgmount 2 sockdrive {wss-makevm} dos.zone win95
+imgmount 2 sockdrive {wss-makevm} system win95-v1
 echo Please visit our website:
 echo 
 echo         _                __
@@ -387,7 +387,7 @@ scaler=none
 
 [autoexec]
 echo off
-imgmount 2 sockdrive {wss-makevm} dos.zone win98
+imgmount 2 sockdrive {wss-makevm} system win98-v1
 echo Please visit our website:
 echo 
 echo         _                __

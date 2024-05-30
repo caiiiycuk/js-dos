@@ -31,7 +31,7 @@ export function ImageRenderingButton(props: {
 export function QuickSaveButton(props: {
     class?: string,
 }) {
-    const disabled = useSelector((state: State) => state.auth.account) === null;
+    const disabled = useSelector((state: State) => state.auth.account) === null && false;
     const action = disabled ?
         uiSlice.actions.modalLogin() :
         uiSlice.actions.frameQuickSave();

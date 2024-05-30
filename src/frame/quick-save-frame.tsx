@@ -6,20 +6,22 @@ import { State, useNonSerializableStore } from "../store";
 import { dispatchLoginAction } from "../store/ui";
 
 export function QuickSaveFrame() {
-    const premium = useSelector((state: State) => state.auth.account)?.premium;
+    const premium = useSelector((state: State) => state.auth.account)?.premium && false;
     return <div class="quick-save-frame flex flex-col justify-center items-center -my-2">
         <CloudSaveButton />
-        <SaveButton label={1} bgcolor="bg-primary" textcolor="text-primary-content" />
-        <LoadButton label={1} bgcolor="bg-primary" />
-        <SaveButton disabled={!premium} label={2} bgcolor="bg-secondary" textcolor="text-secondary-content" />
-        <LoadButton disabled={!premium} label={2} bgcolor="bg-secondary" />
-        <SaveButton disabled={!premium} label={3} bgcolor="bg-accent" textcolor="text-accent-content" />
-        <LoadButton disabled={!premium} label={3} bgcolor="bg-accent" />
+        <SaveButton label="quick" bgcolor="bg-primary" textcolor="text-primary-content" />
+        <LoadButton label="quick" bgcolor="bg-primary" />
+        {premium && <>
+            <SaveButton disabled={!premium} label={2} bgcolor="bg-secondary" textcolor="text-secondary-content" />
+            <LoadButton disabled={!premium} label={2} bgcolor="bg-secondary" />
+            <SaveButton disabled={!premium} label={3} bgcolor="bg-accent" textcolor="text-accent-content" />
+            <LoadButton disabled={!premium} label={3} bgcolor="bg-accent" />
+        </>}
     </div>;
 }
 
 function SaveButton(props: {
-    label: number,
+    label: number | string,
     bgcolor: string,
     textcolor: string,
     disabled?: boolean,
@@ -59,7 +61,7 @@ function SaveButton(props: {
 }
 
 function LoadButton(props: {
-    label: number,
+    label: number | string,
     bgcolor: string,
     disabled?: boolean,
 }) {
@@ -84,7 +86,7 @@ function LoadButton(props: {
 
     return <div class={"sidebar-button flex justify-center " + (props.disabled ? " opacity-50" : "")}
         onClick={onClick}>
-        <DisketteIcon class="opacity-10"/>
+        <DisketteIcon class="opacity-10" />
         {props.disabled === true && <LockBadge />}
         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24" stroke-width="1.5"

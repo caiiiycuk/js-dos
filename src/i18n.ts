@@ -4,6 +4,7 @@ import { State } from "./store";
 
 const translations: {[lang: string]: {[key: string]: string} } = {
     ru: {
+        enter_name_of_drive: "Введите название диска",
         ws_outdated: "Необходимо обновить DOS Браузер",
         update: "Обновить",
         preloading_sockdrive: "Загрузка FAT",
@@ -77,6 +78,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         fat_write: "FAT запись",
     },
     en: {
+        enter_name_of_drive: "Enter name of drive",
         ws_outdated: "Must update DOS Browser App",
         update: "Update",
         preloading_sockdrive: "Preloading FAT",

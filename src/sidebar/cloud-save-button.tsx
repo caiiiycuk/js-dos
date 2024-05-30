@@ -12,7 +12,7 @@ export function CloudSaveButton(props: {
 }) {
     const [busy, setBusy] = useState<boolean>(false);
     const account = useSelector((state: State) => state.auth.account);
-    const disabled = account === null;
+    const disabled = account === null && false;
     const dispatch = useDispatch();
     const t = useT();
     const cloudSaves = useSelector((state: State) => state.ui.cloudSaves);

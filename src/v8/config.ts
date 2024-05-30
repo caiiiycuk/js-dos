@@ -17,4 +17,4 @@ export const cancelSubscriptionPage = {
     ru: "https://v8.js-dos.com/ru/cancel-your-subscription/",
 };
 
-export const actualWsVersion = 1;
+export const actualWsVersion = 2;
