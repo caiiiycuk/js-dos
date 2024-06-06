@@ -1,0 +1,37 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2024-06-06T17:10:26.7760993"><title>Run without bundle | js-dos</title><script type="application/json" id="virtual-toc-data">[{"id":"provide-dosbox-conf-directly","level":0,"title":"Provide dosbox.conf directly","anchor":"#provide-dosbox-conf-directly"}]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b267/app.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="16x16" href="images/logo-16.png"><link rel="icon" type="image/png" sizes="32x32" href="images/logo-32.png"><link rel="icon" type="image/png" sizes="96x96" href="images/logo-192.png"><link rel="icon" type="image/png" sizes="300x300" href="images/logo-512.png"><meta name="image" content=""><!-- Open Graph --><meta property="og:title" content="Run without bundle | js-dos"><meta property="og:description" content=""><meta property="og:image" content=""><meta property="og:site_name" content="js-dos Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://js-dos.com//8.xx/run-without-bundle.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content=""><meta name="twitter:title" content="Run without bundle | js-dos"><meta name="twitter:description" content=""><meta name="twitter:creator" content=""><meta name="twitter:image:src" content=""><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
+    "@context": "http://schema.org",
+    "@type": "WebPage",
+    "@id": "https://js-dos.com//8.xx/run-without-bundle.html#webpage",
+    "url": "https://js-dos.com//8.xx/run-without-bundle.html",
+    "name": "Run without bundle | js-dos",
+    "description": "",
+    "image": "",
+    "inLanguage":"en-US"
+}</script><!-- End Schema.org --><!-- Schema.org WebSite --><script type="application/ld+json">{
+    "@type": "WebSite",
+    "@id": "https://js-dos.com/#website",
+    "url": "https://js-dos.com/",
+    "name": "js-dos Help"
+}</script><!-- End Schema.org --></head><body data-id="run-without-bundle" data-main-title="Run without bundle" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="Overview.md|js-dos///Advanced-Topics.md|Advanced Topics"><div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos 8.xx Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="run-without-bundle" id="run-without-bundle.md">Run without bundle</h1><p id="vzdvqk_761">As explained in other topics, the bundle is a preferred way to run DOS program. Bundle can contain much more configuration that DOSBox excepts, for example, mobile controls, resources, etc.</p><aside class="prompt" data-type="warning" data-title="" id="vzdvqk_762"><p id="vzdvqk_763">If you are looking at the recommended and correct way to run DOS program just create <a href="jsdos-bundle.html" id="vzdvqk_764" data-tooltip="Starting from js-dos v7, the API expects a js-dos bundle that already contains all configuration needed to start the DOS program. js-dos bundle is just a ZIP archive that contains the game itself and a js-dos configuration file (same as dosbox.conf file). For example, digger.jsdos…">bundle</a> for it.</p></aside><section class="chapter"><h2 id="provide-dosbox-conf-directly" data-toc="provide-dosbox-conf-directly">Provide dosbox.conf directly</h2><p id="vzdvqk_765">js-dos can work without a bundle, but at least it needs a DOSBox config file to start. You can create js-dos player by providing config using javascript:</p><div class="code-block" data-lang="javascript">
+Dos(document.getElementById(&quot;app&quot;), {
+  dosboxConf: `
+[dos]
+ver=7.1
+hard drive data rate limit=0
+floppy drive data rate limit=0
+
+[cpu]
+cputype=pentium_mmx
+core=auto 
+integration device=true
+
+[sblaster]
+sbtype=sb16vibra`,
+  onEvent: (event, ci) =&gt; {
+    if (event === &quot;ci-ready&quot;) {
+        // ci: [[[CommandIterface|command-interface.html]]] is ready
+    }
+  },
+});
+</div><p id="vzdvqk_767">When you get <a href="command-interface.html" id="vzdvqk_768" data-tooltip="The Command Interface is only one object that allows you to communicate with js-dos instance. Once you run some js-dos bundle you will receive Command Interface instance.">command interface</a> (ci in example), then you can use <a href="working-with-fs.html" id="vzdvqk_769" data-tooltip="When js-dos player successfully starts, the DOSBox command interface is available. You can get it from the event:">FS API</a> to work with DOS filesystem. For example, you can upload program to run in DOSBox.</p><p id="vzdvqk_770">Do not forget to mount drive <span class="control" id="vzdvqk_771">C:</span> after that.</p></section><div class="last-modified">Last modified: 06 июня 2024</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="working-with-fs.html" class="navigation-links__prev">Working with File System</a><a href="multiple-instances.html" class="navigation-links__next">Multiple Instances</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.10.0-b267/app.js"></script></body></html>
