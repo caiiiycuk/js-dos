@@ -66,11 +66,13 @@ export function FatDrivesFrame() {
                     </tr>
                 </thead>
                 <tbody>
-                    {myDrives
-                        .filter(({ owner, name }) => filter.length === 0 ||
-                            owner.indexOf(filter) >= 0 || name.indexOf(filter) >= 0)
+                    {
                         // eslint-disable-next-line camelcase
-                        .map(({ name, owner, fork_of }, index) => {
+                        myDrives.map(({ name, owner, fork_of }, index) => {
+                            if (filter.length > 0 &&
+                                owner.indexOf(filter) === -1 && name.indexOf(filter) === -1) {
+                                return null;
+                            }
                             return <>
                                 <tr>
                                     <td onClick={() => { }}>
