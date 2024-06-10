@@ -13,7 +13,6 @@ declare const emulators: Emulators;
 export function PreRunWindow() {
     const account = useSelector((state: State) => state.auth.account);
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
-    const lang = useSelector((state: State) => state.i18n.lang);
     const dispatch = useDispatch();
     const t = useT();
 
@@ -22,9 +21,7 @@ export function PreRunWindow() {
     }
 
     function openPremiumPage() {
-        window.open(lang === "ru" ?
-            "https://dos.zone/ru/blog/premium-subscription/" :
-            "https://dos.zone/blog/premium-subscription/", "_blank");
+        window.open("https://js-dos.com/cloud-overview.html", "_blank");
     }
 
     return <div class="pre-run-window">
@@ -82,7 +79,8 @@ export function PreRunWindow() {
         <MouseSensitiviySlider class="mt-4 w-full max-w-sm" />
         <VolumeSlider class="w-full max-w-sm" />
 
-        <div class="text-center mt-8">emu-version: <span class="text-ellipsis overflow-hidden">{emuVersion}</span></div>
+        <div class="text-center mt-8">jsdos/emu version:&nbsp;
+            <span class="text-ellipsis overflow-hidden">{JSDOS_VERSION}/{emuVersion}</span></div>
     </div>;
 }
 

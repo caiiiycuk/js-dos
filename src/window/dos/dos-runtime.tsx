@@ -39,8 +39,10 @@ function useLog(ci: CommandInterface): void {
             } else if (msgType === "log" && args[0]?.indexOf("sockdrive:") !== -1) {
                 const drive = args[0].substring(args[0].indexOf(" ") + 1, args[0].indexOf(","));
                 dispatch(uiSlice.actions.cloudSaves(false));
-                if (args[0]?.indexOf("write=false") !== -1) {
+                if (args[0]?.indexOf("write=") !== -1) {
                     console.log("drive", drive, "config:", args[0]);
+                }
+                if (args[0]?.indexOf("write=false") !== -1) {
                     dispatch(uiSlice.actions.readOnlyWarning(true));
                 }
                 if (args[0]?.indexOf("preload=") !== -1) {

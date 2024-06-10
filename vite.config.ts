@@ -19,4 +19,7 @@ export default defineConfig({
             },
         },
     },
+    define: {
+        JSDOS_VERSION: JSON.stringify(process.env.npm_package_version),
+    },
 });
