@@ -33,7 +33,7 @@ The key features:
 
 ## Development
 
-1. You need to install node dependencies and put `emulators@beta` into `public/emulators`.
+1. You need to install node dependencies and put `emulators` into `public/emulators`.
 ```
 yarn
 cp -rv node_modules/emulators/dist/* public/emulators
