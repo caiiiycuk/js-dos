@@ -1,0 +1,16 @@
+.idea
+.vscode
+dist.zip
+src
+.github
+.gitmodules
+.eslintrc.json
+dist/emulators/test/
+index.html
+postcss.config.cjs
+public
+tailwind.config.cjs
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+README.deployment.md 
