@@ -50,6 +50,11 @@ function PremiumPlan(props: {}) {
             return;
         }
 
+        if (location.host !== "v8.js-dos.com") {
+            window.open("https://v8.js-dos.com/subscription", "_blank");
+            return;
+        }
+
         setLocked(true);
         linkToBuy(token)
             .then((link) => {
