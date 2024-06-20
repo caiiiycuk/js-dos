@@ -115,6 +115,14 @@ export const Dos: DosFn = (element: HTMLDivElement,
         browserSetFullScreen(fullScreen, store);
     }
 
+    function setAutoStart(autoStart: boolean) {
+        store.dispatch(uiSlice.actions.autoStart(autoStart));
+    }
+
+    function setKiosk(kiosk: boolean) {
+        store.dispatch(uiSlice.actions.kiosk(kiosk));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -160,7 +168,11 @@ export const Dos: DosFn = (element: HTMLDivElement,
     }
 
     if (options.autoStart !== undefined) {
-        store.dispatch(uiSlice.actions.autoStart(options.autoStart));
+        setAutoStart(options.autoStart);
+    }
+
+    if (options.kiosk !== undefined) {
+        setKiosk(options.kiosk);
     }
 
     render(
@@ -182,6 +194,8 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setFrame,
         setBackground,
         setFullScreen,
+        setAutoStart,
+        setKiosk,
     };
 };
 

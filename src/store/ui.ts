@@ -31,6 +31,7 @@ const initialState: {
     updateWsWarning: boolean,
     cloudSaves: boolean,
     autoStart: boolean,
+    kiosk: boolean,
 } = {
     modal: "none",
     frame: "none",
@@ -48,6 +49,7 @@ const initialState: {
     updateWsWarning: false,
     cloudSaves: true,
     autoStart: false,
+    kiosk: false,
 };
 
 export type UiState = typeof initialState;
@@ -153,6 +155,9 @@ export const uiSlice = createSlice({
         },
         autoStart: (state, a: { payload: boolean }) => {
             state.autoStart = a.payload;
+        },
+        kiosk: (state, a: { payload: boolean }) => {
+            state.kiosk = a.payload;
         },
     },
     extraReducers: (builder) => {

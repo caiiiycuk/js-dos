@@ -14,6 +14,7 @@ export function PreRunWindow() {
     const account = useSelector((state: State) => state.auth.account);
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
     const dispatch = useDispatch();
+    const kiosk = useSelector((state: State) => state.ui.kiosk);
     const t = useT();
 
     function login() {
@@ -27,7 +28,7 @@ export function PreRunWindow() {
     return <div class="pre-run-window">
         <Play class="mb-8" />
 
-        {(account === null) &&
+        {!kiosk && (account === null) &&
             <div class="flex flex-row mb-4 -mt-4 items-center">
                 <div class="btn btn-accent" onClick={login}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
@@ -48,7 +49,7 @@ export function PreRunWindow() {
                 </div>
             </div>
         }
-        {account &&
+        {!kiosk && account &&
             <div class="flex flex-row mb-4 -mt-4 items-center">
                 <div class="btn btn-ghost" onClick={login}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">

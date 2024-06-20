@@ -26,6 +26,7 @@ export interface DosOptions {
     },
     loginUrl: string,
     autoStart: boolean,
+    kiosk: boolean,
 }
 
 export interface DosProps {
@@ -40,6 +41,8 @@ export interface DosProps {
     setFrame(frame: "network"): void;
     setBackground(background: string | null): void;
     setFullScreen(fullScreen: boolean): void;
+    setAutoStart(autoStart: boolean): void;
+    setKiosk(kiosk: boolean): void;
 }
 
 export type DosFn = (element: HTMLDivElement, options: Partial<DosOptions>) => DosProps;

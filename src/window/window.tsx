@@ -11,6 +11,7 @@ export function Window(props: {}) {
     const frameXs = useSelector((state: State) => state.ui.frameXs);
     const window = useSelector((state: State) => state.ui.window);
     const background = useSelector((state: State) => state.ui.background);
+    const kiosk = useSelector((state: State) => state.ui.kiosk);
 
     let windowComponent = <Loading />;
     switch (window) {
@@ -36,7 +37,7 @@ export function Window(props: {}) {
         <div class="background-image"
             style={{ backgroundImage: (background ? "url(" + background + ")" : undefined ) }} />
         <div class="relative flex flex-row h-full w-full items-start justify-start overflow-auto">
-            <div class={(frameOpened ? (frameXs ? "w-24" : "w-96") : "w-12") + " flex-shrink-0"}></div>
+            { !kiosk && <div class={(frameOpened ? (frameXs ? "w-24" : "w-96") : "w-12") + " flex-shrink-0"}></div> }
             {windowComponent}
         </div>
     </div>;
