@@ -25,6 +25,7 @@ export interface DosOptions {
         host: string,
     },
     loginUrl: string,
+    autoStart: boolean,
 }
 
 export interface DosProps {

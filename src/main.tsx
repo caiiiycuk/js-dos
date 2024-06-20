@@ -159,6 +159,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(authSlice.actions.setLoginUrl(options.loginUrl));
     }
 
+    if (options.autoStart !== undefined) {
+        store.dispatch(uiSlice.actions.autoStart(options.autoStart));
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}

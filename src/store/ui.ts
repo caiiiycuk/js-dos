@@ -2,6 +2,7 @@ import { Dispatch, createAction, createSlice } from "@reduxjs/toolkit";
 import { lStorage } from "../host/lstorage";
 import { Account } from "./auth";
 import { DosAction } from "../store";
+import { dosSlice } from "./dos";
 
 export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
     "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua", "lofi",
@@ -29,6 +30,7 @@ const initialState: {
     readOnlyWarning: boolean,
     updateWsWarning: boolean,
     cloudSaves: boolean,
+    autoStart: boolean,
 } = {
     modal: "none",
     frame: "none",
@@ -45,6 +47,7 @@ const initialState: {
     readOnlyWarning: false,
     updateWsWarning: false,
     cloudSaves: true,
+    autoStart: false,
 };
 
 export type UiState = typeof initialState;
@@ -118,8 +121,12 @@ export const uiSlice = createSlice({
         setFullScreen: (state, a: { payload: boolean }) => {
             state.fullScreen = a.payload;
         },
-        showToast: (state, a: { payload: { message: string, intent?: typeof initialState.toastIntent,
-            long?: boolean } }) => {
+        showToast: (state, a: {
+            payload: {
+                message: string, intent?: typeof initialState.toastIntent,
+                long?: boolean
+            }
+        }) => {
             if (state.toastTimeoutId !== 0) {
                 clearInterval(state.toastTimeoutId);
             }
@@ -144,6 +151,9 @@ export const uiSlice = createSlice({
         cloudSaves: (state, a: { payload: boolean }) => {
             state.cloudSaves = a.payload;
         },
+        autoStart: (state, a: { payload: boolean }) => {
+            state.autoStart = a.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -157,7 +167,13 @@ export const uiSlice = createSlice({
                 s.window = "prerun";
             })
             .addCase(createAction<string>("dos/bndReady"), (s, a) => {
-                s.window = "prerun";
+                if (s.autoStart) {
+                    (a as unknown as DosAction).asyncStore((store) => {
+                        store.dispatch(dosSlice.actions.bndPlay({}));
+                    });
+                } else {
+                    s.window = "prerun";
+                }
             })
             .addCase(createAction<string>("dos/bndPlay"), (s, a) => {
                 s.window = "run";
