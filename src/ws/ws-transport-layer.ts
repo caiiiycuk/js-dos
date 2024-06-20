@@ -48,7 +48,7 @@ export class WsTransportLayer implements TransportLayer {
     socket: WebSocket;
     sessionId: string = Date.now() + "";
     hardware: Hardware;
-    onInit: (version: number) => void = {/**/};
+    onInit: (version: number) => void = () => {/**/};
 
     private cycles = 0;
     private sockdrive = createSockdrive(this.onSockdriveOpen.bind(this),

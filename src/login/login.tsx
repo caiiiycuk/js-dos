@@ -1,16 +1,18 @@
-import { useEffect, useRef } from "preact/hooks";
+import { Dispatch, useEffect, useRef } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { State } from "../store";
 import { uiSlice } from "../store/ui";
 import { CloseButton } from "../components/close-button";
 import { authentificator } from "../v8/config";
-import { Account, authSlice, postAuthMessage } from "../store/auth";
+import { Account, authSlice, getRefreshToken } from "../store/auth";
 import { havePremium } from "../v8/subscriptions";
+import { AnyAction } from "@reduxjs/toolkit";
 
 export function Login() {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const activeAccount = useSelector((state: State) => state.auth.account);
     const visible = useSelector((state: State) => state.ui.modal) === "login";
+    const loginUrl = useSelector((state: State) => state.auth.loginUrl);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -28,7 +30,7 @@ export function Login() {
 
         async function onAuthMessage(e: any) {
             if (e.data.action === "auth/ready") {
-                postAuthMessage("auth/authenicate");
+                postAuthMessage("auth/authenicate", iframe as HTMLIFrameElement, dispatch);
             } else if (e.data.action === "auth/authenicate") {
                 const account = e.data.account as Account | null;
                 if (account !== null) {
@@ -55,13 +57,15 @@ export function Login() {
     }, []);
 
     useEffect(() => {
-        const iframe = iframeRef.current;
-        if (iframe === null) {
-            return;
-        }
+        if (visible) {
+            const iframe = iframeRef.current;
+            if (iframe === null) {
+                return;
+            }
 
-        postAuthMessage("auth/login");
-    }, [visible]);
+            postAuthMessage("auth/login", iframe, dispatch, loginUrl);
+        }
+    }, [visible, loginUrl]);
 
     return <div
         id={"login"}
@@ -74,4 +78,22 @@ export function Login() {
             onClose={() => dispatch(uiSlice.actions.modalNone()) }
         />
     </div>;
+}
+
+function postAuthMessage(action: "auth/login" | "auth/authenicate",
+                         iframe: HTMLIFrameElement,
+                         dispatch: Dispatch<AnyAction>,
+                         loginUrl?: string) {
+    const message = {
+        action,
+        refresh_token: action === "auth/authenicate" ? getRefreshToken() : undefined,
+        url: action === "auth/login" ? loginUrl : undefined,
+    };
+    if (!iframe || !iframe.contentWindow) {
+        console.error("Can't find authentificator iframe");
+        dispatch(authSlice.actions.logout({}));
+        dispatch(authSlice.actions.ready());
+    } else {
+        iframe.contentWindow.postMessage(message, "*");
+    }
 }

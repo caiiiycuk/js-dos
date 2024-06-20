@@ -14,6 +14,7 @@ import { loadBundleFromConfg, loadBundleFromUrl } from "./load";
 import { DosOptions, DosProps, DosFn } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
 import { NonSerializableStore, Store, makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
+import { authSlice } from "./store/auth";
 
 export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
@@ -152,6 +153,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
 
     if (options.fullScreen !== undefined) {
         setFullScreen(options.fullScreen);
+    }
+
+    if (options.loginUrl !== undefined) {
+        store.dispatch(authSlice.actions.setLoginUrl(options.loginUrl));
     }
 
     render(

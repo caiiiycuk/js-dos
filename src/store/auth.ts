@@ -38,9 +38,11 @@ const initAccount = (() => {
 })();
 
 const initialState: {
+    loginUrl: string,
     account: Account | null,
     ready: boolean,
 } = {
+    loginUrl: location.href,
     account: initAccount,
     ready: initAccount !== null,
 };
@@ -84,20 +86,13 @@ export const authSlice = createSlice({
         ready: (state) => {
             state.ready = true;
         },
+        setLoginUrl: (state, action: { payload: string }) => {
+            state.loginUrl = action.payload;
+        },
     },
 });
 
-export function postAuthMessage(action: "auth/login" | "auth/authenicate") {
-    const message = {
-        action,
-        refresh_token: action === "auth/authenicate" ? getRefreshToken() : undefined,
-        url: action === "auth/login" ? location.href : undefined,
-    };
-    document.querySelector<HTMLIFrameElement>("#authentificator")!
-        .contentWindow?.postMessage(message, "*");
-}
-
-function getRefreshToken(): string | null {
+export function getRefreshToken(): string | null {
     return lStorage.getItem("cached.rt");
 }
 

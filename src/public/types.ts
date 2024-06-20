@@ -23,7 +23,8 @@ export interface DosOptions {
     sockdriveBackend: {
         name: string,
         host: string,
-    }
+    },
+    loginUrl: string,
 }
 
 export interface DosProps {
