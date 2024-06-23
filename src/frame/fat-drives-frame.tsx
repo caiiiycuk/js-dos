@@ -36,12 +36,59 @@ export function FatDrivesFrame() {
 
     function reloadDrives() {
         if (!account || !account.token) {
-            setMyDrives([]);
+            setMyDrives([
+                {
+                    "fork_of": [],
+                    "name": "fat32-2gb",
+                    "owner": "system",
+                    "template": "fat32-2gb",
+                },
+                {
+                    "fork_of": [],
+                    "name": "fat16-256m",
+                    "owner": "system",
+                    "template": "fat16-256m",
+                },
+                {
+                    "fork_of": [
+                        "system/fat16-256m",
+                    ],
+                    "name": "win95-v1",
+                    "owner": "system",
+                    "template": "fat16-256m",
+                },
+                {
+                    "fork_of": [
+                        "system/fat16-256m",
+                    ],
+                    "name": "dos7.1-v1",
+                    "owner": "system",
+                    "template": "fat16-256m",
+                },
+                {
+                    "fork_of": [
+                        "system/fat32-2gb",
+                    ],
+                    "name": "win98-v1",
+                    "owner": "system",
+                    "template": "fat32-2gb",
+                },
+                {
+                    "fork_of": [
+                        "system/fat32-2gb",
+                    ],
+                    "name": "win95-v2",
+                    "owner": "system",
+                    "template": "fat32-2gb",
+                },
+            ]);
+            setBusy(false);
         } else {
             setBusy(true);
             fetch(sockdriveEndpoint + "/list/drives/" + account.token.access_token)
                 .then((r) => r.json())
                 .then((drives: Drive[]) => {
+                    console.log(JSON.stringify(drives, null, 2));
                     setMyDrives(drives.sort((a, b) => a.name.localeCompare(b.name)));
                 })
                 .catch(console.error)
