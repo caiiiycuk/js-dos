@@ -76,15 +76,14 @@ export function SockdriveWrite() {
     const t = useT();
     const dispatch = useDispatch();
     const account = useSelector((state: State) => state.auth.account);
-    const premium = account?.premium === true;
     const visible = useSelector((state: State) => state.dos.backend === "dosboxX");
-    const checked = useSelector((state: State) => state.dos.sockdriveWrite) && premium;
+    const checked = useSelector((state: State) => state.dos.sockdriveWrite) && account !== null;
     return visible ? <Checkbox
         class="mt-4"
         label={t("fat_write")}
         checked={checked}
         onChange={(c) => {
-            if (!premium) {
+            if (!account) {
                 dispatchLoginAction(account, dispatch);
             } else {
                 dispatch(dosSlice.actions.setSockdriveWrite(c));

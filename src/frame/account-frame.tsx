@@ -94,7 +94,7 @@ function PremiumPlan(props: {}) {
 
     return <div class={"premium-plan-root " + (account.premium ? "have-premium" : "")}>
         <div class="premium-plan-head flex">
-            <PremiumCheck />
+            { account.premium && <PremiumCheck /> }
             {t("premium")}
             <div class="flex-grow"></div>
             {account.premium &&

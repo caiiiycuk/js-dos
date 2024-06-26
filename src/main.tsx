@@ -22,8 +22,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     const store = makeStore(nonSerializableStore, options);
 
 
-    if (store.getState().auth.account?.email === "dz.caiiiycuk@gmail.com" ||
-        store.getState().auth.account?.email === "caiiiycuk@gmail.com") {
+    if (store.getState().auth.account?.email === "dz.caiiiycuk@gmail.com") {
         store.dispatch(dosSlice.actions.setSockdriveWrite(false));
     }
 

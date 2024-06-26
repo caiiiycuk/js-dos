@@ -22,7 +22,6 @@ export function FatDrivesFrame() {
         sockdriveBackend["js-dos"]);
     const [myDrives, setMyDrives] = useState<Drive[]>([]);
     const dispatch = useDispatch();
-    const preimium = account?.premium ?? false;
     const me = account?.email ?? "";
     const [filter, setFilter] = useState<string>("");
     const [busy, setBusy] = useState<boolean>(true);
@@ -32,6 +31,8 @@ export function FatDrivesFrame() {
     const [deleteConfirm, setDeleteConfirm] = useState<string>("");
     const [dialogError, setDialogError] = useState<string | null>(null);
     const [dialogIndex, setDialogIndex] = useState<number>(-1);
+    const [sockdrivePremium, setSockdrivePremium] = useState<boolean>(false);
+    const premium = (account?.premium ?? false) || sockdrivePremium;
 
 
     function reloadDrives() {
@@ -88,11 +89,20 @@ export function FatDrivesFrame() {
             fetch(sockdriveEndpoint + "/list/drives/" + account.token.access_token)
                 .then((r) => r.json())
                 .then((drives: Drive[]) => {
-                    console.log(JSON.stringify(drives, null, 2));
                     setMyDrives(drives.sort((a, b) => a.name.localeCompare(b.name)));
                 })
                 .catch(console.error)
                 .finally(() => setBusy(false));
+
+            fetch(sockdriveEndpoint + "/premium/" + account.email)
+                .then((r) => r.json())
+                .then((payload: { premium: boolean }) => {
+                    setSockdrivePremium(payload.premium);
+                })
+                .catch((e) => {
+                    console.error(e);
+                    setSockdrivePremium(false);
+                });
         }
     }
 
@@ -132,7 +142,7 @@ export function FatDrivesFrame() {
                                         {owner !== account?.email &&
                                             <p class="text-xs">{owner}</p>}
                                     </td>
-                                    {preimium && <td>
+                                    {premium && <td>
                                         {account?.token && <div class="btn btn-ghost btn-xs"
                                             onClick={() => {
                                                 setDialogIndex(index);
@@ -144,7 +154,7 @@ export function FatDrivesFrame() {
                                                 deleteDialogRef.current?.showModal();
                                             }}>{t("delete")}</div>}
                                     </td>}
-                                    {!preimium && <td>
+                                    {!premium && <td>
                                         <div class="cursor-pointer"
                                             onClick={() => dispatchLoginAction(account, dispatch)}>
                                             <LockBadge class="text-error" />

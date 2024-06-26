@@ -57,12 +57,10 @@ export const authSlice = createSlice({
             setRefreshToken(action.payload.token.refresh_token);
             state.account = action.payload;
             state.account.premium = state.account.premium ||
-                state.account.email === "dz.caiiiycuk@gmail.com" ||
-                state.account.email === "caiiiycuk@gmail.com";
+                state.account.email === "dz.caiiiycuk@gmail.com";
             lStorage.setItem(cachedAccount, JSON.stringify(action.payload));
             (action as unknown as DosAction).asyncStore((store) => {
-                if (action.payload.email === "dz.caiiiycuk@gmail.com" ||
-                    action.payload.email === "caiiiycuk@gmail.com") {
+                if (action.payload.email === "dz.caiiiycuk@gmail.com") {
                     store.dispatch(dosSlice.actions.setSockdriveWrite(false));
                 }
                 getCache(action.payload.email)
