@@ -214,6 +214,10 @@ function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSeriali
         const fullscreen = document.fullscreenElement === root;
         store.dispatch(uiSlice.actions.setFullScreen(fullscreen));
     });
+    function listen() {
+        store.dispatch(uiSlice.actions.documentHidden(document.hidden));
+    };
+    document.addEventListener("visibilitychange", listen);
 }
 
 (window as any).Dos = Dos;

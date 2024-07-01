@@ -32,6 +32,7 @@ const initialState: {
     cloudSaves: boolean,
     autoStart: boolean,
     kiosk: boolean,
+    documentHidden: boolean,
 } = {
     modal: "none",
     frame: "none",
@@ -50,6 +51,7 @@ const initialState: {
     cloudSaves: true,
     autoStart: false,
     kiosk: false,
+    documentHidden: document.hidden ?? false,
 };
 
 export type UiState = typeof initialState;
@@ -158,6 +160,9 @@ export const uiSlice = createSlice({
         },
         kiosk: (state, a: { payload: boolean }) => {
             state.kiosk = a.payload;
+        },
+        documentHidden: (s, a: { payload: boolean }) => {
+            s.documentHidden = a.payload;
         },
     },
     extraReducers: (builder) => {

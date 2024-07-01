@@ -153,9 +153,10 @@ function useAudioBackend(ci: CommandInterface): void {
 
 function usePause(ci: CommandInterface): void {
     const paused = useSelector((state: State) => state.dos.paused);
+    const documentHidden = useSelector((state: State) => state.ui.documentHidden);
     useEffect(() => {
-        paused ? ci.pause() : ci.resume();
-    }, [paused, ci]);
+        (paused || documentHidden) ? ci.pause() : ci.resume();
+    }, [paused, documentHidden, ci]);
 }
 
 function useStats(ci: CommandInterface): void {
