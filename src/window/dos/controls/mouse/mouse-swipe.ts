@@ -37,7 +37,6 @@ export function mouseSwipe(sensitivity: number,
         }
 
         acc += Math.abs(mX) + Math.abs(mY);
-
         (ci as any).sendMouseRelativeMotion(mX * sensitivity * 2, mY * sensitivity * 2);
     }
 

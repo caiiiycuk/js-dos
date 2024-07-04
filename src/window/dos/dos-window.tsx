@@ -44,9 +44,10 @@ export function DosWindow(props: {
                             console.log("wsServer:", version, " expected:", actualWsVersion);
                         }), { token });
                     }
-                }
+                };
 
-                return (emulators as any)[backend + (worker ? "Worker" : "Direct")](bundles, {
+                return (emulators as any)[((backend !== "dosbox" && backend !== "dosboxX") ? "dosbox" : backend) +
+                    (worker ? "Worker" : "Direct")](bundles, {
                     token,
                 });
             })();

@@ -12,3 +12,19 @@
     z-index: 999;
   }
 }
+
+.jsdos-rso {
+  * {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    
+    -ms-touch-action: none;
+    -ms-content-zooming: none;
+    touch-action: none;
+    outline: none;
+  }
+}

@@ -34,6 +34,7 @@
           // url: "https://br.cdn.dos.zone/ipx/doom_dm/doom_dm.jsdos",
           // url: "https://cdn.dos.zone/original/2X/b/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos", // dhry2
           // url: "https://cdn.dos.zone/original/2X/7/744842062905f72648a4d492ccc2526d039b3702.jsdos", // sim-city
+          // url: "https://cdn.dos.zone/custom/dos/war2.jsdos", // warcraft-2
           // dosboxConf: diabloConf,
           // loginUrl: "http://localhost:8080/subscription.html",
           // autoStart: true,
@@ -49,9 +50,10 @@
           //   name: "makevm",
           //   host: "backend.make-vm.com:8001",
           // },
-          onEvent: (event) => {
+          onEvent: (event, ci) => {
             console.log("Event", event)
             if (event === "ci-ready") {
+              window.ci = ci;
               // props.setFrame("network");
               // props.setFullScreen(true);
             }

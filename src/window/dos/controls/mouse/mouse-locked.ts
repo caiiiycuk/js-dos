@@ -1,16 +1,8 @@
-import { CommandInterface } from "emulators";
-import { mount } from "./mount";
+import { pointer } from "./pointer";
 
-export function mouseCapture(sensitivity: number,
-                             pointerButton: number,
-                             el: HTMLElement,
-                             ci: CommandInterface) {
-    function isNotLocked() {
-        return document.pointerLockElement !== el;
-    }
-
-    function onMouseDown(x: number, y: number, button: number) {
-        if (isNotLocked()) {
+export function mousePointerLock(el: HTMLElement) {
+    function requestLock() {
+        if (document.pointerLockElement !== el) {
             const requestPointerLock = el.requestPointerLock ||
                 (el as any).mozRequestPointerLock ||
                 (el as any).webkitRequestPointerLock;
@@ -19,33 +11,19 @@ export function mouseCapture(sensitivity: number,
 
             return;
         }
-
-        ci.sendMouseButton(button, true);
     }
 
-    function onMouseUp(x: number, y: number, button: number) {
-        if (isNotLocked()) {
-            return;
+    const options = {
+        capture: true,
+    };
+
+    for (const next of pointer.starters) {
+        el.addEventListener(next, requestLock, options);
+    }
+
+    return () => {
+        for (const next of pointer.starters) {
+            el.removeEventListener(next, requestLock, options);
         }
-
-        ci.sendMouseButton(button, false);
-    }
-
-    function onMouseMove(x: number, y: number, mX: number, mY: number) {
-        if (isNotLocked()) {
-            return;
-        }
-
-        if (mX === 0 && mY === 0) {
-            return;
-        }
-
-        (ci as any).sendMouseRelativeMotion(mX * sensitivity, mY * sensitivity);
-    }
-
-    function onMouseLeave(x: number, y: number) {
-        // nothing to do
-    }
-
-    return mount(el, pointerButton, onMouseDown, onMouseMove, onMouseUp, onMouseLeave);
+    };
 }
