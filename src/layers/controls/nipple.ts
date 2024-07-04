@@ -1,5 +1,4 @@
-// eslint-disable-next-line
-const nipplejs = require("nipplejs");
+import nipplejs from "nipplejs";
 
 import { KBD_NONE } from "../dom/keys";
 

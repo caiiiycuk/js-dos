@@ -8,6 +8,8 @@ import { dhry2Bundle, Dhry2Results } from "./dos-dhry2";
 import { createWsTransportLayer } from "../../ws/ws-transport-layer";
 import { actualWsVersion } from "../../v8/config";
 import { uiSlice } from "../../store/ui";
+import { extractLayersConfig } from "../../layers/controls/layers-config";
+import { pointer } from "./controls/mouse/pointer";
 
 declare const emulators: Emulators;
 
@@ -56,6 +58,13 @@ export function DosWindow(props: {
                 .then((ci) => {
                     setCi(ci);
                     dispatch(dosSlice.actions.ci(true));
+                    if (pointer.mobile) {
+                        ci.config()
+                            .then((c) => {
+                                dispatch(dosSlice.actions.mobileControls(extractLayersConfig(c.jsdosConf) !== null));
+                            })
+                            .catch((e) => dispatch(dosSlice.actions.emuError(e.message)));
+                    }
                     nonSerializableStore.ci = ci;
                     postJsDosEvent(nonSerializableStore, "ci-ready", ci);
                     (window as any).ci = ci;

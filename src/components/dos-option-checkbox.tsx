@@ -29,6 +29,30 @@ export function MouseCapture() {
     />;
 }
 
+export function MobileControls() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const lock = useSelector((state: State) => state.dos.mobileControls);
+    return <Checkbox
+        class="mt-4"
+        label={t("mobile_controls")}
+        checked={lock}
+        onChange={(l) => dispatch(dosSlice.actions.mobileControls(l))}
+    />;
+}
+
+export function MirroredControls() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const lock = useSelector((state: State) => state.dos.mirroredControls);
+    return <Checkbox
+        class="mt-4"
+        label={t("mirrored_controls")}
+        checked={lock}
+        onChange={(l) => dispatch(dosSlice.actions.mirroredControls(l))}
+    />;
+}
+
 export function PauseCheckbox() {
     const t = useT();
     const dispatch = useDispatch();

@@ -1,6 +1,4 @@
-// eslint-disable-next-line
-const nipplejs = require("nipplejs");
-
+import nipplejs from "nipplejs";
 import { CommandInterface } from "emulators";
 import { Layers } from "../../dom/layers";
 import { pointer } from "../../dom/pointer";

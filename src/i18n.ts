@@ -4,6 +4,9 @@ import { State } from "./store";
 
 const translations: {[lang: string]: {[key: string]: string} } = {
     ru: {
+        mobile_controls: "Моибльное управление",
+        mirrored_controls: "Отразить управление",
+        scale_controls: "Масштаб управления",
         enter_name_of_drive: "Введите название диска",
         ws_outdated: "Необходимо обновить DOS Браузер",
         update: "Обновить",
@@ -78,6 +81,9 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         fat_write: "FAT запись",
     },
     en: {
+        mobile_controls: "Mobile controls",
+        mirrored_controls: "Mirror controls",
+        scale_controls: "Scale controls",
         enter_name_of_drive: "Enter name of drive",
         ws_outdated: "Must update DOS Browser App",
         update: "Update",

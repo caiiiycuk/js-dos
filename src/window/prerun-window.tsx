@@ -3,7 +3,7 @@ import { BackendSelect, RenderAspectSelect, RenderSelect } from "../components/d
 import { dosSlice } from "../store/dos";
 import { State, useNonSerializableStore } from "../store";
 import { HardwareCheckbox, MouseCapture, SockdriveWrite, WorkerCheckbox } from "../components/dos-option-checkbox";
-import { MouseSensitiviySlider, VolumeSlider } from "../components/dos-option-slider";
+import { MouseSensitiviySlider, ScaleControlsSlider, VolumeSlider } from "../components/dos-option-slider";
 import { useT } from "../i18n";
 import { dispatchLoginAction } from "../store/ui";
 import { Emulators } from "emulators";
@@ -78,6 +78,7 @@ export function PreRunWindow() {
         </div>
 
         <MouseSensitiviySlider class="mt-4 w-full max-w-sm" />
+        <ScaleControlsSlider class="w-full max-w-sm" />
         <VolumeSlider class="w-full max-w-sm" />
 
         <div class="text-center mt-8">jsdos/emu version:&nbsp;

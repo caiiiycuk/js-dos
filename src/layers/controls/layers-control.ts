@@ -8,20 +8,18 @@ import {
 } from "./layers-config";
 import { Cell, getGrid, GridConfiguration } from "./grid";
 import { createButton } from "./button";
-import { DosInstance } from "../js-dos";
 import { keyboard } from "./keyboard";
 import { mouse } from "./mouse/mouse-common";
 import { options } from "./options";
 import { pointer } from "../dom/pointer";
-
-// eslint-disable-next-line
-const nipplejs = require("nipplejs");
+import { LayersInstance } from "../instance";
+import nipplejs from "nipplejs";
 
 export function initLayersControl(
     layers: Layers,
     layersConfig: LayersConfig,
     ci: CommandInterface,
-    dosInstance: DosInstance,
+    dosInstance: LayersInstance,
     mirrored: boolean,
     scale: number,
     layerName?: string): () => void {
@@ -80,7 +78,7 @@ type ControlFactory = (control: any,
     ci: CommandInterface,
     gridConfig: GridConfiguration,
     sensors: ControlSensors,
-    dosInstance: DosInstance) => () => void;
+    dosInstance: LayersInstance) => () => void;
 
 const factoryMapping: { [type: string]: ControlFactory } = {
     Key: createKeyControl,
@@ -98,7 +96,7 @@ const factoryMapping: { [type: string]: ControlFactory } = {
 function initLayerConfig(layerConfig: LayerConfig,
                          layers: Layers,
                          ci: CommandInterface,
-                         dosInstance: DosInstance,
+                         dosInstance: LayersInstance,
                          mirrored: boolean,
                          scale: number): () => void {
     const unbindKeyboard = keyboard(layers, ci);
@@ -221,7 +219,7 @@ function createKeyControl(keyControl: LayerKeyControl,
                           ci: CommandInterface,
                           gridConfig: GridConfiguration,
                           sensors: ControlSensors,
-                          dosInstance: DosInstance) {
+                          dosInstance: LayersInstance) {
     const { cells, columnWidth } = gridConfig;
     const { row, column } = keyControl;
     const { centerX, centerY } = cells[row][column];
@@ -263,7 +261,7 @@ function createOptionsControl(optionControl: LayerControl,
                               ci: CommandInterface,
                               gridConfig: GridConfiguration,
                               sensors: ControlSensors,
-                              dosInstance: DosInstance) {
+                              dosInstance: LayersInstance) {
     if (layers.options.optionControls?.length === 0) {
         return () => {/**/};
     }
@@ -293,7 +291,7 @@ function createKeyboardControl(keyboardControl: LayerControl,
                                ci: CommandInterface,
                                gridConfig: GridConfiguration,
                                sensors: ControlSensors,
-                               dosInstance: DosInstance) {
+                               dosInstance: LayersInstance) {
     const { cells, columnWidth } = gridConfig;
     const { row, column } = keyboardControl;
     const { centerX, centerY } = cells[row][column];
@@ -327,13 +325,13 @@ function createSwitchControl(switchControl: LayerSwitchControl,
                              ci: CommandInterface,
                              gridConfig: GridConfiguration,
                              sensors: ControlSensors,
-                             dosInstance: DosInstance) {
+                             dosInstance: LayersInstance) {
     const { cells, columnWidth } = gridConfig;
     const { row, column } = switchControl;
     const { centerX, centerY } = cells[row][column];
 
     const button = createButton(switchControl.symbol, {
-        onUp: () => dosInstance.setLayersConfig(dosInstance.getLayersConfig(), switchControl.layerName),
+        onUp: () => dosInstance.setActiveConfig(dosInstance.getActiveConfig(), switchControl.layerName),
     }, columnWidth);
 
     button.style.position = "absolute";
@@ -351,7 +349,7 @@ function createScreenMoveControl(screenMoveControl: LayerScreenMoveControl,
                                  ci: CommandInterface,
                                  gridConfig: GridConfiguration,
                                  sensors: ControlSensors,
-                                 dosInstance: DosInstance) {
+                                 dosInstance: LayersInstance) {
     const { cells, columnWidth } = gridConfig;
     const { row, column } = screenMoveControl;
     const { centerX, centerY } = cells[row][column];
@@ -408,7 +406,7 @@ function createPointerButtonControl(pointerButtonControl: LayerPointerButtonCont
                                     ci: CommandInterface,
                                     gridConfig: GridConfiguration,
                                     sensors: ControlSensors,
-                                    dosInstance: DosInstance) {
+                                    dosInstance: LayersInstance) {
     const { cells, columnWidth } = gridConfig;
     const { row, column, click } = pointerButtonControl;
     const { centerX, centerY } = cells[row][column];
@@ -454,7 +452,7 @@ function createPointerMoveControl(pointerMoveControl: LayerPointerMoveControl,
                                   ci: CommandInterface,
                                   gridConfig: GridConfiguration,
                                   sensors: ControlSensors,
-                                  dosInstance: DosInstance) {
+                                  dosInstance: LayersInstance) {
     const { cells, columnWidth } = gridConfig;
     const { row, column, x, y } = pointerMoveControl;
     const { centerX, centerY } = cells[row][column];
@@ -492,7 +490,7 @@ function createPointerResetControl(pointerResetControl: LayerPointerResetControl
                                    ci: CommandInterface,
                                    gridConfig: GridConfiguration,
                                    sensors: ControlSensors,
-                                   dosInstance: DosInstance) {
+                                   dosInstance: LayersInstance) {
     const { cells, columnWidth } = gridConfig;
     const { row, column } = pointerResetControl;
     const { centerX, centerY } = cells[row][column];
@@ -527,7 +525,7 @@ function createPointerToggleControl(pointerToggleControl: LayerPointerToggleCont
                                     ci: CommandInterface,
                                     gridConfig: GridConfiguration,
                                     sensors: ControlSensors,
-                                    dosInstance: DosInstance) {
+                                    dosInstance: LayersInstance) {
     const { cells, columnWidth } = gridConfig;
     const { row, column } = pointerToggleControl;
     const { centerX, centerY } = cells[row][column];
@@ -569,7 +567,7 @@ function createNippleActivatorControl(nippleActivatorControl: LayerNippleActivat
                                       ci: CommandInterface,
                                       gridConfig: GridConfiguration,
                                       sensors: ControlSensors,
-                                      dosInstance: DosInstance) {
+                                      dosInstance: LayersInstance) {
     const { cells, columnWidth, rowHeight, width, height } = gridConfig;
     const { row, column } = nippleActivatorControl;
     const { centerX, centerY } = cells[row][column];
@@ -678,7 +676,7 @@ function createNippleActivatorControl(nippleActivatorControl: LayerNippleActivat
 
     function onEnd(e: Event) {
         if (started) {
-            manager.processOnEnd(e);
+            (manager as any).processOnEnd(e);
         }
     }
 

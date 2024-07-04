@@ -12,10 +12,25 @@ export function MouseSensitiviySlider(props: {
     const dispatch = useDispatch();
 
     return <Slider
-        class={"mt-4 " + props.class}
+        class={props.class}
         label={t("mouse_sensitivity")}
         value={sensitivity}
         onChange={(value) => dispatch(dosSlice.actions.mouseSensitivity(value)) }
+    />;
+}
+
+export function ScaleControlsSlider(props: {
+    class?: string,
+}) {
+    const t = useT();
+    const sensitivity = useSelector((state: State) => state.dos.scaleControls);
+    const dispatch = useDispatch();
+
+    return <Slider
+        class={props.class}
+        label={t("scale_controls")}
+        value={sensitivity}
+        onChange={(value) => dispatch(dosSlice.actions.scaleControls(value)) }
     />;
 }
 

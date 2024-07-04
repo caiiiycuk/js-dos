@@ -10,6 +10,7 @@ import { CommandInterface, InitFs } from "emulators";
 import { useStore } from "react-redux";
 import { Cache, CacheNoop } from "./host/lcache";
 import { InitState, createInitSlice, initSlice, sockdriveBackend, sockdriveBackendNames } from "./store/init";
+import { LayersInstance } from "./layers/instance";
 
 export interface LoadedBundle {
     bundleUrl: string | null,
@@ -24,6 +25,7 @@ export interface NonSerializableStore {
     ci: CommandInterface | null,
     cache: Cache,
     options: Partial<DosOptions>,
+    layers: Promise<LayersInstance> | null;
 }
 
 export interface DosAction {
@@ -50,6 +52,7 @@ export function makeNonSerializableStore(options: Partial<DosOptions>): NonSeria
         ci: null,
         cache: new CacheNoop(),
         options,
+        layers: null,
     };
 }
 

@@ -1,6 +1,6 @@
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { dosSlice, FitConstant } from "../../store/dos";
-import { State, Store } from "../../store";
+import { State, Store, useNonSerializableStore } from "../../store";
 import { CommandInterface } from "emulators";
 import { keyboard } from "./controls/keyboard";
 import { webGl as webglRender } from "./render/webgl";
@@ -11,6 +11,11 @@ import { mouse } from "./controls/mouse";
 import { KBD_0 } from "./controls/keys";
 import { uiSlice } from "../../store/ui";
 import { useT } from "../../i18n";
+import { Layers } from "../../layers/dom/layers";
+import { LayersConfig, LegacyLayersConfig, extractLayersConfig } from "../../layers/controls/layers-config";
+import { initLegacyLayersControl } from "../../layers/controls/legacy-layers-control";
+import { initLayersControl } from "../../layers/controls/layers-control";
+import { LayersInstance } from "../../layers/instance";
 
 export function useDosRuntime(canvas: HTMLCanvasElement,
                               ci: CommandInterface): void {
@@ -20,6 +25,7 @@ export function useDosRuntime(canvas: HTMLCanvasElement,
     usePause(ci);
     useKeyboard(ci);
     useMouse(canvas, ci);
+    useLayers(canvas, ci);
     useRenderBackend(canvas, ci);
     useAudioBackend(ci);
 }
@@ -80,12 +86,14 @@ function useRenderImage(canvas: HTMLCanvasElement): void {
 
 function useMouse(canvas: HTMLCanvasElement,
                   ci: CommandInterface): void {
+    const mobileControls = useSelector((state: State) => state.dos.mobileControls);
     const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
-    const mouseSensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
+    const mouseSensitivity = 0.1 + useSelector((state: State) => state.dos.mouseSensitivity) * 3;
     useEffect(() => {
-        const sensistiviy = 0.1 + mouseSensitivity * 3;
-        return mouse(mouseCapture, sensistiviy, 0, canvas, ci);
-    }, [canvas, ci, mouseCapture, mouseSensitivity]);
+        if (!mobileControls) {
+            return mouse(mouseCapture, mouseSensitivity, 0, canvas, ci);
+        }
+    }, [canvas, ci, mouseCapture, mouseSensitivity, mobileControls]);
 }
 
 function useKeyboard(ci: CommandInterface): void {
@@ -215,3 +223,69 @@ function useStats(ci: CommandInterface): void {
         };
     }, [dispatch, ci]);
 }
+
+function useLayers(canvas: HTMLCanvasElement, ci: CommandInterface) {
+    const nsStore = useNonSerializableStore();
+    const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
+    const mirroredControls = useSelector((state: State) => state.dos.mirroredControls);
+    const scaleControls = 1 + useSelector((state: State) => state.dos.scaleControls);
+    const mouseSensitivity = 0.1 + useSelector((state: State) => state.dos.mouseSensitivity) * 3;
+    const mobileControls = useSelector((state: State) => state.dos.mobileControls);
+    useEffect(() => {
+        if (mobileControls) {
+            if (nsStore.layers === null) {
+                nsStore.layers = (async function() {
+                    const layers = new Layers(canvas.parentElement as HTMLDivElement, canvas, {});
+                    const config = extractLayersConfig((await ci.config()).jsdosConf);
+
+                    let activeLayer: string | undefined;
+                    let layersConfig: LayersConfig | LegacyLayersConfig | null = null;
+                    let unbindControls = () => { };
+                    const instance: LayersInstance = {
+                        config,
+                        layers,
+                        autolock: mouseCapture,
+                        sensitivity: mouseSensitivity,
+                        mirroredControls,
+                        scaleControls,
+                        activeLayer: activeLayer,
+                        getActiveConfig: () => layersConfig,
+                        setActiveConfig: (config: LayersConfig | LegacyLayersConfig | null, layerName?: string) => {
+                            layersConfig = config;
+                            activeLayer = layerName;
+                            unbindControls();
+
+                            if (config === null) {
+                                unbindControls = () => {};
+                                layers.mouseOverlay.style.display = "none";
+                            } else if (config.version === undefined) {
+                                layers.mouseOverlay.style.display = "block";
+                                unbindControls = initLegacyLayersControl(instance, layers,
+                                    config as LegacyLayersConfig, ci);
+                            } else {
+                                layers.mouseOverlay.style.display = "block";
+                                unbindControls = initLayersControl(layers, config as LayersConfig,
+                                    ci, instance, instance.mirroredControls, instance.scaleControls,
+                                    layerName);
+                            }
+                        },
+                    };
+
+                    instance.setActiveConfig(config);
+                    return instance;
+                })();
+                nsStore.layers.catch(console.error);
+            } else {
+                nsStore.layers.then((instance) => {
+                    instance.autolock = mouseCapture;
+                    instance.sensitivity = mouseSensitivity;
+                    instance.mirroredControls = mirroredControls;
+                    instance.scaleControls = scaleControls;
+                    instance.setActiveConfig(instance.getActiveConfig() ?? instance.config, instance.activeLayer);
+                });
+            }
+        } else if (nsStore.layers !== null) {
+            nsStore.layers.then((l) => l.setActiveConfig(null));
+        }
+    }, [ci, mouseCapture, mouseSensitivity, mobileControls, mirroredControls, scaleControls]);
+};

@@ -6,10 +6,10 @@ import { mouse } from "./mouse/mouse-common";
 import { nipple } from "./nipple";
 import { options } from "./options";
 import { keyboard } from "./keyboard";
-import { DosInstance } from "../js-dos";
+import { LayersInstance } from "../instance";
 
 export function initLegacyLayersControl(
-    dosInstance: DosInstance,
+    dosInstance: LayersInstance,
     layers: Layers,
     layersConfig: LegacyLayersConfig,
     ci: CommandInterface) {

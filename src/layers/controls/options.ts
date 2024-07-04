@@ -46,31 +46,12 @@ export function options(layers: Layers,
                 }
             },
         }, size),
-        createButton("save", {
-            onClick: () => {
-                layers.save();
-
-                if (controlsVisbile) {
-                    toggleOptions();
-                }
-            },
-        }, size),
-        createButton("fullscreen", {
-            onClick: () => {
-                layers.toggleFullscreen();
-
-                if (controlsVisbile) {
-                    toggleOptions();
-                }
-            },
-        }, size),
         createButton("options", {
             onClick: toggleOptions,
         }, size),
     ];
     const options = children[children.length - 1];
-    const fullscreen = children[children.length - 2].children[0];
-    const keyboard = children[children.length - 4].children[0];
+    const keyboard = children[children.length - 2].children[0];
 
     const onKeyboardVisibility = (visible: boolean) => {
         keyboardVisible = visible;
@@ -83,20 +64,6 @@ export function options(layers: Layers,
     };
     layers.setOnKeyboardVisibility(onKeyboardVisibility);
     onKeyboardVisibility(layers.keyboardVisible);
-
-    layers.setOnFullscreen((fullscreenEnabled) => {
-        if (fullscreenEnabled) {
-            if (!fullscreen.classList.contains("emulator-control-exit-fullscreen-icon")) {
-                fullscreen.classList.add("emulator-control-exit-fullscreen-icon");
-            }
-        } else {
-            fullscreen.classList.remove("emulator-control-exit-fullscreen-icon");
-        }
-    });
-
-    if (layers.fullscreen) {
-        fullscreen.classList.add("emulator-control-exit-fullscreen-icon");
-    }
 
     const container = createDiv("emulator-options");
     const intialDisplay = keyboardVisible ? "flex" : "none";
@@ -120,7 +87,6 @@ export function options(layers: Layers,
 
     return () => {
         layers.mouseOverlay.removeChild(container);
-        layers.setOnFullscreen(() => {/**/});
         layers.removeOnKeyboardVisibility(onKeyboardVisibility);
     };
 }

@@ -57,6 +57,9 @@ const initialState: {
     renderBackend: RenderBackend,
     renderAspect: RenderAspect,
     volume: number,
+    mobileControls: boolean,
+    mirroredControls: boolean,
+    scaleControls: number,
     mouseSensitivity: number,
     mouseCapture: boolean,
     paused: boolean,
@@ -86,6 +89,9 @@ const initialState: {
     renderBackend: (lStorage.getItem("renderBackend") ?? "webgl") as RenderBackend,
     renderAspect: (lStorage.getItem("renderAspect") ?? "AsIs") as RenderAspect,
     volume: (Number.parseFloat(lStorage.getItem("volume") ?? "1.0")),
+    mobileControls: false,
+    mirroredControls: lStorage.getItem("mirroredControls") === "true",
+    scaleControls: (Number.parseFloat(lStorage.getItem("scaleControls") ?? "0.2")),
     mouseSensitivity: (Number.parseFloat(lStorage.getItem("mouse_sensitivity") ?? "1.0")),
     mouseCapture: false,
     paused: false,
@@ -252,6 +258,17 @@ export const dosSlice = createSlice({
         },
         setSockdriveWrite: (s, a: { payload: boolean }) => {
             s.sockdriveWrite = a.payload;
+        },
+        mobileControls: (s, a: { payload: boolean }) => {
+            s.mobileControls = a.payload;
+        },
+        mirroredControls: (s, a: { payload: boolean }) => {
+            s.mirroredControls = a.payload;
+            lStorage.setItem("mirroredControls", a.payload ? "true" : "false");
+        },
+        scaleControls: (s, a: { payload: number }) => {
+            s.scaleControls = a.payload;
+            lStorage.setItem("scaleControls", s.scaleControls + "");
         },
     },
 });
