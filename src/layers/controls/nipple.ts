@@ -1,6 +1,6 @@
 import nipplejs from "nipplejs";
 
-import { KBD_NONE } from "../dom/keys";
+import { KBD_NONE } from "../../window/dos/controls/keys";
 
 import { CommandInterface } from "emulators";
 import { Layers } from "../dom/layers";

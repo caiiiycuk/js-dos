@@ -1,7 +1,7 @@
 import { CommandInterface } from "emulators";
 import { Layers } from "../dom/layers";
-import { namedKeyCodes, KBD_NONE } from "../dom/keys";
-import { pointer } from "../dom/pointer";
+import { namedKeyCodes, KBD_NONE } from "../../window/dos/controls/keys";
+import { pointer } from "../../window/dos/controls/mouse/pointer";
 import { LayoutPosition } from "./layout";
 
 export type ActionType = "click" | "hold";

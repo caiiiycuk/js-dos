@@ -1,6 +1,6 @@
 import { CommandInterface } from "emulators";
 import { Layers } from "../../dom/layers";
-import { pointer, getPointerState } from "../../dom/pointer";
+import { pointer, getPointerState } from "../../../window/dos/controls/mouse/pointer";
 import { mouseSwipe } from "./mouse-swipe";
 import { mouseNotLocked } from "./mouse-not-locked";
 import { mouseLocked } from "./mouse-locked";

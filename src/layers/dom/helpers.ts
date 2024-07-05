@@ -1,4 +1,4 @@
-import { pointer } from "./pointer";
+import { pointer } from "../../window/dos/controls/mouse/pointer";
 
 export function createDiv(className: string, innerHtml?: string) {
     const el = document.createElement("div");

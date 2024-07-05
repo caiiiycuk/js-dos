@@ -11,7 +11,7 @@ export function options(layers: Layers,
     const ident = Math.round(size / 4);
 
     let controlsVisbile = false;
-    let keyboardVisible = false;
+    const keyboardVisible = false;
 
     const updateVisibility = () => {
         const display = controlsVisbile ? "flex" : "none";
@@ -51,19 +51,6 @@ export function options(layers: Layers,
         }, size),
     ];
     const options = children[children.length - 1];
-    const keyboard = children[children.length - 2].children[0];
-
-    const onKeyboardVisibility = (visible: boolean) => {
-        keyboardVisible = visible;
-
-        if (visible) {
-            keyboard.classList.add("emulator-control-close-icon");
-        } else {
-            keyboard.classList.remove("emulator-control-close-icon");
-        }
-    };
-    layers.setOnKeyboardVisibility(onKeyboardVisibility);
-    onKeyboardVisibility(layers.keyboardVisible);
 
     const container = createDiv("emulator-options");
     const intialDisplay = keyboardVisible ? "flex" : "none";
@@ -87,7 +74,6 @@ export function options(layers: Layers,
 
     return () => {
         layers.mouseOverlay.removeChild(container);
-        layers.removeOnKeyboardVisibility(onKeyboardVisibility);
     };
 }
 

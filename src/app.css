@@ -14,7 +14,7 @@
 }
 
 .jsdos-rso {
-  canvas, .slider {
+  canvas, .slider, .soft-keyboard {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;

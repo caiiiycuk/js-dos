@@ -10,6 +10,7 @@ import { actualWsVersion } from "../../v8/config";
 import { uiSlice } from "../../store/ui";
 import { extractLayersConfig } from "../../layers/controls/layers-config";
 import { pointer } from "./controls/mouse/pointer";
+import { SoftKeyboard } from "../soft-keyboard";
 
 declare const emulators: Emulators;
 
@@ -83,9 +84,12 @@ export function DosWindow(props: {
         }
     }, [worker, backend, token ?? null]);
 
-    return <div class="bg-black h-full flex-grow overflow-hidden relative">
-        <canvas ref={canvasRef} />
-        {canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} />}
+    return <div class="flex flex-col flex-grow h-full overflow-hidden">
+        <div class="bg-black h-full flex-grow overflow-hidden relative">
+            <canvas ref={canvasRef} />
+            {canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} />}
+        </div>
+        <SoftKeyboard ci={ci} />
     </div>;
 }
 

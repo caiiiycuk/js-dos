@@ -231,11 +231,17 @@ function useLayers(canvas: HTMLCanvasElement, ci: CommandInterface) {
     const scaleControls = 1 + useSelector((state: State) => state.dos.scaleControls);
     const mouseSensitivity = 0.1 + useSelector((state: State) => state.dos.mouseSensitivity) * 3;
     const mobileControls = useSelector((state: State) => state.dos.mobileControls);
+    const dispatch = useDispatch();
+    let softKeyboard = useSelector((state: State) => state.dos.softKeyboard);
+    function toggleKeyboard() {
+        softKeyboard = !softKeyboard;
+        dispatch(dosSlice.actions.softKeyboard(softKeyboard));
+    }
     useEffect(() => {
         if (mobileControls) {
             if (nsStore.layers === null) {
                 nsStore.layers = (async function() {
-                    const layers = new Layers(canvas.parentElement as HTMLDivElement, canvas, {});
+                    const layers = new Layers(canvas.parentElement as HTMLDivElement, canvas, toggleKeyboard, {});
                     const config = extractLayersConfig((await ci.config()).jsdosConf);
 
                     let activeLayer: string | undefined;

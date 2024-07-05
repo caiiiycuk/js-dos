@@ -76,6 +76,10 @@ const initialState: {
     },
     imageRendering: ImageRendering,
     sockdriveWrite: boolean,
+    softKeyboard: boolean,
+    softKeyboardLayout: string[],
+    softKeyboardSymbols: {[key: string]: string}[],
+    softKeyboardActiveSymbols: number,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -122,6 +126,51 @@ const initialState: {
     ciStartedAt: 0,
     imageRendering: (lStorage.getItem("imageRendering") ?? "pixelated") as any,
     sockdriveWrite: true,
+    softKeyboard: false,
+    softKeyboardLayout: [
+        "{esc} ` 1 2 3 4 5 6 7 8 9 0 () - = {bksp} {enter}",
+        "{tab} q w e r t y u i o p { } \\ {up}",
+        "{shift} {left} {right} a s d f g h j k l ; ' [ {down}",
+        "⎘ {alt} {ctrl} z x c v b n m , . / ] {space}",
+    ],
+    softKeyboardSymbols: [
+        {
+            "{esc}": "␛",
+            "{bksp}": "⌫",
+            "{enter}": "↵",
+            "{space}": "Space",
+            "{up}": "↑",
+            "{down}": "↓",
+            "{left}": "←",
+            "{right}": "→",
+            "{shift}": "⇑",
+            "{ctrl}": "Ctrl",
+            "{alt}": "Alt",
+            "{tab}": "Tab",
+        },
+        {
+            "{esc}": "␛",
+            "{bksp}": "⌫",
+            "{enter}": "↵",
+            "{space}": "Space",
+            "{up}": "↑",
+            "{down}": "↓",
+            "{left}": "←",
+            "{right}": "→",
+            "{shift}": "⇑",
+            "{alt}": "Alt",
+            "{ctrl}": "Ctrl",
+            "{tab}": "Tab",
+            "q": "й", "w": "ц", "e": "у", "r": "к", "t": "е",
+            "y": "н", "u": "г", "i": "ш", "o": "щ", "p": "з",
+            "{": "х", "}": "ъ", "a": "ф", "s": "ы", "d": "в",
+            "f": "а", "g": "п", "h": "р", "j": "о", "k": "л",
+            "l": "д", ";": "ж", "'": "э", "z": "я", "x": "ч",
+            "c": "с", "v": "м", "b": "и", "n": "т", "m": "ь",
+            ",": "б", ".": "ю",
+        },
+    ],
+    softKeyboardActiveSymbols: 0,
 };
 
 export type DosState = typeof initialState;
@@ -269,6 +318,18 @@ export const dosSlice = createSlice({
         scaleControls: (s, a: { payload: number }) => {
             s.scaleControls = a.payload;
             lStorage.setItem("scaleControls", s.scaleControls + "");
+        },
+        softKeyboard: (s, a: { payload: boolean }) => {
+            s.softKeyboard = a.payload;
+        },
+        softKeyboardLayout: (s, a: { payload: string[] }) => {
+            s.softKeyboardLayout = a.payload;
+        },
+        softKeyboardSymbols: (s, a: { payload: {[key: string]: string}[] }) => {
+            s.softKeyboardSymbols = a.payload;
+        },
+        softKeyboardActiveSymbols: (s, a: { payload: number }) => {
+            s.softKeyboardActiveSymbols = a.payload;
         },
     },
 });

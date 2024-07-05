@@ -1,7 +1,7 @@
 import nipplejs from "nipplejs";
 import { CommandInterface } from "emulators";
 import { Layers } from "../../dom/layers";
-import { pointer } from "../../dom/pointer";
+import { pointer } from "../../../window/dos/controls/mouse/pointer";
 
 export function mouseNipple(sensitivity: number, layers: Layers, ci: CommandInterface) {
     const el = layers.mouseOverlay;

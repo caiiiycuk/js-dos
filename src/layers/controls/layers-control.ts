@@ -11,7 +11,7 @@ import { createButton } from "./button";
 import { keyboard } from "./keyboard";
 import { mouse } from "./mouse/mouse-common";
 import { options } from "./options";
-import { pointer } from "../dom/pointer";
+import { pointer } from "../../window/dos/controls/mouse/pointer";
 import { LayersInstance } from "../instance";
 import nipplejs from "nipplejs";
 
@@ -300,15 +300,6 @@ function createKeyboardControl(keyboardControl: LayerControl,
         onUp: () => layers.toggleKeyboard(),
     }, columnWidth);
 
-    const onKeyboardVisibility = (visible: boolean) => {
-        if (visible) {
-            button.children[0].classList.add("emulator-control-close-icon");
-        } else {
-            button.children[0].classList.remove("emulator-control-close-icon");
-        }
-    };
-    layers.setOnKeyboardVisibility(onKeyboardVisibility);
-
     button.style.position = "absolute";
     button.style.left = (centerX - button.widthPx / 2) + "px";
     button.style.top = (centerY - button.heightPx / 2) + "px";
@@ -316,7 +307,6 @@ function createKeyboardControl(keyboardControl: LayerControl,
     layers.mouseOverlay.appendChild(button);
     return () => {
         layers.mouseOverlay.removeChild(button);
-        layers.removeOnKeyboardVisibility(onKeyboardVisibility);
     };
 }
 
