@@ -25,12 +25,10 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
-    "element-resize-detector": "^1.2.4",
     "nipplejs": "^0.10.2",
     "preact": "^10.19.3",
     "react-checkbox-tree": "^1.8.0",
-    "react-redux": "^8.1.3",
-    "simple-keyboard": "^3.4.126"
+    "react-redux": "^8.1.3"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.8.1",

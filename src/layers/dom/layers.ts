@@ -1,5 +1,3 @@
-import Keyboard from "simple-keyboard";
-import elementResizeDetector from "element-resize-detector";
 import { createDiv, stopPropagation } from "./helpers";
 
 /* eslint-disable camelcase */
@@ -42,8 +40,6 @@ export class Layers {
 
     // eslint-disable-next-line
     constructor(root: HTMLDivElement, canvas: HTMLCanvasElement, options: LayersOptions) {
-        const resizeDetector = elementResizeDetector({});
-
         this.options = options;
         this.root = root;
         this.root.classList.add("emulator-root");
@@ -63,17 +59,17 @@ export class Layers {
         this.onKeyPress = () => {/**/};
         this.onKeysPress = () => {/**/};
 
-        resizeDetector.listenTo(this.root, (el: HTMLElement) => {
-            if (el !== root) {
-                return;
+        new ResizeObserver((entries) => {
+            for (const e of entries) {
+                if (e.target === root) {
+                    this.width = e.contentRect.width;
+                    this.height = e.contentRect.height;
+                    for (const next of this.onResize) {
+                        next(this.width, this.height);
+                    }
+                }
             }
-
-            this.width = el.offsetWidth;
-            this.height = el.offsetHeight;
-            for (const next of this.onResize) {
-                next(this.width, this.height);
-            }
-        });
+        }).observe(this.root);
 
         this.initKeyEvents();
         this.initKeyboard();
@@ -195,50 +191,50 @@ export class Layers {
             ",": "б", ".": "ю",
         };
         const displayOrder = [enLayoutDisplay, ruLayoutDisplay];
-        let displayIndex = 0;
+        const displayIndex = 0;
 
         const keyboardDiv = this.options.keyboardDiv || createDiv("");
         keyboardDiv.classList.add("emulator-keyboard");
         keyboardDiv.style.display = "none";
         stopPropagation(keyboardDiv);
 
-        const keyboard = new Keyboard(keyboardDiv, {
-            layout,
-            layoutName: "en",
-            display: displayOrder[displayIndex],
-            onKeyPress: (button: string) => {
-                if (button === "⎘") {
-                    return;
-                }
+        // const keyboard = new Keyboard(keyboardDiv, {
+        //     layout,
+        //     layoutName: "en",
+        //     display: displayOrder[displayIndex],
+        //     onKeyPress: (button: string) => {
+        //         if (button === "⎘") {
+        //             return;
+        //         }
 
-                const keyCodes = buttonToCode(button);
-                for (const keyCode of keyCodes) {
-                    this.fireKeyDown(keyCode);
-                }
-            },
-            onKeyReleased: (button: string) => {
-                if (button === "⎘") {
-                    displayIndex = (displayIndex + 1) % displayOrder.length;
-                    keyboard.setOptions({
-                        display: displayOrder[displayIndex],
-                    });
-                    return;
-                }
+        //         const keyCodes = buttonToCode(button);
+        //         for (const keyCode of keyCodes) {
+        //             this.fireKeyDown(keyCode);
+        //         }
+        //     },
+        //     onKeyReleased: (button: string) => {
+        //         if (button === "⎘") {
+        //             displayIndex = (displayIndex + 1) % displayOrder.length;
+        //             keyboard.setOptions({
+        //                 display: displayOrder[displayIndex],
+        //             });
+        //             return;
+        //         }
 
-                const keyCodes = buttonToCode(button);
-                for (const keyCode of keyCodes) {
-                    this.fireKeyUp(keyCode);
-                }
-            },
-            preventMouseDownDefault: true,
-            preventMouseUpDefault: true,
-            stopMouseDownPropagation: true,
-            stopMouseUpPropagation: true,
-            physicalKeyboardHighlight: false,
-            physicalKeyboardHighlightPress: false,
-            physicalKeyboardHighlightPressUseClick: false,
-            physicalKeyboardHighlightPressUsePointerEvents: false,
-        });
+        //         const keyCodes = buttonToCode(button);
+        //         for (const keyCode of keyCodes) {
+        //             this.fireKeyUp(keyCode);
+        //         }
+        //     },
+        //     preventMouseDownDefault: true,
+        //     preventMouseUpDefault: true,
+        //     stopMouseDownPropagation: true,
+        //     stopMouseUpPropagation: true,
+        //     physicalKeyboardHighlight: false,
+        //     physicalKeyboardHighlightPress: false,
+        //     physicalKeyboardHighlightPressUseClick: false,
+        //     physicalKeyboardHighlightPressUsePointerEvents: false,
+        // });
 
         this.toggleKeyboard = () => {
             keyboardVisible = !keyboardVisible;
