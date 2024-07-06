@@ -3,7 +3,7 @@ import { mount } from "./mount";
 
 const insensitivePadding = 1 / 100;
 
-export function mouseDefault(pointerNumber: number,
+export function mouseDefault(pointerButton: number,
                              el: HTMLElement,
                              ci: CommandInterface) {
     const mapXY = (x: number, y: number) => doMapXY(x, y, el, ci);
@@ -12,16 +12,16 @@ export function mouseDefault(pointerNumber: number,
         document.exitPointerLock();
     }
 
-    function onMouseDown(x: number, y: number, button: number) {
+    function onMouseDown(x: number, y: number, button?: number) {
         const xy = mapXY(x, y);
         ci.sendMouseMotion(xy.x, xy.y);
-        ci.sendMouseButton(button, true);
+        ci.sendMouseButton(button ?? pointerButton, true);
     }
 
-    function onMouseUp(x: number, y: number, button: number) {
+    function onMouseUp(x: number, y: number, button?: number) {
         const xy = mapXY(x, y);
         ci.sendMouseMotion(xy.x, xy.y);
-        ci.sendMouseButton(button, false);
+        ci.sendMouseButton(button ?? pointerButton, false);
     }
 
     function onMouseMove(x: number, y: number, mX: number, mY: number) {
@@ -34,7 +34,7 @@ export function mouseDefault(pointerNumber: number,
         ci.sendMouseMotion(xy.x, xy.y);
     }
 
-    return mount(el, pointerNumber, onMouseDown, onMouseMove, onMouseUp, onMouseLeave);
+    return mount(el, onMouseDown, onMouseMove, onMouseUp, onMouseLeave);
 }
 
 function doMapXY(eX: number,

@@ -13,11 +13,15 @@ export function mouseSwipe(sensitivity: number,
     let prevX = 0;
     let prevY = 0;
 
-    const onMouseDown = (x: number, y: number) => {
+    const onMouseDown = (x: number, y: number, mouseButton?: number) => {
         startedAt = Date.now();
         acc = 0;
         prevX = x;
         prevY = y;
+
+        if (mouseButton !== undefined) {
+            ci.sendMouseButton(mouseButton, true);
+        }
     };
 
     function onMouseMove(x: number, y: number, mX: number, mY: number) {
@@ -37,20 +41,25 @@ export function mouseSwipe(sensitivity: number,
         }
 
         acc += Math.abs(mX) + Math.abs(mY);
-        (ci as any).sendMouseRelativeMotion(mX * sensitivity * 2, mY * sensitivity * 2);
+
+        ci.sendMouseRelativeMotion(mX * sensitivity * 2, mY * sensitivity * 2);
     }
 
-    const onMouseUp = (x: number, y: number) => {
-        const delay = Date.now() - startedAt;
+    const onMouseUp = (x: number, y: number, mouseButton?: number) => {
+        if (mouseButton !== undefined) {
+            ci.sendMouseButton(mouseButton, false);
+        } else {
+            const delay = Date.now() - startedAt;
 
-        if (delay < clickDelay && acc < clickThreshold) {
-            const button = pointerButton ?? 0;
-            ci.sendMouseButton(button, true);
-            setTimeout(() => ci.sendMouseButton(button, false), 60);
+            if (delay < clickDelay && acc < clickThreshold) {
+                const button = mouseButton ?? pointerButton;
+                ci.sendMouseButton(button, true);
+                setTimeout(() => ci.sendMouseButton(button, false), 60);
+            }
         }
     };
 
     const noop = () => {};
 
-    return mount(el, pointerButton, onMouseDown, onMouseMove, onMouseUp, noop);
+    return mount(el, onMouseDown, onMouseMove, onMouseUp, noop);
 }

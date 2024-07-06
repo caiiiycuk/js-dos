@@ -1,25 +1,22 @@
 import { pointer, getPointerState } from "./pointer";
 
 export function mount(el: HTMLElement,
-                      pointerButton: number,
-                      onMouseDown: (x: number, y: number, button: number) => void,
+                      onMouseDown: (x: number, y: number, button?: number) => void,
                       onMouseMove: (x: number, y: number, mX: number, mY: number) => void,
-                      onMouseUp: (x: number, y: number, button: number) => void,
+                      onMouseUp: (x: number, y: number, button?: number) => void,
                       onMouseLeave: (x: number, y: number) => void) {
     // eslint-disable-next-line
     function preventDefaultIfNeeded(e: Event) {
         // not needed yet
     }
 
-    let pressedButton = 0;
     const onStart = (e: Event) => {
         if (e.target !== el) {
             return;
         }
 
         const state = getPointerState(e, el);
-        pressedButton = state.button === undefined ? pointerButton : state.button;
-        onMouseDown(state.x, state.y, pressedButton);
+        onMouseDown(state.x, state.y, state.button);
 
         e.stopPropagation();
         preventDefaultIfNeeded(e);
@@ -38,7 +35,7 @@ export function mount(el: HTMLElement,
 
     const onEnd = (e: Event) => {
         const state = getPointerState(e, el);
-        onMouseUp(state.x, state.y, pressedButton);
+        onMouseUp(state.x, state.y, state.button);
         e.stopPropagation();
         preventDefaultIfNeeded(e);
     };
