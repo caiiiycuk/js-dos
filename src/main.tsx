@@ -3,7 +3,7 @@ import "./index.css";
 
 import { Provider } from "react-redux";
 import { Ui } from "./ui";
-import { dosSlice } from "./store/dos";
+import { dosSlice, RenderAspect } from "./store/dos";
 import { initEmulators } from "./store/dos";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
@@ -11,7 +11,7 @@ import { i18nSlice } from "./i18n";
 import { getCache } from "./host/lcache";
 import { loadBundleFromConfg, loadBundleFromUrl } from "./load";
 
-import { DosOptions, DosProps, DosFn } from "./public/types";
+import { DosOptions, DosProps, DosFn, ImageRendering, RenderBackend } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
 import { NonSerializableStore, Store, makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
 import { authSlice } from "./store/auth";
@@ -122,6 +122,18 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(uiSlice.actions.kiosk(kiosk));
     }
 
+    function setImageRendering(imageRendering: ImageRendering) {
+        store.dispatch(dosSlice.actions.imageRendering(imageRendering));
+    }
+
+    function setRenderBackend(backend: RenderBackend) {
+        store.dispatch(dosSlice.actions.renderBackend(backend));
+    }
+
+    function setRenderAspect(aspect: RenderAspect) {
+        store.dispatch(dosSlice.actions.renderAspect(aspect));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -174,6 +186,18 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setKiosk(options.kiosk);
     }
 
+    if (options.imageRendering !== undefined) {
+        setImageRendering(options.imageRendering);
+    }
+
+    if (options.renderBackend !== undefined) {
+        setRenderBackend(options.renderBackend);
+    }
+
+    if (options.renderAspect !== undefined) {
+        setRenderAspect(options.renderAspect);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -195,6 +219,9 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setFullScreen,
         setAutoStart,
         setKiosk,
+        setImageRendering,
+        setRenderBackend,
+        setRenderAspect,
     };
 };
 

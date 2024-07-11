@@ -1,4 +1,7 @@
 export type DosEvent = "emu-ready" | "ci-ready" | "bnd-play";
+export type ImageRendering = "pixelated" | "smooth";
+export type RenderBackend = "webgl" | "canvas";
+export type RenderAspect = "AsIs" | "1/1" | "5/4" | "4/3" | "16/10" | "16/9" | "Fit";
 
 export interface DosOptions {
     url: string,
@@ -27,6 +30,9 @@ export interface DosOptions {
     loginUrl: string,
     autoStart: boolean,
     kiosk: boolean,
+    imageRendering: ImageRendering,
+    renderBackend: RenderBackend,
+    renderAspect: RenderAspect,
 }
 
 export interface DosProps {
@@ -43,6 +49,9 @@ export interface DosProps {
     setFullScreen(fullScreen: boolean): void;
     setAutoStart(autoStart: boolean): void;
     setKiosk(kiosk: boolean): void;
+    setImageRendering(rendering: ImageRendering): void;
+    setRenderBackend(backend: RenderBackend): void;
+    setRenderAspect(aspect: RenderAspect): void;
 }
 
 export type DosFn = (element: HTMLDivElement, options: Partial<DosOptions>) => DosProps;
