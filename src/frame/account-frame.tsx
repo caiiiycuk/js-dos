@@ -51,7 +51,7 @@ function PremiumPlan(props: {}) {
         }
 
         if (location.host !== "js-dos.com") {
-            window.open("https://js-dos.com/subscription.html", "_blank");
+            window.open("https://js-dos.com/subscription.html#subscribe", "_blank");
             return;
         }
 
