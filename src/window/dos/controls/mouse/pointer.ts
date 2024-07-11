@@ -1,5 +1,7 @@
 function initBind() {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isMobile = /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.appVersion) ||
+                /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.userAgent) ||
+                (/MacIntel/.test(navigator.platform) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
     const isTouch = isMobile && !!("ontouchstart" in window);
     const isPointer = isMobile && (window.PointerEvent ? true : false);
     const isMSPointer = isMobile && ((window as any).MSPointerEvent ? true : false);
