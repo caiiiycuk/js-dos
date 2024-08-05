@@ -13,7 +13,8 @@ import { loadBundleFromConfg, loadBundleFromUrl } from "./load";
 
 import { DosOptions, DosProps, DosFn, ImageRendering, RenderBackend } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
-import { NonSerializableStore, Store, makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
+import { NonSerializableStore, Store, getNonSerializableStore,
+    makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
 import { authSlice } from "./store/auth";
 
 export const Dos: DosFn = (element: HTMLDivElement,
@@ -134,6 +135,26 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.renderAspect(aspect));
     }
 
+    function setNoNetworking(networking: boolean) {
+        store.dispatch(uiSlice.actions.noNetworking(networking));
+    }
+
+    function setNoCloud(cloud: boolean) {
+        store.dispatch(uiSlice.actions.noCloud(cloud));
+    }
+
+    function setPaused(paused: boolean) {
+        store.dispatch(dosSlice.actions.paused(paused));
+    }
+
+    function setScaleControls(scale: number) {
+        store.dispatch(dosSlice.actions.scaleControls(scale));
+    }
+
+    function setMouseSensitivity(sensitivity: number) {
+        store.dispatch(dosSlice.actions.mouseSensitivity(sensitivity));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -198,6 +219,22 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setRenderAspect(options.renderAspect);
     }
 
+    if (options.noNetworking !== undefined) {
+        setNoNetworking(options.noNetworking);
+    }
+
+    if (options.noCloud !== undefined) {
+        setNoCloud(options.noCloud);
+    }
+
+    if (options.scaleControls !== undefined) {
+        setScaleControls(options.scaleControls);
+    }
+
+    if (options.mouseSensitivity !== undefined) {
+        setMouseSensitivity(options.mouseSensitivity);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -222,6 +259,19 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setImageRendering,
         setRenderBackend,
         setRenderAspect,
+        setNoNetworking,
+        setNoCloud,
+        setPaused,
+        setScaleControls,
+        setMouseSensitivity,
+
+        stop: async () => {
+            store.dispatch(uiSlice.actions.hidden(true));
+            const nonSerializableStore = getNonSerializableStore(store);
+            if (nonSerializableStore.ci) {
+                return nonSerializableStore.ci.exit();
+            }
+        },
     };
 };
 

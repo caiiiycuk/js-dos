@@ -15,6 +15,7 @@ export type Frame = "none" | "account" | "settings" |
     "stats" | "fat-drives" | "quick-save" | "image-rendering";
 
 const initialState: {
+    hidden: boolean,
     modal: "none" | "login",
     frame: Frame,
     frameXs: boolean,
@@ -33,7 +34,10 @@ const initialState: {
     autoStart: boolean,
     kiosk: boolean,
     documentHidden: boolean,
+    noNetworking: boolean,
+    noCloud: boolean,
 } = {
+    hidden: false,
     modal: "none",
     frame: "none",
     frameXs: false,
@@ -52,6 +56,8 @@ const initialState: {
     autoStart: false,
     kiosk: false,
     documentHidden: document.hidden ?? false,
+    noNetworking: false,
+    noCloud: false,
 };
 
 export type UiState = typeof initialState;
@@ -163,6 +169,15 @@ export const uiSlice = createSlice({
         },
         documentHidden: (s, a: { payload: boolean }) => {
             s.documentHidden = a.payload;
+        },
+        noNetworking: (state, a: { payload: boolean }) => {
+            state.noNetworking = a.payload;
+        },
+        noCloud: (state, a: { payload: boolean }) => {
+            state.noCloud = a.payload;
+        },
+        hidden: (state, a: { payload: boolean }) => {
+            state.hidden = a.payload;
         },
     },
     extraReducers: (builder) => {

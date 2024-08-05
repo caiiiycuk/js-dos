@@ -52,6 +52,8 @@
           //   name: "makevm",
           //   host: "backend.make-vm.com:8001",
           // },
+          // noNetworking: true,
+          // noCloud: true,
           onEvent: (event, ci) => {
             console.log("Event", event)
             if (event === "ci-ready") {
@@ -64,6 +66,8 @@
           // renderBackend: "webgl",
           // imageRendering: "smooth",
         });
+        
+        window.props = props;
     });
 
     const diabloConf = `

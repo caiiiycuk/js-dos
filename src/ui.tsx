@@ -11,11 +11,12 @@ import { useT } from "./i18n";
 let currentWideScreen = uiSlice.getInitialState().wideScreen;
 export function Ui() {
     const rootRef = useRef<HTMLDivElement>(null);
+    const hidden = useSelector((state: State) => state.ui.hidden);
     const theme = useSelector((state: State) => state.ui.theme);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (rootRef === null || rootRef.current === null) {
+        if (hidden || rootRef === null || rootRef.current === null) {
             return;
         }
 
@@ -37,7 +38,11 @@ export function Ui() {
             resizeObserver.disconnect();
             window.removeEventListener("resize", onResize);
         };
-    }, [rootRef, dispatch]);
+    }, [hidden, rootRef, dispatch]);
+
+    if (hidden) {
+        return null;
+    }
 
     return <div
         ref={rootRef}

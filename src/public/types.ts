@@ -33,6 +33,10 @@ export interface DosOptions {
     imageRendering: ImageRendering,
     renderBackend: RenderBackend,
     renderAspect: RenderAspect,
+    noNetworking: boolean,
+    noCloud: boolean,
+    scaleControls: number,
+    mouseSensitivity: number,
 }
 
 export interface DosProps {
@@ -52,6 +56,13 @@ export interface DosProps {
     setImageRendering(rendering: ImageRendering): void;
     setRenderBackend(backend: RenderBackend): void;
     setRenderAspect(aspect: RenderAspect): void;
+    setNoNetworking(noNetworking: boolean): void;
+    setNoCloud(noCloud: boolean): void;
+    setPaused(pause: boolean): void;
+    setScaleControls(scaleControls: number): void;
+    setMouseSensitivity(mouseSensitivity: number): void;
+
+    stop(): Promise<void>;
 }
 
 export type DosFn = (element: HTMLDivElement, options: Partial<DosOptions>) => DosProps;

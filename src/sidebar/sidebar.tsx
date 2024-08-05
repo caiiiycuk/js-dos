@@ -16,6 +16,8 @@ export function SideBar(props: {}) {
     const editor = useSelector((state: State) => state.ui.editor);
     const backend = useSelector((state: State) => state.dos.backend);
     const kiosk = useSelector((state: State) => state.ui.kiosk);
+    const networking = !useSelector((state: State) => state.ui.noNetworking);
+    const cloud = !useSelector((state: State) => state.ui.noCloud);
 
     if (kiosk) {
         return null;
@@ -26,7 +28,7 @@ export function SideBar(props: {}) {
         {window === "run" && backend === "dosboxX" && <QuickSaveButton />}
         {window === "run" && pointer.mobile && <SoftKeyboardButton />}
         {window === "run" && <ImageRenderingButton />}
-        {window === "run" && <NetworkButton />}
+        {window === "run" && networking && <NetworkButton />}
         {editor && window === "prerun" && <DosboxConfButton />}
         {editor && window === "prerun" && backend === "dosboxX" && <FatDrivesButton />}
         {editor && window === "run" && <FsButton />}
@@ -35,6 +37,6 @@ export function SideBar(props: {}) {
         {window === "run" && <CyclesButton />}
         {window === "run" && <HddLed />}
         {(window === "prerun" || window === "run") && <SettingsButton />}
-        {window !== "run" && <AccountButton />}
+        {window !== "run" && cloud && <AccountButton />}
     </div>;
 };
