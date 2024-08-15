@@ -30,6 +30,7 @@ const clientMessageValues: ClientMessage[] = [
     "wc-install", "wc-run", "wc-pack-fs-to-bundle", "wc-add-key", "wc-mouse-move", "wc-mouse-button", "wc-mouse-sync",
     "wc-exit", "wc-sync-sleep", "wc-pause", "wc-resume", "wc-mute", "wc-unmute", "wc-connect", "wc-disconnect",
     "wc-backend-event", "wc-asyncify-stats", "wc-fs-tree", "wc-fs-get-file", "wc-send-data-chunk",
+    "wc-net-connected", "wc-net-received",
 ];
 const clientMessageEnum: { [msg: string]: number } = {};
 clientMessageValues.forEach((v, i) => clientMessageEnum[v] = i);
@@ -40,6 +41,7 @@ const serverMessageValues: ServerMessage[] = [
     "ws-stdout", "ws-exit", "ws-persist", "ws-sound-init", "ws-sound-push",
     "ws-config", "ws-sync-sleep", "ws-connected", "ws-disconnected",
     "ws-asyncify-stats", "ws-fs-tree", "ws-send-data-chunk",
+    "ws-net-connect", "ws-net-disconnect", "ws-net-send",
 ];
 const serverMessageEnum: { [num: string]: ServerMessage } = {};
 serverMessageValues.forEach((v, i) => serverMessageEnum[i] = v);
@@ -262,6 +264,27 @@ export class WsTransportLayer implements TransportLayer {
                     bundle: payload.length > 0 ? payload[0]! : null,
                 });
             } break;
+            case "ws-net-connect": {
+                let address = textDecoder.decode(payload[0]!);
+                if (!address.startsWith("wss://") && !address.startsWith("ws://")) {
+                    address = ((
+                        window.location.protocol === "http:" &&
+                        window.location.hostname !== "localhost"
+                    ) ? "ws://" : "wss://") + address;
+                }
+                this.handler("ws-net-connect", { address });
+            } break;
+            case "ws-net-send": {
+                this.handler("ws-net-send", {
+                    networkId: this.readUint32(payload[0]!, 0),
+                    data: payload[1],
+                });
+            } break;
+            case "ws-net-disconnect": {
+                this.handler("ws-net-disconnect", {
+                    networkId: this.readUint32(payload[0]!, 0),
+                });
+            } break;
             default: {
                 if (message === undefined) { // not standard messages
                     (async () => {
@@ -398,6 +421,16 @@ export class WsTransportLayer implements TransportLayer {
             } break;
             case "wc-pack-fs-to-bundle": {
                 this.sendMessageToSocket(messageId, new Uint8Array([props.onlyChanges ? 1 : 0]));
+            } break;
+            case "wc-net-connected": {
+                const id = new Uint8Array(4);
+                this.writeUint32(id, props.networkId + 1, 0);
+                this.sendMessageToSocket(messageId, id);
+            } break;
+            case "wc-net-received": {
+                const id = new Uint8Array(4);
+                this.writeUint32(id, props.networkId, 0);
+                this.sendMessageToSocket(messageId, id, new Uint8Array(props.data));
             } break;
             default: {
                 console.log("Unhandled client message (wc):", name, messageId, props);
