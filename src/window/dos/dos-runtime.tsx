@@ -202,6 +202,7 @@ function useStats(ci: CommandInterface): void {
                         driveCacheHit: stats.driveCacheHit,
                         driveCacheMiss: stats.driveCacheMiss,
                         driveCacheUsed: stats.driveCacheUsed,
+                        driveIo: stats.driveIo,
                     };
                     dispatch(dosSlice.actions.stats(dStats));
 

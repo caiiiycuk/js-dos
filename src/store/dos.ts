@@ -42,6 +42,7 @@ export interface EmulatorStats {
     driveCacheHit: number,
     driveCacheMiss: number,
     driveCacheUsed: number,
+    driveIo: { read: number, write: number }[];
 };
 
 const initialState: {
@@ -116,6 +117,7 @@ const initialState: {
         driveCacheHit: 0,
         driveCacheMiss: 0,
         driveCacheUsed: 0,
+        driveIo: [],
     },
     network: {
         server: (lStorage.getItem("net.server") ?? "netherlands") as any,
