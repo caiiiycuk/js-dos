@@ -1159,10 +1159,10 @@ electron-to-chromium@^1.4.648:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.653.tgz#832ab25e80ad698ac09c1ca547bd9ee6cce7df10"
   integrity sha512-wA2A2LQCqnEwQAvwADQq3KpMpNwgAUBnRmrFgRzHnPhbQUFArTR32Ab46f4p0MovDLcg4uqd4nCsN2hTltslpA==
 
-emulators@8.1.7:
-  version "8.1.7"
-  resolved "https://registry.yarnpkg.com/emulators/-/emulators-8.1.7.tgz#01159d7efee15c4d629ae0f0b56f42d5ca91d38f"
-  integrity sha512-+foHB62mijU8JGE5ggs4+onm1zsWtIz5yqnD7r5jw4L2vM5wukomMsHcSFL67keVnpmvY192ieoUhHxSHNoMEg==
+emulators@8.1.8:
+  version "8.1.8"
+  resolved "https://registry.yarnpkg.com/emulators/-/emulators-8.1.8.tgz#7046833aed33d8cb6d4ceb24c2a754e5c421b8b3"
+  integrity sha512-RtvCrFu+LyW2NHoOzDzMeJ5g50Hf10GQuBvC6OP4ZW7IKj+5k1CATpebjklMgZzKB2G7qGLc/mGOUfi8zglNmQ==
 
 entities@^4.2.0:
   version "4.5.0"

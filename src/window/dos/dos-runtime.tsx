@@ -34,7 +34,6 @@ function useLog(ci: CommandInterface): void {
     const dispatch = useDispatch();
     const t = useT();
     useEffect(() => {
-        let totalPreload = 0;
         const preloadProgress: { [drive: string]: number } = {};
         ci.events().onMessage((msgType, ...args: string[]) => {
             if (msgType === "error" && args[0]?.startsWith("[panic]")) {
@@ -55,20 +54,13 @@ function useLog(ci: CommandInterface): void {
                     const rest = Number.parseInt(args[0].substring(args[0].indexOf("preload=") + "preload=".length));
                     if (preloadProgress[drive] === undefined) {
                         preloadProgress[drive] = rest;
-                        totalPreload += rest;
-                    } else {
-                        preloadProgress[drive] = rest;
-                    }
-
-                    let downloaded = totalPreload;
-                    for (const rest of Object.values(preloadProgress)) {
-                        downloaded -= rest;
                     }
 
                     dispatch(uiSlice.actions.showToast({
                         message: t("preloading_sockdrive") + " " +
-                            (Math.round(downloaded / 1024 / 1024 * 100) / 100) + "/" +
-                            (Math.round(totalPreload / 1024 / 1024 * 100) / 100) + "Mb",
+                            drive.substring(drive.indexOf("/") + 1) + " — " +
+                            (Math.round(preloadProgress[drive] - rest) / 1024 / 1024).toFixed(2) + "/" +
+                            (Math.round(preloadProgress[drive] / 1024 / 1024)) + "Mb",
                         long: true,
                     }));
                 }
@@ -263,7 +255,7 @@ function useLayers(canvas: HTMLCanvasElement, ci: CommandInterface) {
                             unbindControls();
 
                             if (config === null) {
-                                unbindControls = () => {};
+                                unbindControls = () => { };
                                 layers.mouseOverlay.style.display = "none";
                             } else if (config.version === undefined) {
                                 layers.mouseOverlay.style.display = "block";

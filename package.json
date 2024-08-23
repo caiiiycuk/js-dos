@@ -1,6 +1,6 @@
 {
   "name": "js-dos",
-  "version": "8.1.16",
+  "version": "8.1.17",
   "description": "Full-featured DOS player with multiple emulator backends",
   "type": "module",
   "keywords": [
@@ -37,7 +37,7 @@
     "@typescript-eslint/parser": "^6.20.0",
     "autoprefixer": "^10.4.17",
     "daisyui": "^3.9.3",
-    "emulators": "8.1.7",
+    "emulators": "8.1.8",
     "eslint": "^8.56.0",
     "eslint-config-google": "^0.14.0",
     "postcss": "^8.4.33",
