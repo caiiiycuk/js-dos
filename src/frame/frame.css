@@ -19,7 +19,7 @@
   }
 
   .premium-plan-root {
-    @apply bg-white rounded-xl px-4 pt-4 pb-2 w-64;
+    @apply bg-white rounded-xl px-4 pt-4 pb-2 w-full;
   }
 
   .premium-plan-root.have-premium {
@@ -47,7 +47,7 @@
     @apply border-b-green-300;
   }
 
-  .settings-frame {
+  .settings-frame, .prerun-frame {
     @apply px-6 -mt-2;
 
     .label {
@@ -78,6 +78,7 @@
   }
 
   .account-frame {
+    @apply px-6 mt-4;
     .account-img {
       @apply w-24 h-24 my-8 rounded-full;
     }

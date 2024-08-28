@@ -81,6 +81,7 @@ const initialState: {
     softKeyboardLayout: string[],
     softKeyboardSymbols: {[key: string]: string}[],
     softKeyboardActiveSymbols: number,
+    noCursor: boolean,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -173,6 +174,7 @@ const initialState: {
         },
     ],
     softKeyboardActiveSymbols: 0,
+    noCursor: false,
 };
 
 export type DosState = typeof initialState;
@@ -332,6 +334,9 @@ export const dosSlice = createSlice({
         },
         softKeyboardActiveSymbols: (s, a: { payload: number }) => {
             s.softKeyboardActiveSymbols = a.payload;
+        },
+        noCursor: (s, a: { payload: boolean }) => {
+            s.noCursor = a.payload;
         },
     },
 });

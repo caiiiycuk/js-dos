@@ -12,7 +12,8 @@ export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "account" | "settings" |
     "editor-conf" | "editor-fs" | "network" |
-    "stats" | "fat-drives" | "quick-save" | "image-rendering";
+    "stats" | "fat-drives" | "quick-save" | "image-rendering" |
+    "prerun";
 
 const initialState: {
     hidden: boolean,
@@ -114,6 +115,10 @@ export const uiSlice = createSlice({
         },
         frameImageRendering: (state) => {
             state.frame = "image-rendering";
+            state.frameXs = false;
+        },
+        framePreRun: (state) => {
+            state.frame = "prerun";
             state.frameXs = false;
         },
         windowSelect: (state) => {

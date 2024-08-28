@@ -9,6 +9,7 @@ import { QuickSaveFrame } from "./quick-save-frame";
 import { SettingsFrame } from "./settings-frame";
 import { StatsFrame } from "./stats-frame";
 import { ImageRenderingFrame } from "./image-rendering-frame";
+import { PreRunFrame } from "./prerun-frame";
 
 export function Frame(props: {}) {
     const frame = useSelector((state: State) => state.ui.frame);
@@ -30,5 +31,6 @@ export function Frame(props: {}) {
         { frame === "fat-drives" && <FatDrivesFrame /> }
         { frame === "quick-save" && <QuickSaveFrame /> }
         { frame === "image-rendering" && <ImageRenderingFrame /> }
+        { frame === "prerun" && <PreRunFrame /> }
     </div>;
 };

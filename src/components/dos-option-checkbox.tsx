@@ -29,6 +29,18 @@ export function MouseCapture() {
     />;
 }
 
+export function SystemCursor() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const lock = useSelector((state: State) => !state.dos.noCursor);
+    return <Checkbox
+        class="mt-4"
+        label={t("system_cursor")}
+        checked={lock}
+        onChange={(l) => dispatch(dosSlice.actions.noCursor(!l))}
+    />;
+}
+
 export function MobileControls() {
     const t = useT();
     const dispatch = useDispatch();

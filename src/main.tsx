@@ -155,6 +155,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.mouseSensitivity(sensitivity));
     }
 
+    function setNoCursor(noCursor: boolean) {
+        store.dispatch(dosSlice.actions.noCursor(noCursor));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -235,6 +239,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setMouseSensitivity(options.mouseSensitivity);
     }
 
+    if (options.noCursor !== undefined) {
+        setNoCursor(options.noCursor);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -264,6 +272,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setPaused,
         setScaleControls,
         setMouseSensitivity,
+        setNoCursor,
 
         stop: async () => {
             store.dispatch(uiSlice.actions.hidden(true));

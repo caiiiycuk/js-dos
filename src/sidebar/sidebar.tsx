@@ -8,6 +8,7 @@ import {
     DosboxConfButton, SettingsButton, CyclesButton, FsButton,
     FatDrivesButton, QuickSaveButton, ImageRenderingButton, HddLed,
     SoftKeyboardButton,
+    PreRunButton,
 } from "./sidebar-button";
 import { pointer } from "../window/dos/controls/mouse/pointer";
 
@@ -36,7 +37,8 @@ export function SideBar(props: {}) {
         {window === "run" && <FullscreenButton />}
         {window === "run" && <CyclesButton />}
         {window === "run" && <HddLed />}
-        {(window === "prerun" || window === "run") && <SettingsButton />}
+        {window === "prerun" && <PreRunButton />}
+        {window === "run" && <SettingsButton />}
         {window !== "run" && cloud && <AccountButton />}
     </div>;
 };

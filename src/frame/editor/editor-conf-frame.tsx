@@ -96,6 +96,7 @@ export function EditorConf() {
         dispatch(dosSlice.actions.mouseCapture(newConf.indexOf("autolock=true") > 0));
         dispatch(editorSlice.actions.dosboxConf(newConf));
         dispatch(dosSlice.actions.dosBackendLocked(newConf.indexOf("sockdrive") >= 0));
+        dispatch(dosSlice.actions.noCursor(newConf.indexOf("sockdrive") >= 0));
     }
 
     if (bundleConfig === null) {

@@ -116,4 +116,4 @@ export function postJsDosEvent(nonSerializableStore: NonSerializableStore, event
             nonSerializableStore.options.onEvent?.(event, ci);
         }, 4);
     }
-};
+}

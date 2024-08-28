@@ -11,9 +11,10 @@ import { ThemeValues, Theme, uiSlice } from "../store/ui";
 import { lStorage } from "../host/lstorage";
 import { SockdriveBackendName, initSlice, sockdriveBackendNames } from "../store/init";
 
-export function BackendSelect() {
+export function BackendSelect(props: { multiline?: boolean }) {
     const locked = useSelector((state: State) => state.dos.backendLocked);
     return <OptionSelect
+        multiline={props.multiline}
         label="emulation_backend"
         values={[...BackendValues]}
         disabled={locked}
@@ -25,9 +26,10 @@ export function BackendSelect() {
     />;
 }
 
-export function RenderSelect() {
+export function RenderSelect(props: { multiline?: boolean }) {
     const disabled = useSelector((state: State) => state.ui.window) === "run";
     return <OptionSelect
+        multiline={props.multiline}
         label="render_backend"
         values={[...RenderBackendValues]}
         disabled={disabled}

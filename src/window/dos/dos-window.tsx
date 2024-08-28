@@ -24,6 +24,7 @@ export function DosWindow(props: {
     const worker = useSelector((state: State) => state.dos.worker);
     const backend = useSelector((state: State) => state.dos.backend);
     const backendHardware = useSelector((state: State) => state.dos.backendHardware);
+    const noCursor = useSelector((state: State) => state.dos.noCursor);
     const dispatch = useDispatch();
     const nonSerializableStore = useNonSerializableStore();
 
@@ -86,7 +87,7 @@ export function DosWindow(props: {
 
     return <div class="flex flex-col flex-grow h-full overflow-hidden">
         <div class="bg-black h-full flex-grow overflow-hidden relative">
-            <canvas ref={canvasRef} />
+            <canvas class={ noCursor ? "cursor-none" : "" } ref={canvasRef} />
             {canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} />}
         </div>
         <SoftKeyboard ci={ci} />

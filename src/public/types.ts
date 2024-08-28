@@ -37,6 +37,7 @@ export interface DosOptions {
     noCloud: boolean,
     scaleControls: number,
     mouseSensitivity: number,
+    noCursor: boolean,
 }
 
 export interface DosProps {
@@ -61,6 +62,7 @@ export interface DosProps {
     setPaused(pause: boolean): void;
     setScaleControls(scaleControls: number): void;
     setMouseSensitivity(mouseSensitivity: number): void;
+    setNoCursor(noCursor: boolean): void;
 
     stop(): Promise<void>;
 }

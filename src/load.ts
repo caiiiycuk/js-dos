@@ -127,6 +127,7 @@ function syncWithConfig(config: DosConfig, dispatch: Dispatch) {
     if (config.dosboxConf.indexOf("sockdrive") >= 0) {
         dispatch(dosSlice.actions.dosBackendLocked(true));
         dispatch(dosSlice.actions.dosBackend("dosboxX"));
+        dispatch(dosSlice.actions.noCursor(true));
     }
     dispatch(dosSlice.actions.mouseCapture(config.dosboxConf.indexOf("autolock=true") >= 0));
 }
