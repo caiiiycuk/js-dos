@@ -80,12 +80,10 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         net_drives: "Сетевые диски",
         fat_write: "FAT запись",
         play: "Запустить",
-        prerun_line: "Вы можете изменить настройки плеера (например, чувствительность мыши) нажав",
         system_cursor: "Системный курсор",
     },
     en: {
         play: "Start",
-        prerun_line: "You can change player settings such as mouse sensitivity by pressing",
         system_cursor: "System cursor",
         mobile_controls: "Mobile controls",
         mirrored_controls: "Mirror controls",
