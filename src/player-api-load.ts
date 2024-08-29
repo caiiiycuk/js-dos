@@ -1,5 +1,5 @@
 import { Dispatch, Store, Unsubscribe } from "@reduxjs/toolkit";
-import { DosConfig, Emulators } from "emulators";
+import { DosConfig, Emulators, InitFs } from "emulators";
 import { dosSlice } from "./store/dos";
 import { bundleFromChanges, bundleFromFile, bundleFromUrl } from "./host/bundle-storage";
 import { uiSlice } from "./store/ui";
@@ -35,7 +35,7 @@ export function loadBundleFromFile(file: File, store: Store) {
         null, null, store);
 }
 
-export async function loadBundleFromConfg(config: DosConfig, store: Store) {
+export async function loadBundleFromConfg(config: DosConfig, initFs: InitFs | null, store: Store) {
     const nonSerializableStore = getNonSerializableStore(store);
     const dispatch = store.dispatch;
     nonSerializableStore.loadedBundle = null;
@@ -48,6 +48,7 @@ export async function loadBundleFromConfg(config: DosConfig, store: Store) {
         bundleChangesUrl: null,
         bundle: config,
         bundleChanges: null,
+        initFs,
     };
     dispatch(dosSlice.actions.bndReady({}));
 }
@@ -92,6 +93,7 @@ async function doLoadBundle(bundleName: string,
         bundleChangesUrl: bundleChanges?.url ?? null,
         bundle,
         bundleChanges: bundleChanges?.bundle ?? null,
+        initFs: null,
     };
     dispatch(dosSlice.actions.bndReady({}));
 }

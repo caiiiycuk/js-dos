@@ -1,7 +1,7 @@
 import { useDispatch, useStore } from "react-redux";
 import { dosSlice } from "../store/dos";
 import { useT } from "../i18n";
-import { loadBundleFromFile, loadBundleFromUrl, loadEmptyBundle } from "../load";
+import { loadBundleFromFile, loadBundleFromUrl, loadEmptyBundle } from "../player-api-load";
 import { useState } from "preact/hooks";
 import { uiSlice } from "../store/ui";
 import { Store } from "../store";

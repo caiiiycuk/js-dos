@@ -9,7 +9,7 @@ import { initEmulators } from "./store/dos";
 import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
 import { getCache } from "./host/lcache";
-import { loadBundleFromConfg, loadBundleFromUrl } from "./load";
+import { loadBundleFromConfg, loadBundleFromUrl } from "./player-api-load";
 
 import { DosOptions, DosProps, DosFn, ImageRendering, RenderBackend } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
@@ -58,7 +58,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
                             jsdosConf: {
                                 version: "8",
                             },
-                        }, store);
+                        }, nonSerializableStore.options.initFs ?? null, store);
                     } else {
                         store.dispatch(uiSlice.actions.windowSelect());
                     }

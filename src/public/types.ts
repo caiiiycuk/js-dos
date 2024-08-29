@@ -3,9 +3,19 @@ export type ImageRendering = "pixelated" | "smooth";
 export type RenderBackend = "webgl" | "canvas";
 export type RenderAspect = "AsIs" | "1/1" | "5/4" | "4/3" | "16/10" | "16/9" | "Fit";
 
+
+export type InitBundleEntry = Uint8Array;
+export interface InitFileEntry {
+    path: string;
+    contents: Uint8Array;
+}
+export type InitFsEntry = InitBundleEntry | InitFileEntry;
+export type InitFs = InitFsEntry | InitFsEntry[];
+
 export interface DosOptions {
     url: string,
     dosboxConf: string,
+    initFs: InitFs,
     background: string,
     pathPrefix: string,
     theme: "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |

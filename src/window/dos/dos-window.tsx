@@ -1,4 +1,4 @@
-import { Emulators, CommandInterface } from "emulators";
+import { Emulators, CommandInterface, InitFs } from "emulators";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { dosSlice } from "../../store/dos";
@@ -30,18 +30,34 @@ export function DosWindow(props: {
 
     useEffect(() => {
         try {
-            const bundles = nonSerializableStore.loadedBundle!.bundleChanges !== null ?
-                [nonSerializableStore.loadedBundle!.bundle, nonSerializableStore.loadedBundle!.bundleChanges] :
-                nonSerializableStore.loadedBundle!.bundle;
+            const loadedBundle = nonSerializableStore.loadedBundle!;
+            let bundles: InitFs = (loadedBundle.bundleChanges !== null ?
+                [loadedBundle.bundle, loadedBundle.bundleChanges] :
+                loadedBundle.bundle) as any;
 
-            nonSerializableStore.loadedBundle!.bundle = null;
-            nonSerializableStore.loadedBundle!.bundleChanges = null;
+            if (loadedBundle.initFs !== null) {
+                if (!Array.isArray(bundles)) {
+                    bundles = [bundles];
+                }
+
+                if (Array.isArray(loadedBundle.initFs)) {
+                    for (const next of loadedBundle.initFs) {
+                        bundles.push(next);
+                    }
+                } else {
+                    bundles.push(loadedBundle.initFs);
+                }
+            }
+
+            loadedBundle.bundle = null;
+            loadedBundle.bundleChanges = null;
+            loadedBundle.initFs = null;
 
             const ci: Promise<CommandInterface> = (async () => {
                 if (backendHardware && nonSerializableStore.options.backendHardware) {
                     const ws = await nonSerializableStore.options.backendHardware(backend);
                     if (ws !== null) {
-                        return emulators.backend(bundles as any, await createWsTransportLayer(ws, (version) => {
+                        return emulators.backend(bundles, await createWsTransportLayer(ws, (version) => {
                             if (version < actualWsVersion) {
                                 dispatch(uiSlice.actions.updateWsWarning(true));
                             }

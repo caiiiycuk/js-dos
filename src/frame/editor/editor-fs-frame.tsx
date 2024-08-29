@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import CheckboxTree, { Node, OnCheckNode, OnExpandNode } from "react-checkbox-tree";
 import { useSelector, useStore } from "react-redux";
 import { useT } from "../../i18n";
-import { loadBundle } from "../../load";
+import { loadBundle } from "../../player-api-load";
 import { State, useNonSerializableStore } from "../../store";
 import { downloadArrayToFs } from "../../download-file";
 
