@@ -1,22 +1,17 @@
 import { useState } from "preact/hooks";
-import { useDispatch, useSelector } from "react-redux";
-import { LockBadge } from "../components/lock";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { State, useNonSerializableStore } from "../store";
-import { uiSlice } from "../store/ui";
 import { DisketteIcon } from "./diskette-icon";
-import { useT } from "../i18n";
-import { putChanges } from "../v8/changes";
+import { apiSave } from "../player-api";
 
 export function CloudSaveButton(props: {
     class?: string,
 }) {
     const [busy, setBusy] = useState<boolean>(false);
-    const account = useSelector((state: State) => state.auth.account);
-    const disabled = account === null && false;
     const dispatch = useDispatch();
-    const t = useT();
     const cloudSaves = useSelector((state: State) => state.ui.cloudSaves);
     const nonSerializableStore = useNonSerializableStore();
+    const store = useStore();
 
     if (!cloudSaves ||
         nonSerializableStore.loadedBundle === null ||
@@ -24,59 +19,22 @@ export function CloudSaveButton(props: {
         return null;
     }
 
-    async function onClick() {
-        if (disabled) {
-            dispatch(uiSlice.actions.modalLogin());
-            return;
-        }
-
+    function onClick() {
         if (busy) {
             return;
         }
 
-        const ci = nonSerializableStore.ci;
-        const changesUrl = nonSerializableStore.loadedBundle?.bundleChangesUrl;
-
-        if (ci === null || !changesUrl) {
-            return;
-        }
 
         setBusy(true);
-        try {
-            const changes = await ci.persist(true);
-            if (changes !== null) {
-                if (account === null || !account.premium) {
-                    await nonSerializableStore.cache.put(changesUrl, changes);
-                } else {
-                    await Promise.all([
-                        putChanges(changesUrl, changes),
-                        nonSerializableStore.cache.put(changesUrl, changes),
-                    ]);
-                }
-            }
-
-            dispatch(uiSlice.actions.showToast({
-                message: t("success"),
-                intent: "success",
-            }));
-        } catch (e: any) {
-            dispatch(uiSlice.actions.showToast({
-                message: t("unable_to_save"),
-                intent: "error",
-            }));
-            console.error(e);
-        } finally {
-            setBusy(false);
-        }
+        apiSave(store.getState() as State, nonSerializableStore, dispatch)
+            .finally(() =>setBusy(false));
     }
 
     return <div class={"save-button sidebar-button overflow-hidden " +
-        (busy ? " sidebar-highlight " : "") + props.class +
-        (disabled ? " opacity-50" : "")} onClick={onClick}>
+        (busy ? " sidebar-highlight " : "") + props.class} onClick={onClick}>
         <div class="w-full h-full flex justify-center">
             <DisketteIcon />
             {busy && <div class="sidebar-badge" />}
-            {disabled && <LockBadge />}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                 stroke-width="1.5" stroke="currentColor"
                 class="absolute bottom-1 w-3 h-3 text-primary-content">

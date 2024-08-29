@@ -64,6 +64,7 @@ export interface DosProps {
     setMouseSensitivity(mouseSensitivity: number): void;
     setNoCursor(noCursor: boolean): void;
 
+    save(): Promise<boolean>;
     stop(): Promise<void>;
 }
 

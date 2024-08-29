@@ -13,9 +13,10 @@ import { loadBundleFromConfg, loadBundleFromUrl } from "./load";
 
 import { DosOptions, DosProps, DosFn, ImageRendering, RenderBackend } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
-import { NonSerializableStore, Store, getNonSerializableStore,
+import { NonSerializableStore, State, Store, getNonSerializableStore,
     makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
 import { authSlice } from "./store/auth";
+import { apiSave } from "./player-api";
 
 export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
@@ -274,6 +275,9 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setMouseSensitivity,
         setNoCursor,
 
+        save: () => {
+            return apiSave(store.getState() as any as State, nonSerializableStore, store.dispatch);
+        },
         stop: async () => {
             store.dispatch(uiSlice.actions.hidden(true));
             const nonSerializableStore = getNonSerializableStore(store);

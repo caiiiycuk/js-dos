@@ -193,3 +193,8 @@ export function useT() {
     };
 };
 
+export function getT(state: State) {
+    return (key: string) => {
+        return state.i18n.keys[key] ?? key;
+    };
+};
