@@ -96,7 +96,7 @@ function buttonToCode(button: string): number[] {
     } else if (button === "'") {
         return [KBD_quote];
     } else if (button === ":") {
-        return [KBD_semicolon];
+        return [KBD_leftshift, KBD_semicolon];
     } else if (button === "{") {
         return [KBD_leftshift, KBD_leftbracket];
     } else if (button === "}") {

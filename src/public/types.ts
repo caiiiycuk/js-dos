@@ -48,6 +48,8 @@ export interface DosOptions {
     scaleControls: number,
     mouseSensitivity: number,
     noCursor: boolean,
+    softKeyboardLayout: string[],
+    softKeyboardSymbols: {[key: string]: string}[],
 }
 
 export interface DosProps {
@@ -73,6 +75,8 @@ export interface DosProps {
     setScaleControls(scaleControls: number): void;
     setMouseSensitivity(mouseSensitivity: number): void;
     setNoCursor(noCursor: boolean): void;
+    setSoftKeyboardLayout(layout: string[]): void;
+    setSoftKeyboardSymbols(symbols: {[key: string]: string}[]): void;
 
     save(): Promise<boolean>;
     stop(): Promise<void>;

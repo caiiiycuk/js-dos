@@ -25,6 +25,7 @@
       /* eslint-enable max-len */
       const props = Dos(document.getElementById("app"),
         {
+          // url: "https://cdn.dos.zone/custom/dos/QB45.jsdos", // qbasic
           // url: decodeURIComponent("https%3A%2F%2Fcdn.dos.zone%2Fcustom%2Fdos%2Fdoom_dm.jsdos"),
           // url: decodeURIComponent("https%3A%2F%2Fcdn.dos.zone%2Fcustom%2Fdos%2Fhomm2_netbios.jsdos"),
           // url: "https://cdn.dos.zone/original/2X/2/24b00b14f118580763440ecaddcc948f8cb94f14.jsdos", // digger
@@ -64,6 +65,27 @@
           // noNetworking: true,
           // noCloud: true,
           // noCursor: true,
+          // softKeyboardLayout: [
+          //   "q w e r t",
+          //   "{up} {down}",
+          //   "{left} {right}",
+          //   "⎘"
+          // ],
+          // softKeyboardSymbols: [
+          //   {
+          //       "{up}": "↑",
+          //       "{down}": "↓",
+          //       "{left}": "←",
+          //       "{right}": "→",
+          //   },
+          //   {
+          //       "{up}": "↑",
+          //       "{down}": "↓",
+          //       "{left}": "←",
+          //       "{right}": "→",
+          //       "q": "й", "w": "ц", "e": "у", "r": "к", "t": "е",
+          //   },
+          // ],
           onEvent: (event, ci) => {
             console.log("Event", event)
             if (event === "ci-ready") {

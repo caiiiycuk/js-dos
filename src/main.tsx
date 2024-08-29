@@ -160,6 +160,14 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.noCursor(noCursor));
     }
 
+    function setSoftKeyboardLayout(layout: string[]) {
+        store.dispatch(dosSlice.actions.softKeyboardLayout(layout));
+    }
+
+    function setSoftKeyboardSymbols(symbols: {[key: string]: string}[]) {
+        store.dispatch(dosSlice.actions.softKeyboardSymbols(symbols));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -244,6 +252,14 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setNoCursor(options.noCursor);
     }
 
+    if (options.softKeyboardLayout !== undefined) {
+        setSoftKeyboardLayout(options.softKeyboardLayout);
+    }
+
+    if (options.softKeyboardSymbols !== undefined) {
+        setSoftKeyboardSymbols(options.softKeyboardSymbols);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -274,6 +290,8 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setScaleControls,
         setMouseSensitivity,
         setNoCursor,
+        setSoftKeyboardLayout,
+        setSoftKeyboardSymbols,
 
         save: () => {
             return apiSave(store.getState() as any as State, nonSerializableStore, store.dispatch);

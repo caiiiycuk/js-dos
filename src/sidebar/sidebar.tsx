@@ -10,7 +10,6 @@ import {
     SoftKeyboardButton,
     PreRunButton,
 } from "./sidebar-button";
-import { pointer } from "../window/dos/controls/mouse/pointer";
 
 export function SideBar(props: {}) {
     const window = useSelector((state: State) => state.ui.window);
@@ -19,6 +18,7 @@ export function SideBar(props: {}) {
     const kiosk = useSelector((state: State) => state.ui.kiosk);
     const networking = !useSelector((state: State) => state.ui.noNetworking);
     const cloud = !useSelector((state: State) => state.ui.noCloud);
+    const mobileControls = useSelector((state: State) => state.dos.mobileControls);
 
     if (kiosk) {
         return null;
@@ -27,7 +27,7 @@ export function SideBar(props: {}) {
     return <div class="sidebar">
         {window === "run" && backend === "dosbox" && <CloudSaveButton />}
         {window === "run" && backend === "dosboxX" && <QuickSaveButton />}
-        {window === "run" && pointer.mobile && <SoftKeyboardButton />}
+        {window === "run" && mobileControls && <SoftKeyboardButton />}
         {window === "run" && <ImageRenderingButton />}
         {window === "run" && networking && <NetworkButton />}
         {editor && window === "prerun" && <DosboxConfButton />}

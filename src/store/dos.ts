@@ -133,7 +133,7 @@ const initialState: {
     softKeyboardLayout: [
         "{esc} ` 1 2 3 4 5 6 7 8 9 0 () - = {bksp} {enter}",
         "{tab} q w e r t y u i o p { } \\ {up}",
-        "{shift} {left} {right} a s d f g h j k l ; ' [ {down}",
+        "{shift} {left} {right} a s d f g h j k l : ; ' [ {down}",
         "⎘ {alt} {ctrl} z x c v b n m , . / ] {space}",
     ],
     softKeyboardSymbols: [
