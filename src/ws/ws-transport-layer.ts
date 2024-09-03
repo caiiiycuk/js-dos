@@ -206,6 +206,7 @@ export class WsTransportLayer implements TransportLayer {
                     driveCacheHit: this.sockdrive.stats.cacheHit,
                     driveCacheMiss: this.sockdrive.stats.cacheMiss,
                     driveCacheUsed: this.sockdrive.stats.cacheUsed,
+                    driveIo: this.sockdrive.stats.io,
                 };
                 this.handler(message, stats);
             } break;
