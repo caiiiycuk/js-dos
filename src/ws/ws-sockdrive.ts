@@ -57,6 +57,7 @@ export function createSockdrive(
 
             const sectorSize = templates[seq].sectorSize;
             const module = { HEAPU8: new Uint8Array(0) };
+            stats.io.push({ read: 0, write: 0 });
             mapping[seq] = new Drive(url, owner, name, token, stats, module, true, true);
             return new Promise<{ handle: Handle, aheadRange: number }>((resolve, reject) => {
                 const drive = owner + "/" + name;
@@ -80,7 +81,8 @@ export function createSockdrive(
         },
         read: async (handle: Handle, sector: number): Promise<ReadResponse> => {
             if (mapping[handle]) {
-                const ptr = templates[seq].sectorSize;
+                stats.io[handle - 1].read++;
+                const ptr = templates[handle].sectorSize;
                 let code = mapping[handle].read(sector, ptr, true) as number;
                 if (code = 255) {
                     code = await mapping[handle].read(sector, ptr, false);
@@ -101,6 +103,7 @@ export function createSockdrive(
                 return 1;
             }
             if (mapping[handle]) {
+                stats.io[handle - 1].write++;
                 memory[handle].set(buffer, 0);
                 return mapping[handle].write(sector, 0);
             }
