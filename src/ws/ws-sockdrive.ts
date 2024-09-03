@@ -31,6 +31,7 @@ export function createSockdrive(
         cacheHit: 0,
         cacheMiss: 0,
         cacheUsed: 0,
+        io: [],
     };
     const sockdrive = {
         stats,
