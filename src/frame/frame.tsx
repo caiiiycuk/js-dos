@@ -8,7 +8,6 @@ import { NetworkFrame } from "./network-frame";
 import { QuickSaveFrame } from "./quick-save-frame";
 import { SettingsFrame } from "./settings-frame";
 import { StatsFrame } from "./stats-frame";
-import { ImageRenderingFrame } from "./image-rendering-frame";
 import { PreRunFrame } from "./prerun-frame";
 
 export function Frame(props: {}) {
@@ -30,7 +29,6 @@ export function Frame(props: {}) {
         { frame === "stats" && <StatsFrame /> }
         { frame === "fat-drives" && <FatDrivesFrame /> }
         { frame === "quick-save" && <QuickSaveFrame /> }
-        { frame === "image-rendering" && <ImageRenderingFrame /> }
         { frame === "prerun" && <PreRunFrame /> }
     </div>;
 };

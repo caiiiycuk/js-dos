@@ -12,7 +12,7 @@ export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "account" | "settings" |
     "editor-conf" | "editor-fs" | "network" |
-    "stats" | "fat-drives" | "quick-save" | "image-rendering" |
+    "stats" | "fat-drives" | "quick-save" |
     "prerun";
 
 const initialState: {
@@ -57,7 +57,7 @@ const initialState: {
     autoStart: false,
     kiosk: false,
     documentHidden: document.hidden ?? false,
-    noNetworking: false,
+    noNetworking: true,
     noCloud: false,
 };
 
@@ -112,10 +112,6 @@ export const uiSlice = createSlice({
         frameQuickSave: (state) => {
             state.frame = "quick-save";
             state.frameXs = true;
-        },
-        frameImageRendering: (state) => {
-            state.frame = "image-rendering";
-            state.frameXs = false;
         },
         framePreRun: (state) => {
             state.frame = "prerun";

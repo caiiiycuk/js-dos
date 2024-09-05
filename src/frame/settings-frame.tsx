@@ -1,6 +1,6 @@
 import { MirroredControls, MobileControls,
     MouseCapture, SystemCursor, PauseCheckbox } from "../components/dos-option-checkbox";
-import { ThemeSelect } from "../components/dos-option-select";
+import { ImageRenderingSelect, RenderAspectSelect, ThemeSelect } from "../components/dos-option-select";
 import { MouseSensitiviySlider, ScaleControlsSlider, VolumeSlider } from "../components/dos-option-slider";
 
 export function SettingsFrame(props: {}) {
@@ -13,6 +13,8 @@ export function SettingsFrame(props: {}) {
         <ScaleControlsSlider class="mt-4" />
         <MouseSensitiviySlider />
         <VolumeSlider />
+        <RenderAspectSelect multiline={true} />
+        <ImageRenderingSelect multiline={true} />
         <ThemeSelect multiline={true} />
     </div>;
 }

@@ -6,7 +6,7 @@ import { NetworkButton } from "./network-button";
 import { CloudSaveButton } from "./cloud-save-button";
 import {
     DosboxConfButton, SettingsButton, CyclesButton, FsButton,
-    FatDrivesButton, QuickSaveButton, ImageRenderingButton, HddLed,
+    FatDrivesButton, QuickSaveButton, HddLed,
     SoftKeyboardButton,
     PreRunButton,
 } from "./sidebar-button";
@@ -28,7 +28,6 @@ export function SideBar(props: {}) {
         {window === "run" && backend === "dosbox" && <CloudSaveButton />}
         {window === "run" && backend === "dosboxX" && <QuickSaveButton />}
         {window === "run" && mobileControls && <SoftKeyboardButton />}
-        {window === "run" && <ImageRenderingButton />}
         {window === "run" && networking && <NetworkButton />}
         {editor && window === "prerun" && <DosboxConfButton />}
         {editor && window === "prerun" && backend === "dosboxX" && <FatDrivesButton />}
