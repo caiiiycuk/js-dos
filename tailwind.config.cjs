@@ -11,6 +11,10 @@ module.exports = {
     safelist: [
         "alert-success",
         "alert-error",
+        "alert-warning",
+        "text-success-content",
+        "text-error-content",
+        "text-warning-content",
     ],
     daisyui: {
         themes: [
@@ -44,5 +48,5 @@ module.exports = {
             "coffee",
             "winter",
         ],
-    }
+    },
 };

@@ -18,7 +18,6 @@ export function SideBar(props: {}) {
     const kiosk = useSelector((state: State) => state.ui.kiosk);
     const networking = !useSelector((state: State) => state.ui.noNetworking);
     const cloud = !useSelector((state: State) => state.ui.noCloud);
-    const mobileControls = useSelector((state: State) => state.dos.mobileControls);
 
     if (kiosk) {
         return null;
@@ -26,7 +25,7 @@ export function SideBar(props: {}) {
 
     return <div class="sidebar">
         {window === "run" && <SaveButtons />}
-        {window === "run" && mobileControls && <SoftKeyboardButton />}
+        {window === "run" && <SoftKeyboardButton />}
         {window === "run" && networking && <NetworkButton />}
         {editor && window === "prerun" && <DosboxConfButton />}
         {editor && window === "prerun" && backend === "dosboxX" && <FatDrivesButton />}

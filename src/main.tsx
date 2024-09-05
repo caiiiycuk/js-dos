@@ -330,6 +330,14 @@ function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSeriali
     document.addEventListener("fullscreenchange", () => {
         const fullscreen = document.fullscreenElement === root;
         store.dispatch(uiSlice.actions.setFullScreen(fullscreen));
+        if (!fullscreen) {
+            apiSave(store.getState() as any, nonSerializableStore, store.dispatch);
+        }
+    });
+    document.addEventListener("pointerlockchange", () => {
+        if (document.pointerLockElement === null) {
+            apiSave(store.getState() as any, nonSerializableStore, store.dispatch);
+        }
     });
     function listen() {
         store.dispatch(uiSlice.actions.documentHidden(document.hidden));
