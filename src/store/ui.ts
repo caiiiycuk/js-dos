@@ -12,7 +12,7 @@ export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "account" | "settings" |
     "editor-conf" | "editor-fs" | "network" |
-    "stats" | "fat-drives" | "quick-save" |
+    "stats" | "fat-drives" |
     "prerun";
 
 const initialState: {
@@ -26,7 +26,7 @@ const initialState: {
     wideScreen: boolean,
     fullScreen: boolean,
     toast: string | null,
-    toastIntent: "none" | "error" | "success" | "panic",
+    toastIntent: "none" | "error" | "success" | "panic" | "warning",
     toastTimeoutId: number,
     background: string | null,
     readOnlyWarning: boolean,
@@ -108,10 +108,6 @@ export const uiSlice = createSlice({
         frameFatDrives: (state) => {
             state.frame = "fat-drives";
             state.frameXs = false;
-        },
-        frameQuickSave: (state) => {
-            state.frame = "quick-save";
-            state.frameXs = true;
         },
         framePreRun: (state) => {
             state.frame = "prerun";

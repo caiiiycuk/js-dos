@@ -44,4 +44,11 @@
       animation: pulse 300ms cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
+  .save-buttons {
+    .text-badge {
+      @apply absolute left-0 top-0 w-3 h-3 font-bold rounded-full flex items-center justify-center;
+      font-size: 0.5rem;
+    }
+  }
+
 }

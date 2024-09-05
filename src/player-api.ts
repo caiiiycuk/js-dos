@@ -28,10 +28,17 @@ export async function apiSave(state: State,
             }
         }
 
-        dispatch(uiSlice.actions.showToast({
-            message: t("success"),
-            intent: "success",
-        }));
+        if (account === null || account.email === null) {
+            dispatch(uiSlice.actions.showToast({
+                message: t("warn_save"),
+                intent: "warning",
+            }));
+        } else {
+            dispatch(uiSlice.actions.showToast({
+                message: t("success_save"),
+                intent: "success",
+            }));
+        }
 
         return true;
     } catch (e: any) {

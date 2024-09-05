@@ -1,28 +1,9 @@
 import { AnyAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { LockBadge } from "../components/lock";
 import { State, Store } from "../store";
 import { Frame, uiSlice } from "../store/ui";
-import { DisketteIcon } from "./diskette-icon";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { dosSlice } from "../store/dos";
-
-export function QuickSaveButton(props: {
-    class?: string,
-}) {
-    const disabled = useSelector((state: State) => state.auth.account) === null && false;
-    const action = disabled ?
-        uiSlice.actions.modalLogin() :
-        uiSlice.actions.frameQuickSave();
-    return <SidebarButton
-        class={props.class + (disabled ? " opacity-50" : "")}
-        frame="quick-save"
-        action={action}
-    >
-        <DisketteIcon />
-        {disabled && <LockBadge />}
-    </SidebarButton>;
-}
 
 export function FatDrivesButton(props: {
     class?: string,

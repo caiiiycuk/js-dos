@@ -5,7 +5,6 @@ import { EditorConf } from "./editor/editor-conf-frame";
 import { EditorFsFrame } from "./editor/editor-fs-frame";
 import { FatDrivesFrame } from "./fat-drives-frame";
 import { NetworkFrame } from "./network-frame";
-import { QuickSaveFrame } from "./quick-save-frame";
 import { SettingsFrame } from "./settings-frame";
 import { StatsFrame } from "./stats-frame";
 import { PreRunFrame } from "./prerun-frame";
@@ -28,7 +27,6 @@ export function Frame(props: {}) {
         { frame === "network" && <NetworkFrame /> }
         { frame === "stats" && <StatsFrame /> }
         { frame === "fat-drives" && <FatDrivesFrame /> }
-        { frame === "quick-save" && <QuickSaveFrame /> }
         { frame === "prerun" && <PreRunFrame /> }
     </div>;
 };
