@@ -168,6 +168,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.softKeyboardSymbols(symbols));
     }
 
+    function setVolume(volume: number) {
+        store.dispatch(dosSlice.actions.volume(volume));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -260,6 +264,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setSoftKeyboardSymbols(options.softKeyboardSymbols);
     }
 
+    if (options.volume !== undefined) {
+        setVolume(options.volume);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -292,6 +300,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setNoCursor,
         setSoftKeyboardLayout,
         setSoftKeyboardSymbols,
+        setVolume,
 
         save: () => {
             return apiSave(store.getState() as any as State, nonSerializableStore, store.dispatch);

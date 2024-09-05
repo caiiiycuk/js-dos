@@ -50,6 +50,7 @@ export interface DosOptions {
     noCursor: boolean,
     softKeyboardLayout: string[],
     softKeyboardSymbols: {[key: string]: string}[],
+    volume: number,
 }
 
 export interface DosProps {
@@ -77,6 +78,7 @@ export interface DosProps {
     setNoCursor(noCursor: boolean): void;
     setSoftKeyboardLayout(layout: string[]): void;
     setSoftKeyboardSymbols(symbols: {[key: string]: string}[]): void;
+    setVolume(volume: number): void;
 
     save(): Promise<boolean>;
     stop(): Promise<void>;
