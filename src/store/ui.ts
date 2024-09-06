@@ -51,7 +51,7 @@ const initialState: {
     toastIntent: "none",
     toastTimeoutId: 0,
     background: null,
-    readOnlyWarning: false,
+    readOnlyWarning: true,
     updateWsWarning: false,
     cloudSaves: true,
     autoStart: false,

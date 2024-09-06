@@ -6,6 +6,7 @@ import { State } from "../store";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { dispatchLoginAction, uiSlice } from "../store/ui";
 import { LockBadge } from "../components/lock";
+import { isSockdrivePremium } from "../player-api";
 
 interface Drive {
     name: string,
@@ -94,15 +95,9 @@ export function FatDrivesFrame() {
                 .catch(console.error)
                 .finally(() => setBusy(false));
 
-            fetch(sockdriveEndpoint + "/premium/" + account.email)
-                .then((r) => r.json())
-                .then((payload: { premium: boolean }) => {
-                    setSockdrivePremium(payload.premium);
-                })
-                .catch((e) => {
-                    console.error(e);
-                    setSockdrivePremium(false);
-                });
+            isSockdrivePremium(sockdriveEndpoint, account)
+                .then(setSockdrivePremium)
+                .catch(console.error);
         }
     }
 

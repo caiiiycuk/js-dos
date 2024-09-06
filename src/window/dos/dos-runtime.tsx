@@ -46,9 +46,10 @@ function useLog(ci: CommandInterface): void {
                 dispatch(uiSlice.actions.cloudSaves(false));
                 if (args[0]?.indexOf("write=") !== -1) {
                     console.log("drive", drive, "config:", args[0]);
-                }
-                if (args[0]?.indexOf("write=false") !== -1) {
-                    dispatch(uiSlice.actions.readOnlyWarning(true));
+                    dispatch(dosSlice.actions.addSockdriveInfo({
+                        drive,
+                        write: args[0]?.indexOf("write=false") === -1,
+                    }));
                 }
                 if (args[0]?.indexOf("preload=") !== -1) {
                     const rest = Number.parseInt(args[0].substring(args[0].indexOf("preload=") + "preload=".length));

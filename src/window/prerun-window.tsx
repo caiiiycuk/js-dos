@@ -12,8 +12,11 @@ export function PreRunWindow() {
 
     return <div class="pre-run-window">
         <Play />
-        <div class="text-center mt-8 absolute bottom-4">jsdos/emu version:&nbsp;
-            <span class="text-ellipsis overflow-hidden">{JSDOS_VERSION}/{emuVersion}</span></div>
+        <div class="self-end mt-8 absolute bottom-3">
+            <span class="text-ellipsis overflow-hidden">
+                js-{JSDOS_VERSION}/emu-{emuVersion.substring(0, emuVersion.indexOf(" "))}
+            </span>
+        </div>
     </div>;
 }
 

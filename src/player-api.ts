@@ -3,6 +3,7 @@ import { NonSerializableStore, State } from "./store";
 import { getT } from "./i18n";
 import { putChanges } from "./v8/changes";
 import { uiSlice } from "./store/ui";
+import { Account } from "./store/auth";
 
 export async function apiSave(state: State,
                               nonSerializableStore: NonSerializableStore,
@@ -31,7 +32,7 @@ export async function apiSave(state: State,
         if (account === null || account.email === null) {
             dispatch(uiSlice.actions.showToast({
                 message: t("warn_save"),
-                intent: "warning",
+                intent: "success",
             }));
         } else {
             dispatch(uiSlice.actions.showToast({
@@ -49,5 +50,15 @@ export async function apiSave(state: State,
         console.error(e);
 
         return false;
+    }
+}
+
+export function isSockdrivePremium(sockdriveEndpoint: string, account: Account | null): Promise<boolean> {
+    if (account) {
+        return fetch(sockdriveEndpoint + "/premium/" + account.email)
+            .then((r) => r.json())
+            .then((payload: { premium: boolean }) => payload.premium);
+    } else {
+        return Promise.resolve(false);
     }
 }
