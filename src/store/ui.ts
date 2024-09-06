@@ -43,7 +43,7 @@ const initialState: {
     frame: "none",
     frameXs: false,
     window: "none",
-    theme: (lStorage.getItem("theme") ?? "dark") as Theme,
+    theme: (lStorage.getItem("theme") ?? "light") as Theme,
     editor: false,
     wideScreen: true,
     fullScreen: false,

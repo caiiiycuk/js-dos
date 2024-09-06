@@ -54,10 +54,11 @@
           pathPrefix: "/emulators/",
           server: params.get("server"),
           room: params.get("room"),
-          //backendHardware: (backend) => {
+          // backendHardware: (backend) => {
           //  console.log("Hardware backend for", backend);
-          //  return Promise.resolve("ws://127.0.0.1:8080");
-          //},
+          //  return Promise.resolve("ws://127.0.0.1:8888");
+          // },
+          // backendHardware: window.backendHardware,
           // sockdriveBackend: {
           //   name: "makevm",
           //   host: "backend.make-vm.com:8001",
