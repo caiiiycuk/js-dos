@@ -177,7 +177,7 @@ export const domToKeyCodes: {[index: number]: number} = {
     103: KBD_kp7,
     104: KBD_kp8,
     105: KBD_kp9,
-    // 106: KBD_kpmultiply,
+    106: KBD_kpmultiply,
     // 107: KBD_kpadd,
     // 109: KBD_kpsubtract,
     // 110: KBD_kpdecimal,
@@ -203,11 +203,11 @@ export const domToKeyCodes: {[index: number]: number} = {
     189: KBD_minus,
     190: KBD_period,
     191: KBD_slash,
-    // 192: KBD_graveaccent,
+    192: KBD_grave,
     219: KBD_leftbracket,
     220: KBD_backslash,
     221: KBD_rightbracket,
-    // 222: KBD_apostrophe,
+    222: KBD_quote,
     // 224: KBD_left_super,
 };
 
