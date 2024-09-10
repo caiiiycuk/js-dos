@@ -8,4 +8,4 @@ yarn run vite build --base /latest --sourcemap true --minify terser && \
     dist s3://jsdos/latest --delete 
 ```
 
-Clear the CDN cache in dashboard.
+Clear the CDN cache (v8.js-dos.com) in dashboard.
