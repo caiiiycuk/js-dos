@@ -30,10 +30,10 @@ export function EditorConf() {
     const [myDrives, setMyDrives] = useState<{ name: string, owner: string }[]>([]);
 
     useEffect(() => {
-        if (!account || !account.token) {
+        if (!account) {
             setMyDrives([]);
         } else {
-            fetch(sockdriveEndpoint + "/list/drives/" + account.token.access_token)
+            fetch(sockdriveEndpoint + "/list/drives/" + account.token)
                 .then((r) => r.json())
                 .then(setMyDrives)
                 .catch(console.error);

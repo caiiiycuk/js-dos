@@ -1,6 +1,6 @@
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { dosSlice, FitConstant } from "../../store/dos";
-import { State, Store, useNonSerializableStore } from "../../store";
+import { getState, State, Store, useNonSerializableStore } from "../../store";
 import { CommandInterface } from "emulators";
 import { keyboard } from "./controls/keyboard";
 import { webGl as webglRender } from "./render/webgl";
@@ -137,7 +137,7 @@ function useAudioBackend(ci: CommandInterface): void {
             let volume = 1;
 
             const updateVolumeIfNeeded = () => {
-                const newVolume = store.getState().dos.volume;
+                const newVolume = getState(store).dos.volume;
                 if (Math.abs(volume - newVolume) >= 0.05) {
                     setVolume(newVolume);
                     volume = newVolume;

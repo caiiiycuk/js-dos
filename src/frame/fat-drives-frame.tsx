@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { sockdriveBackend } from "../store/init";
 import { State } from "../store";
 import { useEffect, useRef, useState } from "preact/hooks";
-import { dispatchLoginAction, uiSlice } from "../store/ui";
+import { uiSlice } from "../store/ui";
 import { LockBadge } from "../components/lock";
 import { isSockdrivePremium } from "../player-api";
 
@@ -87,7 +87,7 @@ export function FatDrivesFrame() {
             setBusy(false);
         } else {
             setBusy(true);
-            fetch(sockdriveEndpoint + "/list/drives/" + account.token.access_token)
+            fetch(sockdriveEndpoint + "/list/drives/" + account.token)
                 .then((r) => r.json())
                 .then((drives: Drive[]) => {
                     setMyDrives(drives.sort((a, b) => a.name.localeCompare(b.name)));
@@ -151,7 +151,7 @@ export function FatDrivesFrame() {
                                     </td>}
                                     {!premium && <td>
                                         <div class="cursor-pointer"
-                                            onClick={() => dispatchLoginAction(account, dispatch)}>
+                                            onClick={() => dispatch(uiSlice.actions.warnOnPremium(true))}>
                                             <LockBadge class="text-error" />
                                         </div>
                                     </td>}
@@ -179,7 +179,7 @@ export function FatDrivesFrame() {
                         setDialogIndex(-1);
                         setBusy(true);
                         // eslint-disable-next-line max-len
-                        fetch(`${sockdriveEndpoint}/fork/drive/${myDrives[dialogIndex].owner}/${myDrives[dialogIndex].name}/${forkName}/${account.token.access_token}`, {
+                        fetch(`${sockdriveEndpoint}/fork/drive/${myDrives[dialogIndex].owner}/${myDrives[dialogIndex].name}/${forkName}/${account.token}`, {
                             method: "POST",
                         })
                             .then((r) => r.json())
@@ -220,7 +220,7 @@ export function FatDrivesFrame() {
                             setDialogIndex(-1);
                             setBusy(true);
                             // eslint-disable-next-line max-len
-                            fetch(`${sockdriveEndpoint}/fork/delete/${myDrives[dialogIndex].owner}/${myDrives[dialogIndex].name}/${account.token.access_token}`, { method: "POST" })
+                            fetch(`${sockdriveEndpoint}/fork/delete/${myDrives[dialogIndex].owner}/${myDrives[dialogIndex].name}/${account.token}`, { method: "POST" })
                                 .then((r) => r.json())
                                 .then((response) => {
                                     if (response.error) {

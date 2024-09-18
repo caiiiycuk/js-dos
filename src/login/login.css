@@ -1,9 +1,0 @@
-.jsdos-rso {
-  .login-widget {
-    @apply absolute z-40 left-12 top-0 bottom-0 right-0 bg-white;
-
-    iframe {
-      @apply w-full h-full p-0 m-0 border-0;
-    }
-  }
-}

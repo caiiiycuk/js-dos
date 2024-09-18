@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import { State } from "../store";
-import { AccountButton } from "./account-button";
 import { FullscreenButton } from "./fullscreen-button";
 import { NetworkButton } from "./network-button";
 import {
@@ -17,7 +16,6 @@ export function SideBar(props: {}) {
     const backend = useSelector((state: State) => state.dos.backend);
     const kiosk = useSelector((state: State) => state.ui.kiosk);
     const networking = !useSelector((state: State) => state.ui.noNetworking);
-    const cloud = !useSelector((state: State) => state.ui.noCloud);
 
     if (kiosk) {
         return null;
@@ -36,6 +34,5 @@ export function SideBar(props: {}) {
         {window === "run" && <HddLed />}
         {window === "prerun" && <PreRunButton />}
         {window === "run" && <SettingsButton />}
-        {window !== "run" && cloud && <AccountButton />}
     </div>;
 };

@@ -1,9 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { dosSlice } from "../store/dos";
-import { State, useNonSerializableStore } from "../store";
+import { postJsDosEvent, State, useNonSerializableStore } from "../store";
 import { useT } from "../i18n";
 import { uiSlice } from "../store/ui";
 import { Emulators } from "emulators";
+import { useEffect, useState } from "preact/hooks";
+import { authSlice, loadAccount } from "../store/auth";
+import { isSockdrivePremium } from "../player-api";
+import { sockdriveBackend } from "../store/init";
 
 declare const emulators: Emulators;
 
@@ -12,11 +16,100 @@ export function PreRunWindow() {
 
     return <div class="pre-run-window">
         <Play />
+        <SecretKey />
         <div class="self-end mt-8 absolute bottom-3">
             <span class="text-ellipsis overflow-hidden">
                 js-{JSDOS_VERSION}/emu-{emuVersion.substring(0, emuVersion.indexOf(" "))}
             </span>
         </div>
+    </div>;
+}
+
+let knownToken = "-----";
+
+function SecretKey() {
+    const t = useT();
+    const account = useSelector((state: State) => state.auth.account);
+    const kiosk = useSelector((state: State) => state.ui.kiosk);
+    const [token, stateSetToken] = useState<string>(account?.token ?? "");
+    const { sockdriveEndpoint } = useSelector((state: State) =>
+        sockdriveBackend[state.init.sockdriveBackendName] ??
+        sockdriveBackend["js-dos"]);
+    const [sockdrivePremium, setSockdrivePremium] = useState<boolean>(true);
+    const premium = (account?.premium ?? false) || sockdrivePremium;
+    const nonSerializableStore = useNonSerializableStore();
+    const warnOnKey = useSelector((state: State) => state.ui.warnOnKey);
+    const warnOnPremium = useSelector((state: State) => state.ui.warnOnPremium);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        isSockdrivePremium(sockdriveEndpoint, account)
+            .then(setSockdrivePremium);
+    }, [account?.token, sockdriveEndpoint]);
+
+    if (kiosk) {
+        return null;
+    }
+
+    function setToken(token: string) {
+        if (token === knownToken) {
+            return;
+        }
+
+        dispatch(uiSlice.actions.warnOnKey(false));
+        dispatch(uiSlice.actions.warnOnPremium(false));
+
+        knownToken = token;
+        stateSetToken(token);
+        loadAccount(token)
+            .then(({ token, account }) => {
+                if (token === knownToken) {
+                    dispatch(authSlice.actions.setAccount(account));
+                }
+            }).catch(console.error);
+    }
+
+    useEffect(() => {
+        loadAccount(token).then(({ token, account }) => {
+            dispatch(authSlice.actions.setAccount(account));
+        });
+    }, []);
+
+    function fireOpenKey() {
+        postJsDosEvent(nonSerializableStore, "open-key");
+    }
+
+    const dzMark = account?.email === "dz.caiiiycuk@gmail.com";
+    return <div class="mt-4 flex flex-col items-center">
+        {account === null && t("hello_guest")}
+        {account !== null && <div class={dzMark ? "bg-warning px-2" : ""}>
+            {t("hello") + ", " + (dzMark ? "DOS Zone" : (account.name ?? account.email)) + "!"}
+            <span class="link link-neutral lowercase inline ml-1"
+                onClick={() => setToken("")}>({t("logout")})</span>
+        </div>}
+        <div class="mt-2">
+            {account === null && <>
+                {t("no_cloud_access")}
+                <a href="https://v8.js-dos.com/key"
+                    onClick={fireOpenKey}
+                    target="_blank" class="link link-neutral ml-1">{t("key")}</a>
+                &nbsp;{t("no_cloud_access2")}.
+            </>}
+            {account !== null && premium === true && <>
+                <span class={(warnOnPremium ? "text-warning font-bold" : "")}>
+                    {t("read_only_access")}
+                    <a href="https://v8.js-dos.com/key"
+                        onClick={fireOpenKey}
+                        target="_blank" class={"link ml-1 lowercase" +
+                            (warnOnPremium ? "" : "link-neutral")} >({t("fix")})</a>
+                </span>
+            </>}
+        </div>
+        {account === null &&
+            <input maxLength={5} value={token} onChange={(e) => setToken(e.currentTarget.value)}
+                placeholder="-----"
+                class={"input input-xs input-bordered mt-4 mb-4 text-center w-20" +
+                    (warnOnKey ? " input-warning animate-pulse" : "")}></input>}
     </div>;
 }
 
@@ -71,8 +164,8 @@ export function Play(props: { class?: string, button?: boolean }) {
 
             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class={ "w-10 h-10 absolute right-0 bottom-0 cursor-pointer" +
-                    (frameVisible ? " sidebar-highlight" : "") }
+                stroke="currentColor" class={"w-10 h-10 absolute right-0 bottom-0 cursor-pointer" +
+                    (frameVisible ? " sidebar-highlight" : "")}
                 onClick={(e) => {
                     if (frameVisible) {
                         dispatch(uiSlice.actions.frameNone());

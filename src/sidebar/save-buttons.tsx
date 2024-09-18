@@ -1,6 +1,6 @@
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { DisketteIcon } from "./diskette-icon";
-import { State, useNonSerializableStore } from "../store";
+import { getState, State, useNonSerializableStore } from "../store";
 import { useState } from "preact/hooks";
 import { apiSave } from "../player-api";
 
@@ -109,7 +109,7 @@ function CloudSaveButton(props: {
 
 
         setBusy(true);
-        apiSave(store.getState() as State, nonSerializableStore, dispatch)
+        apiSave(getState(store as any), nonSerializableStore, dispatch)
             .finally(() =>setBusy(false));
     }
 

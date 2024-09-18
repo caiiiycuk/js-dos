@@ -1,6 +1,5 @@
-import { Dispatch, createAction, createSlice } from "@reduxjs/toolkit";
+import { createAction, createSlice } from "@reduxjs/toolkit";
 import { lStorage } from "../host/lstorage";
-import { Account } from "./auth";
 import { DosAction } from "../store";
 import { dosSlice } from "./dos";
 
@@ -10,14 +9,13 @@ export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "eme
     "acid", "lemonade", "night", "coffee", "winter"];
 export type Theme = typeof ThemeValues[number];
 
-export type Frame = "none" | "account" | "settings" |
+export type Frame = "none" | "settings" |
     "editor-conf" | "editor-fs" | "network" |
     "stats" | "fat-drives" |
     "prerun";
 
 const initialState: {
     hidden: boolean,
-    modal: "none" | "login",
     frame: Frame,
     frameXs: boolean,
     window: "none" | "error" | "loading" | "prerun" | "run" | "select",
@@ -29,7 +27,6 @@ const initialState: {
     toastIntent: "none" | "error" | "success" | "panic" | "warning",
     toastTimeoutId: number,
     background: string | null,
-    readOnlyWarning: boolean,
     updateWsWarning: boolean,
     cloudSaves: boolean,
     autoStart: boolean,
@@ -37,9 +34,10 @@ const initialState: {
     documentHidden: boolean,
     noNetworking: boolean,
     noCloud: boolean,
+    warnOnPremium: boolean,
+    warnOnKey: boolean,
 } = {
     hidden: false,
-    modal: "none",
     frame: "none",
     frameXs: false,
     window: "none",
@@ -51,7 +49,6 @@ const initialState: {
     toastIntent: "none",
     toastTimeoutId: 0,
     background: null,
-    readOnlyWarning: true,
     updateWsWarning: false,
     cloudSaves: true,
     autoStart: false,
@@ -59,6 +56,8 @@ const initialState: {
     documentHidden: document.hidden ?? false,
     noNetworking: true,
     noCloud: false,
+    warnOnKey: false,
+    warnOnPremium: false,
 };
 
 export type UiState = typeof initialState;
@@ -71,18 +70,8 @@ export const uiSlice = createSlice({
             lStorage.setItem("theme", a.payload);
             state.theme = a.payload;
         },
-        modalLogin: (state) => {
-            state.modal = "login";
-        },
-        modalNone: (state) => {
-            state.modal = "none";
-        },
         frameNone: (state) => {
             state.frame = "none";
-            state.frameXs = false;
-        },
-        frameAccount: (state) => {
-            toggleFrameIfNeeded(state, "account");
             state.frameXs = false;
         },
         frameSettings: (state) => {
@@ -149,9 +138,6 @@ export const uiSlice = createSlice({
             state.toast = null;
             state.toastTimeoutId = 0;
         },
-        readOnlyWarning: (state, a: { payload: boolean }) => {
-            state.readOnlyWarning = a.payload;
-        },
         updateWsWarning: (state, a: { payload: boolean }) => {
             state.updateWsWarning = a.payload;
         },
@@ -175,6 +161,14 @@ export const uiSlice = createSlice({
         },
         hidden: (state, a: { payload: boolean }) => {
             state.hidden = a.payload;
+        },
+        warnOnKey: (state, a: { payload: boolean }) => {
+            state.warnOnKey = a.payload;
+            state.frame = "none";
+        },
+        warnOnPremium: (state, a: { payload: boolean }) => {
+            state.warnOnKey = a.payload;
+            state.frame = "none";
         },
     },
     extraReducers: (builder) => {
@@ -210,20 +204,3 @@ export const uiSlice = createSlice({
     },
 });
 
-function toggleFrameIfNeeded(
-    state: typeof initialState,
-    newFrame: typeof initialState.frame) {
-    if (state.frame === newFrame) {
-        state.frame = "none";
-    } else {
-        state.frame = newFrame;
-    }
-}
-
-export function dispatchLoginAction(account: Account | null, dispatch: Dispatch) {
-    if (account === null) {
-        dispatch(uiSlice.actions.modalLogin());
-    } else {
-        dispatch(uiSlice.actions.frameAccount());
-    }
-}

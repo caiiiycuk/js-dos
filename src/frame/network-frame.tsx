@@ -1,34 +1,24 @@
-import { useEffect } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { Checkbox } from "../components/checkbox";
 import { useT } from "../i18n";
 import { State } from "../store";
 import { dosSlice } from "../store/dos";
 import { Select } from "../components/select";
-import { dispatchLoginAction, uiSlice } from "../store/ui";
-import { LockBadge } from "../components/lock";
+import { uiSlice } from "../store/ui";
 import { Dispatch } from "@reduxjs/toolkit";
 
 export function NetworkFrame() {
-    const account = useSelector((state: State) => state.auth.account);
     const network = useSelector((state: State) => state.dos.network);
     const room = network.room;
     const server = network.server;
     const disabled = network.ipx !== "disconnected";
     const t = useT();
     const dispatch = useDispatch();
-    const premium = account?.premium === true;
     const ipxLink =
         network.ipx === "connected" ?
             location.href + searchSeparator() +
             "ipx=1&server=" + network.server + "&room=" + room :
             null;
-
-    useEffect(() => {
-        if (server !== "netherlands" && account?.premium !== true) {
-            dispatch(dosSlice.actions.setServer("netherlands"));
-        }
-    }, [server, account]);
 
     function setRoom(room: string) {
         dispatch(dosSlice.actions.setRoom(room));
@@ -44,7 +34,7 @@ export function NetworkFrame() {
         } else {
             dispatch(dosSlice.actions.connectIpx({
                 room,
-                address: "wss://" + (premium ? server : "netherlands") + ".dos.zone",
+                address: "wss://" + server + ".dos.zone",
             }) as any);
         }
     }
@@ -56,17 +46,8 @@ export function NetworkFrame() {
         }
     }
 
-    function lockClick() {
-        dispatchLoginAction(account, dispatch);
-    }
-
     function onServer(newServer: string) {
         setServer(newServer);
-
-        if (!premium) {
-            dispatchLoginAction(account, dispatch);
-            return;
-        }
     }
 
     return <div class="network-frame frame-root items-start px-4 relative">
@@ -80,9 +61,6 @@ export function NetworkFrame() {
                 disabled={disabled}
                 onSelect={onServer}
             />
-            <div onClick={lockClick}>
-                <LockBadge class="cursor-pointer ml-2 w-4 h-4 text-error" />
-            </div>
         </div>
         <div class="form-control w-full">
             <label class="label">

@@ -118,3 +118,7 @@ export function postJsDosEvent(nonSerializableStore: NonSerializableStore, event
         }, 4);
     }
 }
+
+export function getState(store: Store): State {
+    return store.getState() as any;
+}

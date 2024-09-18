@@ -14,8 +14,8 @@ import { loadBundleFromConfg, loadBundleFromUrl } from "./player-api-load";
 import { DosOptions, DosProps, DosFn, ImageRendering, RenderBackend } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
 import { NonSerializableStore, State, Store, getNonSerializableStore,
+    getState,
     makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
-import { authSlice } from "./store/auth";
 import { apiSave } from "./player-api";
 
 export const Dos: DosFn = (element: HTMLDivElement,
@@ -24,7 +24,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     const store = makeStore(nonSerializableStore, options);
 
 
-    if (store.getState().auth.account?.email === "dz.caiiiycuk@gmail.com") {
+    if (getState(store).auth.account?.email === "dz.caiiiycuk@gmail.com") {
         store.dispatch(dosSlice.actions.setSockdriveWrite(false));
     }
 
@@ -33,7 +33,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     let pollStep = "none";
     function pollEvents() {
         (async () => {
-            const state = store.getState();
+            const state = getState(store);
             const step = state.dos.step;
 
             if (step === pollStep) {
@@ -212,10 +212,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setFullScreen(options.fullScreen);
     }
 
-    if (options.loginUrl !== undefined) {
-        store.dispatch(authSlice.actions.setLoginUrl(options.loginUrl));
-    }
-
     if (options.autoStart !== undefined) {
         setAutoStart(options.autoStart);
     }
@@ -303,7 +299,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setVolume,
 
         save: () => {
-            return apiSave(store.getState() as any as State, nonSerializableStore, store.dispatch);
+            return apiSave(getState(store) as any as State, nonSerializableStore, store.dispatch);
         },
         stop: async () => {
             store.dispatch(uiSlice.actions.hidden(true));
@@ -331,12 +327,12 @@ function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSeriali
         const fullscreen = document.fullscreenElement === root;
         store.dispatch(uiSlice.actions.setFullScreen(fullscreen));
         if (!fullscreen) {
-            apiSave(store.getState() as any, nonSerializableStore, store.dispatch);
+            apiSave(getState(store) as any, nonSerializableStore, store.dispatch);
         }
     });
     document.addEventListener("pointerlockchange", () => {
         if (document.pointerLockElement === null) {
-            apiSave(store.getState() as any, nonSerializableStore, store.dispatch);
+            apiSave(getState(store) as any, nonSerializableStore, store.dispatch);
         }
     });
     function listen() {

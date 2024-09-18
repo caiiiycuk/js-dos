@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useT } from "../i18n";
 import { State, useNonSerializableStore } from "../store";
 import { dosSlice } from "../store/dos";
-import { dispatchLoginAction, uiSlice } from "../store/ui";
+import { uiSlice } from "../store/ui";
 import { Checkbox } from "./checkbox";
 
 export function Editor() {
@@ -120,7 +120,9 @@ export function SockdriveWrite() {
         checked={checked}
         onChange={(c) => {
             if (!account) {
-                dispatchLoginAction(account, dispatch);
+                dispatch(uiSlice.actions.warnOnKey(true));
+            } else if (!account.premium) {
+                dispatch(uiSlice.actions.warnOnPremium(true));
             } else {
                 dispatch(dosSlice.actions.setSockdriveWrite(c));
             }

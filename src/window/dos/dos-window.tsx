@@ -19,7 +19,7 @@ export function DosWindow(props: {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ci, setCi] = useState<CommandInterface | null>(null);
     const sockdriveWrite = useSelector((state: State) => state.dos.sockdriveWrite);
-    const accessToken = useSelector((state: State) => state.auth.account?.token.access_token);
+    const accessToken = useSelector((state: State) => state.auth.account?.token);
     const token = sockdriveWrite ? accessToken : undefined;
     const worker = useSelector((state: State) => state.dos.worker);
     const backend = useSelector((state: State) => state.dos.backend);
@@ -85,7 +85,6 @@ export function DosWindow(props: {
                     }
                     nonSerializableStore.ci = ci;
                     postJsDosEvent(nonSerializableStore, "ci-ready", ci);
-                    (window as any).ci = ci;
                 })
                 .catch((e) => dispatch(dosSlice.actions.emuError(e.message)));
 

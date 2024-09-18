@@ -1,14 +1,11 @@
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
-import { Login } from "./login/login";
 import { Frame } from "./frame/frame";
 import { SideBar } from "./sidebar/sidebar";
 import { State } from "./store";
-import { dispatchLoginAction, uiSlice } from "./store/ui";
+import { uiSlice } from "./store/ui";
 import { Window } from "./window/window";
 import { useT } from "./i18n";
-import { sockdriveBackend } from "./store/init";
-import { isSockdrivePremium } from "./player-api";
 
 let currentWideScreen = uiSlice.getInitialState().wideScreen;
 export function Ui() {
@@ -16,7 +13,6 @@ export function Ui() {
     const hidden = useSelector((state: State) => state.ui.hidden);
     const theme = useSelector((state: State) => state.ui.theme);
     const dispatch = useDispatch();
-    const prerun = useSelector((state: State) => state.ui.window) === "prerun";
 
     useEffect(() => {
         if (hidden || rootRef === null || rootRef.current === null) {
@@ -54,9 +50,7 @@ export function Ui() {
         <Window />
         <Frame />
         <SideBar />
-        <Login />
         <Toast />
-        { prerun && <ReadOnlyWarning /> }
         <UpdateWsWarning />
     </div>;
 };
@@ -94,68 +88,6 @@ function Toast() {
                 {path}
             </svg>
             <span>{toast}</span>
-        </div>
-    </div>;
-}
-
-function ReadOnlyWarning() {
-    const kiosk = useSelector((state: State) => state.ui.kiosk);
-    const readOnlyWarning = useSelector((state: State) => state.ui.readOnlyWarning);
-    const account = useSelector((state: State) => state.auth.account);
-    const backend = useSelector((state: State) => state.dos.backend);
-    const t = useT();
-    const dispatch = useDispatch();
-    const { sockdriveEndpoint } = useSelector((state: State) =>
-        sockdriveBackend[state.init.sockdriveBackendName] ??
-        sockdriveBackend["js-dos"]);
-    const [sockdrivePremium, setSockdrivePremium] = useState<boolean>(true);
-    const premium = (account?.premium ?? false) || sockdrivePremium;
-
-    useEffect(() => {
-        isSockdrivePremium(sockdriveEndpoint, account)
-            .then(setSockdrivePremium);
-    }, [account?.token, sockdriveEndpoint]);
-
-    if (!readOnlyWarning || kiosk ||
-            (account !== null && backend === "dosbox") ||
-            premium) {
-        return null;
-    }
-
-    function close() {
-        dispatch(uiSlice.actions.readOnlyWarning(false));
-    }
-
-    function fix() {
-        dispatch(uiSlice.actions.readOnlyWarning(false));
-        if (account === null) {
-            dispatchLoginAction(account, dispatch);
-        } else {
-            window.open("https://js-dos.com/subscription.html", "_blank");
-        }
-    }
-
-    const text = account === null ?
-        <>{t("no_cloud_access")}
-            <a href="https://js-dos.com/cloud-storage.html"
-                target="_blank" class="link link-primary ml-1">{t("cloud_storage")}</a>
-        </> : <>{t("read_only_access")}</>;
-
-    return <div class="absolute pl-16 right-4 bottom-10">
-        <div class="alert">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                class="text-error shrink-0 w-7 h-7 mt-1" stroke="currentColor" stroke-width="1.5px">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374
-                    1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697
-                    16.126ZM12 15.75h.007v.008H12v-.008Z" />;
-            </svg>
-            <span>{text}</span>
-            <div>
-                <button class="btn btn-sm btn-primary mr-2" onClick={fix}>
-                    {account === null ? t("login") : t("fix")}
-                </button>
-                <button class="btn btn-sm" onClick={close}>{t("close")}</button>
-            </div>
         </div>
     </div>;
 }

@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import { State } from "../store";
-import { AccountFrame } from "./account-frame";
 import { EditorConf } from "./editor/editor-conf-frame";
 import { EditorFsFrame } from "./editor/editor-fs-frame";
 import { FatDrivesFrame } from "./fat-drives-frame";
@@ -20,7 +19,6 @@ export function Frame(props: {}) {
 
     return <div class={"frame " + (frameXs ? " frame-xs " : "") +
         (frameXs || wideScreen ? "" : " frame-md")}>
-        { frame === "account" && <AccountFrame /> }
         { frame === "settings" && <SettingsFrame /> }
         { frame === "editor-conf" && <EditorConf /> }
         { frame === "editor-fs" && <EditorFsFrame /> }

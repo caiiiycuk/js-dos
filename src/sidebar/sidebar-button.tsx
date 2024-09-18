@@ -1,6 +1,6 @@
 import { AnyAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { State, Store } from "../store";
+import { getState, State, Store } from "../store";
 import { Frame, uiSlice } from "../store/ui";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { dosSlice } from "../store/dos";
@@ -91,7 +91,7 @@ export function HddLed(props: {}) {
 
             const id = setInterval(() => {
                 if (state.delayLedTo <= Date.now()) {
-                    const newRecv = store.getState().dos.stats.driveRecv;
+                    const newRecv = getState(store).dos.stats.driveRecv;
                     const newEnabled = state.recv !== newRecv;
                     if (newEnabled !== state.enabled) {
                         el.classList.remove("bg-base-300", "bg-green-300", "animate-led");

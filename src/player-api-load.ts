@@ -1,4 +1,4 @@
-import { Dispatch, Store, Unsubscribe } from "@reduxjs/toolkit";
+import { Dispatch, Store } from "@reduxjs/toolkit";
 import { DosConfig, Emulators, InitFs } from "emulators";
 import { dosSlice } from "./store/dos";
 import { bundleFromChanges, bundleFromFile, bundleFromUrl } from "./host/bundle-storage";
@@ -6,7 +6,7 @@ import { uiSlice } from "./store/ui";
 import { editorSlice } from "./store/editor";
 import { getChangesUrl } from "./v8/changes";
 import { storageSlice } from "./store/storage";
-import { getNonSerializableStore } from "./store";
+import { getNonSerializableStore, getState } from "./store";
 
 declare const emulators: Emulators;
 
@@ -54,7 +54,7 @@ export async function loadBundleFromConfg(config: DosConfig, initFs: InitFs | nu
 }
 
 export async function loadBundleFromUrl(url: string, store: Store) {
-    const owner = store.getState().auth.account?.email ?? "guest";
+    const owner = getState(store).auth.account?.email ?? "guest";
     const changesUrl = await getChangesUrl(owner, url);
     return doLoadBundle(url,
         bundleFromUrl(url, store),
@@ -102,20 +102,7 @@ async function changesProducer(bundleUrl: string, store: Store): Promise<{
     url: string,
     bundle: Uint8Array | null,
 }> {
-    if (!store.getState().auth.ready) {
-        await new Promise<void>((resolve) => {
-            let unsubscirbe: Unsubscribe | null = null;
-            const updateFn = () => {
-                if (store.getState().auth.ready) {
-                    unsubscirbe!();
-                    resolve();
-                }
-            };
-            unsubscirbe = store.subscribe(updateFn);
-        });
-    }
-
-    const account = store.getState().auth.account;
+    const account = getState(store).auth.account;
     const owner = account?.email ?? "guest";
     const url = getChangesUrl(owner, bundleUrl);
     const bundle = await bundleFromChanges(url, account, store);

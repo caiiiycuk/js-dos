@@ -1,4 +1,4 @@
-export type DosEvent = "emu-ready" | "ci-ready" | "bnd-play";
+export type DosEvent = "emu-ready" | "ci-ready" | "bnd-play" | "open-key";
 export type ImageRendering = "pixelated" | "smooth";
 export type RenderBackend = "webgl" | "canvas";
 export type RenderAspect = "AsIs" | "1/1" | "5/4" | "4/3" | "16/10" | "16/9" | "Fit";
@@ -37,7 +37,6 @@ export interface DosOptions {
         name: string,
         host: string,
     },
-    loginUrl: string,
     autoStart: boolean,
     kiosk: boolean,
     imageRendering: ImageRendering,

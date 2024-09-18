@@ -2,49 +2,33 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getCache } from "../host/lcache";
 import { lStorage } from "../host/lstorage";
 import { DosAction, getNonSerializableStore } from "../store";
+import { tokenGet } from "../v8/config";
 import { dosSlice } from "./dos";
 
-const cachedAccount = "cached.account";
-
-export interface Token {
-    access_token: string,
-    refresh_token: string,
-    scope: string,
-    expires_in: number,
-    validUntilMs: number;
-};
+const cachedAccount = "cached.jsdos.account";
 
 export interface Account {
+    token: string,
+    name: string,
     email: string,
-    name: null | string,
-    picture: null | string,
-    token: Token,
     premium: boolean,
 };
 
 const initAccount = (() => {
-    const params = new URLSearchParams(location.search);
-    const refreshToken = params.get("jsdos_token");
-    if (refreshToken !== null) {
-        setRefreshToken(refreshToken);
-        history.replaceState(null, "", location.href.substring(0, location.href.indexOf("?")));
-        return null;
-    } else {
-        const json = lStorage.getItem(cachedAccount);
-        const account = json !== null ? JSON.parse(json) : null;
-        return account !== null && account.token.validUntilMs - Date.now() > 1 * 60 * 60 * 1000 ?
-            account : null;
+    const json = lStorage.getItem(cachedAccount);
+    if (json) {
+        const account = JSON.parse(json);
+        if (account.email && account.email.length > 0 && account.token && account.token.length === 5) {
+            return account;
+        }
     }
+    return null;
 })();
 
 const initialState: {
-    loginUrl: string,
     account: Account | null,
-    ready: boolean,
 } = {
-    loginUrl: location.href,
     account: initAccount,
-    ready: initAccount !== null,
 };
 
 export type AuthState = typeof initialState;
@@ -53,56 +37,45 @@ export const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        login: (state, action: { payload: Account }) => {
-            setRefreshToken(action.payload.token.refresh_token);
-            state.account = action.payload;
-            state.account.premium = state.account.premium ||
-                state.account.email === "dz.caiiiycuk@gmail.com";
-            lStorage.setItem(cachedAccount, JSON.stringify(action.payload));
-            (action as unknown as DosAction).asyncStore((store) => {
-                if (action.payload.email === "dz.caiiiycuk@gmail.com") {
-                    store.dispatch(dosSlice.actions.setSockdriveWrite(false));
-                }
-                getCache(action.payload.email)
-                    .then((cache) => getNonSerializableStore(store).cache = cache)
-                    .catch(console.error)
-                    .finally(() => {
-                        store.dispatch(authSlice.actions.ready());
-                    });
-            });
-        },
-        logout: (state, action) => {
-            clearRefreshToken();
-            lStorage.removeItem(cachedAccount);
-            (action as unknown as DosAction).asyncStore((store) => {
-                getCache("guest")
-                    .then((cache) => getNonSerializableStore(store).cache = cache)
-                    .catch(console.error);
-            });
-            state.account = null;
-        },
-        ready: (state) => {
-            state.ready = true;
-        },
-        setLoginUrl: (state, action: { payload: string }) => {
-            state.loginUrl = action.payload;
+        setAccount: (state, action: { payload: Account | null }) => {
+            const account = action.payload;
+            if (account !== null) {
+                lStorage.setItem(cachedAccount, JSON.stringify(account));
+                (action as unknown as DosAction).asyncStore((store) => {
+                    if (account.email === "dz.caiiiycuk@gmail.com") {
+                        store.dispatch(dosSlice.actions.setSockdriveWrite(false));
+                    }
+                    getCache(account.email)
+                        .then((cache) => getNonSerializableStore(store).cache = cache)
+                        .catch(console.error);
+                });
+            } else {
+                lStorage.removeItem(cachedAccount);
+                (action as unknown as DosAction).asyncStore((store) => {
+                    getCache("guest")
+                        .then((cache) => getNonSerializableStore(store).cache = cache)
+                        .catch(console.error);
+                });
+            }
+            state.account = account;
         },
     },
 });
 
-export function getRefreshToken(): string | null {
-    return lStorage.getItem("cached.rt");
-}
-
-function setRefreshToken(refreshToken: string | null) {
-    if (refreshToken === null) {
-        clearRefreshToken();
-        return;
+export async function loadAccount(token: string) {
+    if (!token || token.length !== 5) {
+        return { token, account: null };
     }
 
-    return lStorage.setItem("cached.rt", refreshToken);
-}
+    for (let i = 0; i < token.length; ++i) {
+        const code = token.charCodeAt(i);
+        if (!(code > 96 && code < 123)) { // lower alpha (a-z)
+            return { token, account: null };
+        }
+    }
 
-function clearRefreshToken() {
-    lStorage.removeItem("cached.rt");
+    const account = await (await fetch(tokenGet + "?id=" + token)).json();
+    delete account.success;
+
+    return { token, account: account.email ? account : null };
 }
