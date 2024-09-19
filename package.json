@@ -1,6 +1,6 @@
 {
   "name": "js-dos",
-  "version": "8.2.3",
+  "version": "8.3.0",
   "description": "Full-featured DOS player with multiple emulator backends",
   "type": "module",
   "keywords": [
