@@ -119,7 +119,7 @@ function SecretKey() {
                 {warnMark}
                 <input maxLength={5} value={token} onChange={(e) => setToken(e.currentTarget.value)}
                     placeholder="-----"
-                    class={"input input-xs input-bordered mt-4 mb-4 text-center w-20" +
+                    class={"input input-xs input-bordered mt-4 mb-4 text-center w-20 bg-blend-multiply bg-opacity-40" +
                         (warnOnKey ? " input-warning animate-pulse" : "")}></input>
             </div>}
     </div>;

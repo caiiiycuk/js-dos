@@ -15,6 +15,10 @@ module.exports = {
         "text-success-content",
         "text-error-content",
         "text-warning-content",
+        "input-bordered",
+        "input-xs",
+        "bg-blend-multiply",
+        "bg-opacity-40",
     ],
     daisyui: {
         themes: [
