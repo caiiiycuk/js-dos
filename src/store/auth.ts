@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getCache } from "../host/lcache";
 import { lStorage } from "../host/lstorage";
-import { DosAction, getNonSerializableStore } from "../store";
+import { DosAction } from "../store";
 import { tokenGet } from "../v8/config";
 import { dosSlice } from "./dos";
 
@@ -45,17 +44,9 @@ export const authSlice = createSlice({
                     if (account.email === "dz.caiiiycuk@gmail.com") {
                         store.dispatch(dosSlice.actions.setSockdriveWrite(false));
                     }
-                    getCache(account.email)
-                        .then((cache) => getNonSerializableStore(store).cache = cache)
-                        .catch(console.error);
                 });
             } else {
                 lStorage.removeItem(cachedAccount);
-                (action as unknown as DosAction).asyncStore((store) => {
-                    getCache("guest")
-                        .then((cache) => getNonSerializableStore(store).cache = cache)
-                        .catch(console.error);
-                });
             }
             state.account = account;
         },

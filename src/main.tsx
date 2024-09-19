@@ -17,11 +17,13 @@ import { NonSerializableStore, State, Store, getNonSerializableStore,
     getState,
     makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
 import { apiSave } from "./player-api";
+import { authSlice, loadAccount } from "./store/auth";
 
 export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
     const nonSerializableStore = makeNonSerializableStore(options);
     const store = makeStore(nonSerializableStore, options);
+    const cache = getCache("guest");
 
 
     if (getState(store).auth.account?.email === "dz.caiiiycuk@gmail.com") {
@@ -43,8 +45,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
 
             switch (state.dos.step) {
                 case "emu-ready": {
-                    const cachedEmail = state.auth.account?.email;
-                    nonSerializableStore.cache = await getCache(cachedEmail ?? "guest");
+                    nonSerializableStore.cache = await cache;
 
                     if (nonSerializableStore.options.url) {
                         try {
@@ -172,6 +173,16 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.volume(volume));
     }
 
+    function setKey(key: string | null) {
+        if (key === null || key.length !== 5) {
+            store.dispatch(authSlice.actions.setAccount(null));
+        } else {
+            loadAccount(key).then(({ account }) => {
+                store.dispatch(authSlice.actions.setAccount(account));
+            }).catch(console.error);
+        }
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -264,6 +275,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setVolume(options.volume);
     }
 
+    if (options.key !== undefined) {
+        setKey(options.key);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -297,6 +312,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setSoftKeyboardLayout,
         setSoftKeyboardSymbols,
         setVolume,
+        setKey,
 
         save: () => {
             return apiSave(getState(store) as any as State, nonSerializableStore, store.dispatch);
