@@ -54,11 +54,9 @@ export async function loadBundleFromConfg(config: DosConfig, initFs: InitFs | nu
 }
 
 export async function loadBundleFromUrl(url: string, store: Store) {
-    const owner = getState(store).auth.account?.email ?? "guest";
-    const changesUrl = await getChangesUrl(owner, url);
     return doLoadBundle(url,
         bundleFromUrl(url, store),
-        changesProducer(changesUrl, store),
+        changesProducer(url, store),
         url,
         store);
 }

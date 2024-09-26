@@ -19,13 +19,10 @@ export async function apiSave(state: State,
     try {
         const changes = await ci.persist(true);
         if (changes !== null) {
-            if (account === null || !account.premium) {
-                await nonSerializableStore.cache.put(changesUrl, changes);
+            if (canDoCloudSaves(account)) {
+                await putChanges(changesUrl, changes);
             } else {
-                await Promise.all([
-                    putChanges(changesUrl, changes),
-                    nonSerializableStore.cache.put(changesUrl, changes),
-                ]);
+                await nonSerializableStore.cache.put(changesUrl, changes);
             }
         }
 
@@ -61,4 +58,8 @@ export function isSockdrivePremium(sockdriveEndpoint: string, account: Account |
     } else {
         return Promise.resolve(false);
     }
+}
+
+export function canDoCloudSaves(account: Account | null) {
+    return account?.email !== undefined;
 }

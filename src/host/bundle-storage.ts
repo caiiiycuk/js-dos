@@ -2,6 +2,7 @@ import { storageSlice } from "../store/storage";
 import { Account } from "../store/auth";
 import { brCdn } from "../v8/config";
 import { Store, getNonSerializableStore } from "../store";
+import { canDoCloudSaves } from "../player-api";
 
 export function bundleFromFile(file: File, store: Store): Promise<Uint8Array> {
     return new Promise<Uint8Array>((resolve) => {
@@ -20,7 +21,7 @@ export function bundleFromFile(file: File, store: Store): Promise<Uint8Array> {
 
 export async function bundleFromChanges(url: string, account: Account | null,
                                         store: Store): Promise<Uint8Array | null> {
-    if (account === null || !account.premium) {
+    if (!canDoCloudSaves(account)) {
         return await getNonSerializableStore(store).cache.get(url).catch(() => null);
     }
 

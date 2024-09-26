@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { dosSlice } from "../store/dos";
 import { postJsDosEvent, State, useNonSerializableStore } from "../store";
 import { useT } from "../i18n";
@@ -8,6 +8,7 @@ import { useEffect, useState } from "preact/hooks";
 import { authSlice, loadAccount } from "../store/auth";
 import { isSockdrivePremium } from "../player-api";
 import { sockdriveBackend } from "../store/init";
+import { loadBundleFromUrl } from "../player-api-load";
 
 declare const emulators: Emulators;
 
@@ -41,6 +42,7 @@ function SecretKey() {
     const warnOnKey = useSelector((state: State) => state.ui.warnOnKey);
     const warnOnPremium = useSelector((state: State) => state.ui.warnOnPremium);
     const dispatch = useDispatch();
+    const store = useStore();
 
     useEffect(() => {
         isSockdrivePremium(sockdriveEndpoint, account)
@@ -65,6 +67,11 @@ function SecretKey() {
             .then(({ token, account }) => {
                 if (token === knownToken) {
                     dispatch(authSlice.actions.setAccount(account));
+                    if (nonSerializableStore.options.url) {
+                        loadBundleFromUrl(nonSerializableStore.options.url, store).catch((e) => {
+                            store.dispatch(dosSlice.actions.bndError(e.message));
+                        });
+                    }
                 }
             }).catch(console.error);
     }
