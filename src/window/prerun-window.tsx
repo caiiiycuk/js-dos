@@ -32,6 +32,7 @@ function SecretKey() {
     const t = useT();
     const account = useSelector((state: State) => state.auth.account);
     const kiosk = useSelector((state: State) => state.ui.kiosk);
+    const noCloud = useSelector((state: State) => state.ui.noCloud);
     const [token, stateSetToken] = useState<string>(account?.token ?? "");
     const { sockdriveEndpoint } = useSelector((state: State) =>
         sockdriveBackend[state.init.sockdriveBackendName] ??
@@ -49,7 +50,7 @@ function SecretKey() {
             .then(setSockdrivePremium);
     }, [account?.token, sockdriveEndpoint]);
 
-    if (kiosk) {
+    if (kiosk || noCloud) {
         return null;
     }
 
