@@ -79,9 +79,10 @@ const initialState: {
     sockdriveWrite: boolean,
     sockdriveInfo: { drive: string, write: boolean}[],
     softKeyboard: boolean,
-    softKeyboardLayout: string[],
+    softKeyboardLayout: string[][][],
     softKeyboardSymbols: {[key: string]: string}[],
     softKeyboardActiveSymbols: number,
+    softKeyboardActiveLayout: number,
     noCursor: boolean,
 } = {
     step: "emu-init",
@@ -133,39 +134,64 @@ const initialState: {
     sockdriveInfo: [],
     softKeyboard: false,
     softKeyboardLayout: [
-        "{esc} ` 1 2 3 4 5 6 7 8 9 0 () - = {bksp} {enter}",
-        "{tab} q w e r t y u i o p { } \\ {up}",
-        "{shift} {left} {right} a s d f g h j k l : ; ' [ {down}",
-        "⎘ {alt} {ctrl} z x c v b n m , . / ] {space}",
+        [
+            [
+                "{esc} {f1} {f2} {f3} {f4}",
+                "0 1 2 3 4",
+                "5 6 7 8 9",
+                "{ } ( ) {shift}",
+                "{layout} {ctrl} {alt} {space}",
+            ],
+            [
+                "{f5} {f6} {f7} {f8}",
+                "{pgup} {pgdown} {bksp}",
+                "",
+                "{up}",
+                "{left} {down} {right}",
+            ],
+            [
+                "{f9} {f10} {f11} {f12}",
+                "{del} {kp7} {kp8} {kp9}",
+                "{tab} {kp4} {kp5} {kp6}",
+                "- {kp1} {kp2} {kp3}",
+                "+ {kp0} . {enter}",
+            ],
+        ],
+        [
+            [
+                "{esc} ` 1 2 3 4 5 6 7 8 9 0 ( ) - = {bksp} {enter}",
+                "{tab} q w e r t y u i o p { } \\ [ ] {up}",
+                "{shift} {left} {right} a s d f g h j k l : ; ' [ {down}",
+                "{layout} {symbols} {alt} {ctrl} z x c v b n m , . / ] {space}",
+            ],
+        ],
     ],
     softKeyboardSymbols: [
         {
             "{esc}": "␛",
             "{bksp}": "⌫",
             "{enter}": "↵",
-            "{space}": "Space",
             "{up}": "↑",
             "{down}": "↓",
             "{left}": "←",
             "{right}": "→",
             "{shift}": "⇑",
-            "{ctrl}": "Ctrl",
-            "{alt}": "Alt",
-            "{tab}": "Tab",
+            "{layout}": "⎘",
+            "{pgup}": "PgUp",
+            "{pgdown}": "PgDown",
+            "{kp7}": "↖",
+            "{kp8}": "↑",
+            "{kp9}": "↗",
+            "{kp5}": "5",
+            "{kp4}": "←",
+            "{kp6}": "→",
+            "{kp1}": "↙",
+            "{kp2}": "↓",
+            "{kp3}": "↘",
+            "{kp0}": "0",
+            "{symbols}": "En/Ru",
         },
         {
-            "{esc}": "␛",
-            "{bksp}": "⌫",
-            "{enter}": "↵",
-            "{space}": "Space",
-            "{up}": "↑",
-            "{down}": "↓",
-            "{left}": "←",
-            "{right}": "→",
-            "{shift}": "⇑",
-            "{alt}": "Alt",
-            "{ctrl}": "Ctrl",
-            "{tab}": "Tab",
             "q": "й", "w": "ц", "e": "у", "r": "к", "t": "е",
             "y": "н", "u": "г", "i": "ш", "o": "щ", "p": "з",
             "{": "х", "}": "ъ", "a": "ф", "s": "ы", "d": "в",
@@ -176,6 +202,7 @@ const initialState: {
         },
     ],
     softKeyboardActiveSymbols: 0,
+    softKeyboardActiveLayout: 0,
     noCursor: false,
 };
 
@@ -331,14 +358,21 @@ export const dosSlice = createSlice({
         softKeyboard: (s, a: { payload: boolean }) => {
             s.softKeyboard = a.payload;
         },
-        softKeyboardLayout: (s, a: { payload: string[] }) => {
-            s.softKeyboardLayout = a.payload;
+        softKeyboardLayout: (s, a: { payload: string[] | string[][][] }) => {
+            if (a.payload.length > 0 && Array.isArray(a.payload[0])) {
+                s.softKeyboardLayout = a.payload as string[][][];
+            } else {
+                s.softKeyboardLayout = [[a.payload as string[]]];
+            }
         },
         softKeyboardSymbols: (s, a: { payload: {[key: string]: string}[] }) => {
             s.softKeyboardSymbols = a.payload;
         },
         softKeyboardActiveSymbols: (s, a: { payload: number }) => {
             s.softKeyboardActiveSymbols = a.payload;
+        },
+        softKeyboardActiveLayout: (s, a: { payload: number }) => {
+            s.softKeyboardActiveLayout = a.payload;
         },
         noCursor: (s, a: { payload: boolean }) => {
             s.noCursor = a.payload;

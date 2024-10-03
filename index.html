@@ -43,10 +43,28 @@
           //   mount c .
           //   c:
           // `,
-          // initFs: [
-          //   { path: "1.txt", contents: new TextEncoder().encode("123") },
-          //   { path: "D/2.txt", contents: new TextEncoder().encode("345") },
-          // ],
+          // jsdosConf: {
+          //   "layersConfig": {
+          //     "version": 2,
+          //     "layers": [
+          //       {
+          //         "grid": "honeycomb",
+          //         "title": "Layer#0",
+          //         "controls": [
+          //           {
+          //             "row": 0,
+          //             "column": 0,
+          //             "symbol": "↑",
+          //             "type": "Key",
+          //             "mapTo": [
+          //               265
+          //             ]
+          //           }
+          //         ]
+          //       }
+          //     ]
+          //   }
+          // },
           // dosboxConf: diabloConf,
           // loginUrl: "http://localhost:8080/subscription.html",
           // autoStart: true,
@@ -71,7 +89,7 @@
           //   "q w e r t",
           //   "{up} {down}",
           //   "{left} {right}",
-          //   "⎘"
+          //   "{symbols}"
           // ],
           // softKeyboardSymbols: [
           //   {
@@ -87,7 +105,32 @@
           //       "{right}": "→",
           //       "q": "й", "w": "ц", "e": "у", "r": "к", "t": "е",
           //   },
+          // ], 
+          // softKeyboardLayout: [
+          //   [
+          //     [
+          //       "{up}",
+          //     ],
+          //     [
+          //       "{left} {right}",
+          //     ],
+          //     [
+          //       "{down}",
+          //     ]
+          //   ],
           // ],
+          softkeyboardlayout: [
+            [
+              [
+                "{layout} {up}",
+              ],
+            ],
+            [
+              [
+                "{layout} {down}",
+              ],
+            ],
+          ],
           // key: "-----",
           onEvent: (event, ci) => {
             console.log("Event", event)
@@ -101,8 +144,8 @@
           // renderBackend: "webgl",
           // imageRendering: "smooth",
         });
-        
-        window.props = props;
+
+      window.props = props;
     });
 
     const diabloConf = `

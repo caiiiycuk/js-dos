@@ -15,6 +15,7 @@ export type InitFs = InitFsEntry | InitFsEntry[];
 export interface DosOptions {
     url: string,
     dosboxConf: string,
+    jsdosConf: any,
     initFs: InitFs,
     background: string,
     pathPrefix: string,
@@ -47,7 +48,7 @@ export interface DosOptions {
     scaleControls: number,
     mouseSensitivity: number,
     noCursor: boolean,
-    softKeyboardLayout: string[],
+    softKeyboardLayout: string[] | string[][][],
     softKeyboardSymbols: {[key: string]: string}[],
     volume: number,
     key: string,
@@ -76,7 +77,7 @@ export interface DosProps {
     setScaleControls(scaleControls: number): void;
     setMouseSensitivity(mouseSensitivity: number): void;
     setNoCursor(noCursor: boolean): void;
-    setSoftKeyboardLayout(layout: string[]): void;
+    setSoftKeyboardLayout(layout: string[] | string[][][]): void;
     setSoftKeyboardSymbols(symbols: {[key: string]: string}[]): void;
     setVolume(volume: number): void;
     setKey(key: string | null): void;

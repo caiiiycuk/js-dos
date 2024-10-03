@@ -46,7 +46,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
             switch (state.dos.step) {
                 case "emu-ready": {
                     nonSerializableStore.cache = await cache;
-
                     if (nonSerializableStore.options.url) {
                         try {
                             await loadBundleFromUrl(nonSerializableStore.options.url, store);
@@ -54,11 +53,15 @@ export const Dos: DosFn = (element: HTMLDivElement,
                             store.dispatch(dosSlice.actions.bndError(e.message));
                         }
                     } else if (nonSerializableStore.options.dosboxConf) {
+                        const jsdosConf = nonSerializableStore.options.jsdosConf ?? {
+                            version: "8",
+                        };
+                        if (!jsdosConf.version) {
+                            jsdosConf.version = "8";
+                        }
                         loadBundleFromConfg({
                             dosboxConf: nonSerializableStore.options.dosboxConf,
-                            jsdosConf: {
-                                version: "8",
-                            },
+                            jsdosConf,
                         }, nonSerializableStore.options.initFs ?? null, store);
                     } else {
                         store.dispatch(uiSlice.actions.windowSelect());
@@ -161,7 +164,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.noCursor(noCursor));
     }
 
-    function setSoftKeyboardLayout(layout: string[]) {
+    function setSoftKeyboardLayout(layout: string[] | string[][][]) {
         store.dispatch(dosSlice.actions.softKeyboardLayout(layout));
     }
 
