@@ -44,6 +44,11 @@ export const Dos: DosFn = (element: HTMLDivElement,
             pollStep = step;
 
             switch (state.dos.step) {
+                case "bnd-ready": {
+                    if (options.mouseCapture !== undefined) {
+                        setMouseCapture(options.mouseCapture);
+                    }
+                } break;
                 case "emu-ready": {
                     nonSerializableStore.cache = await cache;
                     if (nonSerializableStore.options.url) {
@@ -204,10 +209,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
 
     if (options.workerThread !== undefined) {
         setWorkerThread(options.workerThread);
-    }
-
-    if (options.mouseCapture !== undefined) {
-        setMouseCapture(options.mouseCapture);
     }
 
     if (options.server) {
