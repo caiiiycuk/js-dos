@@ -123,9 +123,9 @@ export function SockdriveWrite() {
                 dispatch(uiSlice.actions.warnOnKey(true));
             } else if (!account.premium) {
                 dispatch(uiSlice.actions.warnOnPremium(true));
-            } else {
-                dispatch(dosSlice.actions.setSockdriveWrite(c));
             }
+
+            dispatch(dosSlice.actions.setSockdriveWrite(c));
         }}
     /> : null;
 }
