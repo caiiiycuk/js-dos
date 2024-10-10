@@ -24,6 +24,7 @@ export function DosWindow(props: {
     const worker = useSelector((state: State) => state.dos.worker);
     const backend = useSelector((state: State) => state.dos.backend);
     const backendHardware = useSelector((state: State) => state.dos.backendHardware);
+    const sockdriveNative = useSelector((state: State) => state.dos.sockdriveNative);
     const noCursor = useSelector((state: State) => state.dos.noCursor);
     const dispatch = useDispatch();
     const nonSerializableStore = useNonSerializableStore();
@@ -55,7 +56,7 @@ export function DosWindow(props: {
 
             const ci: Promise<CommandInterface> = (async () => {
                 if (backendHardware && nonSerializableStore.options.backendHardware) {
-                    const ws = await nonSerializableStore.options.backendHardware(backend);
+                    const ws = await nonSerializableStore.options.backendHardware(backend, sockdriveNative);
                     if (ws !== null) {
                         return emulators.backend(bundles, await createWsTransportLayer(ws, (version) => {
                             if (version < actualWsVersion) {
@@ -98,7 +99,7 @@ export function DosWindow(props: {
         } catch (e) {
             dispatch(dosSlice.actions.emuError((e as any).message));
         }
-    }, [worker, backend, token ?? null]);
+    }, [worker, backend, sockdriveNative, token ?? null]);
 
     return <div class="flex flex-col flex-grow h-full overflow-hidden">
         <div class="bg-black h-full flex-grow overflow-hidden relative">

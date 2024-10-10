@@ -86,6 +86,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         no_cloud_access: "Введите",
         no_cloud_access2: "что бы использовать облачное хранилище",
         key: "Ваш ключ",
+        sockdrive_native: "Native drives",
     },
     en: {
         hello: "Hello",
@@ -170,6 +171,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         no_cloud_access: "Please enter",
         no_cloud_access2: "to use cloud storage",
         key: "your key",
+        sockdrive_native: "Native drives",
     },
 };
 

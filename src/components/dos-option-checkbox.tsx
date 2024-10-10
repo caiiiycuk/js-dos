@@ -29,6 +29,18 @@ export function MouseCapture() {
     />;
 }
 
+export function SockdriveNative() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const native = useSelector((state: State) => state.dos.sockdriveNative);
+    return <Checkbox
+        class="mt-4"
+        label={t("sockdrive_native")}
+        checked={native}
+        onChange={(n) => dispatch(dosSlice.actions.setSockdriveNative(n))}
+    />;
+}
+
 export function SystemCursor() {
     const t = useT();
     const dispatch = useDispatch();

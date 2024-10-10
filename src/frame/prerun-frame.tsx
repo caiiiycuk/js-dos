@@ -1,5 +1,6 @@
 import { Editor, HardwareCheckbox, MirroredControls, MobileControls,
     MouseCapture,
+    SockdriveNative,
     SockdriveWrite,
     SystemCursor,
     WorkerCheckbox } from "../components/dos-option-checkbox";
@@ -24,6 +25,7 @@ export function PreRunFrame(props: {}) {
         <HardwareCheckbox />
         <SockdriveWrite />
         <Editor />
+        <SockdriveNative />
         <ThemeSelect multiline={true} />
     </div>;
 }

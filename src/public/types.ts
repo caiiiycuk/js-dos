@@ -27,7 +27,7 @@ export interface DosOptions {
     lang: "ru" | "en",
     backend: "dosbox" | "dosboxX",
     backendLocked: boolean,
-    backendHardware: ((backend: "dosbox" | "dosboxX") => Promise<string | null>),
+    backendHardware: ((backend: "dosbox" | "dosboxX", sockdriveNative: boolean) => Promise<string | null>),
     workerThread: boolean,
     mouseCapture: boolean,
     onEvent: (event: DosEvent, ci?: any /* CommandInterface */) => void,

@@ -1,7 +1,7 @@
 import { Handle, Stats } from "../sockdrive/js/src/sockdrive/types";
 import { Drive } from "../sockdrive/js/src/sockdrive/drive";
 
-interface Template {
+export interface Template {
     name: string,
     size: number,
     heads: number,

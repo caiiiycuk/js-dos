@@ -3,7 +3,7 @@ import {
     ServerMessage, DataChunk, FsNode,
 } from "emulators/dist/types/protocol/protocol";
 
-import { createSockdrive } from "./ws-sockdrive";
+import { createSockdrive, Template } from "./ws-sockdrive";
 
 const sockdriveConfirmWrite = false;
 
@@ -55,6 +55,7 @@ export class WsTransportLayer implements TransportLayer {
     private cycles = 0;
     private sockdrive = createSockdrive(this.onSockdriveOpen.bind(this),
         this.onSockdriveError.bind(this), this.onSockdrivePreloadProgress.bind(this));
+    private sockdriveSeq = 1;
 
     private handler: MessageHandler = () => {/**/};
 
@@ -202,12 +203,19 @@ export class WsTransportLayer implements TransportLayer {
                     netRecv: 0,
                     driveSent: this.sockdrive.stats.write,
                     driveRecv: this.sockdrive.stats.read,
-                    driveRecvTime: this.sockdrive.stats.readTotalTime,
                     driveCacheHit: this.sockdrive.stats.cacheHit,
                     driveCacheMiss: this.sockdrive.stats.cacheMiss,
+                    driveRecvTime: this.sockdrive.stats.readTotalTime,
                     driveCacheUsed: this.sockdrive.stats.cacheUsed,
                     driveIo: this.sockdrive.stats.io,
                 };
+                if (payload[0]!.length > 20) {
+                    stats.driveCacheHit = this.readUint32(payload[0]!, 20);
+                    stats.driveCacheMiss = this.readUint32(payload[0]!, 24);
+                    stats.driveRecv = this.readUint32(payload[0]!, 28);
+                    stats.driveSent = this.readUint32(payload[0]!, 32);
+                    stats.driveRecvTime = this.readUint32(payload[0]!, 36);
+                }
                 this.handler(message, stats);
             } break;
             case "ws-connected": {
@@ -290,13 +298,36 @@ export class WsTransportLayer implements TransportLayer {
                 if (message === undefined) { // not standard messages
                     (async () => {
                         switch (id) {
-                            case 100/* ws-sockdrive-open */: {
+                            case 100/* ws-sockdrive-open */:
+                            case 104/* ws-sockdrive-open-native */: {
                                 const url = textDecoder.decode(payload[0]!);
                                 const owner = textDecoder.decode(payload[1]!);
                                 const name = textDecoder.decode(payload[2]!);
                                 const token = textDecoder.decode(payload[3]!);
-                                const { handle, aheadRange } = await this.sockdrive.open(url, owner, name, token);
-                                const template = this.sockdrive.template(handle);
+                                let handle: number = this.sockdriveSeq++;
+                                let aheadRange: number = 0;
+                                let template: Template;
+                                if (id === 100) {
+                                    const tuple = await this.sockdrive.open(url, owner, name, token);
+                                    handle = tuple.handle;
+                                    aheadRange = tuple.aheadRange;
+                                    template = this.sockdrive.template(handle);
+                                } else {
+                                    const response = await fetch(url.replace("wss://", "https://")
+                                        .replace("ws://", "http://") + "/template/" + owner + "/" + name);
+                                    const json = await response.json();
+                                    if ((json as any).error) {
+                                        throw new Error((json as any).error);
+                                    }
+                                    template = {
+                                        name: json.name,
+                                        size: json.size ?? 0,
+                                        heads: json.heads ?? 1,
+                                        cylinders: json.cylinders ?? 520,
+                                        sectors: json.sectors ?? 63,
+                                        sectorSize: json.sector_size ?? 512,
+                                    };
+                                }
                                 const packet = new Uint8Array(4 * 7);
                                 let offset = 0;
                                 offset = this.writeUint32(packet, handle, offset);
@@ -328,6 +359,13 @@ export class WsTransportLayer implements TransportLayer {
                             } break;
                             case 103/* ws-sockdrive-close */: {
                                 this.sockdrive.close(this.readUint32(payload[0]!, 0));
+                            } break;
+                            case 105/* ws-sockdrive-native-open */: {
+                                const owner = textDecoder.decode(payload[0]!);
+                                const name = textDecoder.decode(payload[1]!);
+                                this.onSockdriveOpen(owner + "/" + name, true,
+                                    payload[2]![0] === 1, this.readUint32(payload[2]!, 1),
+                                    this.readUint32(payload[2]!, 5));
                             } break;
                             default:
                                 console.log("WARN! Unhandled server non standard message", id, payload);
@@ -450,11 +488,12 @@ export class WsTransportLayer implements TransportLayer {
         this.sendMessageToSocket("wc-exit");
     }
 
-    onSockdriveOpen(drive: string, read: boolean, write: boolean, imageSize: number, preloadQueue: number[]) {
+    onSockdriveOpen(drive: string, read: boolean, write: boolean, imageSize: number, preloadQueue: number[] | number) {
         this.handler("ws-log", {
             tag: "worker",
             message: "sockdrive: " + drive + ", read=" + read + ", write=" + write +
-                ", imageSize=" + Math.round(imageSize / 1024 / 1024) + "Mb" + ", preloadQueue=" + preloadQueue.length,
+                ", imageSize=" + Math.round(imageSize / 1024 / 1024) + "Mb" + ", preloadQueue=" +
+                (Array.isArray(preloadQueue) ? preloadQueue.length : preloadQueue),
         });
     }
 

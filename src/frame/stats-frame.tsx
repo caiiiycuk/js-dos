@@ -12,8 +12,7 @@ export function StatsFrame() {
     const driveInfo = useSelector((state: State) => state.dos.sockdriveInfo);
     const cycles = Math.round(useSelector((state: State) => state.dos.stats.cyclesPerMs) / 1000);
     const driveRecvMb = Math.round(stats.driveRecv / 1024 / 1024 * 100) / 100;
-    const driveSpeedMb = (stats.driveRecvTime / 1000) > 1 ?
-        Math.round(driveRecvMb / stats.driveRecvTime * 1000 * 100) / 100 : 0;
+    const driveSpeedMb = Math.round(driveRecvMb / (Date.now() - startedAt) * 1000 * 100) / 100;
     return <div class="stats-frame frame-root items-start px-4">
         <div class="text-center mb-2 text-xs">
             js-dos/emu: {JSDOS_VERSION}/{emuVersion}

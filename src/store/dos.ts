@@ -78,6 +78,7 @@ const initialState: {
     imageRendering: ImageRendering,
     sockdriveWrite: boolean,
     sockdriveInfo: { drive: string, write: boolean}[],
+    sockdriveNative: boolean,
     softKeyboard: boolean,
     softKeyboardLayout: string[][][],
     softKeyboardSymbols: {[key: string]: string}[],
@@ -132,6 +133,7 @@ const initialState: {
     imageRendering: (lStorage.getItem("imageRendering") ?? "pixelated") as any,
     sockdriveWrite: true,
     sockdriveInfo: [],
+    sockdriveNative: (lStorage.getItem("sockdriveNative") === "true"),
     softKeyboard: false,
     softKeyboardLayout: [
         [
@@ -340,6 +342,10 @@ export const dosSlice = createSlice({
         },
         setSockdriveWrite: (s, a: { payload: boolean }) => {
             s.sockdriveWrite = a.payload;
+        },
+        setSockdriveNative: (s, a: { payload: boolean }) => {
+            s.sockdriveNative = a.payload;
+            lStorage.setItem("sockdriveNative", a.payload ? "true" : "false");
         },
         addSockdriveInfo: (s, a: { payload: { drive: string, write: boolean} }) => {
             s.sockdriveInfo.push(a.payload);
