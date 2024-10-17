@@ -54,7 +54,9 @@ export class WsTransportLayer implements TransportLayer {
 
     private cycles = 0;
     private sockdrive = createSockdrive(this.onSockdriveOpen.bind(this),
-        this.onSockdriveError.bind(this), this.onSockdrivePreloadProgress.bind(this));
+        this.onSockdriveError.bind(this),
+        this.onSockdrivePreloadProgress.bind(this),
+        this.onSockdrivePayload.bind(this));
     private sockdriveSeq = 1;
 
     private handler: MessageHandler = () => {/**/};
@@ -154,6 +156,10 @@ export class WsTransportLayer implements TransportLayer {
                 this.handler(message, { chunk });
             } break;
             case "ws-config": {
+                if (payload[0]) {
+                    const dosboxConf = textDecoder.decode(payload[0]);
+                    this.sockdrive.applyConf(dosboxConf);
+                }
                 this.handler(message, {
                     dosboxConf: payload[0]!,
                     jsdosConf: textDecoder.decode(payload[1]!),
@@ -364,8 +370,7 @@ export class WsTransportLayer implements TransportLayer {
                                 const owner = textDecoder.decode(payload[0]!);
                                 const name = textDecoder.decode(payload[1]!);
                                 this.onSockdriveOpen(owner + "/" + name, true,
-                                    payload[2]![0] === 1, this.readUint32(payload[2]!, 1),
-                                    this.readUint32(payload[2]!, 5));
+                                    payload[2]![0] === 1, this.readUint32(payload[2]!, 1));
                             } break;
                             default:
                                 console.log("WARN! Unhandled server non standard message", id, payload);
@@ -408,6 +413,7 @@ export class WsTransportLayer implements TransportLayer {
         switch (name) {
             case "wc-run": {
                 const token = props.token ?? "";
+                this.sockdrive.applyToken(token);
                 this.sendMessageToSocket(messageId, textEncoder.encode(token));
             } break;
             case "wc-send-data-chunk": {
@@ -488,12 +494,11 @@ export class WsTransportLayer implements TransportLayer {
         this.sendMessageToSocket("wc-exit");
     }
 
-    onSockdriveOpen(drive: string, read: boolean, write: boolean, imageSize: number, preloadQueue: number[] | number) {
+    onSockdriveOpen(drive: string, read: boolean, write: boolean, imageSize: number) {
         this.handler("ws-log", {
             tag: "worker",
             message: "sockdrive: " + drive + ", read=" + read + ", write=" + write +
-                ", imageSize=" + Math.round(imageSize / 1024 / 1024) + "Mb" + ", preloadQueue=" +
-                (Array.isArray(preloadQueue) ? preloadQueue.length : preloadQueue),
+                ", imageSize=" + Math.round(imageSize / 1024 / 1024) + "Mb",
         });
     }
 
@@ -509,6 +514,24 @@ export class WsTransportLayer implements TransportLayer {
             tag: "worker",
             message: "sockdrive: " + drive + ", preload=" + restBytes,
         });
+    }
+
+    onSockdrivePayload(owner: string, drive: string, sectorSize: number,
+        aheadRange: number, sectors: number[], row: Uint8Array) {
+        const sectorsPayload = new Uint8Array(sectors.length * 4 + 2 * 4);
+        let offset = 0;
+        for (const sector of sectors) {
+            offset = this.writeUint32(sectorsPayload, sector, offset);
+        }
+        offset = this.writeUint32(sectorsPayload, sectorSize, offset);
+        this.writeUint32(sectorsPayload, aheadRange, offset);
+
+        this.sendMessageToSocket(106 /* wc-sockdrive-cache */,
+            textEncoder.encode(owner),
+            textEncoder.encode(drive),
+            sectorsPayload,
+            row,
+        );
     }
 }
 

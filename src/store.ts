@@ -26,7 +26,7 @@ export interface NonSerializableStore {
     ci: CommandInterface | null,
     cache: Cache,
     options: Partial<DosOptions>,
-    layers: Promise<LayersInstance> | null;
+    layers: Promise<LayersInstance> | null,
 }
 
 export interface DosAction {

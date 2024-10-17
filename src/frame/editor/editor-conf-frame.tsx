@@ -7,8 +7,8 @@ import { dosSlice } from "../../store/dos";
 import { useEffect, useState } from "preact/hooks";
 import { sockdriveBackend } from "../../store/init";
 import { uiSlice } from "../../store/ui";
+import { applySockdriveOptionsIfNeeded, sockdriveImgmount } from "../../player-api-load";
 
-const imgmount = "imgmount\\s+(\\d+)\\s+sockdrive\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s*$";
 const cleanup = "imgmount\\s+(\\d+)\\s+sockdrive\\s+.*$";
 
 interface Sockdrive {
@@ -42,9 +42,8 @@ export function EditorConf() {
 
     function parseSockDrives(conf: string) {
         const drives: { [num: string]: Sockdrive } = {};
-        const re = new RegExp(imgmount, "gm");
         let m: RegExpExecArray | null;
-        while (m = re.exec(conf)) {
+        while (m = sockdriveImgmount.exec(conf)) {
             /* eslint-disable-next-line no-unused-vars */
             const [_, num, backend, owner, drive] = m;
             drives[num] = {
@@ -93,10 +92,9 @@ export function EditorConf() {
     }
 
     function updateDosboxConf(newConf: string) {
+        applySockdriveOptionsIfNeeded(newConf, dispatch);
         dispatch(dosSlice.actions.mouseCapture(newConf.indexOf("autolock=true") > 0));
         dispatch(editorSlice.actions.dosboxConf(newConf));
-        dispatch(dosSlice.actions.dosBackendLocked(newConf.indexOf("sockdrive") >= 0));
-        dispatch(dosSlice.actions.noCursor(newConf.indexOf("sockdrive") >= 0));
     }
 
     if (bundleConfig === null) {

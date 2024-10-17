@@ -1,5 +1,7 @@
 import { Handle, Stats } from "../sockdrive/js/src/sockdrive/types";
 import { Drive } from "../sockdrive/js/src/sockdrive/drive";
+import { Cache } from "../sockdrive/js/src/sockdrive/cache";
+import { sockdriveImgmount } from "../player-api-load";
 
 export interface Template {
     name: string,
@@ -16,11 +18,15 @@ export interface ReadResponse {
 }
 
 export function createSockdrive(
-    onOpen: (drive: string, read: boolean, write: boolean, imageSize: number, preloadQueue: number[]) => void,
+    onOpen: (drive: string, read: boolean, write: boolean, imageSize: number) => void,
     onError: (e: Error) => void,
     onPreloadProgress: (drive: string, restBytes: number) => void,
+    onPayload: (owner: string, drive: string, sectorSize: number,
+        aheadRange: number, sectors: number[], row: Uint8Array) => void,
 ) {
     let seq = 0;
+    let token = "";
+    const cache: { [backend: string]: Cache } = {};
     const mapping: { [handle: Handle]: Drive } = {};
     const templates: { [handle: number]: Template } = {};
     const memory: { [handle: number]: Uint8Array } = {};
@@ -35,10 +41,14 @@ export function createSockdrive(
     };
     const sockdrive = {
         stats,
-        open: async (url: string, owner: string, name: string, token: string): Promise<{
+        open: async (url: string, owner: string, name: string, _token: string): Promise<{
             handle: Handle,
             aheadRange: number,
         }> => {
+            if (token !== _token) {
+                console.error("sockdrive error: token mistmatch", token, "!=", _token);
+            }
+
             const response = await fetch(url.replace("wss://", "https://")
                 .replace("ws://", "http://") + "/template/" + owner + "/" + name);
             const template = await response.json();
@@ -58,20 +68,23 @@ export function createSockdrive(
             const sectorSize = templates[seq].sectorSize;
             const module = { HEAPU8: new Uint8Array(0) };
             stats.io.push({ read: 0, write: 0 });
-            mapping[seq] = new Drive(url, owner, name, token, stats, module, true, true);
+            const backendCache = cache[url] ?? null;
+            if (backendCache) {
+                backendCache.open(owner, name, token);
+            } else {
+                console.error("Sockdrive cache not found for", url);
+            }
+            mapping[seq] = new Drive(url, owner, name, token, stats, module, backendCache, true);
             return new Promise<{ handle: Handle, aheadRange: number }>((resolve, reject) => {
                 const drive = owner + "/" + name;
-                mapping[seq].onOpen((read, write, imageSize, preloadQueue, aheadRange) => {
+                mapping[seq].onOpen((read, write, imageSize, aheadRange) => {
                     memory[seq] = new Uint8Array(sectorSize /* write */ + sectorSize * aheadRange);
                     module.HEAPU8 = memory[seq];
-                    onOpen(drive, read, write, imageSize, preloadQueue);
+                    onOpen(drive, read, write, imageSize);
                     resolve({
                         handle: seq,
                         aheadRange,
                     });
-                });
-                mapping[seq].onPreloadProgress((restBytes) => {
-                    onPreloadProgress(drive, restBytes);
                 });
                 mapping[seq].onError((e) => {
                     onError(e);
@@ -120,6 +133,25 @@ export function createSockdrive(
         },
         template: (handle: Handle) => {
             return templates[handle];
+        },
+        applyToken: (_token: string) => {
+            token = _token;
+        },
+        applyConf: (conf: string) => {
+            console.log("applyConf", conf);
+            let m: RegExpExecArray | null;
+            while (m = sockdriveImgmount.exec(conf)) {
+                /* eslint-disable-next-line no-unused-vars */
+                const [_, num, backend, owner, drive] = m;
+                if (!cache[backend]) {
+                    cache[backend] = new Cache(backend, true);
+                }
+                cache[backend].onProgress((owner, drive, rest, total) => {
+                    onPreloadProgress(owner + "/" + drive, rest);
+                });
+                cache[backend].onPayload(onPayload);
+                cache[backend].open(owner, drive, token);
+            }
         },
     };
 
