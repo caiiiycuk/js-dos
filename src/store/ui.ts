@@ -104,6 +104,7 @@ export const uiSlice = createSlice({
         },
         windowSelect: (state) => {
             state.window = "select";
+            state.editor = true;
         },
         background: (state, a: { payload: string }) => {
             state.background = a.payload;

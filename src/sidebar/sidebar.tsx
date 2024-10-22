@@ -26,7 +26,7 @@ export function SideBar(props: {}) {
         {window === "run" && <SoftKeyboardButton />}
         {window === "run" && networking && <NetworkButton />}
         {editor && window === "prerun" && <DosboxConfButton />}
-        {editor && window === "prerun" && backend === "dosboxX" && <FatDrivesButton />}
+        {editor && window === "prerun" && <FatDrivesButton />}
         {editor && window === "run" && <FsButton />}
         <div class="contentbar"></div>
         {window === "run" && <FullscreenButton />}

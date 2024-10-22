@@ -266,6 +266,66 @@ echo on
 #
 `.replace(/\n/g, "\r\n"),
 }, {
+    name: "Win 3.11",
+    backend: "dosboxX",
+    contents: `
+[sdl]
+autolock=false
+mouse emulation=integration
+
+[dosbox]
+title=Win 3.11
+memsize=256
+
+[dos]
+hard drive data rate limit=0
+floppy drive data rate limit=0
+
+[cpu]
+cputype=pentium
+core=auto
+integration device=true
+
+[pci]
+voodoo=false
+
+[sblaster]
+sbtype=sb16vibra
+
+[render]
+scaler=none
+
+[autoexec]
+echo off
+imgmount 2 sockdrive {wss-makevm} system win311-v1
+echo Please visit our website:
+echo 
+echo         _                __
+echo        (_)____      ____/ /___  _____ _________  ____ ___
+echo       / / ___/_____/ __  / __ \\/ ___// ___/ __ \\/ __ \`__ \\
+echo      / (__  )_____/ /_/ / /_/ (__  )/ /__/ /_/ / / / / / /
+echo   __/ /____/      \\__,_/\\____/____(_)___/\\____/_/ /_/ /_/
+echo  /___/
+echo
+echo type 'boot c:' to load Win 3.11
+echo on
+# 
+# █▀▀▀▀▀█ █  ▄▄▄▀▀█ █▀▀▀▀▀█
+# █ ███ █ ██▄ █ ▀ ▄ █ ███ █
+# █ ▀▀▀ █ ▄██ ▀ ▀▀█ █ ▀▀▀ █
+# ▀▀▀▀▀▀▀ ▀ █▄▀▄▀ █ ▀▀▀▀▀▀▀
+# █▀▄▄█▀▀▄▄ ▀ ▀█▄▄▄▄ ▀▄█▀█▀
+# █▀ ▀ ▀▀▄ █▀ ▄ ▄▀▀▀▄ █▀█▄
+# ▄ ▄▄ █▀▀▄ ▄▀▄▀▀█  ▀▀▄▀▀█▀
+#   ▄▀▀█▀▀ █▀█▀█▀▀▄ ▀██▀█▄
+# ▀▀▀ ▀ ▀ █▄█ ▀█▄▄█▀▀▀█▀▀
+# █▀▀▀▀▀█ ▄▄▄ ▄ ▄ █ ▀ █▄▄▄▄
+# █ ███ █ ▀█▀▀▄▀▀▄████▀▀█▄█
+# █ ▀▀▀ █ ▄▀▀█▀█▀▄ ▀▀▄▄█▄█
+# ▀▀▀▀▀▀▀ ▀   ▀▀ ▀  ▀   ▀▀▀
+#
+`.replace(/\n/g, "\r\n"),
+}, {
     name: "Win 95",
     backend: "dosboxX",
     contents: `
@@ -312,7 +372,7 @@ scaler=none
 
 [autoexec]
 echo off
-imgmount 2 sockdrive {wss-makevm} system win95-v1
+imgmount 2 sockdrive {wss-makevm} system win95-v2
 echo Please visit our website:
 echo 
 echo         _                __
