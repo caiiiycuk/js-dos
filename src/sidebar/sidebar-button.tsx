@@ -92,7 +92,9 @@ export function HddLed(props: {}) {
             const id = setInterval(() => {
                 if (state.delayLedTo <= Date.now()) {
                     const newRecv = getState(store).dos.stats.driveRecv;
+                    const write = getState(store).dos.stats.driveBufferedAmount;
                     const newEnabled = state.recv !== newRecv;
+
                     if (newEnabled !== state.enabled) {
                         el.classList.remove("bg-base-300", "bg-green-300", "animate-led");
                         if (newEnabled) {
@@ -101,6 +103,14 @@ export function HddLed(props: {}) {
                             el.classList.add("bg-base-300");
                         }
                         state.enabled = newEnabled;
+                    }
+
+                    if (write) {
+                        if (!el.classList.contains("bg-red-300")) {
+                            el.classList.add("bg-red-300");
+                        }
+                    } else {
+                        el.classList.remove("bg-red-300");
                     }
 
                     if (newEnabled) {

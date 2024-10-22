@@ -42,6 +42,7 @@ export interface EmulatorStats {
     driveCacheHit: number,
     driveCacheMiss: number,
     driveCacheUsed: number,
+    driveBufferedAmount: number,
     driveIo: { read: number, write: number }[];
 };
 
@@ -121,6 +122,7 @@ const initialState: {
         driveCacheHit: 0,
         driveCacheMiss: 0,
         driveCacheUsed: 0,
+        driveBufferedAmount: 0,
         driveIo: [],
     },
     network: {

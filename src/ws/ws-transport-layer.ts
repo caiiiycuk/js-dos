@@ -213,6 +213,7 @@ export class WsTransportLayer implements TransportLayer {
                     driveCacheMiss: this.sockdrive.stats.cacheMiss,
                     driveRecvTime: this.sockdrive.stats.readTotalTime,
                     driveCacheUsed: this.sockdrive.stats.cacheUsed,
+                    driveBufferedAmount: 0,
                     driveIo: this.sockdrive.stats.io,
                 };
                 if (payload[0]!.length > 20) {

@@ -99,6 +99,10 @@ export function StatsFrame() {
                         <td>{stats.driveCacheHit} / {stats.driveCacheMiss}</td>
                     </tr>
                     <tr>
+                        <td>HDD Buffered</td>
+                        <td>{stats.driveBufferedAmount}</td>
+                    </tr>
+                    <tr>
                         <td>HDD RX</td>
                         <td>{stats.driveIo.map((io) => {
                             return io.read;

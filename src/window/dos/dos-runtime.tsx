@@ -195,6 +195,7 @@ function useStats(ci: CommandInterface): void {
                         driveCacheHit: stats.driveCacheHit,
                         driveCacheMiss: stats.driveCacheMiss,
                         driveCacheUsed: stats.driveCacheUsed,
+                        driveBufferedAmount: stats.driveBufferedAmount,
                         driveIo: structuredClone(stats.driveIo),
                     };
                     dispatch(dosSlice.actions.stats(dStats));
