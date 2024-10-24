@@ -13,7 +13,6 @@ import { SaveButtons } from "./save-buttons";
 export function SideBar(props: {}) {
     const window = useSelector((state: State) => state.ui.window);
     const editor = useSelector((state: State) => state.ui.editor);
-    const backend = useSelector((state: State) => state.dos.backend);
     const kiosk = useSelector((state: State) => state.ui.kiosk);
     const networking = !useSelector((state: State) => state.ui.noNetworking);
 

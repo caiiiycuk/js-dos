@@ -87,7 +87,7 @@ function Toast() {
                 class="shrink-0 w-6 h-6">
                 {path}
             </svg>
-            <span>{toast}</span>
+            <span class="break-words">{toast}</span>
         </div>
     </div>;
 }

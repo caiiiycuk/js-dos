@@ -18,7 +18,8 @@ export interface ReadResponse {
 }
 
 export function createSockdrive(
-    onOpen: (drive: string, read: boolean, write: boolean, imageSize: number) => void,
+    onOpen: (drive: string, read: boolean, write: boolean, imageSize: number,
+        realOwner: string, realDrive: string) => void,
     onError: (e: Error) => void,
     onPreloadProgress: (drive: string, restBytes: number) => void,
     onPayload: (owner: string, drive: string, sectorSize: number,
@@ -77,10 +78,11 @@ export function createSockdrive(
             mapping[seq] = new Drive(url, owner, name, token, stats, module, backendCache, true);
             return new Promise<{ handle: Handle, aheadRange: number }>((resolve, reject) => {
                 const drive = owner + "/" + name;
-                mapping[seq].onOpen((read, write, imageSize, aheadRange) => {
+                mapping[seq].onOpen((read, write, imageSize, aheadRange, realOwner, realDrive) => {
                     memory[seq] = new Uint8Array(sectorSize /* write */ + sectorSize * aheadRange);
                     module.HEAPU8 = memory[seq];
-                    onOpen(drive, read, write, imageSize);
+                    onOpen(drive, read, write, imageSize,
+                        realOwner, realDrive);
                     resolve({
                         handle: seq,
                         aheadRange,

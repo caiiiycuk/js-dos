@@ -35,6 +35,7 @@ function useLog(ci: CommandInterface): void {
     const t = useT();
     useEffect(() => {
         const preloadProgress: { [drive: string]: number } = {};
+        const isFork: { [drive: string]: boolean } = {};
         ci.events().onMessage((msgType, ...args: string[]) => {
             if (msgType === "error" && args[0]?.startsWith("[panic]")) {
                 dispatch(uiSlice.actions.showToast({
@@ -45,7 +46,10 @@ function useLog(ci: CommandInterface): void {
                 const drive = args[0].substring(args[0].indexOf(" ") + 1, args[0].indexOf(","));
                 dispatch(uiSlice.actions.cloudSaves(false));
                 if (args[0]?.indexOf("write=") !== -1) {
-                    console.log("drive", drive, "config:", args[0]);
+                    const name = drive.substring(drive.indexOf("/") + 1);
+                    if (name.startsWith("@")) {
+                        isFork[drive.substring(drive.indexOf(".", drive.indexOf("/")) + 1)] = true;
+                    }
                     dispatch(dosSlice.actions.addSockdriveInfo({
                         drive,
                         write: args[0]?.indexOf("write=false") === -1,
@@ -57,9 +61,10 @@ function useLog(ci: CommandInterface): void {
                         preloadProgress[drive] = rest;
                     }
 
+                    const name = drive.substring(drive.indexOf("/") + 1);
                     dispatch(uiSlice.actions.showToast({
                         message: t("preloading_sockdrive") + " " +
-                            drive.substring(drive.indexOf("/") + 1) + " — " +
+                            (isFork[name] ? "@" + name : name) + " — " +
                             (Math.round(preloadProgress[drive] - rest) / 1024 / 1024).toFixed(2) + "/" +
                             (Math.round(preloadProgress[drive] / 1024 / 1024)) + "Mb",
                         long: true,

@@ -79,7 +79,7 @@ export function StatsFrame() {
                     {driveInfo.map((info, i) => {
                         return <tr>
                             <td>HDD { i == 0 ? "C:" : "D:"}</td>
-                            <td>{info.drive} {info.write ? " RW" : " RO" }</td>
+                            <td>{info.drive.replace("/", " ")} {info.write ? " RW" : " RO" }</td>
                         </tr>;
                     })}
                     <tr>
