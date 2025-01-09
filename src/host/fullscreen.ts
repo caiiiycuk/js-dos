@@ -1,8 +1,9 @@
-import { Store, getNonSerializableStore } from "../store";
+import { Store, getNonSerializableStore, postJsDosEvent } from "../store";
 import { uiSlice } from "../store/ui";
 
 export function browserSetFullScreen(fullScreen: boolean, store: Store) {
-    const root = getNonSerializableStore(store).root as any;
+    const nsStore = getNonSerializableStore(store);
+    const root = nsStore.root as any;
     if (fullScreen) {
         if (root.requestFullscreen) {
             root.requestFullscreen();
@@ -32,4 +33,5 @@ export function browserSetFullScreen(fullScreen: boolean, store: Store) {
     }
 
     store.dispatch(uiSlice.actions.setFullScreen(fullScreen));
+    postJsDosEvent(nsStore, "fullscreen-change", fullScreen);
 }

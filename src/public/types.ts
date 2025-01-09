@@ -1,4 +1,4 @@
-export type DosEvent = "emu-ready" | "ci-ready" | "bnd-play" | "open-key";
+export type DosEvent = "emu-ready" | "ci-ready" | "bnd-play" | "open-key" | "fullscreen-change";
 export type ImageRendering = "pixelated" | "smooth";
 export type RenderBackend = "webgl" | "canvas";
 export type RenderAspect = "AsIs" | "1/1" | "5/4" | "4/3" | "16/10" | "16/9" | "Fit";
@@ -35,7 +35,7 @@ export interface DosOptions {
     backendHardware: ((backend: "dosbox" | "dosboxX", sockdriveNative: boolean) => Promise<string | null>),
     workerThread: boolean,
     mouseCapture: boolean,
-    onEvent: (event: DosEvent, ci?: any /* CommandInterface */) => void,
+    onEvent: (event: DosEvent, arg?: any /* CommandInterface | boolean */) => void,
     ipx: NamedHost[],
     ipxBackend: string,
     room: string,

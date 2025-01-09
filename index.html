@@ -140,10 +140,10 @@
             ],
           ],
           // key: "-----",
-          onEvent: (event, ci) => {
-            console.log("Event", event)
+          onEvent: (event, arg) => {
+            console.log("Event", event, arg);
             if (event === "ci-ready") {
-              window.ci = ci;
+              window.ci = arg;
               // props.setFrame("network");
               // props.setFullScreen(true);
             }

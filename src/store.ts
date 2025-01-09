@@ -111,10 +111,11 @@ export function useNonSerializableStore() {
     return getNonSerializableStore(useStore());
 }
 
-export function postJsDosEvent(nonSerializableStore: NonSerializableStore, event: DosEvent, ci?: CommandInterface) {
+export function postJsDosEvent(nonSerializableStore: NonSerializableStore, event: DosEvent,
+                               arg?: CommandInterface | boolean) {
     if (nonSerializableStore.options.onEvent) {
         setTimeout(() => {
-            nonSerializableStore.options.onEvent?.(event, ci);
+            nonSerializableStore.options.onEvent?.(event, arg);
         }, 4);
     }
 }
