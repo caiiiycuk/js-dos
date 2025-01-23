@@ -1,19 +1,25 @@
 import { CommandInterface } from "emulators";
-import { State } from "../store";
 import { useDispatch, useSelector } from "react-redux";
+import { State } from "../store";
 /* eslint-disable camelcase */
-import { domToKeyCode, KBD_0, KBD_9, KBD_backspace, KBD_capslock, KBD_comma, KBD_down, KBD_enter,
+import { dosSlice } from "../store/dos";
+import {
+    domToKeyCode, KBD_0, KBD_9, KBD_backspace, KBD_capslock, KBD_comma,
+    KBD_delete,
+    KBD_down,
+    KBD_end,
+    KBD_enter,
+    KBD_equals,
     KBD_esc,
-    KBD_f1, KBD_f2, KBD_f3,
+    KBD_f1,
+    KBD_f10, KBD_f11, KBD_f12,
+    KBD_f2, KBD_f3,
     KBD_f4, KBD_f5, KBD_f6,
     KBD_f7, KBD_f8, KBD_f9,
-    KBD_f10, KBD_f11, KBD_f12,
-    KBD_left, KBD_leftalt, KBD_leftbracket, KBD_leftctrl, KBD_leftshift,
-    KBD_period, KBD_quote, KBD_right, KBD_rightbracket, KBD_semicolon, KBD_space,
-    KBD_tab, KBD_up,
+    KBD_home,
     KBD_kp0,
-    KBD_kp2,
     KBD_kp1,
+    KBD_kp2,
     KBD_kp3,
     KBD_kp4,
     KBD_kp5,
@@ -21,14 +27,13 @@ import { domToKeyCode, KBD_0, KBD_9, KBD_backspace, KBD_capslock, KBD_comma, KBD
     KBD_kp7,
     KBD_kp8,
     KBD_kp9,
+    KBD_left, KBD_leftalt, KBD_leftbracket, KBD_leftctrl, KBD_leftshift,
+    KBD_minus,
     KBD_pagedown,
     KBD_pageup,
-    KBD_delete,
-    KBD_end,
-    KBD_home,
-    KBD_minus,
-    KBD_equals } from "./dos/controls/keys";
-import { dosSlice } from "../store/dos";
+    KBD_period, KBD_quote, KBD_right, KBD_rightbracket, KBD_semicolon, KBD_space,
+    KBD_tab, KBD_up,
+} from "./dos/controls/keys";
 /* eslint-enable camelcase */
 
 export function SoftKeyboard(props: { ci: CommandInterface | null }) {
@@ -216,7 +221,7 @@ function buttonToCode(button: string): number[] {
         }
     }
 
-    const keyCode = domToKeyCode(button.toUpperCase().charCodeAt(0));
+    const keyCode = domToKeyCode(button.toUpperCase().charCodeAt(0), 0);
     if (keyCode === 0) {
         return [];
     }

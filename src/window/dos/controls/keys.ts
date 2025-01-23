@@ -107,7 +107,7 @@ export const KBD_down = 264;
 export const KBD_right = 262;
 export const KBD_extra_lt_gt = 348; // ???
 
-export const domToKeyCodes: {[index: number]: number} = {
+export const domKeyToDosKeyCodes: { [index: number]: number } = {
     8: KBD_backspace,
     9: KBD_tab,
     13: KBD_enter,
@@ -211,121 +211,149 @@ export const domToKeyCodes: {[index: number]: number} = {
     // 224: KBD_left_super,
 };
 
-export const namedKeyCodes: {[name: string]: number} = {
-    "KBD_NONE": KBD_NONE,
-    "KBD_0": KBD_0,
-    "KBD_1": KBD_1,
-    "KBD_2": KBD_2,
-    "KBD_3": KBD_3,
-    "KBD_4": KBD_4,
-    "KBD_5": KBD_5,
-    "KBD_6": KBD_6,
-    "KBD_7": KBD_7,
-    "KBD_8": KBD_8,
-    "KBD_9": KBD_9,
-    "KBD_a": KBD_a,
-    "KBD_b": KBD_b,
-    "KBD_c": KBD_c,
-    "KBD_d": KBD_d,
-    "KBD_e": KBD_e,
-    "KBD_f": KBD_f,
-    "KBD_g": KBD_g,
-    "KBD_h": KBD_h,
-    "KBD_i": KBD_i,
-    "KBD_j": KBD_j,
-    "KBD_k": KBD_k,
-    "KBD_l": KBD_l,
-    "KBD_m": KBD_m,
-    "KBD_n": KBD_n,
-    "KBD_o": KBD_o,
-    "KBD_p": KBD_p,
-    "KBD_q": KBD_q,
-    "KBD_r": KBD_r,
-    "KBD_s": KBD_s,
-    "KBD_t": KBD_t,
-    "KBD_u": KBD_u,
-    "KBD_v": KBD_v,
-    "KBD_w": KBD_w,
-    "KBD_x": KBD_x,
-    "KBD_y": KBD_y,
-    "KBD_z": KBD_z,
-    "KBD_f1": KBD_f1,
-    "KBD_f2": KBD_f2,
-    "KBD_f3": KBD_f3,
-    "KBD_f4": KBD_f4,
-    "KBD_f5": KBD_f5,
-    "KBD_f6": KBD_f6,
-    "KBD_f7": KBD_f7,
-    "KBD_f8": KBD_f8,
-    "KBD_f9": KBD_f9,
-    "KBD_f10": KBD_f10,
-    "KBD_f11": KBD_f11,
-    "KBD_f12": KBD_f12,
+export const namedKeyCodes: { [name: string]: number } = {
+    KBD_NONE: KBD_NONE,
+    KBD_0: KBD_0,
+    KBD_1: KBD_1,
+    KBD_2: KBD_2,
+    KBD_3: KBD_3,
+    KBD_4: KBD_4,
+    KBD_5: KBD_5,
+    KBD_6: KBD_6,
+    KBD_7: KBD_7,
+    KBD_8: KBD_8,
+    KBD_9: KBD_9,
+    KBD_a: KBD_a,
+    KBD_b: KBD_b,
+    KBD_c: KBD_c,
+    KBD_d: KBD_d,
+    KBD_e: KBD_e,
+    KBD_f: KBD_f,
+    KBD_g: KBD_g,
+    KBD_h: KBD_h,
+    KBD_i: KBD_i,
+    KBD_j: KBD_j,
+    KBD_k: KBD_k,
+    KBD_l: KBD_l,
+    KBD_m: KBD_m,
+    KBD_n: KBD_n,
+    KBD_o: KBD_o,
+    KBD_p: KBD_p,
+    KBD_q: KBD_q,
+    KBD_r: KBD_r,
+    KBD_s: KBD_s,
+    KBD_t: KBD_t,
+    KBD_u: KBD_u,
+    KBD_v: KBD_v,
+    KBD_w: KBD_w,
+    KBD_x: KBD_x,
+    KBD_y: KBD_y,
+    KBD_z: KBD_z,
+    KBD_f1: KBD_f1,
+    KBD_f2: KBD_f2,
+    KBD_f3: KBD_f3,
+    KBD_f4: KBD_f4,
+    KBD_f5: KBD_f5,
+    KBD_f6: KBD_f6,
+    KBD_f7: KBD_f7,
+    KBD_f8: KBD_f8,
+    KBD_f9: KBD_f9,
+    KBD_f10: KBD_f10,
+    KBD_f11: KBD_f11,
+    KBD_f12: KBD_f12,
 
-    "KBD_kp0": KBD_kp0,
-    "KBD_kp1": KBD_kp1,
-    "KBD_kp2": KBD_kp2,
-    "KBD_kp3": KBD_kp3,
-    "KBD_kp4": KBD_kp4,
-    "KBD_kp5": KBD_kp5,
-    "KBD_kp6": KBD_kp6,
-    "KBD_kp7": KBD_kp7,
-    "KBD_kp8": KBD_kp8,
-    "KBD_kp9": KBD_kp9,
+    KBD_kp0: KBD_kp0,
+    KBD_kp1: KBD_kp1,
+    KBD_kp2: KBD_kp2,
+    KBD_kp3: KBD_kp3,
+    KBD_kp4: KBD_kp4,
+    KBD_kp5: KBD_kp5,
+    KBD_kp6: KBD_kp6,
+    KBD_kp7: KBD_kp7,
+    KBD_kp8: KBD_kp8,
+    KBD_kp9: KBD_kp9,
 
-    "KBD_kpperiod": KBD_kpperiod,
-    "KBD_kpdivide": KBD_kpdivide,
-    "KBD_kpmultiply": KBD_kpmultiply,
-    "KBD_kpminus": KBD_kpminus,
-    "KBD_kpplus": KBD_kpplus,
-    "KBD_kpenter": KBD_kpenter,
+    KBD_kpperiod: KBD_kpperiod,
+    KBD_kpdivide: KBD_kpdivide,
+    KBD_kpmultiply: KBD_kpmultiply,
+    KBD_kpminus: KBD_kpminus,
+    KBD_kpplus: KBD_kpplus,
+    KBD_kpenter: KBD_kpenter,
 
-    "KBD_esc": KBD_esc,
-    "KBD_tab": KBD_tab,
-    "KBD_backspace": KBD_backspace,
-    "KBD_enter": KBD_enter,
-    "KBD_space": KBD_space,
-    "KBD_leftalt": KBD_leftalt,
-    "KBD_rightalt": KBD_rightalt,
-    "KBD_leftctrl": KBD_leftctrl,
-    "KBD_rightctrl": KBD_rightctrl,
-    "KBD_leftshift": KBD_leftshift,
-    "KBD_rightshift": KBD_rightshift,
-    "KBD_capslock": KBD_capslock,
-    "KBD_scrolllock": KBD_scrolllock,
-    "KBD_numlock": KBD_numlock,
-    "KBD_grave": KBD_grave,
-    "KBD_minus": KBD_minus,
-    "KBD_equals": KBD_equals,
-    "KBD_backslash": KBD_backslash,
-    "KBD_leftbracket": KBD_leftbracket,
-    "KBD_rightbracket": KBD_rightbracket,
-    "KBD_semicolon": KBD_semicolon,
-    "KBD_quote": KBD_quote,
-    "KBD_period": KBD_period,
-    "KBD_comma": KBD_comma,
-    "KBD_slash": KBD_slash,
-    "KBD_printscreen": KBD_printscreen,
-    "KBD_pause": KBD_pause,
-    "KBD_insert": KBD_insert,
-    "KBD_home": KBD_home,
-    "KBD_pageup": KBD_pageup,
-    "KBD_delete": KBD_delete,
-    "KBD_end": KBD_end,
-    "KBD_pagedown": KBD_pagedown,
-    "KBD_left": KBD_left,
-    "KBD_up": KBD_up,
-    "KBD_down": KBD_down,
-    "KBD_right": KBD_right,
-    "KBD_extra_lt_gt": KBD_extra_lt_gt,
+    KBD_esc: KBD_esc,
+    KBD_tab: KBD_tab,
+    KBD_backspace: KBD_backspace,
+    KBD_enter: KBD_enter,
+    KBD_space: KBD_space,
+    KBD_leftalt: KBD_leftalt,
+    KBD_rightalt: KBD_rightalt,
+    KBD_leftctrl: KBD_leftctrl,
+    KBD_rightctrl: KBD_rightctrl,
+    KBD_leftshift: KBD_leftshift,
+    KBD_rightshift: KBD_rightshift,
+    KBD_capslock: KBD_capslock,
+    KBD_scrolllock: KBD_scrolllock,
+    KBD_numlock: KBD_numlock,
+    KBD_grave: KBD_grave,
+    KBD_minus: KBD_minus,
+    KBD_equals: KBD_equals,
+    KBD_backslash: KBD_backslash,
+    KBD_leftbracket: KBD_leftbracket,
+    KBD_rightbracket: KBD_rightbracket,
+    KBD_semicolon: KBD_semicolon,
+    KBD_quote: KBD_quote,
+    KBD_period: KBD_period,
+    KBD_comma: KBD_comma,
+    KBD_slash: KBD_slash,
+    KBD_printscreen: KBD_printscreen,
+    KBD_pause: KBD_pause,
+    KBD_insert: KBD_insert,
+    KBD_home: KBD_home,
+    KBD_pageup: KBD_pageup,
+    KBD_delete: KBD_delete,
+    KBD_end: KBD_end,
+    KBD_pagedown: KBD_pagedown,
+    KBD_left: KBD_left,
+    KBD_up: KBD_up,
+    KBD_down: KBD_down,
+    KBD_right: KBD_right,
+    KBD_extra_lt_gt: KBD_extra_lt_gt,
 };
 
-export const keyCodesToDom: {[index: number]: number} = {};
-for (const next of Object.keys(domToKeyCodes)) {
-    const key = Number.parseInt(next, 10);
-    keyCodesToDom[domToKeyCodes[key]] = key;
+// More locationalKeys can be supported
+const locationalKeys: number[] = [16, 17, 18];
+
+function domLocationalKeyToDosKeyCode(
+    domKey: number,
+    domKeyLocation: number,
+): number {
+    const compositeKey = `${domKey}_${domKeyLocation}`;
+    switch (compositeKey) {
+        case "16_1":
+            return KBD_leftshift;
+        case "16_2":
+            return KBD_rightshift;
+        case "17_1":
+            return KBD_leftctrl;
+        case "17_2":
+            return KBD_rightctrl;
+        case "18_1":
+            return KBD_leftalt;
+        case "18_2":
+            return KBD_rightalt;
+        default:
+            return domKeyToDosKeyCodes[domKey] || 0;
+    }
 }
 
-export function domToKeyCode(domCode: number) {
-    return domToKeyCodes[domCode] || 0;
+export const keyCodesToDom: { [index: number]: number } = {};
+for (const next of Object.keys(domKeyToDosKeyCodes)) {
+    const key = Number.parseInt(next, 10);
+    keyCodesToDom[domKeyToDosKeyCodes[key]] = key;
+}
+
+export function domToKeyCode(domKey: number, domKeyLocation: number): number {
+    if (locationalKeys.includes(domKey) && domKeyLocation > 0) {
+        return domLocationalKeyToDosKeyCode(domKey, domKeyLocation);
+    } else return domKeyToDosKeyCodes[domKey] || 0;
 }
