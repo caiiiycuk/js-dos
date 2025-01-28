@@ -143,6 +143,7 @@
           onEvent: (event, arg) => {
             console.log("Event", event, arg);
             if (event === "ci-ready") {
+              console.log("js-dos version:", props.getVersion());
               window.ci = arg;
               // props.setFrame("network");
               // props.setFullScreen(true);

@@ -299,6 +299,9 @@ export const Dos: DosFn = (element: HTMLDivElement,
     );
 
     return {
+        getVersion: () => {
+            return [JSDOS_VERSION, store.getState().dos.emuVersion];
+        },
         setTheme,
         setLang,
         setBackend,

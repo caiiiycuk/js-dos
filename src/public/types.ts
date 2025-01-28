@@ -58,6 +58,8 @@ export interface DosOptions {
 }
 
 export interface DosProps {
+    getVersion(): [string, string];
+
     setTheme(theme: DosOptions["theme"]): void;
     setLang(lang: DosOptions["lang"]): void;
     setBackend(backend: DosOptions["backend"]): void;
