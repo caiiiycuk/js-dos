@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { useSelector } from "react-redux";
 import { State } from "./store";
 
-const translations: {[lang: string]: {[key: string]: string} } = {
+const translations: { [lang: string]: { [key: string]: string } } = {
     ru: {
         hello: "Привет",
         hello_guest: "Привет, гость!",
@@ -173,7 +173,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         key: "your key",
         sockdrive_native: "Native drives",
     },
-pt_BR: {
+    pt: {
         hello: "Olá",
         hello_guest: "Olá, convidado!",
         play: "Iniciar",
@@ -257,13 +257,15 @@ pt_BR: {
         no_cloud_access2: "para usar o armazenamento em nuvem",
         key: "sua chave",
         sockdrive_native: "Unidades nativas",
-},
+    },
+};
 
-const initialLang = navigator.language.startsWith("ru") ? "ru" : "en"; "pt_BR";
+const initialLang = navigator.language.startsWith("ru") ? "ru" :
+    (navigator.language.startsWith("pt") ? "pt" : "en");
 
 const initialState: {
-    lang: "ru" | "en" | "pt_BR",
-    keys: {[key: string]: string},
+    lang: "ru" | "en" | "pt",
+    keys: { [key: string]: string },
 } = {
     lang: initialLang,
     keys: translations[initialLang],
@@ -275,7 +277,7 @@ export const i18nSlice = createSlice({
     name: "i18n",
     initialState,
     reducers: {
-        setLang: (state, action: { payload: "ru" | "en" | "pt_BR" }) => {
+        setLang: (state, action: { payload: "ru" | "en" | "pt" }) => {
             state.lang = action.payload;
             state.keys = translations[action.payload];
         },
