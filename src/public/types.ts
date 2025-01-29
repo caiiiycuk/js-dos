@@ -29,7 +29,7 @@ export interface DosOptions {
     "forest" | "aqua" | "lofi" | "pastel" | "fantasy" | "wireframe" | "black" |
     "luxury" | "dracula" | "cmyk" | "autumn" | "business" | "acid" | "lemonade" |
     "night" | "coffee" | "winter",
-    lang: "ru" | "en"| "pt",
+    lang: "ru" | "en" | "pt",
     backend: "dosbox" | "dosboxX",
     backendLocked: boolean,
     backendHardware: ((backend: "dosbox" | "dosboxX", sockdriveNative: boolean) => Promise<string | null>),
