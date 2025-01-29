@@ -1,14 +1,22 @@
 import { CommandInterface } from "emulators";
 import { useEffect, useState } from "preact/hooks";
 import { useSelector } from "react-redux";
-import { State } from "../../store";
+import { State, useNonSerializableStore } from "../../store";
+import { systemInfo } from "../../host/device";
+import { apiEndpoint } from "../../v8/config";
 
 export const dhry2Bundle = "/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos";
 
 export function Dhry2Results(props: { ci: CommandInterface }) {
     const ci = props.ci;
+    const nonSerializableStore = useNonSerializableStore();
     const backend = useSelector((state: State) => state.dos.backend);
     const worker = useSelector((state: State) => state.dos.worker);
+    const token = useSelector((state: State) => state.auth.account?.token);
+    const emuVersion = useSelector((state: State) => state.dos.emuVersion);
+    const hardware = useSelector((state: State) => state.dos.backendHardware) &&
+        nonSerializableStore.options.backendHardware;
+    const [submited, setSubmited] = useState(false);
 
     const [results, setResults] = useState<{
         runs: number,
@@ -22,7 +30,7 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
         pc: null,
     });
 
-    const [stats, setStats] = useState<{sleepPerSec: number, cyclesPerMs: number}>({
+    const [stats, setStats] = useState<{ sleepPerSec: number, cyclesPerMs: number }>({
         sleepPerSec: 0,
         cyclesPerMs: 0,
     });
@@ -74,6 +82,34 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
                     vax: Math.round(vaxRating * 100) / 100,
                     pc: getComparablePc(vaxRating),
                 });
+
+                if (token) {
+                    (async () => {
+                        const gl = nonSerializableStore.gl;
+                        if (gl) {
+                            const payload = {
+                                token,
+                                test: "dhry2",
+                                jsdos: JSDOS_VERSION,
+                                emu: emuVersion,
+                                backend,
+                                worker,
+                                hardware,
+                                result: Math.round(vaxRating * 100) / 100,
+                                ...systemInfo(gl),
+                            };
+                            await fetch(apiEndpoint + "/perf/set", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify(payload),
+                            });
+                        }
+                    })()
+                        .catch(console.error)
+                        .finally(() => setSubmited(true));
+                }
             } else {
                 setResults({
                     runs,
@@ -91,7 +127,9 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
 
     return <div class="dhry2-window">
         <div class="title">Dhrystone 2 Benchmark</div>
-        <div class="backend">Backend: {backend + "-" + (worker ? "worker" : "direct")}</div>
+        <div class="backend">
+            Backend: {backend + "-" + (worker ? "worker" : "direct")} {hardware ? "(WS)" : "(WA)"}
+        </div>
         <div class="results">
             <div>VAX:</div>
             <div>{results.vax}</div>
@@ -106,6 +144,8 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
             {results.pc !== null && <div>PC:</div>}
             {results.pc !== null && <div>{results.pc ?? "..."}</div>}
         </div>
+        {token && !submited && <div class="mt-14 text-yellow-500">Please wait until this message disappears</div>}
+        {!token && <div class="mt-14 text-yellow-500">Please enter your key to submit results</div>}
     </div>;
 }
 

@@ -101,6 +101,7 @@ function useKeyboard(ci: CommandInterface): void {
 
 function useRenderBackend(canvas: HTMLCanvasElement,
                           ci: CommandInterface): void {
+    const nonSerializableStore = useNonSerializableStore();
     const renderBackend = useSelector((state: State) => state.dos.renderBackend);
     const renderAspect = useSelector((state: State) => state.dos.renderAspect);
 
@@ -122,7 +123,7 @@ function useRenderBackend(canvas: HTMLCanvasElement,
             unbind = canvasRender(canvas, ci, aspect);
         } else {
             try {
-                unbind = webglRender(canvas, ci, aspect);
+                unbind = webglRender(canvas, ci, nonSerializableStore, aspect);
             } catch (e) {
                 console.error("Unalbe to start webgl render", e);
                 unbind = canvasRender(canvas, ci, aspect);

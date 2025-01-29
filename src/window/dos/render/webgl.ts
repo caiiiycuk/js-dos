@@ -1,5 +1,6 @@
 import { CommandInterface } from "emulators";
 import { resizeCanvas } from "./resize";
+import { NonSerializableStore } from "../../../store";
 
 const vsSource = `
 attribute vec4 aVertexPosition;
@@ -26,11 +27,14 @@ void main(void) {
 
 export function webGl(canvas: HTMLCanvasElement,
                       ci: CommandInterface,
+                      nonSerializableStore: NonSerializableStore,
                       forceAspect?: number) {
-    const gl = canvas.getContext("webgl");
+    const gl = nonSerializableStore.gl ?? canvas.getContext("webgl");
     if (gl === null) {
         throw new Error("Unable to create webgl context on given canvas");
     }
+
+    nonSerializableStore.gl = gl;
 
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
     const vertexPosition = gl.getAttribLocation(shaderProgram, "aVertexPosition");

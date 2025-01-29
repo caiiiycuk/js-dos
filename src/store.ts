@@ -27,6 +27,7 @@ export interface NonSerializableStore {
     cache: Cache,
     options: Partial<DosOptions>,
     layers: Promise<LayersInstance> | null,
+    gl: WebGLRenderingContext | null,
 }
 
 export interface DosAction {
@@ -54,6 +55,7 @@ export function makeNonSerializableStore(options: Partial<DosOptions>): NonSeria
         cache: new CacheNoop(),
         options,
         layers: null,
+        gl: null,
     };
 }
 

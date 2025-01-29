@@ -302,6 +302,9 @@ export const Dos: DosFn = (element: HTMLDivElement,
         getVersion: () => {
             return [JSDOS_VERSION, store.getState().dos.emuVersion];
         },
+        getToken: () => {
+            return getState(store).auth.account?.token ?? null;
+        },
         setTheme,
         setLang,
         setBackend,
