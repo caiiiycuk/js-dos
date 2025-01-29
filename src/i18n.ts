@@ -173,7 +173,7 @@ const translations: {[lang: string]: {[key: string]: string} } = {
         key: "your key",
         sockdrive_native: "Native drives",
     },
-pt_BR: {
+pt: {
         hello: "Olá",
         hello_guest: "Olá, convidado!",
         play: "Iniciar",
@@ -259,10 +259,10 @@ pt_BR: {
         sockdrive_native: "Unidades nativas",
 },
 
-const initialLang = navigator.language.startsWith("ru") ? "ru" : "en"; "pt_BR";
+const initialLang = navigator.language.startsWith("ru") ? "ru" : "en"; "pt";
 
 const initialState: {
-    lang: "ru" | "en" | "pt_BR",
+    lang: "ru" | "en" | "pt",
     keys: {[key: string]: string},
 } = {
     lang: initialLang,
@@ -275,7 +275,7 @@ export const i18nSlice = createSlice({
     name: "i18n",
     initialState,
     reducers: {
-        setLang: (state, action: { payload: "ru" | "en" | "pt_BR" }) => {
+        setLang: (state, action: { payload: "ru" | "en" | "pt" }) => {
             state.lang = action.payload;
             state.keys = translations[action.payload];
         },
