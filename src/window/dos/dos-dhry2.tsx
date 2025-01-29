@@ -94,15 +94,12 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
                                 emu: emuVersion,
                                 backend,
                                 worker,
-                                hardware,
+                                hardware: hardware ?? false,
                                 result: Math.round(vaxRating * 100) / 100,
                                 ...systemInfo(gl),
                             };
                             await fetch(apiEndpoint + "/perf/set", {
                                 method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
                                 body: JSON.stringify(payload),
                             });
                         }

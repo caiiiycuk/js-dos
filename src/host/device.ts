@@ -61,7 +61,7 @@ export interface ISystemInfo {
     osVersion: string;
     gpu: string;
     deviceModel: string;
-    cpu: number;
+    cpu: string;
 }
 
 
@@ -165,7 +165,7 @@ export function systemInfo(ctx: WebGLRenderingContext): ISystemInfo {
             gpu,
             { width: screenWidth, height: screenHeight },
         ),
-        cpu: cores || 0,
+        cpu: (cores || 0).toString(),
     };
 }
 
