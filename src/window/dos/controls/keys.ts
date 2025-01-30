@@ -107,7 +107,7 @@ export const KBD_down = 264;
 export const KBD_right = 262;
 export const KBD_extra_lt_gt = 348; // ???
 
-export const domKeyToDosKeyCodes: { [index: number]: number } = {
+const domKeyToDosKeyCodes: { [index: number]: number } = {
     8: KBD_backspace,
     9: KBD_tab,
     13: KBD_enter,
@@ -321,39 +321,22 @@ export const namedKeyCodes: { [name: string]: number } = {
 };
 
 // More locationalKeys can be supported
-const locationalKeys: number[] = [16, 17, 18];
-
-function domLocationalKeyToDosKeyCode(
-    domKey: number,
-    domKeyLocation: number,
-): number {
-    const compositeKey = `${domKey}_${domKeyLocation}`;
-    switch (compositeKey) {
-        case "16_1":
-            return KBD_leftshift;
-        case "16_2":
-            return KBD_rightshift;
-        case "17_1":
-            return KBD_leftctrl;
-        case "17_2":
-            return KBD_rightctrl;
-        case "18_1":
-            return KBD_leftalt;
-        case "18_2":
-            return KBD_rightalt;
-        default:
-            return domKeyToDosKeyCodes[domKey] || 0;
-    }
-}
-
-export const keyCodesToDom: { [index: number]: number } = {};
-for (const next of Object.keys(domKeyToDosKeyCodes)) {
-    const key = Number.parseInt(next, 10);
-    keyCodesToDom[domKeyToDosKeyCodes[key]] = key;
-}
+const locationalKeys: { [index: number]: { [index: number]: number } } = {
+    16: {
+        1: KBD_leftshift,
+        2: KBD_rightshift,
+    },
+    17: {
+        1: KBD_leftctrl,
+        2: KBD_rightctrl,
+    },
+    18: {
+        1: KBD_leftalt,
+        2: KBD_rightalt,
+    },
+};
 
 export function domToKeyCode(domKey: number, domKeyLocation: number): number {
-    if (locationalKeys.includes(domKey) && domKeyLocation > 0) {
-        return domLocationalKeyToDosKeyCode(domKey, domKeyLocation);
-    } else return domKeyToDosKeyCodes[domKey] || 0;
+    return locationalKeys[domKey]?.[domKeyLocation] ??
+        (domKeyToDosKeyCodes[domKey] ?? 0);
 }
