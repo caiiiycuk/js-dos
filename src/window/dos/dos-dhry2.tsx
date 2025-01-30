@@ -83,30 +83,28 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
                     pc: getComparablePc(vaxRating),
                 });
 
-                if (token) {
-                    (async () => {
-                        const gl = nonSerializableStore.gl;
-                        if (gl) {
-                            const payload = {
-                                token,
-                                test: "dhry2",
-                                jsdos: JSDOS_VERSION,
-                                emu: emuVersion,
-                                backend,
-                                worker,
-                                hardware: hardware ?? false,
-                                result: Math.round(vaxRating * 100) / 100,
-                                ...systemInfo(gl),
-                            };
-                            await fetch(apiEndpoint + "/perf/set", {
-                                method: "POST",
-                                body: JSON.stringify(payload),
-                            });
-                        }
-                    })()
-                        .catch(console.error)
-                        .finally(() => setSubmited(true));
-                }
+                (async () => {
+                    const gl = nonSerializableStore.gl;
+                    if (gl) {
+                        const payload = {
+                            token: token ?? "",
+                            test: "dhry2",
+                            jsdos: JSDOS_VERSION,
+                            emu: emuVersion,
+                            backend,
+                            worker,
+                            hardware: hardware ?? false,
+                            result: Math.round(vaxRating * 100) / 100,
+                            ...systemInfo(gl),
+                        };
+                        await fetch(apiEndpoint + "/perf/set", {
+                            method: "POST",
+                            body: JSON.stringify(payload),
+                        });
+                    }
+                })()
+                    .catch(console.error)
+                    .finally(() => setSubmited(true));
             } else {
                 setResults({
                     runs,
@@ -138,11 +136,11 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
             <div>{results.runs}</div>
             <div>Time:</div>
             <div>{results.time} <span>ms</span></div>
-            {results.pc !== null && <div>PC:</div>}
-            {results.pc !== null && <div>{results.pc ?? "..."}</div>}
+            {submited && results.pc !== null && <div>PC:</div>}
+            {submited && results.pc !== null && <div>{results.pc ?? "..."}</div>}
         </div>
-        {token && !submited && <div class="mt-14 text-yellow-500">Please wait until this message disappears</div>}
-        {!token && <div class="mt-14 text-yellow-500">Please enter your key to submit results</div>}
+        {!submited && <div class="mt-14 text-yellow-500">Please wait until this message disappears</div>}
+        {!submited && !token && <div class="mt-14 text-yellow-500">Please enter your key to submit results</div>}
     </div>;
 }
 

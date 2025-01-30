@@ -62,6 +62,7 @@ export interface ISystemInfo {
     gpu: string;
     deviceModel: string;
     cpu: string;
+    emscripten: string;
 }
 
 
@@ -166,6 +167,7 @@ export function systemInfo(ctx: WebGLRenderingContext): ISystemInfo {
             { width: screenWidth, height: screenHeight },
         ),
         cpu: (cores || 0).toString(),
+        emscripten: "3.1.68",
     };
 }
 
