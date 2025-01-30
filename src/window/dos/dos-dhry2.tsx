@@ -93,7 +93,7 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
                             emu: emuVersion,
                             backend,
                             worker,
-                            hardware: hardware ?? false,
+                            hardware: hardware !== false && hardware !== null && hardware !== undefined,
                             result: Math.round(vaxRating * 100) / 100,
                             ...systemInfo(gl),
                         };
