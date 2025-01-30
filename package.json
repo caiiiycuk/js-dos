@@ -43,7 +43,7 @@
     "postcss": "^8.4.33",
     "postcss-import": "^16.0.0",
     "tailwindcss": "^3.4.1",
-    "terser": "^5.27.0",
+    "terser": "^5.37.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.12"
   }
