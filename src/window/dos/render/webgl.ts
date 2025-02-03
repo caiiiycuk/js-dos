@@ -108,6 +108,7 @@ export function webGl(canvas: HTMLCanvasElement,
     window.addEventListener("resize", onResize);
 
     return () => {
+        nonSerializableStore.gl = null;
         ci.events().onFrameSize(() => {});
         ci.events().onFrame(() => {});
         resizeObserver.disconnect();
