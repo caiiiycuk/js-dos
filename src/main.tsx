@@ -195,6 +195,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         }
     }
 
+    function setSoftFullscreen(softFullscreen: boolean) {
+        store.dispatch(uiSlice.actions.softFullscreen(softFullscreen));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -291,6 +295,14 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setKey(options.key);
     }
 
+    if (options.backendHardware !== undefined) {
+        setSoftFullscreen(true);
+    }
+
+    if (options.softFullscreen !== undefined) {
+        setSoftFullscreen(options.softFullscreen);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -332,6 +344,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setSoftKeyboardSymbols,
         setVolume,
         setKey,
+        setSoftFullscreen,
 
         save: () => {
             return apiSave(getState(store) as any as State, nonSerializableStore, store.dispatch);
@@ -358,11 +371,13 @@ function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSeriali
         e.preventDefault();
         return false;
     });
-    document.addEventListener("fullscreenchange", () => {
-        const fullscreen = document.fullscreenElement === root;
-        store.dispatch(uiSlice.actions.setFullScreen(fullscreen));
-        if (!fullscreen) {
-            apiSave(getState(store) as any, nonSerializableStore, store.dispatch);
+    document.addEventListener("fullscreenchange", (e) => {
+        if (!store.getState().ui.softFullscreen) {
+            const fullscreen = document.fullscreenElement === root;
+            store.dispatch(uiSlice.actions.setFullScreen(fullscreen));
+            if (!fullscreen) {
+                apiSave(getState(store) as any, nonSerializableStore, store.dispatch);
+            }
         }
     });
     document.addEventListener("pointerlockchange", () => {

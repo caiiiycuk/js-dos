@@ -36,6 +36,7 @@ const initialState: {
     noCloud: boolean,
     warnOnPremium: boolean,
     warnOnKey: boolean,
+    softFullscreen: boolean,
 } = {
     hidden: false,
     frame: "none",
@@ -58,6 +59,7 @@ const initialState: {
     noCloud: false,
     warnOnKey: false,
     warnOnPremium: false,
+    softFullscreen: false,
 };
 
 export type UiState = typeof initialState;
@@ -170,6 +172,9 @@ export const uiSlice = createSlice({
         warnOnPremium: (state, a: { payload: boolean }) => {
             state.warnOnKey = a.payload;
             state.frame = "none";
+        },
+        softFullscreen: (state, a: { payload: boolean }) => {
+            state.softFullscreen = a.payload;
         },
     },
     extraReducers: (builder) => {
