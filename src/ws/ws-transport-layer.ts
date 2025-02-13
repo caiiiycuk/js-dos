@@ -351,7 +351,10 @@ export class WsTransportLayer implements TransportLayer {
                             case 101/* ws-sockdrive-read */: {
                                 const handle = this.readUint32(payload[0]!, 0);
                                 const sector = this.readUint32(payload[0]!, 4);
-                                const response = await this.sockdrive.read(handle, sector);
+                                let response = this.sockdrive.readSync(handle, sector);
+                                if (response.code === 255) {
+                                    response = await this.sockdrive.readAsync(handle, sector);
+                                }
                                 const packet = new Uint8Array(4);
                                 this.writeUint32(packet, response.code, 0);
                                 this.sendMessageToSocket(101, packet, response.buffer ?? null);

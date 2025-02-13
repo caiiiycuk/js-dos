@@ -94,14 +94,25 @@ export function createSockdrive(
                 });
             });
         },
-        read: async (handle: Handle, sector: number): Promise<ReadResponse> => {
+        readSync: (handle: Handle, sector: number): ReadResponse => {
             if (mapping[handle]) {
                 stats.io[handle - 1].read++;
                 const ptr = templates[handle].sectorSize;
-                let code = mapping[handle].read(sector, ptr, true) as number;
-                if (code = 255) {
-                    code = await mapping[handle].read(sector, ptr, false);
-                }
+                const code = mapping[handle].read(sector, ptr, true) as number;
+                return {
+                    code,
+                    buffer: code === 255 ? undefined : memory[handle].slice(ptr),
+                };
+            }
+
+            console.error("ERROR! sockdrive handle", handle, "not found");
+            return { code: 1 };
+        },
+        readAsync: async (handle: Handle, sector: number): Promise<ReadResponse> => {
+            if (mapping[handle]) {
+                stats.io[handle - 1].read++;
+                const ptr = templates[handle].sectorSize;
+                const code = await mapping[handle].read(sector, ptr, false);
                 return {
                     code,
                     buffer: memory[handle].slice(ptr),
