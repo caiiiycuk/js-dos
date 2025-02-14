@@ -39,6 +39,7 @@ export interface DosOptions {
     ipx: NamedHost[],
     ipxBackend: string,
     room: string,
+    server: string,
     fullScreen: boolean,
     sockdriveBackend: NamedHost,
     autoStart: boolean,
