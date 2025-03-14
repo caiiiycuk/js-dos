@@ -63,4 +63,4 @@ cp -rv node_modules/emulators/dist/* public/emulators
 * [DOS.Zone](https://dos.zone)
 * [Discord](https://discord.com/invite/hMVYEbG)
 * [Twitter](https://twitter.com/intent/user?screen_name=doszone_db)
-* [Telegram](https://t.me/doszone)
+* [Telegram](https://t.me/doszonechat)
