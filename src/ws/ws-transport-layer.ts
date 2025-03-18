@@ -3,12 +3,13 @@ import {
     ServerMessage, DataChunk, FsNode,
 } from "emulators/dist/types/protocol/protocol";
 
-import { createSockdrive, Template } from "./ws-sockdrive";
-
+import { Template } from "./ws-sockdrive";
+import { createSockdrive } from "./ws-sockdrive-v2";
+// import { createSockdrive } from "./ws-sockdrive";
 const sockdriveConfirmWrite = false;
 
 export interface Hardware {
-    readConfig(): string;
+    readConfig(): string;1
     sendMessage(payload: string): void;
     addKey(key: number, pressed: number, timeMs: number): void;
     mouseMove(x: number, y: number, relative: boolean, timeMs: number): void;
