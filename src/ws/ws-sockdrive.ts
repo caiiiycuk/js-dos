@@ -3,6 +3,21 @@ import { Drive } from "../sockdrive/js/src/sockdrive/drive";
 import { Cache } from "../sockdrive/js/src/sockdrive/cache";
 import { sockdriveImgmount } from "../player-api-load";
 
+export interface WsSockdrive {
+    stats: Stats;
+    applyConf(conf: string): void;
+    applyToken(token: string): void;
+    open(url: string, owner: string, drive: string, token: string): Promise<{
+        handle: number;
+        aheadRange: number;
+    }>;
+    template(handle: number): Template;
+    readSync(handle: number, sector: number): ReadResponse;
+    readAsync(handle: number, sector: number): Promise<ReadResponse>;
+    write(handle: number, sector: number, buffer: Uint8Array): number;
+    close(handle: number): void;
+}
+
 export interface Template {
     name: string,
     size: number,
@@ -24,7 +39,7 @@ export function createSockdrive(
     onPreloadProgress: (drive: string, restBytes: number) => void,
     onPayload: (owner: string, drive: string, sectorSize: number,
         aheadRange: number, sectors: number[], row: Uint8Array) => void,
-) {
+): WsSockdrive {
     let seq = 0;
     let token = "";
     const cache: { [backend: string]: Cache } = {};
