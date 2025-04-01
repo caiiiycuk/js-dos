@@ -1,3 +1,4 @@
+# Algolia-Crawler-Verif: 0845BF5F38DFCE04
 User-Agent: *
 Allow: /
 Disallow: /cdn/test.html
