@@ -28,13 +28,55 @@ export function SelectWindow() {
         }
     }
 
+    async function onFileChange() {
+        fileInput.removeEventListener("change", onFileChange);
+
+        if (fileInput.files === null || fileInput.files.length === 0) {
+            return;
+        }
+
+        const file = fileInput.files[0];
+        try {
+            await loadBundleFromFile(file, store).catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
+        } catch (e: any) {
+            store.dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error"));
+        }
+    }
+
+    function onUpload() {
+        fileInput.addEventListener("change", onFileChange);
+        fileInput.click();
+    }
+
     return <div class="select-window overflow-hidden flex-grow flex flex-col items-center justify-center px-8">
         <div class="mb-4 text-center underline cursor-pointer hover:text-accent"
             onClick={() => setUseUrl(true)}>{t("load_by_url")}</div>
-        <Upload />
+        <Upload onUpload={onUpload} />
         <div class="mt-4 text-center">{t("upload_file")}</div>
-        <div class="mt-4 text-center underline cursor-pointer hover:text-accent"
-            onClick={createEmpty}>{t("create_empty")}</div>
+        <div class="flex flex-row flex-wrap gap-4">
+            <div class="mt-4 text-center underline cursor-pointer hover:text-accent"
+                onClick={onUpload}>{t("load_archive")}</div>
+            <div class="mt-4 text-center underline cursor-pointer hover:text-accent"
+                onClick={createEmpty}>{t("create_empty")}</div>
+        </div>
+        <div class="mt-4 text-center">{t("sockdrives")}:</div>
+        <div class="flex flex-row flex-wrap gap-4">
+            {[
+                { url: "https://br.cdn.dos.zone/js-dos/system/system-dos7.1-v1.jsdos", label: "DOS v7.1" },
+                { url: "https://br.cdn.dos.zone/js-dos/system/system-win311-v1.jsdos", label: "Windows 3.11" },
+                { url: "https://br.cdn.dos.zone/js-dos/system/system-win311-ru.jsdos", label: "Windows 3.11 (RU)" },
+                { url: "https://br.cdn.dos.zone/js-dos/system/system-win95-v1.jsdos", label: "Windows 95 v1" },
+                { url: "https://br.cdn.dos.zone/js-dos/system/system-win95-v2.jsdos", label: "Windows 95 v2" },
+                { url: "https://br.cdn.dos.zone/js-dos/system/system-win95-ru.jsdos", label: "Windows 95 (RU)" },
+                { url: "https://br.cdn.dos.zone/js-dos/system/system-win98-v1.jsdos", label: "Windows 98" },
+            ].map(({ url, label }) => (
+                <a href={url} target="_blank"
+                    class="mt-4 text-center underline cursor-pointer hover:text-accent">
+                    {label}
+                </a>
+            ))}
+
+        </div>
     </div>;
 }
 
@@ -83,30 +125,8 @@ function Load() {
     </>;
 }
 
-function Upload() {
-    const store = useStore() as Store;
-
-    async function onFileChange() {
-        fileInput.removeEventListener("change", onFileChange);
-
-        if (fileInput.files === null || fileInput.files.length === 0) {
-            return;
-        }
-
-        const file = fileInput.files[0];
-        try {
-            await loadBundleFromFile(file, store).catch((e) => store.dispatch(dosSlice.actions.bndError(e.message)));
-        } catch (e: any) {
-            store.dispatch(dosSlice.actions.bndError(e.message ?? "unexpected error"));
-        }
-    }
-
-    function onUpload() {
-        fileInput.addEventListener("change", onFileChange);
-        fileInput.click();
-    }
-
-    return <div class="cursor-pointer" onClick={onUpload}>
+function Upload(props: { onUpload: () => void }) {
+    return <div class="cursor-pointer" onClick={props.onUpload}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-48 h-48 play-button">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 13.5l3 3m0 0l3-3m-3
@@ -116,3 +136,4 @@ function Upload() {
         </svg>
     </div>;
 }
+

@@ -108,7 +108,7 @@ function SecretKey() {
                 {t("no_cloud_access")}
                 <a href="https://v8.js-dos.com/key"
                     onClick={fireOpenKey}
-                    target="_blank" class="link link-neutral ml-1">{t("key")}</a>
+                    target="_blank" class="link link-accent ml-1">{t("key")}</a>
                 &nbsp;{t("no_cloud_access2")}.
             </>}
             {account !== null && premium === false && <>

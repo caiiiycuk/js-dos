@@ -11,8 +11,7 @@ export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "settings" |
     "editor-conf" | "editor-fs" | "network" |
-    "stats" | "fat-drives" |
-    "prerun";
+    "stats" | "prerun";
 
 const initialState: {
     hidden: boolean,
@@ -28,7 +27,7 @@ const initialState: {
     toastTimeoutId: number,
     background: string | null,
     updateWsWarning: boolean,
-    cloudSaves: boolean,
+    canSave: boolean,
     autoStart: boolean,
     kiosk: boolean,
     documentHidden: boolean,
@@ -51,7 +50,7 @@ const initialState: {
     toastTimeoutId: 0,
     background: null,
     updateWsWarning: false,
-    cloudSaves: true,
+    canSave: true,
     autoStart: false,
     kiosk: false,
     documentHidden: document.hidden ?? false,
@@ -94,10 +93,6 @@ export const uiSlice = createSlice({
         },
         frameFs: (state) => {
             state.frame = "editor-fs";
-            state.frameXs = false;
-        },
-        frameFatDrives: (state) => {
-            state.frame = "fat-drives";
             state.frameXs = false;
         },
         framePreRun: (state) => {
@@ -144,9 +139,6 @@ export const uiSlice = createSlice({
         updateWsWarning: (state, a: { payload: boolean }) => {
             state.updateWsWarning = a.payload;
         },
-        cloudSaves: (state, a: { payload: boolean }) => {
-            state.cloudSaves = a.payload;
-        },
         autoStart: (state, a: { payload: boolean }) => {
             state.autoStart = a.payload;
         },
@@ -175,6 +167,9 @@ export const uiSlice = createSlice({
         },
         softFullscreen: (state, a: { payload: boolean }) => {
             state.softFullscreen = a.payload;
+        },
+        canSave: (state, a: { payload: boolean }) => {
+            state.canSave = a.payload;
         },
     },
     extraReducers: (builder) => {

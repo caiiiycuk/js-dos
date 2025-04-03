@@ -1,7 +1,6 @@
 import { Handle, Stats } from "../sockdrive/js/src/sockdrive/types";
 import { Drive } from "../sockdrive/js/src/sockdrive/drive";
 import { Cache } from "../sockdrive/js/src/sockdrive/cache";
-import { sockdriveImgmount } from "../player-api-load";
 
 export interface WsSockdrive {
     stats: Stats;
@@ -168,6 +167,8 @@ export function createSockdrive(
         applyConf: (conf: string) => {
             console.log("applyConf", conf);
             let m: RegExpExecArray | null;
+            const sockdriveImgmount = new RegExp(
+                "imgmount\\s+(\\d+)\\s+sockdrive\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s*$", "gm");
             while (m = sockdriveImgmount.exec(conf)) {
                 /* eslint-disable-next-line no-unused-vars */
                 const [_, num, backend, owner, drive] = m;
