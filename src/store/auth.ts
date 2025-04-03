@@ -40,11 +40,6 @@ export const authSlice = createSlice({
             const account = action.payload;
             if (account !== null) {
                 lStorage.setItem(cachedAccount, JSON.stringify(account));
-                (action as unknown as DosAction).asyncStore((store) => {
-                    if (account.email === "dz.caiiiycuk@gmail.com") {
-                        store.dispatch(dosSlice.actions.setSockdriveWrite(false));
-                    }
-                });
             } else {
                 lStorage.removeItem(cachedAccount);
             }

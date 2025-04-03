@@ -29,18 +29,6 @@ export function MouseCapture() {
     />;
 }
 
-export function SockdriveNative() {
-    const t = useT();
-    const dispatch = useDispatch();
-    const native = useSelector((state: State) => state.dos.sockdriveNative);
-    return <Checkbox
-        class="mt-4"
-        label={t("sockdrive_native")}
-        checked={native}
-        onChange={(n) => dispatch(dosSlice.actions.setSockdriveNative(n))}
-    />;
-}
-
 export function SystemCursor() {
     const t = useT();
     const dispatch = useDispatch();
@@ -117,27 +105,5 @@ export function HardwareCheckbox() {
         label={t("hardware")}
         checked={hardware}
         onChange={(h) => dispatch(dosSlice.actions.dosBackendHardware(h))}
-    /> : null;
-}
-
-export function SockdriveWrite() {
-    const t = useT();
-    const dispatch = useDispatch();
-    const account = useSelector((state: State) => state.auth.account);
-    const visible = useSelector((state: State) => state.dos.backend === "dosboxX");
-    const checked = useSelector((state: State) => state.dos.sockdriveWrite) && account !== null;
-    return visible ? <Checkbox
-        class="mt-4"
-        label={t("fat_write")}
-        checked={checked}
-        onChange={(c) => {
-            if (!account) {
-                dispatch(uiSlice.actions.warnOnKey(true));
-            } else if (!account.premium) {
-                dispatch(uiSlice.actions.warnOnPremium(true));
-            }
-
-            dispatch(dosSlice.actions.setSockdriveWrite(c));
-        }}
     /> : null;
 }

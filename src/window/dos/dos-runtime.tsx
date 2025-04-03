@@ -16,9 +16,10 @@ import { LayersConfig, LegacyLayersConfig, extractLayersConfig } from "../../lay
 import { initLegacyLayersControl } from "../../layers/controls/legacy-layers-control";
 import { initLayersControl } from "../../layers/controls/layers-control";
 import { LayersInstance } from "../../layers/instance";
+import { AsyncifyStats } from "emulators/dist/types/protocol/protocol";
 
 export function useDosRuntime(canvas: HTMLCanvasElement,
-                              ci: CommandInterface): void {
+    ci: CommandInterface): void {
     useLog(ci);
     useRenderImage(canvas);
     useStats(ci);
@@ -42,33 +43,6 @@ function useLog(ci: CommandInterface): void {
                     message: args[0],
                     intent: "panic",
                 }));
-            } else if (msgType === "log" && args[0]?.indexOf("sockdrive:") !== -1) {
-                const drive = args[0].substring(args[0].indexOf(" ") + 1, args[0].indexOf(","));
-                dispatch(uiSlice.actions.cloudSaves(false));
-                if (args[0]?.indexOf("write=") !== -1) {
-                    const name = drive.substring(drive.indexOf("/") + 1);
-                    if (name.startsWith("@")) {
-                        isFork[drive.substring(drive.indexOf(".", drive.indexOf("/")) + 1)] = true;
-                    }
-                    dispatch(dosSlice.actions.addSockdriveInfo({
-                        drive,
-                        write: args[0]?.indexOf("write=false") === -1,
-                    }));
-                }
-                if (args[0]?.indexOf("preload=") !== -1) {
-                    const rest = Number.parseInt(args[0].substring(args[0].indexOf("preload=") + "preload=".length));
-                    if (preloadProgress[drive] === undefined) {
-                        preloadProgress[drive] = rest;
-                    }
-
-                    const name = drive.substring(drive.indexOf("/") + 1);
-                    dispatch(uiSlice.actions.showToast({
-                        message: t("preloading_sockdrive") + " " +
-                            (isFork[name] ? "@" + name : name) + " — " +
-                            Math.round((preloadProgress[drive] - rest) * 100 / preloadProgress[drive]) + "%",
-                        long: true,
-                    }));
-                }
             }
         });
     }, [ci, dispatch]);
@@ -82,7 +56,7 @@ function useRenderImage(canvas: HTMLCanvasElement): void {
 }
 
 function useMouse(canvas: HTMLCanvasElement,
-                  ci: CommandInterface): void {
+    ci: CommandInterface): void {
     const mobileControls = useSelector((state: State) => state.dos.mobileControls);
     const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
     const mouseSensitivity = 0.1 + useSelector((state: State) => state.dos.mouseSensitivity) * 3;
@@ -100,7 +74,7 @@ function useKeyboard(ci: CommandInterface): void {
 }
 
 function useRenderBackend(canvas: HTMLCanvasElement,
-                          ci: CommandInterface): void {
+    ci: CommandInterface): void {
     const nonSerializableStore = useNonSerializableStore();
     const renderBackend = useSelector((state: State) => state.dos.renderBackend);
     const renderAspect = useSelector((state: State) => state.dos.renderAspect);
@@ -167,6 +141,8 @@ function usePause(ci: CommandInterface): void {
 
 function useStats(ci: CommandInterface): void {
     const dispatch = useDispatch();
+    const t = useT();
+
     useEffect(() => {
         let prevCycles = 0;
         let prevNonSkippableSleepCount = 0;
@@ -178,7 +154,7 @@ function useStats(ci: CommandInterface): void {
         let prevMsgRecv = 0;
         let intervalStartedAt = Date.now();
         const intervalId = setInterval(() => {
-            ci.asyncifyStats().then((stats) => {
+            ci.asyncifyStats().then((stats: AsyncifyStats) => {
                 const dtMs = Date.now() - intervalStartedAt;
                 const dtSec = dtMs / 1000;
                 if (dtSec > 0) {
@@ -194,16 +170,21 @@ function useStats(ci: CommandInterface): void {
                         msgRecvPerSec: Math.round((stats.messageReceived - prevMsgRecv) / dtSec),
                         netSent: stats.netSent,
                         netRecv: stats.netRecv,
-                        driveSent: stats.driveSent,
-                        driveRecv: stats.driveRecv,
-                        driveRecvTime: stats.driveRecvTime,
-                        driveCacheHit: stats.driveCacheHit,
-                        driveCacheMiss: stats.driveCacheMiss,
-                        driveCacheUsed: stats.driveCacheUsed,
-                        driveBufferedAmount: stats.driveBufferedAmount,
-                        driveIo: structuredClone(stats.driveIo),
+                        driveIo: structuredClone(stats.driveIo) ?? [],
                     };
                     dispatch(dosSlice.actions.stats(dStats));
+
+                    for (const drive of dStats.driveIo) {
+                        const name = drive.url.substring(drive.url.lastIndexOf("/") + 1);
+                        const progress = Math.round(drive.read * 100 / drive.total);
+                        if (progress < 100) {
+                            dispatch(uiSlice.actions.showToast({
+                                message: t("preloading_sockdrive") + " " + name + " — " + progress + "%",
+                                long: true,
+                            }));
+                            break;
+                        }
+                    };
 
                     prevCycles = stats.cycles;
                     prevNonSkippableSleepCount = stats.nonSkippableSleepCount;
@@ -216,7 +197,7 @@ function useStats(ci: CommandInterface): void {
                     intervalStartedAt = Date.now();
                 }
             });
-        }, 3000);
+        }, 1000);
 
         return () => {
             clearInterval(intervalId);
@@ -240,7 +221,7 @@ function useLayers(canvas: HTMLCanvasElement, ci: CommandInterface) {
     useEffect(() => {
         if (mobileControls) {
             if (nsStore.layers === null) {
-                nsStore.layers = (async function() {
+                nsStore.layers = (async function () {
                     const layers = new Layers(canvas.parentElement as HTMLDivElement, canvas, toggleKeyboard, {});
                     const config = extractLayersConfig((await ci.config()).jsdosConf);
 
