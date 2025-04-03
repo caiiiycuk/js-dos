@@ -10,8 +10,6 @@ import { getNonSerializableStore, getState } from "./store";
 
 declare const emulators: Emulators;
 
-export const sockdriveImgmount = new RegExp(
-    "imgmount\\s+(\\d+)\\s+sockdrive\\s+([^\\s]+)\\s+([^\\s]+)\\s+([^\\s]+)\\s*$", "gm");
 
 export async function loadEmptyBundle(store: Store) {
     await doLoadBundle("empty.jsdos",
@@ -119,9 +117,10 @@ function syncWithConfig(config: DosConfig, dispatch: Dispatch) {
 }
 
 export function applySockdriveOptionsIfNeeded(config: string, dispatch: Dispatch) {
-    if (config.indexOf("sockdrive") >= 0) {
+    if (config.indexOf("sockdrive") >= 0 || config.indexOf(".qcow2") >= 0) {
         dispatch(dosSlice.actions.dosBackendLocked(true));
         dispatch(dosSlice.actions.dosBackend("dosboxX"));
         dispatch(dosSlice.actions.noCursor(true));
+        dispatch(uiSlice.actions.canSave(config.indexOf(".qcow2") === -1));
     }
 }

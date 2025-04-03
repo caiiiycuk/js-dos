@@ -10,7 +10,7 @@ export async function apiSave(state: State,
                               dispatch: Dispatch): Promise<boolean> {
     const ci = nonSerializableStore.ci;
     const changesUrl = nonSerializableStore.loadedBundle?.bundleChangesUrl;
-    if (ci === null || !changesUrl || !state.ui.cloudSaves) {
+    if (ci === null || !changesUrl || !state.ui.canSave) {
         return false;
     }
 

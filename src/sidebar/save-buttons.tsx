@@ -92,11 +92,11 @@ function CloudSaveButton(props: {
 }) {
     const [busy, setBusy] = useState<boolean>(false);
     const dispatch = useDispatch();
-    const cloudSaves = useSelector((state: State) => state.ui.cloudSaves);
+    const canSave = useSelector((state: State) => state.ui.canSave);
     const nonSerializableStore = useNonSerializableStore();
     const store = useStore();
 
-    if (!cloudSaves ||
+    if (!canSave ||
         nonSerializableStore.loadedBundle === null ||
         nonSerializableStore.loadedBundle.bundleChangesUrl === null) {
         return null;

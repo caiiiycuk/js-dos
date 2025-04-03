@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 import { State } from "../store";
 import { EditorConf } from "./editor/editor-conf-frame";
 import { EditorFsFrame } from "./editor/editor-fs-frame";
-import { FatDrivesFrame } from "./fat-drives-frame";
 import { NetworkFrame } from "./network-frame";
 import { SettingsFrame } from "./settings-frame";
 import { StatsFrame } from "./stats-frame";
@@ -24,7 +23,6 @@ export function Frame(props: {}) {
         { frame === "editor-fs" && <EditorFsFrame /> }
         { frame === "network" && <NetworkFrame /> }
         { frame === "stats" && <StatsFrame /> }
-        { frame === "fat-drives" && <FatDrivesFrame /> }
         { frame === "prerun" && <PreRunFrame /> }
     </div>;
 };

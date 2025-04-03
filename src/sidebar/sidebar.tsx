@@ -4,7 +4,7 @@ import { FullscreenButton } from "./fullscreen-button";
 import { NetworkButton } from "./network-button";
 import {
     DosboxConfButton, SettingsButton, CyclesButton, FsButton,
-    FatDrivesButton, HddLed,
+    HddLed,
     SoftKeyboardButton,
     PreRunButton,
 } from "./sidebar-button";
@@ -25,7 +25,6 @@ export function SideBar(props: {}) {
         {window === "run" && <SoftKeyboardButton />}
         {window === "run" && networking && <NetworkButton />}
         {editor && window === "prerun" && <DosboxConfButton />}
-        {editor && window === "prerun" && <FatDrivesButton />}
         {editor && window === "run" && <FsButton />}
         <div class="contentbar"></div>
         {window === "run" && <FullscreenButton />}
