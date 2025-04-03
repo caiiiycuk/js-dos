@@ -9,7 +9,6 @@ import {
 } from "../store/dos";
 import { ThemeValues, Theme, uiSlice } from "../store/ui";
 import { lStorage } from "../host/lstorage";
-import { initSlice } from "../store/init";
 
 export function BackendSelect(props: { multiline?: boolean }) {
     const locked = useSelector((state: State) => state.dos.backendLocked);

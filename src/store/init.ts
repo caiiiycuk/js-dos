@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { lStorage } from "../host/lstorage";
 
 export interface InitState {
     uid: string,

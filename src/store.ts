@@ -9,7 +9,7 @@ import { DosEvent, DosOptions } from "./public/types";
 import { CommandInterface, InitFs } from "emulators";
 import { useStore } from "react-redux";
 import { Cache, CacheNoop } from "./host/lcache";
-import { InitState, createInitSlice, initSlice } from "./store/init";
+import { InitState, createInitSlice } from "./store/init";
 import { LayersInstance } from "./layers/instance";
 
 export interface LoadedBundle {

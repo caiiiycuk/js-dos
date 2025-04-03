@@ -34,7 +34,9 @@ export async function bundleFromChanges(url: string, account: Account | null,
             throw new Error("Resource not avalible (" + response.status + "): " + response.statusText);
         }
 
-        return response.arrayBuffer().then((b) => new Uint8Array(b));
+        return await readResponseBody(response, url, (bytes, length) => {
+            store.dispatch(storageSlice.actions.changedProgress([bytes, length]));
+        });
     } catch (e: any) {
         return await getNonSerializableStore(store).cache.get(url).catch(() => null);
     }
@@ -56,6 +58,20 @@ export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Arr
         throw new Error("Resource not avalible (" + response.status + "): " + response.statusText);
     }
 
+    const complete = await readResponseBody(response, url, (bytes, length) => {
+        store.dispatch(storageSlice.actions.progress([bytes, length]));
+    });
+
+    getNonSerializableStore(store).cache
+        .put(url, complete)
+        .catch(console.error);
+
+    return complete;
+};
+
+
+async function readResponseBody(response: Response, url: string,
+                                onProgress: (bytes: number, total: number) => void): Promise<Uint8Array> {
     const lenHeader = response.headers.get("Content-Length");
     const length = lenHeader === null ? 0 :
         Number.parseInt(lenHeader);
@@ -74,7 +90,7 @@ export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Arr
         received += value.length;
 
         const bytes = Math.min(url.startsWith(brCdn) ? received / 2 : received, length);
-        store.dispatch(storageSlice.actions.progress([bytes, length]));
+        onProgress(bytes, length);
     }
 
     let offset = 0;
@@ -84,9 +100,5 @@ export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Arr
         offset += next.length;
     }
 
-    getNonSerializableStore(store).cache
-        .put(url, complete)
-        .catch(console.error);
-
     return complete;
-};
+}

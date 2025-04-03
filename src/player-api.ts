@@ -18,10 +18,10 @@ export async function apiSave(state: State,
     const account = state.auth.account;
     try {
         let savedInIndexedDb = true;
-        let warn_text = 
-            (account === null || account.email === null) ? t("warn_save_no_account") : 
-            (!account.premium) ? t("warn_save_no_premium") :
-            t("warn_save_big_file");
+        const warnText =
+            (account === null || account.email === null) ? t("warn_save_no_account") :
+                (!account.premium) ? t("warn_save_no_premium") :
+                    t("warn_save_big_file");
 
         const changes = await ci.persist(true);
         if (changes !== null) {
@@ -35,7 +35,7 @@ export async function apiSave(state: State,
 
         if (savedInIndexedDb) {
             dispatch(uiSlice.actions.showToast({
-                message: warn_text,
+                message: warnText,
                 intent: "success",
             }));
         } else {
@@ -59,7 +59,8 @@ export async function apiSave(state: State,
 
 export function canDoCloudSave(account: Account | null, changes: Uint8Array | null) {
     if (account) {
-        return account.email !== undefined && (account.email === "dz.caiiiycuk@gmail.com" || account.premium === true) &&
+        return account.email !== undefined &&
+            (account.email === "dz.caiiiycuk@gmail.com" || account.premium === true) &&
             (changes === null || changes.length <= 25 * 1024 * 1024);
     }
     return false;
