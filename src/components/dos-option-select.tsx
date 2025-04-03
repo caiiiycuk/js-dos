@@ -9,7 +9,7 @@ import {
 } from "../store/dos";
 import { ThemeValues, Theme, uiSlice } from "../store/ui";
 import { lStorage } from "../host/lstorage";
-import { SockdriveBackendName, initSlice, sockdriveBackendNames } from "../store/init";
+import { initSlice } from "../store/init";
 
 export function BackendSelect(props: { multiline?: boolean }) {
     const locked = useSelector((state: State) => state.dos.backendLocked);
@@ -65,17 +65,6 @@ export function ThemeSelect(props: { class?: string, multiline?: boolean }) {
         values={[...ThemeValues]}
         selector={(state: State) => state.ui.theme}
         dispatch={(newValue: Theme) => uiSlice.actions.theme(newValue)}
-        multiline={props.multiline}
-    />;
-}
-
-export function SockdriveBackend(props: { class?: string, multiline?: boolean }) {
-    return <OptionSelect<SockdriveBackendName>
-        class={props.class}
-        label="FAT16/32 Backend"
-        values={sockdriveBackendNames}
-        selector={(state: State) => state.init.sockdriveBackendName}
-        dispatch={(newValue) => initSlice.actions.setSockdriveBackendName(newValue)}
         multiline={props.multiline}
     />;
 }
