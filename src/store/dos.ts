@@ -37,11 +37,11 @@ export interface EmulatorStats {
     msgRecvPerSec: number,
     netSent: number,
     netRecv: number,
-    driveIo: { 
+    driveIo: {
         url: string,
         total: number,
-        read: number, 
-        write: number 
+        read: number,
+        write: number
     }[];
 };
 
