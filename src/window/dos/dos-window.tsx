@@ -53,7 +53,7 @@ export function DosWindow(props: {
 
             const ci: Promise<CommandInterface> = (async () => {
                 if (backendHardware && nonSerializableStore.options.backendHardware) {
-                    const ws = await nonSerializableStore.options.backendHardware(backend, false);
+                    const ws = await nonSerializableStore.options.backendHardware(backend);
                     if (ws !== null) {
                         return emulators.backend(bundles, await createWsTransportLayer(ws, (version) => {
                             if (version < actualWsVersion) {

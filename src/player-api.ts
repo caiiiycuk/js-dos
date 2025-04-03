@@ -50,16 +50,6 @@ export async function apiSave(state: State,
     }
 }
 
-export function isSockdrivePremium(sockdriveEndpoint: string, account: Account | null): Promise<boolean> {
-    if (account) {
-        return fetch(sockdriveEndpoint + "/premium/" + account.email)
-            .then((r) => r.json())
-            .then((payload: { premium: boolean }) => payload.premium);
-    } else {
-        return Promise.resolve(false);
-    }
-}
-
 export function canDoCloudSaves(account: Account | null) {
     return account?.email !== undefined;
 }

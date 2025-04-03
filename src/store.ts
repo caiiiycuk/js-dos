@@ -9,7 +9,7 @@ import { DosEvent, DosOptions } from "./public/types";
 import { CommandInterface, InitFs } from "emulators";
 import { useStore } from "react-redux";
 import { Cache, CacheNoop } from "./host/lcache";
-import { InitState, createInitSlice, initSlice, sockdriveBackend, sockdriveBackendNames } from "./store/init";
+import { InitState, createInitSlice, initSlice } from "./store/init";
 import { LayersInstance } from "./layers/instance";
 
 export interface LoadedBundle {
@@ -78,14 +78,6 @@ export function makeStore(nonSerializableStore: NonSerializableStore, options: P
         },
     });
     nonSerializableStoreMap[storeUid] = nonSerializableStore;
-    if (options.sockdriveBackend && sockdriveBackendNames.indexOf(options.sockdriveBackend.name) === -1) {
-        sockdriveBackendNames.push(options.sockdriveBackend.name);
-        sockdriveBackend[options.sockdriveBackend.name] = {
-            sockdriveEndpoint: "https://" + options.sockdriveBackend.host,
-            sockdriveWssEndpoint: "wss://" + options.sockdriveBackend.host,
-        };
-        store.dispatch(initSlice.actions.setSockdriveBackendName(options.sockdriveBackend.name));
-    }
     return store;
 };
 

@@ -6,8 +6,6 @@ import { uiSlice } from "../store/ui";
 import { Emulators } from "emulators";
 import { useEffect, useState } from "preact/hooks";
 import { authSlice, loadAccount } from "../store/auth";
-import { isSockdrivePremium } from "../player-api";
-import { sockdriveBackend } from "../store/init";
 import { loadBundleFromUrl } from "../player-api-load";
 
 declare const emulators: Emulators;
@@ -34,21 +32,12 @@ function SecretKey() {
     const kiosk = useSelector((state: State) => state.ui.kiosk);
     const noCloud = useSelector((state: State) => state.ui.noCloud);
     const [token, stateSetToken] = useState<string>(account?.token ?? "");
-    const { sockdriveEndpoint } = useSelector((state: State) =>
-        sockdriveBackend[state.init.sockdriveBackendName] ??
-        sockdriveBackend["js-dos"]);
-    const [sockdrivePremium, setSockdrivePremium] = useState<boolean>(true);
-    const premium = (account?.premium ?? false) || sockdrivePremium;
+    const premium = (account?.premium ?? false);
     const nonSerializableStore = useNonSerializableStore();
     const warnOnKey = useSelector((state: State) => state.ui.warnOnKey);
     const warnOnPremium = useSelector((state: State) => state.ui.warnOnPremium);
     const dispatch = useDispatch();
     const store = useStore();
-
-    useEffect(() => {
-        isSockdrivePremium(sockdriveEndpoint, account)
-            .then(setSockdrivePremium);
-    }, [account?.token, sockdriveEndpoint]);
 
     if (kiosk || noCloud) {
         return null;
@@ -114,7 +103,7 @@ function SecretKey() {
             {account !== null && premium === false && <>
                 {warnMark}
                 <span class={(warnOnPremium ? "text-warning font-bold" : "")}>
-                    {t("read_only_access")}
+                    {t("no_cloud_access3")}
                     <a href="https://v8.js-dos.com/key"
                         onClick={fireOpenKey}
                         target="_blank" class={"link ml-1 lowercase " +
