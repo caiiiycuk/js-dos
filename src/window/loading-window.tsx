@@ -8,9 +8,12 @@ export function LoadingWindow() {
     const step = useSelector((state: State) => state.dos.step);
     const received = useSelector((state: State) => state.storage.recived);
     const total = useSelector((state: State) => state.storage.total);
+    const changedRecived = useSelector((state: State) => state.storage.changedRecived);
+    const changedTotal = useSelector((state: State) => state.storage.changedTotal);
 
     let head = t("loading");
     let message = "100%";
+    let changesMessage = "";
 
     switch (step) {
         case "bnd-load": {
@@ -20,6 +23,13 @@ export function LoadingWindow() {
 
                 if (total > 0) {
                     message += ` (${Math.round(received * 1000 / total) / 10}%)`;
+                }
+            }
+
+            if (changedRecived > 0) {
+                changesMessage = `${formatSize(changedRecived)} / ${formatSize(changedTotal)}`;
+                if (changedTotal > 0) {
+                    changesMessage += ` (${Math.round(changedRecived * 1000 / changedTotal) / 10}%)`;
                 }
             }
         } break;
@@ -33,5 +43,11 @@ export function LoadingWindow() {
 
     return <div class="flex flex-col w-full h-full items-center justify-center">
         <Loading head={head} message={message} />
+        {changesMessage !== "" &&
+            <>
+                <br/>
+                <Loading head={t("changes")} message={changesMessage} />
+            </>
+        }
     </div>;
 }
