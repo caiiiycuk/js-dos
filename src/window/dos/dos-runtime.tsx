@@ -19,7 +19,7 @@ import { LayersInstance } from "../../layers/instance";
 import { AsyncifyStats } from "emulators/dist/types/protocol/protocol";
 
 export function useDosRuntime(canvas: HTMLCanvasElement,
-    ci: CommandInterface): void {
+                              ci: CommandInterface): void {
     useLog(ci);
     useRenderImage(canvas);
     useStats(ci);
@@ -33,10 +33,7 @@ export function useDosRuntime(canvas: HTMLCanvasElement,
 
 function useLog(ci: CommandInterface): void {
     const dispatch = useDispatch();
-    const t = useT();
     useEffect(() => {
-        const preloadProgress: { [drive: string]: number } = {};
-        const isFork: { [drive: string]: boolean } = {};
         ci.events().onMessage((msgType, ...args: string[]) => {
             if (msgType === "error" && args[0]?.startsWith("[panic]")) {
                 dispatch(uiSlice.actions.showToast({
@@ -56,7 +53,7 @@ function useRenderImage(canvas: HTMLCanvasElement): void {
 }
 
 function useMouse(canvas: HTMLCanvasElement,
-    ci: CommandInterface): void {
+                  ci: CommandInterface): void {
     const mobileControls = useSelector((state: State) => state.dos.mobileControls);
     const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
     const mouseSensitivity = 0.1 + useSelector((state: State) => state.dos.mouseSensitivity) * 3;
@@ -74,7 +71,7 @@ function useKeyboard(ci: CommandInterface): void {
 }
 
 function useRenderBackend(canvas: HTMLCanvasElement,
-    ci: CommandInterface): void {
+                          ci: CommandInterface): void {
     const nonSerializableStore = useNonSerializableStore();
     const renderBackend = useSelector((state: State) => state.dos.renderBackend);
     const renderAspect = useSelector((state: State) => state.dos.renderAspect);
@@ -221,7 +218,7 @@ function useLayers(canvas: HTMLCanvasElement, ci: CommandInterface) {
     useEffect(() => {
         if (mobileControls) {
             if (nsStore.layers === null) {
-                nsStore.layers = (async function () {
+                nsStore.layers = (async function() {
                     const layers = new Layers(canvas.parentElement as HTMLDivElement, canvas, toggleKeyboard, {});
                     const config = extractLayersConfig((await ci.config()).jsdosConf);
 

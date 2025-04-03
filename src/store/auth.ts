@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { lStorage } from "../host/lstorage";
-import { DosAction } from "../store";
 import { tokenGet } from "../v8/config";
-import { dosSlice } from "./dos";
 
 const cachedAccount = "cached.jsdos.account";
 

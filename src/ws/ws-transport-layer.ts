@@ -4,12 +4,11 @@ import {
 } from "emulators/dist/types/protocol/protocol";
 
 import { Template } from "./ws-sockdrive";
-import { createSockdrive } from "./ws-sockdrive-v2";
-// import { createSockdrive } from "./ws-sockdrive";
+import { createSockdrive } from "./ws-sockdrive";
 const sockdriveConfirmWrite = false;
 
 export interface Hardware {
-    readConfig(): string;1
+    readConfig(): string;
     sendMessage(payload: string): void;
     addKey(key: number, pressed: number, timeMs: number): void;
     mouseMove(x: number, y: number, relative: boolean, timeMs: number): void;

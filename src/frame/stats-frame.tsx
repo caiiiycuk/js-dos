@@ -77,13 +77,15 @@ export function StatsFrame() {
                         return <>
                             <tr>
                                 <td>HDD {i == 0 ? "C:" : "D:"}</td>
-                                <td>{info.url.substring(info.url.lastIndexOf("/") + 1)} - {Math.round(info.read * 100 / info.total)}%</td>
+                                <td>{info.url.substring(info.url.lastIndexOf("/") + 1)} -
+                                    {Math.round(info.read * 100 / info.total)}%</td>
                             </tr>
                             <tr>
                                 <td>Size</td>
-                                <td>{Math.round(info.total / 1024 / 1024)} Mb <br/> {Math.round(info.write / 1024)} Kb</td>
+                                <td>{Math.round(info.total / 1024 / 1024)} Mb <br/>
+                                    {Math.round(info.write / 1024)} Kb</td>
                             </tr>
-                        </>
+                        </>;
                     })}
                 </tbody>
             </table>
