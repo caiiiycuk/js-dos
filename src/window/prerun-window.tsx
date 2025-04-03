@@ -107,7 +107,7 @@ function SecretKey() {
                     <a href="https://v8.js-dos.com/key"
                         onClick={fireOpenKey}
                         target="_blank" class={"link ml-1 lowercase " +
-                            (warnOnPremium ? "" : "link-neutral")} >({t("fix")})</a>
+                            (warnOnPremium ? "" : "link-accent")} >({t("fix")})</a>
                 </span>
             </>}
         </div>
