@@ -25,11 +25,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
     const store = makeStore(nonSerializableStore, options);
     const cache = getCache("guest");
 
-
-    if (getState(store).auth.account?.email === "dz.caiiiycuk@gmail.com") {
-        store.dispatch(dosSlice.actions.setSockdriveWrite(false));
-    }
-
     setupRootElement(element, nonSerializableStore, store);
 
     let pollStep = "none";

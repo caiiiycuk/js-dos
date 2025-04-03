@@ -37,14 +37,12 @@ export interface EmulatorStats {
     msgRecvPerSec: number,
     netSent: number,
     netRecv: number,
-    driveSent: number,
-    driveRecv: number,
-    driveRecvTime: number,
-    driveCacheHit: number,
-    driveCacheMiss: number,
-    driveCacheUsed: number,
-    driveBufferedAmount: number,
-    driveIo: { read: number, write: number }[];
+    driveIo: { 
+        url: string,
+        total: number,
+        read: number, 
+        write: number 
+    }[];
 };
 
 const initialState: {
@@ -79,9 +77,6 @@ const initialState: {
         status: "connecting" | "connected" | "disconnected" | "error",
     },
     imageRendering: ImageRendering,
-    sockdriveWrite: boolean,
-    sockdriveInfo: { drive: string, write: boolean}[],
-    sockdriveNative: boolean,
     softKeyboard: boolean,
     softKeyboardLayout: string[][][],
     softKeyboardSymbols: {[key: string]: string}[],
@@ -118,13 +113,6 @@ const initialState: {
         msgRecvPerSec: 0,
         netRecv: 0,
         netSent: 0,
-        driveSent: 0,
-        driveRecv: 0,
-        driveRecvTime: 0,
-        driveCacheHit: 0,
-        driveCacheMiss: 0,
-        driveCacheUsed: 0,
-        driveBufferedAmount: 0,
         driveIo: [],
     },
     ipx: {
@@ -139,9 +127,6 @@ const initialState: {
     ci: false,
     ciStartedAt: 0,
     imageRendering: (lStorage.getItem("imageRendering") ?? "pixelated") as any,
-    sockdriveWrite: true,
-    sockdriveInfo: [],
-    sockdriveNative: (lStorage.getItem("sockdriveNative") === "true"),
     softKeyboard: false,
     softKeyboardLayout: [
         [
@@ -360,16 +345,6 @@ export const dosSlice = createSlice({
                 s.ipx.backend = backend.name;
                 lStorage.setItem("net.ipx.server", a.payload);
             }
-        },
-        setSockdriveWrite: (s, a: { payload: boolean }) => {
-            s.sockdriveWrite = a.payload;
-        },
-        setSockdriveNative: (s, a: { payload: boolean }) => {
-            s.sockdriveNative = a.payload;
-            lStorage.setItem("sockdriveNative", a.payload ? "true" : "false");
-        },
-        addSockdriveInfo: (s, a: { payload: { drive: string, write: boolean} }) => {
-            s.sockdriveInfo.push(a.payload);
         },
         mobileControls: (s, a: { payload: boolean }) => {
             s.mobileControls = a.payload;
