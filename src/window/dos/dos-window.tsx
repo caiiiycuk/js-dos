@@ -1,8 +1,8 @@
 import { Emulators, CommandInterface, InitFs } from "emulators";
 import { useEffect, useRef, useState } from "preact/hooks";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { dosSlice } from "../../store/dos";
-import { State, useNonSerializableStore, postJsDosEvent } from "../../store";
+import { State, useNonSerializableStore, postJsDosEvent, Store } from "../../store";
 import { useDosRuntime } from "./dos-runtime";
 import { dhry2Bundle, Dhry2Results } from "./dos-dhry2";
 import { createWsTransportLayer } from "../../ws/ws-transport-layer";
@@ -11,6 +11,8 @@ import { uiSlice } from "../../store/ui";
 import { extractLayersConfig } from "../../layers/controls/layers-config";
 import { pointer } from "./controls/mouse/pointer";
 import { SoftKeyboard } from "../soft-keyboard";
+import { useT } from "../../i18n";
+import { apiSave } from "../../player-api";
 
 declare const emulators: Emulators;
 
@@ -100,7 +102,7 @@ export function DosWindow(props: {
 
     return <div class="flex flex-col flex-grow h-full overflow-hidden">
         <div class="bg-black h-full flex-grow overflow-hidden relative">
-            <canvas class={ noCursor ? "cursor-none" : "" } ref={canvasRef} />
+            <canvas class={noCursor ? "cursor-none" : ""} ref={canvasRef} />
             {canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} />}
         </div>
         <SoftKeyboard ci={ci} />
@@ -114,6 +116,80 @@ function DosRuntime(props: { canvas: HTMLCanvasElement, ci: CommandInterface }) 
     useDosRuntime(canvas, ci);
 
     return <>
+        <Unload ci={ci} />
         {bundle?.endsWith(dhry2Bundle) && <Dhry2Results ci={ci} />}
     </>;
+}
+
+let unloadResolveFn = () => {};
+function Unload(props: { ci: CommandInterface }) {
+    const ci = props.ci;
+    const t = useT();
+    const store = useStore() as Store;
+    const nonSerializableStore = useNonSerializableStore();
+
+    const [open, setOpen] = useState<boolean>(false);
+    const [busy, setBusy] = useState<boolean>(false);
+    const [openResult, setOpenResult] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        if (openResult !== null) {
+            setBusy(true);
+            const finallyFn = () => {
+                setBusy(false);
+                unloadResolveFn();
+            };
+            if (openResult) {
+                apiSave(store.getState() as any, nonSerializableStore, store.dispatch, true)
+                    .catch(console.error)
+                    .finally(finallyFn);
+            } else {
+                finallyFn();
+            }
+        }
+    }, [openResult]);
+
+    useEffect(() => {
+        ci.events().onUnload(() => {
+            return new Promise((resolve) => {
+                setOpen(true);
+                unloadResolveFn = resolve;
+            });
+        });
+    }, [ci]);
+
+    if (open) {
+        return <dialog id="save-dialog" className="modal" open={true}>
+            <div className="modal-box">
+                <h3 className="font-bold text-lg">{t("emulation_ended")}</h3>
+                <p className="py-4">{t("confirm_save")}</p>
+                <div className="modal-action">
+                    <form method="dialog" className="join">
+                        <button className="btn btn-neutral join-item" onClick={() => {
+                            setOpen(false);
+                            setOpenResult(false);
+                        }}>{t("close")}</button>
+                        <button className="btn btn-primary join-item" onClick={() => {
+                            setOpen(false);
+                            setOpenResult(true);
+                        }}>{t("save")}</button>
+                    </form>
+                </div>
+            </div>
+        </dialog>;
+    }
+
+    if (busy) {
+        return <dialog id="busy-dialog" className="modal" open={true}>
+            <div className="modal-box">
+                <h3 className="font-bold text-lg">{t("emulation_ended")}</h3>
+                <div class="flex flex-row gap-4 py-4 items-center">
+                    <span class="loading loading-spinner loading-lg"></span>
+                    <p>{t("saving_game")}</p>
+                </div>
+            </div>
+        </dialog>;
+    }
+
+    return null;
 }

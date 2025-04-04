@@ -8,7 +8,7 @@ import { EditorState, editorSlice } from "./store/editor";
 import { DosEvent, DosOptions } from "./public/types";
 import { CommandInterface, InitFs } from "emulators";
 import { useStore } from "react-redux";
-import { Cache, CacheNoop } from "./host/lcache";
+import { IDB, IDBNoop } from "./host/idb";
 import { InitState, createInitSlice } from "./store/init";
 import { LayersInstance } from "./layers/instance";
 
@@ -24,7 +24,7 @@ export interface NonSerializableStore {
     root: HTMLDivElement,
     loadedBundle: LoadedBundle | null,
     ci: CommandInterface | null,
-    cache: Cache,
+    cache: IDB,
     options: Partial<DosOptions>,
     layers: Promise<LayersInstance> | null,
     gl: WebGLRenderingContext | null,
@@ -52,7 +52,7 @@ export function makeNonSerializableStore(options: Partial<DosOptions>): NonSeria
         root: null as any,
         loadedBundle: null,
         ci: null,
-        cache: new CacheNoop(),
+        cache: new IDBNoop(),
         options,
         layers: null,
         gl: null,

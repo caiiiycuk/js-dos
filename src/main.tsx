@@ -8,7 +8,7 @@ import { initEmulators } from "./store/dos";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
-import { getCache } from "./host/lcache";
+import { idbCache } from "./host/idb";
 import { loadBundleFromConfg, loadBundleFromUrl } from "./player-api-load";
 
 import { DosOptions, DosProps, DosFn, ImageRendering, RenderBackend } from "./public/types";
@@ -23,7 +23,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
     const nonSerializableStore = makeNonSerializableStore(options);
     const store = makeStore(nonSerializableStore, options);
-    const cache = getCache("guest");
+    const cache = idbCache();
 
     setupRootElement(element, nonSerializableStore, store);
 
@@ -126,6 +126,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
 
     function setAutoStart(autoStart: boolean) {
         store.dispatch(uiSlice.actions.autoStart(autoStart));
+    }
+
+    function setAutoSave(autoSave: boolean) {
+        store.dispatch(uiSlice.actions.autoSave(autoSave));
     }
 
     function setKiosk(kiosk: boolean) {
@@ -238,6 +242,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setAutoStart(options.autoStart);
     }
 
+    if (options.autoSave !== undefined) {
+        setAutoSave(options.autoSave);
+    }
+
     if (options.kiosk !== undefined) {
         setKiosk(options.kiosk);
     }
@@ -325,6 +333,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setBackground,
         setFullScreen,
         setAutoStart,
+        setAutoSave,
         setKiosk,
         setImageRendering,
         setRenderBackend,
@@ -370,13 +379,13 @@ function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSeriali
         if (!store.getState().ui.softFullscreen) {
             const fullscreen = document.fullscreenElement === root;
             store.dispatch(uiSlice.actions.setFullScreen(fullscreen));
-            if (!fullscreen) {
+            if (!fullscreen && store.getState().ui.autoSave) {
                 apiSave(getState(store) as any, nonSerializableStore, store.dispatch);
             }
         }
     });
     document.addEventListener("pointerlockchange", () => {
-        if (document.pointerLockElement === null) {
+        if (document.pointerLockElement === null && store.getState().ui.autoSave) {
             apiSave(getState(store) as any, nonSerializableStore, store.dispatch);
         }
     });

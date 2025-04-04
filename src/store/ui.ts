@@ -29,6 +29,7 @@ const initialState: {
     updateWsWarning: boolean,
     canSave: boolean,
     autoStart: boolean,
+    autoSave: boolean,
     kiosk: boolean,
     documentHidden: boolean,
     noNetworking: boolean,
@@ -41,7 +42,8 @@ const initialState: {
     frame: "none",
     frameXs: false,
     window: "none",
-    theme: (lStorage.getItem("theme") ?? "light") as Theme,
+    theme: (lStorage.getItem("theme") ??
+        (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light") as Theme,
     editor: false,
     wideScreen: true,
     fullScreen: false,
@@ -52,6 +54,7 @@ const initialState: {
     updateWsWarning: false,
     canSave: true,
     autoStart: false,
+    autoSave: false,
     kiosk: false,
     documentHidden: document.hidden ?? false,
     noNetworking: true,
@@ -141,6 +144,9 @@ export const uiSlice = createSlice({
         },
         autoStart: (state, a: { payload: boolean }) => {
             state.autoStart = a.payload;
+        },
+        autoSave: (state, a: { payload: boolean }) => {
+            state.autoSave = a.payload;
         },
         kiosk: (state, a: { payload: boolean }) => {
             state.kiosk = a.payload;
