@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-04-01T17:04:18.619860774"><script type="text/javascript" >
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-04-04T11:44:54.910128943"><script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -26,16 +26,16 @@
     "url": "https://js-dos.com/",
     "name": "js-dos Help"
 }</script><!-- End Schema.org --></head><body data-id="command-interface" data-main-title="Command Interface (CI)" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="emulators.md|emulators"><noscript><div><img src="https://mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="command-interface" id="command-interface.md">Command Interface (CI)</h1><p id="z6oc2cx_3">The <code class="code" id="z6oc2cx_9">Command Interface</code> is only one object that allows you to communicate with js-dos instance. Once you run some <a href="jsdos-bundle.html" id="z6oc2cx_10" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publis it on dos.zone">js-dos bundle</a> you will receive <code class="code" id="z6oc2cx_11">Command Interface</code> instance.</p><div class="tabs" id="z6oc2cx_4" data-anchors="[z6oc2cx_12,z6oc2cx_13]"><div class="tabs__content" data-gtm="tab" id="z6oc2cx_12" data-title="v8"><div class="code-block" data-lang="ts" data-title="TypeScript">
+<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="command-interface" id="command-interface.md">Command Interface (CI)</h1><p id="iotj08_3">The <code class="code" id="iotj08_9">Command Interface</code> is only one object that allows you to communicate with js-dos instance. Once you run some <a href="jsdos-bundle.html" id="iotj08_10" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publis it on dos.zone">js-dos bundle</a> you will receive <code class="code" id="iotj08_11">Command Interface</code> instance.</p><div class="tabs" id="iotj08_4" data-anchors="[iotj08_12,iotj08_13]"><div class="tabs__content" data-gtm="tab" id="iotj08_12" data-title="v8"><div class="code-block" data-lang="ts" data-title="TypeScript">
             Dos(/*element*/, {
                 url: /* bundle url */,
                 onEvent: (&quot;ci-ready&quot;, ci: CommandInterface) {
                     // now ci s ready
                 },
             );
-        </div></div><div class="tabs__content" data-gtm="tab" id="z6oc2cx_13" data-title="v7"><div class="code-block" data-lang="javascript" data-title="JavaScript">
+        </div></div><div class="tabs__content" data-gtm="tab" id="iotj08_13" data-title="v7"><div class="code-block" data-lang="javascript" data-title="JavaScript">
             const ci = await Dos(/*element*/).run(/*bundle url*/);
-        </div></div></div><p id="z6oc2cx_5">CI interface:</p><div class="code-block" data-lang="ts">
+        </div></div></div><p id="iotj08_5">CI interface:</p><div class="code-block" data-lang="ts">
 export interface CommandInterface {
     config: () =&gt; Promise&lt;DosConfig&gt;;
     height: () =&gt; number;
@@ -64,7 +64,7 @@ export interface CommandInterface {
     fsWriteFile(file: string, contents: ReadableStream&lt;Uint8Array&gt; | Uint8Array): Promise&lt;void&gt;;
     fsDeleteFile(file: string): Promise&lt;void&gt;;
 }
-</div><p id="z6oc2cx_7">Events interface:</p><div class="code-block" data-lang="ts">
+</div><p id="iotj08_7">Events interface:</p><div class="code-block" data-lang="ts">
 export type MessageType = &quot;log&quot; | &quot;warn&quot; | &quot;error&quot; | string;
 
 export interface CommandInterfaceEvents {
@@ -77,4 +77,4 @@ export interface CommandInterfaceEvents {
     onNetworkConnected: (consumer: (networkType: NetworkType, address: string) =&gt; void) =&gt; void;
     onNetworkDisconnected: (consumer: (networkType: NetworkType) =&gt; void) =&gt; void;
 }
-</div><div class="last-modified">Last modified: 01 апреля 2025</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="save-load.html" class="navigation-links__prev">Persist FS</a><a href="dosbox-direct.html" class="navigation-links__next">DOSBox Direct</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b725/app.js"></script></body></html>
+</div><div class="last-modified">Last modified: 04 апреля 2025</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="save-load.html" class="navigation-links__prev">Persist FS</a><a href="dosbox-direct.html" class="navigation-links__next">DOSBox Direct</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b725/app.js"></script></body></html>
