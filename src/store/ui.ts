@@ -29,6 +29,7 @@ const initialState: {
     updateWsWarning: boolean,
     canSave: boolean,
     autoStart: boolean,
+    countDownStart: number,
     autoSave: boolean,
     kiosk: boolean,
     documentHidden: boolean,
@@ -54,6 +55,7 @@ const initialState: {
     updateWsWarning: false,
     canSave: true,
     autoStart: false,
+    countDownStart: 0,
     autoSave: false,
     kiosk: false,
     documentHidden: document.hidden ?? false,
@@ -145,6 +147,10 @@ export const uiSlice = createSlice({
         autoStart: (state, a: { payload: boolean }) => {
             state.autoStart = a.payload;
         },
+        countDownStart: (state, a: { payload: number }) => {
+            state.countDownStart = a.payload;
+            state.autoStart = true;
+        },
         autoSave: (state, a: { payload: boolean }) => {
             state.autoSave = a.payload;
         },
@@ -190,7 +196,7 @@ export const uiSlice = createSlice({
                 s.window = "prerun";
             })
             .addCase(createAction<string>("dos/bndReady"), (s, a) => {
-                if (s.autoStart) {
+                if (s.autoStart && s.countDownStart === 0) {
                     (a as unknown as DosAction).asyncStore((store) => {
                         store.dispatch(dosSlice.actions.bndPlay({}));
                     });
