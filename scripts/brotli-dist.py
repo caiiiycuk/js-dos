@@ -8,7 +8,10 @@ def brotli_compress_file(file_path):
     try:
         subprocess.run(['brotli', '-Zf', file_path], check=True)
         os.remove(file_path)
-        os.rename(file_path + '.br', file_path + ".ea")
+        if (file_path.endswith(".js") or file_path.endswith(".wasm") or file_path.endswith(".css")):
+            os.rename(file_path + '.br', file_path + ".ea")
+        else:
+            os.rename(file_path + '.br', file_path)
         print(f"Compressed {file_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error compressing {file_path}: {e}")

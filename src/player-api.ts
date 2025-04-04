@@ -35,15 +35,15 @@ export async function apiSave(state: State,
         const changes = await ci.persist(true);
         const encodedChanges = encodeChanges(changes);
         if (encodedChanges !== null) {
-            if (canDoCloudSave(account, encodedChanges)) {
-                if (encodedChanges !== changes && !emulationEnded) {
-                    dispatch(uiSlice.actions.showToast({
-                        message: t("sockdrive_save_in_the_middle"),
-                        intent: "warning",
-                        long: true,
-                    }));
-                }
+            if (encodedChanges !== changes && !emulationEnded) {
+                dispatch(uiSlice.actions.showToast({
+                    message: t("sockdrive_save_in_the_middle"),
+                    intent: "warning",
+                    long: true,
+                }));
+            }
 
+            if (canDoCloudSave(account, encodedChanges)) {
                 await putChanges(changesUrl, encodedChanges);
                 savedInIndexedDb = false;
             } else if (changes instanceof Uint8Array) {
