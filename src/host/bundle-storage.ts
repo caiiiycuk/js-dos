@@ -19,8 +19,8 @@ export function bundleFromFile(file: File, store: Store): Promise<Uint8Array> {
 }
 
 
-export async function bundleFromChanges(url: string, account: Account | null,
-                                        store: Store): Promise<Uint8Array | null> {
+export async function changesFromUrl(url: string, account: Account | null,
+                                     store: Store): Promise<Uint8Array | null> {
     if (!canDoCloudSave(account, null)) {
         return await getNonSerializableStore(store).cache.get(url).catch(() => null);
     }

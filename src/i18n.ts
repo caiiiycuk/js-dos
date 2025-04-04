@@ -88,6 +88,11 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         key: "Ваш ключ",
         load_archive: "Загрузить архив",
         sockdrives: "Готовые образы (sockdrive)",
+        confirm_save: "Хотите сохранить прогресс?",
+        save: "Сохранить",
+        emulation_ended: "Эмуляция завершена",
+        saving_game: "Сохранение игры...",
+        sockdrive_save_in_the_middle: "Win9x безопаснее сохранять после выключении системы",
     },
     en: {
         hello: "Hello",
@@ -174,6 +179,11 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         key: "your key",
         load_archive: "Load archive",
         sockdrives: "Disk images (sockdrive)",
+        confirm_save: "Do you want to save progress?",
+        save: "Save",
+        emulation_ended: "Emulation ended",
+        saving_game: "Saving game...",
+        sockdrive_save_in_the_middle: "Win9x is safer to save after shutting down the system",
     },
     pt: {
         hello: "Olá",
@@ -260,6 +270,11 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         key: "sua chave",
         load_archive: "Carregar arquivo",
         sockdrives: "Imagens de disco (sockdrive)",
+        confirm_save: "Você deseja salvar o progresso?",
+        save: "Salvar",
+        emulation_ended: "Emulação terminada",
+        saving_game: "Salvando jogo...",
+        sockdrive_save_in_the_middle: "Win9x é mais seguro salvar após desligar o sistema",
     },
 };
 

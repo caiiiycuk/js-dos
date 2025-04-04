@@ -1,12 +1,13 @@
 import { Dispatch, Store } from "@reduxjs/toolkit";
 import { DosConfig, Emulators, InitFs } from "emulators";
 import { dosSlice } from "./store/dos";
-import { bundleFromChanges, bundleFromFile, bundleFromUrl } from "./host/bundle-storage";
+import { changesFromUrl, bundleFromFile, bundleFromUrl } from "./host/bundle-storage";
 import { uiSlice } from "./store/ui";
 import { editorSlice } from "./store/editor";
 import { getChangesUrl } from "./v8/changes";
 import { storageSlice } from "./store/storage";
 import { getNonSerializableStore, getState } from "./store";
+import { applySockdriveChanges } from "./player-api";
 
 declare const emulators: Emulators;
 
@@ -104,10 +105,26 @@ async function changesProducer(bundleUrl: string, store: Store): Promise<{
     const account = getState(store).auth.account;
     const owner = account?.email ?? "guest";
     const url = getChangesUrl(owner, bundleUrl);
-    const bundle = await bundleFromChanges(url, account, store);
+    const changes = await changesFromUrl(url, account, store);
+
+    if (changes !== null && changes.length > 1 &&
+        !(changes[0] === 0x50 && changes[1] === 0x4b)) {
+        if (!(await applySockdriveChanges(changes))) {
+            store.dispatch(uiSlice.actions.showToast({
+                message: "Changes is not a zip file",
+                intent: "error",
+            }));
+        }
+
+        return {
+            url,
+            bundle: null,
+        };
+    }
+
     return {
         url,
-        bundle,
+        bundle: changes,
     };
 }
 

@@ -1,7 +1,6 @@
 /* eslint @typescript-eslint/no-unused-vars: 0 */
 
-export interface Cache {
-    readonly owner: string;
+export interface IDB {
     put: (key: string, data: Uint8Array) => Promise<void>;
     get: (key: string, defaultValue?: Uint8Array) => Promise<Uint8Array>;
     del: (key: string) => Promise<void>;
@@ -10,9 +9,7 @@ export interface Cache {
     close: () => void;
 }
 
-export class CacheNoop implements Cache {
-    public owner = "";
-
+export class IDBNoop implements IDB {
     public close() {
     }
 
@@ -40,16 +37,17 @@ export class CacheNoop implements Cache {
     }
 }
 
-class LCache implements Cache {
-    public owner: string;
+class IDBImpl implements IDB {
     private storeName = "files";
     private indexedDB: IDBFactory;
     private db: IDBDatabase | null = null;
 
-    constructor(owner: string,
-        onready: (cache: Cache) => void,
+    constructor(dbName: string,
+        storeName: string,
+        stores: [string, string, boolean][],
+        onready: (cache: IDB) => void,
         onerror: (msg: string) => void) {
-        this.owner = owner;
+        this.storeName = storeName;
         this.indexedDB = (typeof window === "undefined" ? undefined : window.indexedDB ||
             (window as any).mozIndexedDB ||
             (window as any).webkitIndexedDB || (window as any).msIndexedDB) as any;
@@ -60,7 +58,7 @@ class LCache implements Cache {
         }
 
         try {
-            const openRequest = this.indexedDB.open("js-dos-cache (" + owner + ")", 1);
+            const openRequest = this.indexedDB.open(dbName, 1);
             openRequest.onerror = (event) => {
                 onerror("Can't open cache database: " + openRequest.error?.message);
             };
@@ -75,11 +73,13 @@ class LCache implements Cache {
                         onerror("Can't upgrade cache database");
                     };
 
-                    const objectStore = this.db.createObjectStore(this.storeName);
-                    objectStore.createIndex("key", "", {
-                        unique: true,
-                        multiEntry: false,
-                    });
+                    for (const [name, index, unique] of stores) {
+                        this.db.createObjectStore(name)
+                            .createIndex(index, "", {
+                                unique,
+                                multiEntry: false,
+                            });
+                    }
                 } catch (e) {
                     onerror("Can't upgrade cache database");
                 }
@@ -194,11 +194,22 @@ class LCache implements Cache {
     }
 }
 
-export function getCache(owner: string): Promise<Cache> {
+export function idbCache(): Promise<IDB> {
     return new Promise((resolve) => {
-        new LCache(owner, resolve, (msg: string) => {
-            console.error("Can't open IndexedDB cache", msg);
-            resolve(new CacheNoop());
-        });
+        new IDBImpl("js-dos-cache (guest)", "files",
+            [["files", "key", true]], resolve, (msg: string) => {
+                console.error("Can't open IndexedDB cache", msg);
+                resolve(new IDBNoop());
+            });
+    });
+}
+
+export function idbSockdrive(url: string): Promise<IDB> {
+    return new Promise((resolve) => {
+        new IDBImpl("sockdrive (" + url + ")", "write",
+            [["raw", "range", false], ["write", "sector", false]], resolve, (msg: string) => {
+                console.error("Can't open IndexedDB cache", msg);
+                resolve(new IDBNoop());
+            });
     });
 }

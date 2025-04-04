@@ -196,7 +196,7 @@ function Actions(props: {
 
         onMakingBundle(true);
         try {
-            const bundle = await ci.persist(false);
+            const bundle = await ci.persist(false) as Uint8Array;
             if (bundle) {
                 loadBundle(bundle, true, store);
             }
@@ -213,7 +213,7 @@ function Actions(props: {
 
         onMakingBundle(true);
         try {
-            const bundle = await ci.persist(false);
+            const bundle = await ci.persist(false) as Uint8Array;
             if (bundle) {
                 downloadArrayToFs("bundle.jsdos", bundle);
             }

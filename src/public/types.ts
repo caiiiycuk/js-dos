@@ -42,6 +42,7 @@ export interface DosOptions {
     server: string,
     fullScreen: boolean,
     autoStart: boolean,
+    autoSave: boolean,
     kiosk: boolean,
     imageRendering: ImageRendering,
     renderBackend: RenderBackend,
@@ -75,6 +76,7 @@ export interface DosProps {
     setBackground(background: string | null): void;
     setFullScreen(fullScreen: boolean): void;
     setAutoStart(autoStart: boolean): void;
+    setAutoSave(autoSave: boolean): void;
     setKiosk(kiosk: boolean): void;
     setImageRendering(rendering: ImageRendering): void;
     setRenderBackend(backend: RenderBackend): void;

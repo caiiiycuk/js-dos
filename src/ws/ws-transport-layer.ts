@@ -5,6 +5,7 @@ import {
 
 import { Template } from "./ws-sockdrive";
 import { createSockdrive } from "./ws-sockdrive";
+import { readUint32, writeUint32 } from "../player-api";
 const sockdriveConfirmWrite = false;
 
 export interface Hardware {
@@ -42,6 +43,7 @@ const serverMessageValues: ServerMessage[] = [
     "ws-config", "ws-sync-sleep", "ws-connected", "ws-disconnected",
     "ws-asyncify-stats", "ws-fs-tree", "ws-send-data-chunk",
     "ws-net-connect", "ws-net-disconnect", "ws-net-send",
+    "ws-unload",
 ];
 const serverMessageEnum: { [num: string]: ServerMessage } = {};
 serverMessageValues.forEach((v, i) => serverMessageEnum[i] = v);
@@ -62,23 +64,8 @@ export class WsTransportLayer implements TransportLayer {
 
     private handler: MessageHandler = () => {/**/};
 
-    private writeUint32(container: Uint8Array, value: number, offset: number) {
-        container[offset] = value & 0xFF;
-        container[offset + 1] = (value & 0x0000FF00) >> 8;
-        container[offset + 2] = (value & 0x00FF0000) >> 16;
-        container[offset + 3] = (value & 0xFF000000) >> 24;
-        return offset + 4;
-    }
-
-    private readUint32(container: Uint8Array, offset: number) {
-        return (container[offset] & 0x000000FF) |
-            ((container[offset + 1] << 8) & 0x0000FF00) |
-            ((container[offset + 2] << 16) & 0x00FF0000) |
-            ((container[offset + 3] << 24) & 0xFF000000);
-    }
-
     private readUint64(container: Uint8Array, offset: number) {
-        return this.readUint32(container, offset) + this.readUint32(container, offset + 4) * 2 ** 32;
+        return readUint32(container, offset) + readUint32(container, offset + 4) * 2 ** 32;
     }
 
     private sendMessageToSocket(id: ClientMessage | number, ...payload: (Uint8Array | null)[]) {
@@ -91,7 +78,7 @@ export class WsTransportLayer implements TransportLayer {
         encoded[0] = typeof id === "string" ? clientMessageEnum[id] : id;
         let position = 1;
         for (const next of payload) {
-            this.writeUint32(encoded, next?.length ?? 0, position);
+            writeUint32(encoded, next?.length ?? 0, position);
             position += 4;
             if (next) {
                 encoded.set(next, position);
@@ -106,7 +93,7 @@ export class WsTransportLayer implements TransportLayer {
         const out: Uint8Array[] = [];
         let position = 1;
         while (position + 4 <= payload.length) {
-            const length = this.readUint32(payload, position);
+            const length = readUint32(payload, position);
             position += 4;
 
             if (position + length > payload.length) {
@@ -169,7 +156,7 @@ export class WsTransportLayer implements TransportLayer {
             } break;
             case "ws-sound-init": {
                 this.handler(message, {
-                    freq: this.readUint32(payload[0]!, 0),
+                    freq: readUint32(payload[0]!, 0),
                 });
                 this.handler("ws-server-ready", {});
             } break;
@@ -180,8 +167,8 @@ export class WsTransportLayer implements TransportLayer {
             } break;
             case "ws-frame-set-size": {
                 this.handler(message, {
-                    width: this.readUint32(payload[0]!, 0),
-                    height: this.readUint32(payload[0]!, 4),
+                    width: readUint32(payload[0]!, 0),
+                    height: readUint32(payload[0]!, 4),
                 });
             } break;
             case "ws-update-lines": {
@@ -189,7 +176,7 @@ export class WsTransportLayer implements TransportLayer {
                     const lines: { start: number, heapu8: Uint8Array }[] = [];
                     for (const next of payload) {
                         lines.push({
-                            start: this.readUint32(next!, 0),
+                            start: readUint32(next!, 0),
                             heapu8: next!.slice(4),
                         });
                     }
@@ -197,12 +184,12 @@ export class WsTransportLayer implements TransportLayer {
                 }
             } break;
             case "ws-asyncify-stats": {
-                this.cycles += this.readUint32(payload[0]!, 0);
+                this.cycles += readUint32(payload[0]!, 0);
                 const stats = {
-                    messageSent: this.readUint32(payload[0]!, 4),
-                    messageReceived: this.readUint32(payload[0]!, 8),
-                    messageFrame: this.readUint32(payload[0]!, 12),
-                    messageSound: this.readUint32(payload[0]!, 16),
+                    messageSent: readUint32(payload[0]!, 4),
+                    messageReceived: readUint32(payload[0]!, 8),
+                    messageFrame: readUint32(payload[0]!, 12),
+                    messageSound: readUint32(payload[0]!, 16),
                     nonSkippableSleepCount: 0,
                     sleepCount: 0,
                     sleepTime: 0,
@@ -219,11 +206,11 @@ export class WsTransportLayer implements TransportLayer {
                     driveIo: this.sockdrive.stats.io,
                 };
                 if (payload[0]!.length > 20) {
-                    stats.driveCacheHit = this.readUint32(payload[0]!, 20);
-                    stats.driveCacheMiss = this.readUint32(payload[0]!, 24);
-                    stats.driveRecv = this.readUint32(payload[0]!, 28);
-                    stats.driveSent = this.readUint32(payload[0]!, 32);
-                    stats.driveRecvTime = this.readUint32(payload[0]!, 36);
+                    stats.driveCacheHit = readUint32(payload[0]!, 20);
+                    stats.driveCacheMiss = readUint32(payload[0]!, 24);
+                    stats.driveRecv = readUint32(payload[0]!, 28);
+                    stats.driveSent = readUint32(payload[0]!, 32);
+                    stats.driveRecvTime = readUint32(payload[0]!, 36);
                 }
                 this.handler(message, stats);
             } break;
@@ -241,7 +228,7 @@ export class WsTransportLayer implements TransportLayer {
 
                 const sizes = payload[payload.length - 1]!;
                 for (let i = 0; i < info.length; ++i) {
-                    const size = this.readUint32(sizes, i * 4);
+                    const size = readUint32(sizes, i * 4);
                     info[i].size = size < 0 ? null : size;
                 }
 
@@ -294,14 +281,17 @@ export class WsTransportLayer implements TransportLayer {
             } break;
             case "ws-net-send": {
                 this.handler("ws-net-send", {
-                    networkId: this.readUint32(payload[0]!, 0),
+                    networkId: readUint32(payload[0]!, 0),
                     data: payload[1],
                 });
             } break;
             case "ws-net-disconnect": {
                 this.handler("ws-net-disconnect", {
-                    networkId: this.readUint32(payload[0]!, 0),
+                    networkId: readUint32(payload[0]!, 0),
                 });
+            } break;
+            case "ws-unload": {
+                // ignore
             } break;
             default: {
                 if (message === undefined) { // not standard messages
@@ -339,44 +329,44 @@ export class WsTransportLayer implements TransportLayer {
                                 }
                                 const packet = new Uint8Array(4 * 7);
                                 let offset = 0;
-                                offset = this.writeUint32(packet, handle, offset);
-                                offset = this.writeUint32(packet, template.size, offset);
-                                offset = this.writeUint32(packet, template.heads, offset);
-                                offset = this.writeUint32(packet, template.cylinders, offset);
-                                offset = this.writeUint32(packet, template.sectors, offset);
-                                offset = this.writeUint32(packet, template.sectorSize, offset);
-                                this.writeUint32(packet, aheadRange, offset);
+                                offset = writeUint32(packet, handle, offset);
+                                offset = writeUint32(packet, template.size, offset);
+                                offset = writeUint32(packet, template.heads, offset);
+                                offset = writeUint32(packet, template.cylinders, offset);
+                                offset = writeUint32(packet, template.sectors, offset);
+                                offset = writeUint32(packet, template.sectorSize, offset);
+                                writeUint32(packet, aheadRange, offset);
                                 this.sendMessageToSocket(100, packet);
                             } break;
                             case 101/* ws-sockdrive-read */: {
-                                const handle = this.readUint32(payload[0]!, 0);
-                                const sector = this.readUint32(payload[0]!, 4);
+                                const handle = readUint32(payload[0]!, 0);
+                                const sector = readUint32(payload[0]!, 4);
                                 let response = this.sockdrive.readSync(handle, sector);
                                 if (response.code === 255) {
                                     response = await this.sockdrive.readAsync(handle, sector);
                                 }
                                 const packet = new Uint8Array(4);
-                                this.writeUint32(packet, response.code, 0);
+                                writeUint32(packet, response.code, 0);
                                 this.sendMessageToSocket(101, packet, response.buffer ?? null);
                             } break;
                             case 102/* ws-sockdrive-write */: {
-                                const handle = this.readUint32(payload[0]!, 0);
-                                const sector = this.readUint32(payload[0]!, 4);
+                                const handle = readUint32(payload[0]!, 0);
+                                const sector = readUint32(payload[0]!, 4);
                                 const code = this.sockdrive.write(handle, sector, payload[1]!);
                                 const packet = new Uint8Array(4);
-                                this.writeUint32(packet, code, 0);
+                                writeUint32(packet, code, 0);
                                 if (sockdriveConfirmWrite) {
                                     this.sendMessageToSocket(102, packet);
                                 }
                             } break;
                             case 103/* ws-sockdrive-close */: {
-                                this.sockdrive.close(this.readUint32(payload[0]!, 0));
+                                this.sockdrive.close(readUint32(payload[0]!, 0));
                             } break;
                             case 105/* ws-sockdrive-native-open */: {
                                 const owner = textDecoder.decode(payload[0]!);
                                 const name = textDecoder.decode(payload[1]!);
                                 this.onSockdriveOpen(owner + "/" + name, true,
-                                    payload[2]![0] === 1, this.readUint32(payload[2]!, 1), owner, name);
+                                    payload[2]![0] === 1, readUint32(payload[2]!, 1), owner, name);
                             } break;
                             default:
                                 console.log("WARN! Unhandled server non standard message", id, payload);
@@ -435,17 +425,17 @@ export class WsTransportLayer implements TransportLayer {
             case "wc-add-key": {
                 const payload = new Uint8Array(3 * 4);
                 let offset = 0;
-                offset = this.writeUint32(payload, props.key, offset);
-                offset = this.writeUint32(payload, props.pressed ? 1 : 0, offset);
-                this.writeUint32(payload, props.timeMs, offset);
+                offset = writeUint32(payload, props.key, offset);
+                offset = writeUint32(payload, props.pressed ? 1 : 0, offset);
+                writeUint32(payload, props.timeMs, offset);
                 this.sendMessageToSocket(messageId, payload);
             } break;
             case "wc-mouse-move": {
                 const payload = new Uint8Array(3 * 4 + 3);
                 let offset = 0;
-                offset = this.writeUint32(payload, Math.abs(props.x) * fMultiplier, offset);
-                offset = this.writeUint32(payload, Math.abs(props.y) * fMultiplier, offset);
-                offset = this.writeUint32(payload, props.timeMs, offset);
+                offset = writeUint32(payload, Math.abs(props.x) * fMultiplier, offset);
+                offset = writeUint32(payload, Math.abs(props.y) * fMultiplier, offset);
+                offset = writeUint32(payload, props.timeMs, offset);
                 payload[offset] = props.relative ? 1 : 0;
                 payload[offset + 1] = props.x >= 0 ? 0 : 1;
                 payload[offset + 2] = props.y >= 0 ? 0 : 1;
@@ -455,12 +445,12 @@ export class WsTransportLayer implements TransportLayer {
                 const payload = new Uint8Array(4 + 2);
                 payload[0] = props.button;
                 payload[1] = props.pressed ? 1 : 0;
-                this.writeUint32(payload, props.timeMs, 2);
+                writeUint32(payload, props.timeMs, 2);
                 this.sendMessageToSocket(messageId, payload);
             } break;
             case "wc-mouse-sync": {
                 const payload = new Uint8Array(4);
-                this.writeUint32(payload, props.timeMs, 0);
+                writeUint32(payload, props.timeMs, 0);
                 this.sendMessageToSocket(messageId, payload);
             } break;
             case "wc-connect": {
@@ -475,12 +465,12 @@ export class WsTransportLayer implements TransportLayer {
             } break;
             case "wc-net-connected": {
                 const id = new Uint8Array(4);
-                this.writeUint32(id, props.networkId + 1, 0);
+                writeUint32(id, props.networkId + 1, 0);
                 this.sendMessageToSocket(messageId, id);
             } break;
             case "wc-net-received": {
                 const id = new Uint8Array(4);
-                this.writeUint32(id, props.networkId, 0);
+                writeUint32(id, props.networkId, 0);
                 this.sendMessageToSocket(messageId, id, new Uint8Array(props.data));
             } break;
             default: {
@@ -530,10 +520,10 @@ export class WsTransportLayer implements TransportLayer {
             const sectorsPayload = new Uint8Array(sectors.length * 4 + 2 * 4);
             let offset = 0;
             for (const sector of sectors) {
-                offset = this.writeUint32(sectorsPayload, sector, offset);
+                offset = writeUint32(sectorsPayload, sector, offset);
             }
-            offset = this.writeUint32(sectorsPayload, sectorSize, offset);
-            this.writeUint32(sectorsPayload, aheadRange, offset);
+            offset = writeUint32(sectorsPayload, sectorSize, offset);
+            writeUint32(sectorsPayload, aheadRange, offset);
 
             this.sendMessageToSocket(106 /* wc-sockdrive-cache */,
                 textEncoder.encode(owner),
