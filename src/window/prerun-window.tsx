@@ -73,6 +73,7 @@ function SecretKey() {
     }, []);
 
     function fireOpenKey() {
+        dispatch(uiSlice.actions.autoStart(false));
         postJsDosEvent(nonSerializableStore, "open-key");
     }
 
@@ -90,7 +91,10 @@ function SecretKey() {
         {account !== null && <div class={dzMark ? "bg-warning px-2" : ""}>
             {t("hello") + ", " + (dzMark ? "DOS Zone" : (account.name ?? account.email)) + "!"}
             <span class="link link-neutral lowercase inline ml-1"
-                onClick={() => setToken("")}>({t("logout")})</span>
+                onClick={() => {
+                    setToken("");
+                    dispatch(uiSlice.actions.autoStart(false));
+                }}>({t("logout")})</span>
         </div>}
         <div class="mt-2">
             {account === null && <>
@@ -117,7 +121,8 @@ function SecretKey() {
                 <input maxLength={5} value={token} onChange={(e) => setToken(e.currentTarget.value)}
                     placeholder="-----"
                     class={"input input-xs input-bordered mt-4 mb-4 text-center w-20 bg-blend-multiply bg-opacity-40" +
-                        (warnOnKey ? " input-warning animate-pulse" : "")}></input>
+                        (warnOnKey ? " input-warning animate-pulse" : "")}
+                    onClick={() => dispatch(uiSlice.actions.autoStart(false))}></input>
             </div>}
     </div>;
 }
@@ -126,9 +131,31 @@ export function Play(props: { class?: string, button?: boolean }) {
     const configChanged = useSelector((state: State) => state.editor.configChanged);
     const bundleConfig = useSelector((state: State) => state.editor.bundleConfig);
     const frameVisible = useSelector((state: State) => state.ui.frame !== "none");
+    const countDownStart = useSelector((state: State) => state.ui.countDownStart);
+    const uiAutoStart = useSelector((state: State) => state.ui.autoStart);
+    const [countDownRest, setCountDownRest] = useState<number>(countDownStart);
+    const [_autoStart, setAutoStart] = useState<boolean>(uiAutoStart);
     const nonSerializableStore = useNonSerializableStore();
     const dispatch = useDispatch();
     const t = useT();
+    const autoStart = _autoStart && !frameVisible;
+
+    useEffect(() => {
+        if (countDownStart > 0 && countDownRest > 0 && autoStart) {
+            const timeout = setTimeout(() => {
+                setCountDownRest(countDownRest - 1);
+            }, 1000);
+            return () => clearInterval(timeout);
+        }
+
+        if (countDownRest === 0 && countDownStart > 0 && autoStart) {
+            dispatch(dosSlice.actions.bndPlay({}));
+        }
+    }, [countDownRest, countDownStart, autoStart]);
+
+    useEffect(() => {
+        setAutoStart(uiAutoStart);
+    }, [uiAutoStart]);
 
     async function onPlay() {
         if (configChanged) {
@@ -163,13 +190,32 @@ export function Play(props: { class?: string, button?: boolean }) {
         </div>;
     } else {
         return <div class={props.class + " relative cursor-pointer w-1/4 h-1/4 min-w-48 " +
-            "min-h-48 max-w-96 max-h-96"} onClick={onPlay}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                stroke-width="1.5" stroke="currentColor" class="w-full h-full play-button">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010
-                .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
-            </svg>
+            "min-h-48 max-w-96 max-h-96"}>
+            <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor" class="w-full h-full play-button"
+                    onClick={onPlay}>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.91 11.672a.375.375 0 010
+                    .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+                </svg>
+
+                {countDownStart > 0 && autoStart &&
+                    <div class="absolute top-0 right-0 translate-x-1/2
+                        w-12 h-12 opacity-90 cursor-pointer flex items-center justify-center
+                        text-2xl font-bold bg-primary text-primary-content rounded-full
+                        animate-pulse cound-down-start" onClick={() => setAutoStart(false)}>
+                        <div>{countDownRest}</div>
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="size-12">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                        </div>
+                    </div>
+                }
+            </div>
 
             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5"

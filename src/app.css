@@ -27,4 +27,17 @@
     touch-action: none;
     outline: none;
   }
+
+  .cound-down-start > :last-child {
+    display: none;
+  }
+
+  .cound-down-start:hover > :first-child {
+    display: none;
+  }
+
+  .cound-down-start:hover > :last-child {
+    display: block;
+  }
+
 }

@@ -128,6 +128,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(uiSlice.actions.autoStart(autoStart));
     }
 
+    function setCountDownStart(countDownStart: number) {
+        store.dispatch(uiSlice.actions.countDownStart(countDownStart));
+    }
+
     function setAutoSave(autoSave: boolean) {
         store.dispatch(uiSlice.actions.autoSave(autoSave));
     }
@@ -242,6 +246,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setAutoStart(options.autoStart);
     }
 
+    if (options.countDownStart !== undefined) {
+        setCountDownStart(options.countDownStart);
+    }
+
     if (options.autoSave !== undefined) {
         setAutoSave(options.autoSave);
     }
@@ -333,6 +341,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setBackground,
         setFullScreen,
         setAutoStart,
+        setCountDownStart,
         setAutoSave,
         setKiosk,
         setImageRendering,
