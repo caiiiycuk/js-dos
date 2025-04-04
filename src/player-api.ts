@@ -8,9 +8,9 @@ import { PersistedSockdrives } from "emulators";
 import { idbSockdrive } from "./host/idb";
 
 export async function apiSave(state: State,
-                              nonSerializableStore: NonSerializableStore,
-                              dispatch: Dispatch,
-                              emulationEnded: boolean = false): Promise<boolean> {
+    nonSerializableStore: NonSerializableStore,
+    dispatch: Dispatch,
+    emulationEnded: boolean = false): Promise<boolean> {
     const ci = nonSerializableStore.ci;
     const changesUrl = nonSerializableStore.loadedBundle?.bundleChangesUrl;
     if (ci === null || !changesUrl || !state.ui.canSave) {
@@ -34,8 +34,9 @@ export async function apiSave(state: State,
 
         const changes = await ci.persist(true);
         const encodedChanges = encodeChanges(changes);
+        const warnAboutSaves = encodedChanges !== changes && !emulationEnded;
         if (encodedChanges !== null) {
-            if (encodedChanges !== changes && !emulationEnded) {
+            if (warnAboutSaves) {
                 dispatch(uiSlice.actions.showToast({
                     message: t("sockdrive_save_in_the_middle"),
                     intent: "warning",
@@ -52,11 +53,13 @@ export async function apiSave(state: State,
         }
 
         if (savedInIndexedDb) {
-            dispatch(uiSlice.actions.showToast({
-                message: warnText,
-                intent: "success",
-                long: true,
-            }));
+            setTimeout(() => {
+                dispatch(uiSlice.actions.showToast({
+                    message: warnText,
+                    intent: "success",
+                    long: true,
+                }));
+            }, warnAboutSaves ? 3000 : 4);
         } else {
             dispatch(uiSlice.actions.showToast({
                 message: t("success_save"),
@@ -98,7 +101,7 @@ export async function applySockdriveChanges(encoded: Uint8Array): Promise<boolea
             return false;
         }
 
-        const url = decoder.decode(encoded.slice(offset, offset + urlLength) );
+        const url = decoder.decode(encoded.slice(offset, offset + urlLength));
 
         if (!(url.startsWith("http://") || url.startsWith("https://"))) {
             return false;
