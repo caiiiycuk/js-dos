@@ -383,11 +383,11 @@ export const dosSlice = createSlice({
 });
 
 let emulatorsReady = false;
-export function initEmulators(store: ReturnType<typeof makeStore>, pathPrefix: string) {
+export function initEmulators(store: ReturnType<typeof makeStore>, pathPrefix: string, pathSuffix: string) {
     store.dispatch(async (dispatch) => {
         try {
             if (!emulatorsReady) {
-                await initEmulatorsJs(pathPrefix);
+                await initEmulatorsJs(pathPrefix, pathSuffix);
                 emulatorsReady = true;
             }
             dispatch(dosSlice.actions.emuReady(emulators.version));
@@ -398,19 +398,21 @@ export function initEmulators(store: ReturnType<typeof makeStore>, pathPrefix: s
     });
 }
 
-function initEmulatorsJs(pathPrefix: string) {
-    const el = document.querySelector("#emulators.js");
+function initEmulatorsJs(pathPrefix: string, pathSuffix: string) {
+    const el = document.querySelector("#emulators-js");
     if (el !== null) {
         return Promise.resolve();
     }
 
     return new Promise<void>((resolve, reject) => {
         const script = document.createElement("script");
+        script.id = "emulators-js";
         script.async = true;
         script.type = "text/javascript";
-        script.src = pathPrefix + "emulators.js";
+        script.src = pathPrefix + "emulators.js" + pathSuffix;
         script.onload = () => {
             emulators.pathPrefix = pathPrefix;
+            emulators.pathSuffix = pathSuffix;
             resolve();
         };
         script.onerror = (err) => {

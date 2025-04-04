@@ -74,7 +74,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     }
     store.subscribe(pollEvents);
 
-    initEmulators(store, options.pathPrefix ?? "https://v8.js-dos.com/latest/emulators/");
+    initEmulators(store, options.pathPrefix ?? "https://v8.js-dos.com/latest/emulators/", options.pathSuffix ?? "");
 
     function setTheme(theme: DosOptions["theme"]) {
         store.dispatch(uiSlice.actions.theme(theme));

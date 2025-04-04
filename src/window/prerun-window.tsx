@@ -133,12 +133,13 @@ export function Play(props: { class?: string, button?: boolean }) {
     const frameVisible = useSelector((state: State) => state.ui.frame !== "none");
     const countDownStart = useSelector((state: State) => state.ui.countDownStart);
     const uiAutoStart = useSelector((state: State) => state.ui.autoStart);
+    const editor = useSelector((state: State) => state.ui.editor);
     const [countDownRest, setCountDownRest] = useState<number>(countDownStart);
     const [_autoStart, setAutoStart] = useState<boolean>(uiAutoStart);
     const nonSerializableStore = useNonSerializableStore();
     const dispatch = useDispatch();
     const t = useT();
-    const autoStart = _autoStart && !frameVisible;
+    const autoStart = _autoStart && !frameVisible && !editor;
 
     useEffect(() => {
         if (countDownStart > 0 && countDownRest > 0 && autoStart) {
