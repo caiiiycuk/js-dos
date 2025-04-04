@@ -26,5 +26,5 @@ rm -rf build && \
 
 Clear the CDN cache (br.cdn.js-dos.com) in dashboard, pattern:
 ```
-/js-dos/latest,/js-dos/latest*
+/js-dos/latest,/js-dos/latest/*
 ```
