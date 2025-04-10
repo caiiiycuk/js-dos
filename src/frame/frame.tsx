@@ -3,6 +3,7 @@ import { State } from "../store";
 import { EditorConf } from "./editor/editor-conf-frame";
 import { EditorFsFrame } from "./editor/editor-fs-frame";
 import { FatDrivesFrame } from "./fat-drives-frame";
+import { KeyMapFrame } from "./key-map-frame";
 import { NetworkFrame } from "./network-frame";
 import { SettingsFrame } from "./settings-frame";
 import { StatsFrame } from "./stats-frame";
@@ -25,6 +26,7 @@ export function Frame(props: {}) {
         { frame === "network" && <NetworkFrame /> }
         { frame === "stats" && <StatsFrame /> }
         { frame === "fat-drives" && <FatDrivesFrame /> }
+        { frame === "key-map" && <KeyMapFrame /> }
         { frame === "prerun" && <PreRunFrame /> }
     </div>;
 };
