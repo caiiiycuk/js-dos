@@ -29,6 +29,20 @@ export function MouseCapture() {
     />;
 }
 
+export function KeymapCheckbox() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const keymapEnabled = useSelector((state: State) => state.dos.keymapEnabled);
+    return (
+        <Checkbox
+            class="mt-4"
+            label={t("enable_keymap")}
+            checked={keymapEnabled}
+            onChange={(enabled) => dispatch(dosSlice.actions.setKeymapEnabled(enabled))}
+        />
+    );
+}
+
 export function SockdriveNative() {
     const t = useT();
     const dispatch = useDispatch();
