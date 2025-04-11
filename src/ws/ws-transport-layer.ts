@@ -3,10 +3,7 @@ import {
     ServerMessage, DataChunk, FsNode,
 } from "emulators/dist/types/protocol/protocol";
 
-import { Template } from "./ws-sockdrive";
-import { createSockdrive } from "./ws-sockdrive";
 import { readUint32, writeUint32 } from "../player-api";
-const sockdriveConfirmWrite = false;
 
 export interface Hardware {
     readConfig(): string;
@@ -32,6 +29,7 @@ const clientMessageValues: ClientMessage[] = [
     "wc-exit", "wc-sync-sleep", "wc-pause", "wc-resume", "wc-mute", "wc-unmute", "wc-connect", "wc-disconnect",
     "wc-backend-event", "wc-asyncify-stats", "wc-fs-tree", "wc-fs-get-file", "wc-send-data-chunk",
     "wc-net-connected", "wc-net-received",
+    "wc-sockdrive-opened", "wc-sockdrive-new-range", "wc-unload",
 ];
 const clientMessageEnum: { [msg: string]: number } = {};
 clientMessageValues.forEach((v, i) => clientMessageEnum[v] = i);
@@ -43,6 +41,8 @@ const serverMessageValues: ServerMessage[] = [
     "ws-config", "ws-sync-sleep", "ws-connected", "ws-disconnected",
     "ws-asyncify-stats", "ws-fs-tree", "ws-send-data-chunk",
     "ws-net-connect", "ws-net-disconnect", "ws-net-send",
+    "ws-sockdrive-open", "ws-sockdrive-ready", "ws-sockdrive-close",
+    "ws-sockdrive-load-range", "ws-sockdrive-write-sector",
     "ws-unload",
 ];
 const serverMessageEnum: { [num: string]: ServerMessage } = {};
@@ -55,11 +55,6 @@ export class WsTransportLayer implements TransportLayer {
     onInit: (version: number) => void = () => {/**/};
 
     private cycles = 0;
-    private sockdrive = createSockdrive(this.onSockdriveOpen.bind(this),
-        this.onSockdriveError.bind(this),
-        this.onSockdrivePreloadProgress.bind(this),
-        this.onSockdrivePayload.bind(this));
-    private sockdriveSeq = 1;
     private version = 0;
 
     private handler: MessageHandler = () => {/**/};
@@ -145,10 +140,6 @@ export class WsTransportLayer implements TransportLayer {
                 this.handler(message, { chunk });
             } break;
             case "ws-config": {
-                if (payload[0]) {
-                    const dosboxConf = textDecoder.decode(payload[0]);
-                    this.sockdrive.applyConf(dosboxConf);
-                }
                 this.handler(message, {
                     dosboxConf: payload[0]!,
                     jsdosConf: textDecoder.decode(payload[1]!),
@@ -196,22 +187,9 @@ export class WsTransportLayer implements TransportLayer {
                     cycles: this.cycles,
                     netSent: 0,
                     netRecv: 0,
-                    driveSent: this.sockdrive.stats.write,
-                    driveRecv: this.sockdrive.stats.read,
-                    driveCacheHit: this.sockdrive.stats.cacheHit,
-                    driveCacheMiss: this.sockdrive.stats.cacheMiss,
-                    driveRecvTime: this.sockdrive.stats.readTotalTime,
-                    driveCacheUsed: this.sockdrive.stats.cacheUsed,
                     driveBufferedAmount: 0,
-                    driveIo: this.sockdrive.stats.io,
+                    driveIo: [],
                 };
-                if (payload[0]!.length > 20) {
-                    stats.driveCacheHit = readUint32(payload[0]!, 20);
-                    stats.driveCacheMiss = readUint32(payload[0]!, 24);
-                    stats.driveRecv = readUint32(payload[0]!, 28);
-                    stats.driveSent = readUint32(payload[0]!, 32);
-                    stats.driveRecvTime = readUint32(payload[0]!, 36);
-                }
                 this.handler(message, stats);
             } break;
             case "ws-connected": {
@@ -291,95 +269,40 @@ export class WsTransportLayer implements TransportLayer {
                 });
             } break;
             case "ws-unload": {
-                // ignore
+                debugger;
+                this.handler("ws-unload", {});
+            } break;
+            case "ws-sockdrive-open": {
+                this.handler("ws-sockdrive-open", {
+                    handle: readUint32(payload[0]!, 0),
+                    url: textDecoder.decode(payload[1]!),
+                });
+            } break;
+            case "ws-sockdrive-ready": {
+                this.handler("ws-sockdrive-ready", {
+                    handle: readUint32(payload[0]!, 0),
+                });
+            } break;
+            case "ws-sockdrive-close": {
+                this.handler("ws-sockdrive-close", {
+                    handle: readUint32(payload[0]!, 0),
+                });
+            } break;
+            case "ws-sockdrive-load-range": {
+                this.handler("ws-sockdrive-load-range", {
+                    handle: readUint32(payload[0]!, 0),
+                    range: readUint32(payload[0]!, 4),
+                });
+            } break;
+            case "ws-sockdrive-write-sector": {
+                this.handler("ws-sockdrive-write-sector", {
+                    handle: readUint32(payload[0]!, 0),
+                    sector: readUint32(payload[0]!, 4),
+                    data: payload[1],
+                });
             } break;
             default: {
-                if (message === undefined) { // not standard messages
-                    (async () => {
-                        switch (id) {
-                            case 100/* ws-sockdrive-open */:
-                            case 104/* ws-sockdrive-open-native */: {
-                                const url = textDecoder.decode(payload[0]!);
-                                const owner = textDecoder.decode(payload[1]!);
-                                const name = textDecoder.decode(payload[2]!);
-                                const token = textDecoder.decode(payload[3]!);
-                                let handle: number = this.sockdriveSeq++;
-                                let aheadRange: number = 0;
-                                let template: Template;
-                                if (id === 100) {
-                                    const tuple = await this.sockdrive.open(url, owner, name, token);
-                                    handle = tuple.handle;
-                                    aheadRange = tuple.aheadRange;
-                                    template = this.sockdrive.template(handle);
-                                } else {
-                                    const response = await fetch(url.replace("wss://", "https://")
-                                        .replace("ws://", "http://") + "/template/" + owner + "/" + name);
-                                    const json = await response.json();
-                                    if ((json as any).error) {
-                                        throw new Error((json as any).error);
-                                    }
-                                    template = {
-                                        name: json.name,
-                                        size: json.size ?? 0,
-                                        heads: json.heads ?? 1,
-                                        cylinders: json.cylinders ?? 520,
-                                        sectors: json.sectors ?? 63,
-                                        sectorSize: json.sector_size ?? 512,
-                                    };
-                                }
-                                const packet = new Uint8Array(4 * 7);
-                                let offset = 0;
-                                offset = writeUint32(packet, handle, offset);
-                                offset = writeUint32(packet, template.size, offset);
-                                offset = writeUint32(packet, template.heads, offset);
-                                offset = writeUint32(packet, template.cylinders, offset);
-                                offset = writeUint32(packet, template.sectors, offset);
-                                offset = writeUint32(packet, template.sectorSize, offset);
-                                writeUint32(packet, aheadRange, offset);
-                                this.sendMessageToSocket(100, packet);
-                            } break;
-                            case 101/* ws-sockdrive-read */: {
-                                const handle = readUint32(payload[0]!, 0);
-                                const sector = readUint32(payload[0]!, 4);
-                                let response = this.sockdrive.readSync(handle, sector);
-                                if (response.code === 255) {
-                                    response = await this.sockdrive.readAsync(handle, sector);
-                                }
-                                const packet = new Uint8Array(4);
-                                writeUint32(packet, response.code, 0);
-                                this.sendMessageToSocket(101, packet, response.buffer ?? null);
-                            } break;
-                            case 102/* ws-sockdrive-write */: {
-                                const handle = readUint32(payload[0]!, 0);
-                                const sector = readUint32(payload[0]!, 4);
-                                const code = this.sockdrive.write(handle, sector, payload[1]!);
-                                const packet = new Uint8Array(4);
-                                writeUint32(packet, code, 0);
-                                if (sockdriveConfirmWrite) {
-                                    this.sendMessageToSocket(102, packet);
-                                }
-                            } break;
-                            case 103/* ws-sockdrive-close */: {
-                                this.sockdrive.close(readUint32(payload[0]!, 0));
-                            } break;
-                            case 105/* ws-sockdrive-native-open */: {
-                                const owner = textDecoder.decode(payload[0]!);
-                                const name = textDecoder.decode(payload[1]!);
-                                this.onSockdriveOpen(owner + "/" + name, true,
-                                    payload[2]![0] === 1, readUint32(payload[2]!, 1), owner, name);
-                            } break;
-                            default:
-                                console.log("WARN! Unhandled server non standard message", id, payload);
-                        }
-                    })().catch((e) => {
-                        this.handler("ws-err", {
-                            tag: "panic",
-                            message: "sockdrive error: " + (e.message ?? "???"),
-                        });
-                    });
-                } else {
-                    console.warn("WARN! Unhandled server message", message);
-                }
+                console.warn("WARN! Unhandled server message", message);
             }
         }
     }
@@ -391,10 +314,22 @@ export class WsTransportLayer implements TransportLayer {
             this.handler("ws-exit", {});
             this.socket.close();
         });
-        this.socket.addEventListener("message", async (ev) => {
+        const onMessage = async (ev: MessageEvent) => {
             const blob: Blob = ev.data;
-            this.onMessage(new Uint8Array(await blob.arrayBuffer()));
-        });
+            const size = blob.size;
+            try {
+                this.onMessage(new Uint8Array(await blob.arrayBuffer()));
+            } catch (e: any) {
+                console.error("unparsable message on transport layer, blob size:", size, " error:", e.message);
+                // happens on unload
+                this.handler("ws-unload", {});
+                this.socket.removeEventListener("message", onMessage);
+                if (this.socket.readyState === WebSocket.OPEN) {
+                    this.socket.close();
+                }
+            }
+        };
+        this.socket.addEventListener("message", onMessage);
         this.sendMessageToSocket("wc-install");
         this.hardware = (null) as any;
         this.onInit = onInit;
@@ -409,7 +344,6 @@ export class WsTransportLayer implements TransportLayer {
         switch (name) {
             case "wc-run": {
                 const token = props.token ?? "";
-                this.sockdrive.applyToken(token);
                 this.sendMessageToSocket(messageId, textEncoder.encode(token));
             } break;
             case "wc-send-data-chunk": {
@@ -473,6 +407,45 @@ export class WsTransportLayer implements TransportLayer {
                 writeUint32(id, props.networkId, 0);
                 this.sendMessageToSocket(messageId, id, new Uint8Array(props.data));
             } break;
+            case "wc-sockdrive-opened": {
+                const {
+                    handle, // 4
+                    sectorSize, // 4
+                    emptyRangesCount, // 4
+                    emptyRanges, // 4 * emptyRangesCount
+                    size, // 4
+                    heads, // 4
+                    cylinders, // 4
+                    sectors, // 4
+                    aheadRange, // 4
+                } = props;
+
+                const payload = new Uint8Array(4 + 4 + 4 + 4 * emptyRangesCount + 4 + 4 + 4 + 4 + 4);
+                let offset = 0;
+                offset = writeUint32(payload, handle, offset);
+                offset = writeUint32(payload, sectorSize, offset);
+                offset = writeUint32(payload, emptyRangesCount, offset);
+                for (const range of emptyRanges) {
+                    offset = writeUint32(payload, range, offset);
+                }
+                offset = writeUint32(payload, size, offset);
+                offset = writeUint32(payload, heads, offset);
+                offset = writeUint32(payload, cylinders, offset);
+                offset = writeUint32(payload, sectors, offset);
+                offset = writeUint32(payload, aheadRange, offset);
+                this.sendMessageToSocket(messageId, payload);
+            } break;
+            case "wc-sockdrive-new-range": {
+                const {
+                    handle, // 4
+                    range, // 4
+                    buffer,
+                } = props;
+                const payload = new Uint8Array(8);
+                writeUint32(payload, handle, 0);
+                writeUint32(payload, range, 4);
+                this.sendMessageToSocket(messageId, payload, new Uint8Array(buffer));
+            } break;
             default: {
                 console.log("Unhandled client message (wc):", name, messageId, props);
             } break;
@@ -488,50 +461,6 @@ export class WsTransportLayer implements TransportLayer {
 
     exit() {
         this.sendMessageToSocket("wc-exit");
-    }
-
-    onSockdriveOpen(drive: string, read: boolean, write: boolean, imageSize: number,
-        realOwner: string, realDrive: string) {
-        this.handler("ws-log", {
-            tag: "worker",
-            message: "sockdrive: " + (realOwner ? realOwner + "/" + realDrive : drive) +
-                ", read=" + read + ", write=" + write +
-                ", imageSize=" + Math.round(imageSize / 1024 / 1024) + "Mb",
-        });
-    }
-
-    onSockdriveError(e: Error) {
-        this.handler("ws-err", {
-            tag: "panic",
-            message: e.message ?? "unable to open sockdrive",
-        });
-    }
-
-    onSockdrivePreloadProgress(drive: string, restBytes: number) {
-        this.handler("ws-log", {
-            tag: "worker",
-            message: "sockdrive: " + drive + ", preload=" + restBytes,
-        });
-    }
-
-    onSockdrivePayload(owner: string, drive: string, sectorSize: number,
-        aheadRange: number, sectors: number[], row: Uint8Array) {
-        if (this.version > 3) {
-            const sectorsPayload = new Uint8Array(sectors.length * 4 + 2 * 4);
-            let offset = 0;
-            for (const sector of sectors) {
-                offset = writeUint32(sectorsPayload, sector, offset);
-            }
-            offset = writeUint32(sectorsPayload, sectorSize, offset);
-            writeUint32(sectorsPayload, aheadRange, offset);
-
-            this.sendMessageToSocket(106 /* wc-sockdrive-cache */,
-                textEncoder.encode(owner),
-                textEncoder.encode(drive),
-                sectorsPayload,
-                row,
-            );
-        }
     }
 }
 
