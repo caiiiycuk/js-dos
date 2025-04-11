@@ -8,9 +8,9 @@ import { PersistedSockdrives } from "emulators";
 import { idbSockdrive } from "./host/idb";
 
 export async function apiSave(state: State,
-    nonSerializableStore: NonSerializableStore,
-    dispatch: Dispatch,
-    emulationEnded: boolean = false): Promise<boolean> {
+                              nonSerializableStore: NonSerializableStore,
+                              dispatch: Dispatch,
+                              emulationEnded: boolean = false): Promise<boolean> {
     const ci = nonSerializableStore.ci;
     const changesUrl = nonSerializableStore.loadedBundle?.bundleChangesUrl;
     if (ci === null || !changesUrl || !state.ui.canSave) {
