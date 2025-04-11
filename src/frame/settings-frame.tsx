@@ -1,6 +1,6 @@
 import { MirroredControls, MobileControls,
     MouseCapture, SystemCursor, PauseCheckbox, 
-    KeymapCheckbox} from "../components/dos-option-checkbox";
+    KeymapWASD} from "../components/dos-option-checkbox";
 import { ImageRenderingSelect, RenderAspectSelect, ThemeSelect } from "../components/dos-option-select";
 import { MouseSensitiviySlider, ScaleControlsSlider, VolumeSlider } from "../components/dos-option-slider";
 
@@ -9,7 +9,7 @@ export function SettingsFrame(props: {}) {
         <PauseCheckbox />
         <SystemCursor />
         <MouseCapture />
-        <KeymapCheckbox />
+        <KeymapWASD />
         <MobileControls />
         <MirroredControls />
         <ScaleControlsSlider class="mt-4" />

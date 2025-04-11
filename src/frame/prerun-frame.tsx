@@ -1,5 +1,6 @@
 import { Editor, HardwareCheckbox, MirroredControls, MobileControls,
     MouseCapture,
+    KeymapWASD,
     SockdriveNative,
     SockdriveWrite,
     SystemCursor,
@@ -13,6 +14,7 @@ export function PreRunFrame(props: {}) {
         <Play button={true} />
         <SystemCursor />
         <MouseCapture />
+        <KeymapWASD />
         <MobileControls />
         <MirroredControls />
         <ScaleControlsSlider class="mt-4" />

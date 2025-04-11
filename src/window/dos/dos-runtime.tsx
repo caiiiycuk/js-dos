@@ -96,7 +96,10 @@ function useMouse(canvas: HTMLCanvasElement,
 function useKeyboard(ci: CommandInterface): void {
     const keymapEnabled = useSelector((state: State) => state.dos.keymapEnabled);
     useEffect(() => {
-        return keyboard(window as any, ci, keymapEnabled);
+        const cleanup = keyboard(window as any, ci, keymapEnabled);
+        return () => {
+            cleanup();
+        };
     }, [ci, keymapEnabled]);
 }
 

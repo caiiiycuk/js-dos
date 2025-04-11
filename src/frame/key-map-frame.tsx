@@ -1,4 +1,4 @@
-import { KeymapCheckbox} from "../components/dos-option-checkbox";
+import { KeymapWASD } from "../components/dos-option-checkbox";
 
 export function KeyMapFrame(props: {}) {
     return <div class="keymap-frame frame-root items-start pl-4">

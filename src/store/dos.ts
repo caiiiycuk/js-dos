@@ -290,7 +290,7 @@ export const dosSlice = createSlice({
         mouseCapture: (s, a: { payload: boolean }) => {
             s.mouseCapture = a.payload;
         },
-        setKeymapEnabled: (s, a: { payload: boolean }) => {
+        keymapEnabled: (s, a: { payload: boolean }) => {
             s.keymapEnabled = a.payload;
         },
         paused: (s, a: { payload: boolean }) => {
