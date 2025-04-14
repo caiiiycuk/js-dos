@@ -9,7 +9,6 @@ export function SettingsFrame(props: {}) {
         <PauseCheckbox />
         <SystemCursor />
         <MouseCapture />
-        <KeymapWASD />
         <MobileControls />
         <MirroredControls />
         <ScaleControlsSlider class="mt-4" />

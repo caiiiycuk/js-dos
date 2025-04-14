@@ -3,7 +3,8 @@ import { State } from "../store";
 import { FullscreenButton } from "./fullscreen-button";
 import { NetworkButton } from "./network-button";
 import {
-    DosboxConfButton, SettingsButton, CyclesButton, FsButton, KeyMappingButton,
+    DosboxConfButton, SettingsButton, CyclesButton,
+    FsButton, KeyMappingButton,
     FatDrivesButton, HddLed,
     SoftKeyboardButton,
     PreRunButton,
@@ -26,8 +27,8 @@ export function SideBar(props: {}) {
         {window === "run" && networking && <NetworkButton />}
         {editor && window === "prerun" && <DosboxConfButton />}
         {editor && window === "prerun" && <FatDrivesButton />}
-        {editor && window === "prerun" && <KeyMappingButton />}
         {editor && window === "run" && <FsButton />}
+        {<KeyMappingButton />}
         <div class="contentbar"></div>
         {window === "run" && <FullscreenButton />}
         {window === "run" && <CyclesButton />}
