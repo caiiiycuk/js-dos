@@ -65,6 +65,8 @@ const initialState: {
     scaleControls: number,
     mouseSensitivity: number,
     mouseCapture: boolean,
+    wasdKeymapEnabled: boolean,
+    wasdqeKeymapEnabled: boolean,
     paused: boolean,
     error: null | undefined | string,
     bundle: string | null,
@@ -106,6 +108,8 @@ const initialState: {
     scaleControls: (Number.parseFloat(lStorage.getItem("scaleControls") ?? "0.2")),
     mouseSensitivity: (Number.parseFloat(lStorage.getItem("mouse_sensitivity") ?? "1.0")),
     mouseCapture: false,
+    wasdKeymapEnabled: false,
+    wasdqeKeymapEnabled: false,
     paused: false,
     stats: {
         cyclesPerMs: 0,
@@ -287,6 +291,12 @@ export const dosSlice = createSlice({
         },
         mouseCapture: (s, a: { payload: boolean }) => {
             s.mouseCapture = a.payload;
+        },
+        wasdKeymapEnabled: (s, a: { payload: boolean }) => {
+            s.wasdKeymapEnabled = a.payload;
+        },
+        wasdqeKeymapEnabled: (s, a: { payload: boolean }) => {
+            s.wasdqeKeymapEnabled = a.payload;
         },
         paused: (s, a: { payload: boolean }) => {
             s.paused = a.payload;

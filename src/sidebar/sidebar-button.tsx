@@ -25,6 +25,27 @@ export function FatDrivesButton(props: {
     </SidebarButton>;
 }
 
+export function KeyMappingButton(props: {
+    class?: string,
+}) {
+    return <SidebarButton
+        class={props.class}
+        frame="key-map"
+        action={uiSlice.actions.frameKeyMap()}
+        >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.25px">
+            <path x="1" y="1" width="32.96" height="32.96" rx="6.01" ry="6.01" d="M6.416 0.915H25.584A5.501 5.501 0 0 1 31.085 6.416V25.584A5.501 5.501 0 0 1 
+            25.584 31.085H6.416A5.501 5.501 0 0 1 0.915 25.584V6.416A5.501 5.501 0 0 1 6.416 0.915z"/>
+            <path x="4.45" y="4.45" width="26.05" height="26.05" rx="3.15" ry="3.15" d="M6.957 4.073H25.034A2.883 2.883 0 0 1 
+            27.918 6.957V25.034A2.883 2.883 0 0 1 25.034 27.918H6.957A2.883 2.883 0 0 1 4.073 25.034V6.957A2.883 2.883 0 0 1 6.957 4.073z"/>
+            <path fill="#000" d="M14.902 17.519c-0.027 -1.098 0.449 -1.822 1.556 -2.481 0.97 -0.586 1.318 -1.053 1.318 -1.876 0 -0.924 -0.723 -1.584 
+            -1.822 -1.584s-1.803 0.677 -1.895 1.657v0.073h-1.675v-0.101c0.11 -1.73 1.318 -3.112 3.652 -3.112 2.114 0 3.551 1.254 3.551 2.984 0 1.245 -0.632
+            2.124 -1.693 2.755 -1.034 0.613 -1.336 1.043 -1.336 1.858v0.458h-1.666v-0.641Zm-0.201 3.332c0 -0.586 0.467 -1.034 1.053 -1.034s1.062 0.449 1.062
+            1.034 -0.458 1.043 -1.062 1.043 -1.053 -0.458 -1.053 -1.043"/>
+      </svg>  
+        </SidebarButton>
+}
+
 export function DosboxConfButton(props: { class?: string }) {
     return <SidebarButton
         class={props.class}

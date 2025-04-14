@@ -1,5 +1,6 @@
 import { MirroredControls, MobileControls,
-    MouseCapture, SystemCursor, PauseCheckbox } from "../components/dos-option-checkbox";
+    MouseCapture, SystemCursor, PauseCheckbox, 
+    KeymapWASD} from "../components/dos-option-checkbox";
 import { ImageRenderingSelect, RenderAspectSelect, ThemeSelect } from "../components/dos-option-select";
 import { MouseSensitiviySlider, ScaleControlsSlider, VolumeSlider } from "../components/dos-option-slider";
 

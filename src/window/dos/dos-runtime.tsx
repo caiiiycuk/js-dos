@@ -3,6 +3,7 @@ import { dosSlice, FitConstant } from "../../store/dos";
 import { getState, State, Store, useNonSerializableStore } from "../../store";
 import { CommandInterface } from "emulators";
 import { keyboard } from "./controls/keyboard";
+import { keyMapWASD, keyMapWASDQE } from "./controls/keymaps";
 import { webGl as webglRender } from "./render/webgl";
 import { canvas as canvasRender } from "./render/canvas";
 import { audioNode } from "./sound/audio-node";
@@ -94,9 +95,26 @@ function useMouse(canvas: HTMLCanvasElement,
 }
 
 function useKeyboard(ci: CommandInterface): void {
+    const keymapStates = useSelector((state: State) => ({
+        wasdKeymapEnabled: state.dos.wasdKeymapEnabled,
+        wasdqeKeymapEnabled: state.dos.wasdqeKeymapEnabled,
+    }));
+
+    const keymaps = {
+        wasdKeymapEnabled: keyMapWASD,
+        wasdqeKeymapEnabled: keyMapWASDQE,
+    };
+
     useEffect(() => {
-        return keyboard(window as any, ci);
-    }, [ci]);
+        // Find the first enabled keymap
+        const activeKeymap = Object.entries(keymapStates).find(([key, enabled]) => enabled)?.[0];
+        const mapper = activeKeymap ? keymaps[activeKeymap as keyof typeof keymaps] : undefined;
+
+        const cleanup = keyboard(window as any, ci, !!mapper, mapper);
+        return () => {
+            cleanup();
+        };
+    }, [ci, keymapStates]);
 }
 
 function useRenderBackend(canvas: HTMLCanvasElement,

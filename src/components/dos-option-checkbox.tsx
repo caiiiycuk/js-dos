@@ -29,6 +29,34 @@ export function MouseCapture() {
     />;
 }
 
+export function KeymapWASD() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const wasdKeymapEnabled = useSelector((state: State) => state.dos.wasdKeymapEnabled);
+    return (
+        <Checkbox
+            class="mt-4"
+            label={t("Map WASD to Arrow Keys")}
+            checked={wasdKeymapEnabled}
+            onChange={(enabled) => dispatch(dosSlice.actions.wasdKeymapEnabled(enabled))}
+        />
+    );
+}
+
+export function KeymapWASDQE() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const wasdqeKeymapEnabled = useSelector((state: State) => state.dos.wasdqeKeymapEnabled);
+    return (
+        <Checkbox
+            class="mt-4"
+            label={t("Map WASDQE to Numpad")}
+            checked={wasdqeKeymapEnabled}
+            onChange={(enabled) => dispatch(dosSlice.actions.wasdqeKeymapEnabled(enabled))}
+        />
+    );
+}
+
 export function SockdriveNative() {
     const t = useT();
     const dispatch = useDispatch();

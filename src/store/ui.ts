@@ -11,7 +11,7 @@ export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "settings" |
     "editor-conf" | "editor-fs" | "network" |
-    "stats" | "fat-drives" |
+    "stats" | "fat-drives" | "key-map" |
     "prerun";
 
 const initialState: {
@@ -98,6 +98,10 @@ export const uiSlice = createSlice({
         },
         frameFatDrives: (state) => {
             state.frame = "fat-drives";
+            state.frameXs = false;
+        },
+        frameKeyMap: (state) => {
+            state.frame = "key-map";
             state.frameXs = false;
         },
         framePreRun: (state) => {
