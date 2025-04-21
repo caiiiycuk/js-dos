@@ -61,6 +61,8 @@ function SecretKey() {
                         loadBundleFromUrl(nonSerializableStore.options.url, store).catch((e) => {
                             store.dispatch(dosSlice.actions.bndError(e.message));
                         });
+                    } else if (account === null && token.length === 5) {
+                        stateSetToken("");
                     }
                 }
             }).catch(console.error);
@@ -78,15 +80,7 @@ function SecretKey() {
     }
 
     const dzMark = account?.email === "dz.caiiiycuk@gmail.com";
-    const warnMark = <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 inline mr-2 text-warning opacity-50">
-        <path stroke-linecap="round" stroke-linejoin="round"
-            d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73
-             0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898
-             0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
-    </svg>;
-
-    return <div class="mt-4 flex flex-col items-center">
+    return <div class="mt-4 flex flex-col items-center gap-2">
         {account === null && t("hello_guest")}
         {account !== null && <div class={dzMark ? "bg-warning px-2" : ""}>
             {t("hello") + ", " + (dzMark ? "DOS Zone" : (account.name ?? account.email)) + "!"}
@@ -101,27 +95,25 @@ function SecretKey() {
                 {t("no_cloud_access")}
                 <a href="https://v8.js-dos.com/key"
                     onClick={fireOpenKey}
-                    target="_blank" class="link link-accent ml-1">{t("key")}</a>
+                    target="_blank" class="link link-warning ml-1">{t("key")}</a>
                 &nbsp;{t("no_cloud_access2")}.
             </>}
-            {account !== null && premium === false && <>
-                {warnMark}
-                <span class={(warnOnPremium ? "text-warning font-bold" : "")}>
-                    {t("no_cloud_access3")}
-                    <a href="https://v8.js-dos.com/key"
-                        onClick={fireOpenKey}
-                        target="_blank" class={"link ml-1 lowercase " +
-                            (warnOnPremium ? "" : "link-accent")} >({t("fix")})</a>
-                </span>
-            </>}
         </div>
+        {premium === false && <>
+            <span class="text-xs">
+                {t("no_cloud_access3")}
+                {account !== null && <a href="https://v8.js-dos.com/key"
+                    onClick={fireOpenKey}
+                    target="_blank" class={"link ml-1 lowercase " +
+                        (warnOnPremium ? "" : "link-warning")} >({t("fix")})</a>}
+            </span>
+        </>}
         {account === null &&
             <div class="-ml-4">
-                {warnMark}
                 <input maxLength={5} value={token} onChange={(e) => setToken(e.currentTarget.value)}
                     placeholder="-----"
-                    class={"input input-xs input-bordered mt-4 mb-4 text-center w-20 bg-blend-multiply bg-opacity-40" +
-                        (warnOnKey ? " input-warning animate-pulse" : "")}
+                    class={"input input-bordered mt-4 mb-4 text-center w-24 bg-blend-multiply bg-opacity-40" +
+                        (warnOnKey ? " input-warning " : "")}
                     onClick={() => dispatch(uiSlice.actions.autoStart(false))}></input>
             </div>}
     </div>;

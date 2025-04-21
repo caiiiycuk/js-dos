@@ -84,7 +84,6 @@ export function EditorFsFrame() {
                     if (path.startsWith("./")) {
                         path = path.slice(2);
                     }
-                    console.log(path);
                     await ci.fsDeleteFile(path);
                 }
             } finally {
