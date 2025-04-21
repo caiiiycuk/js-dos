@@ -61,7 +61,7 @@ const initialState: {
     documentHidden: document.hidden ?? false,
     noNetworking: true,
     noCloud: false,
-    warnOnKey: false,
+    warnOnKey: true,
     warnOnPremium: false,
     softFullscreen: false,
 };
