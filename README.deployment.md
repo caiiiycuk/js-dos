@@ -1,5 +1,15 @@
 # Deployment
 
+## Move latest version to named version
+
+```sh
+VERSION=<version-number>
+mkdir /tmp/$VERSION
+aws s3 --endpoint-url=https://storage.yandexcloud.net sync s3://jsdos/latest /tmp/$VERSION
+aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read /tmp/$VERSION s3://jsdos/8.xx/$VERSION
+rm -rf /tmp/$VERSION
+```
+
 ## Release version
 
 ```
