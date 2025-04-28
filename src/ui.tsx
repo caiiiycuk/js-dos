@@ -78,7 +78,7 @@ function Toast() {
             d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />;
     }
 
-    return <div class={ "absolute right-10 bottom-10 pointer-events-none " + 
+    return <div class={ "absolute right-10 bottom-10 pointer-events-none " +
         (intent === "error" || intent === "panic" || intent === "warning" ? "opacity-80" : "opacity-50") }>
         <div class={ "alert alert-" + intentClass + " text-" + intentClass + "-content" }>
             <svg xmlns="http://www.w3.org/2000/svg"
