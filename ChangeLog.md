@@ -9,6 +9,8 @@ dev version
 
 * Add F6/F7 quick save/load support for DOSBox-X
 * Change UI buttons for quick save/load in DOSBox-X mode
+* Fix mouse pointer position calculation
+* Change sliders ui
 
 8.3.15 - 29.04.2015
 -------------------

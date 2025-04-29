@@ -11,35 +11,19 @@ export function mouseSwipe(sensitivity: number, layers: Layers, ci: CommandInter
 
     let startedAt = -1;
     let acc = 0;
-    let prevX = 0;
-    let prevY = 0;
 
     const onMouseDown = (x: number, y: number) => {
         startedAt = Date.now();
         acc = 0;
-        prevX = x;
-        prevY = y;
     };
 
     function onMouseMove(x: number, y: number, mX: number, mY: number) {
-        if (mX === undefined) {
-            mX = x - prevX;
-        }
-
-        if (mY === undefined) {
-            mY = y - prevY;
-        }
-
-        prevX = x;
-        prevY = y;
-
         if (mX === 0 && mY === 0) {
             return;
         }
 
         acc += Math.abs(mX) + Math.abs(mY);
-
-        (ci as any).sendMouseRelativeMotion(mX * sensitivity * 2, mY * sensitivity * 2);
+        (ci as any).sendMouseRelativeMotion(mX, mY);
     }
 
     const onMouseUp = (x: number, y: number) => {
@@ -54,5 +38,5 @@ export function mouseSwipe(sensitivity: number, layers: Layers, ci: CommandInter
 
     const noop = () => {};
 
-    return mount(el, layers, onMouseDown, onMouseMove, onMouseUp, noop);
+    return mount(el, layers, sensitivity, false, onMouseDown, onMouseMove, onMouseUp, noop);
 }

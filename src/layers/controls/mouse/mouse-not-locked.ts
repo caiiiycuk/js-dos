@@ -33,5 +33,5 @@ export function mouseNotLocked(layers: Layers, ci: CommandInterface) {
         ci.sendMouseMotion(xy.x, xy.y);
     }
 
-    return mount(el, layers, onMouseDown, onMouseMove, onMouseUp, onMouseLeave);
+    return mount(el, layers, 0, false, onMouseDown, onMouseMove, onMouseUp, onMouseLeave);
 }

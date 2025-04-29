@@ -34,7 +34,7 @@ export function mouseDefault(pointerButton: number,
         ci.sendMouseMotion(xy.x, xy.y);
     }
 
-    return mount(el, onMouseDown, onMouseMove, onMouseUp, onMouseLeave);
+    return mount(el, 0, false, onMouseDown, onMouseMove, onMouseUp, onMouseLeave);
 }
 
 function doMapXY(eX: number,

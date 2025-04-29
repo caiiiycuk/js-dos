@@ -61,12 +61,6 @@
     .option {
       @apply w-full justify-between;
     }
-
-    .slider {
-      .touch {
-        @apply w-40 flex-grow-0;
-      }
-    }
   }
 
   .network-frame {

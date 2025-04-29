@@ -57,18 +57,6 @@
 
     .pre-run-window {
       @apply overflow-x-hidden overflow-y-auto flex-grow flex flex-col items-center justify-center px-8 mx-auto md:my-auto;
-
-      .slider {
-        @apply justify-center w-80 max-w-none;
-
-        .label {
-          @apply flex-grow;
-        }
-
-        .touch {
-          @apply w-40 flex-grow-0;
-        }
-      }
     }
 
     .select-window {

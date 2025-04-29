@@ -1,6 +1,8 @@
 import { pointer, getPointerState } from "./pointer";
 
 export function mount(el: HTMLElement,
+                      sensitivity: number,
+                      locked: boolean,
                       onMouseDown: (x: number, y: number, button?: number) => void,
                       onMouseMove: (x: number, y: number, mX: number, mY: number) => void,
                       onMouseUp: (x: number, y: number, button?: number) => void,
@@ -15,7 +17,7 @@ export function mount(el: HTMLElement,
             return;
         }
 
-        const state = getPointerState(e, el);
+        const state = getPointerState(e, el, sensitivity, locked);
         onMouseDown(state.x, state.y, state.button);
 
         e.stopPropagation();
@@ -27,14 +29,14 @@ export function mount(el: HTMLElement,
             return;
         }
 
-        const state = getPointerState(e, el);
+        const state = getPointerState(e, el, sensitivity, locked);
         onMouseMove(state.x, state.y, state.mX, state.mY);
         e.stopPropagation();
         preventDefaultIfNeeded(e);
     };
 
     const onEnd = (e: Event) => {
-        const state = getPointerState(e, el);
+        const state = getPointerState(e, el, sensitivity, locked);
         onMouseUp(state.x, state.y, state.button);
         e.stopPropagation();
         preventDefaultIfNeeded(e);
@@ -45,7 +47,7 @@ export function mount(el: HTMLElement,
             return;
         }
 
-        const state = getPointerState(e, el);
+        const state = getPointerState(e, el, sensitivity, locked);
         onMouseLeave(state.x, state.y);
         e.stopPropagation();
         preventDefaultIfNeeded(e);

@@ -4,14 +4,10 @@
     }
 
     .slider {
-        @apply flex flex-row items-center;
-
-        .label {
-            @apply mr-4 w-min;
-        }
+        @apply flex flex-col items-start;
 
         .touch {
-            @apply cursor-pointer h-16 relative flex-grow flex flex-row items-center;
+            @apply cursor-pointer h-16 relative flex-grow flex flex-row items-center w-full;
 
             .bg {
                 @apply w-full h-2 rounded-full;

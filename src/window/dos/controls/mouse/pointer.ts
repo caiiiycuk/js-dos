@@ -1,7 +1,9 @@
+const MAX_MOVEMENT_REAL_SPEED = 50;
+
 function initBind() {
     const isMobile = /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.appVersion) ||
-                /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.userAgent) ||
-                (/MacIntel/.test(navigator.platform) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+        /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.userAgent) ||
+        (/MacIntel/.test(navigator.platform) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
     const isTouch = isMobile && !!("ontouchstart" in window);
     const isPointer = isMobile && (window.PointerEvent ? true : false);
     const isMSPointer = isMobile && ((window as any).MSPointerEvent ? true : false);
@@ -46,6 +48,7 @@ function initBind() {
 }
 
 export interface PointerState {
+    id: string,
     x: number,
     y: number,
     mX: number,
@@ -53,35 +56,70 @@ export interface PointerState {
     button?: number,
 }
 
-export function getPointerState(e: Event, el: HTMLElement): PointerState {
-    if (e.type.match(/^touch/)) {
-        const evt = e as TouchEvent;
-        const rect = el.getBoundingClientRect();
-        return {
-            x: evt.targetTouches[0].clientX - rect.x,
-            y: evt.targetTouches[0].clientY - rect.y,
-            mX: 0,
-            mY: 0,
-        };
-    } else if (e.type.match(/^pointer/)) {
-        const evt = e as PointerEvent;
-        return {
-            x: evt.offsetX,
-            y: evt.offsetY,
-            mX: evt.movementX,
-            mY: evt.movementY,
-        };
-    } else {
-        const evt = e as MouseEvent;
-        return {
-            x: evt.offsetX,
-            y: evt.offsetY,
-            mX: evt.movementX,
-            mY: evt.movementY,
-            button: evt.button === 0 ? 0 : 1,
-        };
+const pointerPositions: {[id: string]: {x: number, y: number}} = {};
+export function getPointerState(e: Event, el: HTMLElement, sensitivity: number, locked: boolean): PointerState {
+    function getState(e: Event): PointerState {
+        if (e.type.match(/^touch/)) {
+            const evt = e as TouchEvent;
+            const rect = el.getBoundingClientRect();
+            return {
+                id: "touch-" + evt.targetTouches[0].identifier,
+                x: evt.targetTouches[0].clientX - rect.x,
+                y: evt.targetTouches[0].clientY - rect.y,
+                mX: 0,
+                mY: 0,
+            };
+        } else if (e.type.match(/^pointer/)) {
+            const evt = e as PointerEvent;
+            return {
+                id: "pointer-" + evt.pointerId,
+                x: evt.offsetX,
+                y: evt.offsetY,
+                mX: evt.movementX,
+                mY: evt.movementY,
+            };
+        } else {
+            const evt = e as MouseEvent;
+            return {
+                id: "mouse",
+                x: evt.offsetX,
+                y: evt.offsetY,
+                mX: evt.movementX,
+                mY: evt.movementY,
+                button: evt.button === 0 ? 0 : 1,
+            };
+        }
     }
+
+
+    const state = getState(e);
+    if (!locked) {
+        if (pointerPositions[state.id]) {
+            state.mX = state.x - pointerPositions[state.id].x;
+            state.mY = state.y - pointerPositions[state.id].y;
+        } else {
+            state.mX = 0;
+            state.mY = 0;
+        }
+    }
+
+    pointerPositions[state.id] = {x: state.x, y: state.y};
+    state.mX = calibrateMovement(state.mX, sensitivity);
+    state.mY = calibrateMovement(state.mY, sensitivity);
+    return state;
 }
 
 export const pointer = initBind();
+
+function calibrateMovement(value: number, sensitivity: number) {
+    if (value > MAX_MOVEMENT_REAL_SPEED) {
+        value = MAX_MOVEMENT_REAL_SPEED;
+    } else if (value < -MAX_MOVEMENT_REAL_SPEED) {
+        value = -MAX_MOVEMENT_REAL_SPEED;
+    }
+
+    value = value * Math.pow(10, sensitivity * 0.8) / 10;
+
+    return value;   
+}
 

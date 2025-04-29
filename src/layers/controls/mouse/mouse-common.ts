@@ -53,6 +53,7 @@ export function mapXY(eX: number, eY: number,
 }
 
 export function mount(el: HTMLDivElement, layers: Layers,
+                      sensitivity: number, locked: boolean,
                       onMouseDown: (x: number, y: number, button: number) => void,
                       onMouseMove: (x: number, y: number, mX: number, mY: number) => void,
                       onMouseUp: (x: number, y: number, button: number) => void,
@@ -74,7 +75,7 @@ export function mount(el: HTMLDivElement, layers: Layers,
             return;
         }
 
-        const state = getPointerState(e, el);
+        const state = getPointerState(e, el, sensitivity, locked);
         pressedButton = state.button || layers.pointerButton;
         onMouseDown(state.x, state.y, pressedButton);
 
@@ -93,7 +94,7 @@ export function mount(el: HTMLDivElement, layers: Layers,
             return;
         }
 
-        const state = getPointerState(e, el);
+        const state = getPointerState(e, el, sensitivity, locked);
         onMouseMove(state.x, state.y, state.mX, state.mY);
         e.stopPropagation();
         preventDefaultIfNeeded(e);
@@ -106,7 +107,7 @@ export function mount(el: HTMLDivElement, layers: Layers,
             return;
         }
 
-        const state = getPointerState(e, el);
+        const state = getPointerState(e, el, sensitivity, locked);
         onMouseUp(state.x, state.y, pressedButton);
         e.stopPropagation();
         preventDefaultIfNeeded(e);
@@ -123,7 +124,7 @@ export function mount(el: HTMLDivElement, layers: Layers,
             return;
         }
 
-        const state = getPointerState(e, el);
+        const state = getPointerState(e, el, sensitivity, locked);
         onMouseLeave(state.x, state.y);
         e.stopPropagation();
         preventDefaultIfNeeded(e);

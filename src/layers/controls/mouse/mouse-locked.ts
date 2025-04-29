@@ -40,12 +40,12 @@ export function mouseLocked(sensitivity: number, layers: Layers, ci: CommandInte
             return;
         }
 
-        (ci as any).sendMouseRelativeMotion(mX * sensitivity, mY * sensitivity);
+        (ci as any).sendMouseRelativeMotion(mX, mY);
     }
 
     function onMouseLeave(x: number, y: number) {
         // nothing to do
     }
 
-    return mount(el, layers, onMouseDown, onMouseMove, onMouseUp, onMouseLeave);
+    return mount(el, layers, sensitivity, true, onMouseDown, onMouseMove, onMouseUp, onMouseLeave);
 }

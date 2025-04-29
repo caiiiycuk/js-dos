@@ -99,7 +99,7 @@ const initialState: {
     mobileControls: false,
     mirroredControls: lStorage.getItem("mirroredControls") === "true",
     scaleControls: (Number.parseFloat(lStorage.getItem("scaleControls") ?? "0.2")),
-    mouseSensitivity: (Number.parseFloat(lStorage.getItem("mouse_sensitivity") ?? "1.0")),
+    mouseSensitivity: (Number.parseFloat(lStorage.getItem("mouse_sensitivity") ?? "0.5")),
     mouseCapture: false,
     paused: false,
     stats: {

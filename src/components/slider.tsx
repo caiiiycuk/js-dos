@@ -59,7 +59,10 @@ export function Slider(props: {
     const percent = Math.min(Math.max(0, props.value * 100), 100);
 
     return <div class={props.class + " slider option"}>
-        <div class="label">{props.label}</div>
+        <div class="label w-full flex-row flex justify-between gap-2">
+            <p>{props.label}</p>
+            <p>{props.value.toFixed(2)}</p>
+        </div>
         <div class="touch" ref={sliderRef}>
             <div class="bg"></div>
             <div class="point" ref={pointRef}

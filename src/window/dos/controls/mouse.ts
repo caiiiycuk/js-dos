@@ -1,6 +1,6 @@
 import { CommandInterface } from "emulators";
 import { mousePointerLock } from "./mouse/mouse-locked";
-import { mouseDefault } from "./mouse/mouse-not-locked";
+import { mouseDefault } from "./mouse/mouse-default";
 import { mouseSwipe } from "./mouse/mouse-swipe";
 import { pointer } from "./mouse/pointer";
 
@@ -10,12 +10,12 @@ export function mouse(lock: boolean,
                       el: HTMLElement,
                       ci: CommandInterface) {
     if (lock && !pointer.canLock) {
-        return mouseSwipe(sensitivity, pointerButton, el, ci);
+        return mouseSwipe(sensitivity, false, pointerButton, el, ci);
     }
 
     if (lock) {
         const unlock = mousePointerLock(el);
-        const umount = mouseSwipe(sensitivity, pointerButton, el, ci);
+        const umount = mouseSwipe(sensitivity, true, pointerButton, el, ci);
 
         return () => {
             umount();

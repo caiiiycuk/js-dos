@@ -5,6 +5,7 @@ const clickDelay = 500;
 const clickThreshold = 50;
 
 export function mouseSwipe(sensitivity: number,
+                           locked: boolean,
                            pointerButton: number,
                            el: HTMLElement,
                            ci: CommandInterface) {
@@ -42,7 +43,7 @@ export function mouseSwipe(sensitivity: number,
 
         acc += Math.abs(mX) + Math.abs(mY);
 
-        ci.sendMouseRelativeMotion(mX * sensitivity * 2, mY * sensitivity * 2);
+        ci.sendMouseRelativeMotion(mX, mY);
     }
 
     const onMouseUp = (x: number, y: number, mouseButton?: number) => {
@@ -61,5 +62,5 @@ export function mouseSwipe(sensitivity: number,
 
     const noop = () => {};
 
-    return mount(el, onMouseDown, onMouseMove, onMouseUp, noop);
+    return mount(el, sensitivity, locked, onMouseDown, onMouseMove, onMouseUp, noop);
 }
