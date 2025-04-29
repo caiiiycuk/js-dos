@@ -38,6 +38,7 @@ const initialState: {
     warnOnPremium: boolean,
     warnOnKey: boolean,
     softFullscreen: boolean,
+    haveQuickSave: boolean,
 } = {
     hidden: false,
     frame: "none",
@@ -64,6 +65,7 @@ const initialState: {
     warnOnKey: true,
     warnOnPremium: false,
     softFullscreen: false,
+    haveQuickSave: false,
 };
 
 export type UiState = typeof initialState;
@@ -182,6 +184,9 @@ export const uiSlice = createSlice({
         },
         canSave: (state, a: { payload: boolean }) => {
             state.canSave = a.payload;
+        },
+        setHaveQuickSave: (state, a: { payload: boolean }) => {
+            state.haveQuickSave = a.payload;
         },
     },
     extraReducers: (builder) => {

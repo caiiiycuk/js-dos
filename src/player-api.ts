@@ -6,6 +6,7 @@ import { uiSlice } from "./store/ui";
 import { Account } from "./store/auth";
 import { PersistedSockdrives } from "emulators";
 import { idbSockdrive } from "./host/idb";
+import { CommandInterface } from "emulators";
 
 export async function apiSave(state: State,
                               nonSerializableStore: NonSerializableStore,
@@ -168,4 +169,18 @@ export function readUint32(container: Uint8Array, offset: number) {
         ((container[offset + 1] << 8) & 0x0000FF00) |
         ((container[offset + 2] << 16) & 0x00FF0000) |
         ((container[offset + 3] << 24) & 0xFF000000);
+}
+
+export function sendQuickSaveEvent(ci: CommandInterface) {
+    ci.sendBackendEvent({
+        type: "wc-trigger-event",
+        event: "hand_savestate",
+    });
+}
+
+export function sendQuickLoadEvent(ci: CommandInterface) {
+    ci.sendBackendEvent({
+        type: "wc-trigger-event",
+        event: "hand_loadstate",
+    });
 }

@@ -1,8 +1,11 @@
 import { CommandInterface } from "emulators";
 import { domToKeyCode } from "./keys";
-
-export function keyboard(el: HTMLElement, ci: CommandInterface) {
+import { Dispatch } from "@reduxjs/toolkit";
+import { sendQuickLoadEvent, sendQuickSaveEvent } from "../../../player-api";
+import { uiSlice } from "../../../store/ui";
+export function keyboard(el: HTMLElement, ci: CommandInterface, handleQuickSaves: boolean, dispatch: Dispatch) {
     const pressedKeys = new Set<number>();
+
     function releaseKeys() {
         pressedKeys.forEach((keyCode) => {
             ci.sendKeyEvent(keyCode, false);
@@ -14,6 +17,18 @@ export function keyboard(el: HTMLElement, ci: CommandInterface) {
         if ((e.target as any).type === "text") {
             return;
         }
+
+        if (handleQuickSaves) {
+            if (e.key === "F6") {
+                sendQuickSaveEvent(ci);
+                dispatch(uiSlice.actions.setHaveQuickSave(true));
+            }
+
+            if (e.key === "F7") {
+                sendQuickLoadEvent(ci);
+            }
+        }
+
         const keyCode = domToKeyCode(e.keyCode, e.location);
         ci.sendKeyEvent(keyCode, true);
         pressedKeys.add(keyCode);
