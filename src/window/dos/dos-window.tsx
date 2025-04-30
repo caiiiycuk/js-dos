@@ -125,7 +125,7 @@ function ClickToLock() {
     }
 
     return <div class="absolute top-0 left-0 w-full h-full flex flex-col items-center
-        justify-center pointer-events-none bg-black/90 gap-2 px-4 py-2 text-center">
+        justify-center pointer-events-none bg-black/90 gap-2 px-4 py-2 text-white text-center">
         <div class="text-4xl">{t("click_to_lock")}</div>
         <div class="text-xl">{t("use_esc_key_to_unlock")}</div>
         <div class="text-xl">{t("use_slider_to_change_sensitivity")}</div>
