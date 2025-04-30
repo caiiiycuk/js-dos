@@ -13,6 +13,7 @@ dev version
 * Changed sliders UI
 * Added sensitivity slider when mouse capture mode is enabled
 * In fullscreen mode, sidebar becomes thin
+* Added click to lock frame if game is running in capture mode
 
 8.3.15 - 29.04.2015
 -------------------

@@ -3,7 +3,7 @@
     @apply overflow-hidden;
 
     .background-image {
-      @apply absolute left-12 right-0 h-full pointer-events-none;
+      @apply absolute right-0 h-full pointer-events-none;
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;

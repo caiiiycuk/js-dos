@@ -24,9 +24,13 @@ export function DosWindow(props: {
     const worker = useSelector((state: State) => state.dos.worker);
     const backend = useSelector((state: State) => state.dos.backend);
     const backendHardware = useSelector((state: State) => state.dos.backendHardware);
-    const noCursor = useSelector((state: State) => state.dos.noCursor);
+    const dosNoCursor = useSelector((state: State) => state.dos.noCursor);
+    const locked = useSelector((state: State) => state.ui.pointerLocked);
+    const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
     const dispatch = useDispatch();
     const nonSerializableStore = useNonSerializableStore();
+    const cursor = pointer.canLock && mouseCapture && !locked ? "cursor-pointer" :
+        dosNoCursor ? "cursor-none" : "";
 
     useEffect(() => {
         try {
@@ -102,10 +106,30 @@ export function DosWindow(props: {
 
     return <div class="flex flex-col flex-grow h-full overflow-hidden">
         <div class="bg-black h-full flex-grow overflow-hidden relative">
-            <canvas class={noCursor ? "cursor-none" : ""} ref={canvasRef} />
+            <canvas class={cursor} ref={canvasRef} />
             {canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} />}
+            <ClickToLock />
         </div>
         <SoftKeyboard ci={ci} />
+    </div>;
+}
+
+function ClickToLock() {
+    const locked = useSelector((state: State) => state.ui.pointerLocked);
+    const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
+    const mouseSensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
+    const t = useT();
+
+    if (locked || !pointer.canLock || !mouseCapture) {
+        return null;
+    }
+
+    return <div class="absolute top-0 left-0 w-full h-full flex flex-col items-center
+        justify-center pointer-events-none bg-black/90 gap-2 mx-4 my-2 text-center">
+        <div class="text-4xl">{t("click_to_lock")}</div>
+        <div class="text-xl">{t("use_esc_key_to_unlock")}</div>
+        <div class="text-xl">{t("use_slider_to_change_sensitivity")}</div>
+        <div class="text-sm">{t("current_sensitivity")}: {mouseSensitivity.toFixed(2)}</div>
     </div>;
 }
 

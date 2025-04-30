@@ -5,6 +5,10 @@ import { State } from "./store";
 
 const translations: { [lang: string]: { [key: string]: string } } = {
     ru: {
+        click_to_lock: "Нажмите что бы захватить мышь",
+        use_esc_key_to_unlock: "Используйте `Esc` что бы освободить",
+        use_slider_to_change_sensitivity: "Используйте слайдер слева что бы изменить чувствительность",
+        current_sensitivity: "Текущая чувствительность",
         hello: "Привет",
         hello_guest: "Привет, гость!",
         mobile_controls: "Мобильное управление",
@@ -96,6 +100,10 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         sockdrive_save_in_the_middle: "Win9x безопаснее сохранять после выключении системы",
     },
     en: {
+        click_to_lock: "Click to capture mouse",
+        use_esc_key_to_unlock: "Use `Esc` to unlock",
+        use_slider_to_change_sensitivity: "Use slider on the left to change sensitivity",
+        current_sensitivity: "Current sensitivity",
         hello: "Hello",
         hello_guest: "Hello, guest!",
         play: "Start",
@@ -187,6 +195,10 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         sockdrive_save_in_the_middle: "Win9x is safer to save after shutting down the system",
     },
     pt: {
+        click_to_lock: "Clique para capturar o mouse",
+        use_esc_key_to_unlock: "Use `Esc` para desbloquear",
+        use_slider_to_change_sensitivity: "Use o slider à esquerda para alterar a sensibilidade",
+        current_sensitivity: "Sensibilidade atual",
         hello: "Olá",
         hello_guest: "Olá, convidado!",
         play: "Iniciar",

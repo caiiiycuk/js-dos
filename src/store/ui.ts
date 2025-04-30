@@ -40,6 +40,7 @@ const initialState: {
     softFullscreen: boolean,
     haveQuickSave: boolean,
     sidebarThin: boolean,
+    pointerLocked: boolean,
 } = {
     hidden: false,
     frame: "none",
@@ -68,6 +69,7 @@ const initialState: {
     softFullscreen: false,
     haveQuickSave: false,
     sidebarThin: true,
+    pointerLocked: false,
 };
 
 export type UiState = typeof initialState;
@@ -193,6 +195,9 @@ export const uiSlice = createSlice({
         },
         sidebarThin: (state, a: { payload: boolean }) => {
             state.sidebarThin = a.payload;
+        },
+        pointerLocked: (state, a: { payload: boolean }) => {
+            state.pointerLocked = a.payload;
         },
     },
     extraReducers: (builder) => {

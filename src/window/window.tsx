@@ -34,15 +34,17 @@ export function Window(props: {}) {
         default: ;
     };
 
+    let bgClass = "left-12";
     let widthClass = "w-12";
     if (sidebarThin && !frameOpened) {
         widthClass = "w-4";
+        bgClass = "left-4";
     } else if (frameOpened) {
         widthClass = frameXs ? "w-24" : "w-96";
     }
 
     return <div class="window absolute w-full h-full bg-base-100">
-        <div class="background-image"
+        <div class={"background-image " + bgClass}
             style={{ backgroundImage: (background ? "url(" + background + ")" : undefined ) }} />
         <div class="relative flex flex-row h-full w-full items-start justify-start overflow-auto">
             { !kiosk && <div class={widthClass + " flex-shrink-0"}></div> }
