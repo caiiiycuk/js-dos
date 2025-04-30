@@ -59,6 +59,7 @@ export interface DosOptions {
     volume: number,
     key: string,
     softFullscreen: boolean,
+    thinSidebar: boolean,
 }
 
 export interface DosProps {
@@ -95,7 +96,7 @@ export interface DosProps {
     setVolume(volume: number): void;
     setKey(key: string | null): void;
     setSoftFullscreen(softFullscreen: boolean): void;
-
+    setThinSidebar(thinSidebar: boolean): void;
     save(): Promise<boolean>;
     stop(): Promise<void>;
 }

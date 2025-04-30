@@ -202,6 +202,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(uiSlice.actions.softFullscreen(softFullscreen));
     }
 
+    function setThinSidebar(thinSidebar: boolean) {
+        store.dispatch(uiSlice.actions.thinSidebar(thinSidebar));
+    }
+
     if (options.theme) {
         setTheme(options.theme);
     }
@@ -314,6 +318,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setSoftFullscreen(options.softFullscreen);
     }
 
+    if (options.thinSidebar !== undefined) {
+        setThinSidebar(options.thinSidebar);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -358,7 +366,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setVolume,
         setKey,
         setSoftFullscreen,
-
+        setThinSidebar,
         save: () => {
             return apiSave(getState(store) as any as State, nonSerializableStore, store.dispatch);
         },

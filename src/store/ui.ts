@@ -39,7 +39,7 @@ const initialState: {
     warnOnKey: boolean,
     softFullscreen: boolean,
     haveQuickSave: boolean,
-    sidebarThin: boolean,
+    thinSidebar: boolean,
     pointerLocked: boolean,
 } = {
     hidden: false,
@@ -68,7 +68,7 @@ const initialState: {
     warnOnPremium: false,
     softFullscreen: false,
     haveQuickSave: false,
-    sidebarThin: true,
+    thinSidebar: false,
     pointerLocked: false,
 };
 
@@ -125,7 +125,7 @@ export const uiSlice = createSlice({
         },
         setFullScreen: (state, a: { payload: boolean }) => {
             state.fullScreen = a.payload;
-            state.sidebarThin = a.payload;
+            state.thinSidebar = a.payload;
         },
         showToast: (state, a: {
             payload: {
@@ -193,8 +193,8 @@ export const uiSlice = createSlice({
         setHaveQuickSave: (state, a: { payload: boolean }) => {
             state.haveQuickSave = a.payload;
         },
-        sidebarThin: (state, a: { payload: boolean }) => {
-            state.sidebarThin = a.payload;
+        thinSidebar: (state, a: { payload: boolean }) => {
+            state.thinSidebar = a.payload;
         },
         pointerLocked: (state, a: { payload: boolean }) => {
             state.pointerLocked = a.payload;

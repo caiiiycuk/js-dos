@@ -12,7 +12,7 @@ export function Window(props: {}) {
     const window = useSelector((state: State) => state.ui.window);
     const background = useSelector((state: State) => state.ui.background);
     const kiosk = useSelector((state: State) => state.ui.kiosk);
-    const sidebarThin = useSelector((state: State) => state.ui.sidebarThin);
+    const sidebarThin = useSelector((state: State) => state.ui.thinSidebar);
 
     let windowComponent = <Loading />;
     switch (window) {

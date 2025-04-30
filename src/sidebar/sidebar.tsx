@@ -20,7 +20,7 @@ export function SideBar(props: {}) {
     const networking = !useSelector((state: State) => state.ui.noNetworking);
     const frame = useSelector((state: State) => state.ui.frame) !== "none";
     const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
-    const sidebarThin = useSelector((state: State) => state.ui.sidebarThin);
+    const sidebarThin = useSelector((state: State) => state.ui.thinSidebar);
     const dispatch = useDispatch();
     if (kiosk) {
         return null;
@@ -30,7 +30,7 @@ export function SideBar(props: {}) {
         return <div class="sidebar-thin">
             <div class="cursor-pointer hover:bg-base-100 w-full h-full flex flex-col items-center justify-center gap-1"
                 onClick={() => {
-                    dispatch(uiSlice.actions.sidebarThin(false));
+                    dispatch(uiSlice.actions.thinSidebar(false));
                 }}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
