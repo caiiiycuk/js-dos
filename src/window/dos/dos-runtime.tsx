@@ -56,7 +56,7 @@ function useMouse(canvas: HTMLCanvasElement,
                   ci: CommandInterface): void {
     const mobileControls = useSelector((state: State) => state.dos.mobileControls);
     const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
-    const mouseSensitivity = 0.1 + useSelector((state: State) => state.dos.mouseSensitivity) * 3;
+    const mouseSensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
     useEffect(() => {
         if (!mobileControls) {
             return mouse(mouseCapture, mouseSensitivity, 0, canvas, ci);
