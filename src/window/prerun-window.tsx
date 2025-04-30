@@ -14,12 +14,14 @@ export function PreRunWindow() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
 
     return <div class="pre-run-window">
-        <Play />
-        <SecretKey />
-        <div class="self-end mt-8 absolute bottom-3">
-            <span class="text-ellipsis overflow-hidden">
-                js-{JSDOS_VERSION}/emu-{emuVersion.substring(0, emuVersion.indexOf(" "))}
-            </span>
+        <div class="bg-base-100/50 mx-4 my-2 px-8 py-4 flex flex-col gap-2 items-center rounded-xl">
+            <Play />
+            <SecretKey />
+            <div class="self-end mt-8 absolute bottom-3">
+                <span class="text-ellipsis overflow-hidden">
+                    js-{JSDOS_VERSION}/emu-{emuVersion.substring(0, emuVersion.indexOf(" "))}
+                </span>
+            </div>
         </div>
     </div>;
 }
