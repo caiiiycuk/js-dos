@@ -4,8 +4,8 @@ Note that version numbers do not necessarily reflect the amount of changes betwe
 
 Not all changes are documented here. To examine the full set of changes between versions, you can use git to browse the changes between the tags.
 
-dev version
------------
+8.3.16 - 30.04.2015
+-------------------
 
 * Added F6/F7 quick save/load support for DOSBox-X
 * Changed UI buttons for quick save/load in DOSBox-X mode
