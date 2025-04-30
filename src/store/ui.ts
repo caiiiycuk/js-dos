@@ -39,6 +39,7 @@ const initialState: {
     warnOnKey: boolean,
     softFullscreen: boolean,
     haveQuickSave: boolean,
+    sidebarThin: boolean,
 } = {
     hidden: false,
     frame: "none",
@@ -66,6 +67,7 @@ const initialState: {
     warnOnPremium: false,
     softFullscreen: false,
     haveQuickSave: false,
+    sidebarThin: true,
 };
 
 export type UiState = typeof initialState;
@@ -121,6 +123,7 @@ export const uiSlice = createSlice({
         },
         setFullScreen: (state, a: { payload: boolean }) => {
             state.fullScreen = a.payload;
+            state.sidebarThin = a.payload;
         },
         showToast: (state, a: {
             payload: {
@@ -187,6 +190,9 @@ export const uiSlice = createSlice({
         },
         setHaveQuickSave: (state, a: { payload: boolean }) => {
             state.haveQuickSave = a.payload;
+        },
+        sidebarThin: (state, a: { payload: boolean }) => {
+            state.sidebarThin = a.payload;
         },
     },
     extraReducers: (builder) => {

@@ -12,6 +12,7 @@ export function Window(props: {}) {
     const window = useSelector((state: State) => state.ui.window);
     const background = useSelector((state: State) => state.ui.background);
     const kiosk = useSelector((state: State) => state.ui.kiosk);
+    const sidebarThin = useSelector((state: State) => state.ui.sidebarThin);
 
     let windowComponent = <Loading />;
     switch (window) {
@@ -33,11 +34,18 @@ export function Window(props: {}) {
         default: ;
     };
 
+    let widthClass = "w-12";
+    if (sidebarThin && !frameOpened) {
+        widthClass = "w-4";
+    } else if (frameOpened) {
+        widthClass = frameXs ? "w-24" : "w-96";
+    }
+
     return <div class="window absolute w-full h-full bg-base-100">
         <div class="background-image"
             style={{ backgroundImage: (background ? "url(" + background + ")" : undefined ) }} />
         <div class="relative flex flex-row h-full w-full items-start justify-start overflow-auto">
-            { !kiosk && <div class={(frameOpened ? (frameXs ? "w-24" : "w-96") : "w-12") + " flex-shrink-0"}></div> }
+            { !kiosk && <div class={widthClass + " flex-shrink-0"}></div> }
             {windowComponent}
         </div>
     </div>;

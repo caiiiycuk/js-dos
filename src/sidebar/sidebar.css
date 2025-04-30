@@ -1,4 +1,13 @@
 .jsdos-rso {
+  .sidebar-thin {
+    @apply absolute left-0 top-0 h-full flex flex-col items-center z-10 w-4;
+    background: linear-gradient(90deg, hsl(var(--b3)) 0%, hsl(var(--b2)) 100%);
+
+    .sidebar-slider {
+      @apply absolute top-0 bottom-0 left-4;
+    }
+  }
+
   .sidebar {
     @apply absolute left-0 top-0 h-full flex flex-col items-center py-2 z-10;
     background: linear-gradient(90deg, hsl(var(--b3)) 0%, hsl(var(--b2)) 100%);
@@ -46,7 +55,7 @@
   }
 
   .animate-led {
-      animation: pulse 300ms cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: pulse 300ms cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   .save-buttons {

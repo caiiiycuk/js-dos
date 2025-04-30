@@ -11,6 +11,7 @@ import {
 import { SaveButtons } from "./save-buttons";
 import { Slider } from "../components/slider";
 import { dosSlice } from "../store/dos";
+import { uiSlice } from "../store/ui";
 
 export function SideBar(props: {}) {
     const window = useSelector((state: State) => state.ui.window);
@@ -19,9 +20,25 @@ export function SideBar(props: {}) {
     const networking = !useSelector((state: State) => state.ui.noNetworking);
     const frame = useSelector((state: State) => state.ui.frame) !== "none";
     const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
-
+    const sidebarThin = useSelector((state: State) => state.ui.sidebarThin);
+    const dispatch = useDispatch();
     if (kiosk) {
         return null;
+    }
+
+    if (sidebarThin) {
+        return <div class="sidebar-thin">
+            <div class="cursor-pointer hover:bg-base-100 w-full h-full flex flex-col items-center justify-center gap-1"
+                onClick={() => {
+                    dispatch(uiSlice.actions.sidebarThin(false));
+                }}
+            >
+                <div class="w-full h-1 bg-base-content"></div>
+                <div class="w-full h-1 bg-base-content"></div>
+                <div class="w-full h-1 bg-base-content"></div>
+            </div>
+            {!frame && window === "run" && mouseCapture && <SidebarSlider />}
+        </div>;
     }
 
     return <div class="sidebar">

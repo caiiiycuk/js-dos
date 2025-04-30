@@ -7,11 +7,12 @@ Not all changes are documented here. To examine the full set of changes between 
 dev version
 -----------
 
-* Add F6/F7 quick save/load support for DOSBox-X
-* Change UI buttons for quick save/load in DOSBox-X mode
-* Fix mouse pointer position calculation
-* Change sliders ui
-* Add sensitivity slider when mouse capture mode is enabled 
+* Added F6/F7 quick save/load support for DOSBox-X
+* Changed UI buttons for quick save/load in DOSBox-X mode
+* Fixed mouse pointer position calculation
+* Changed sliders UI
+* Added sensitivity slider when mouse capture mode is enabled
+* In fullscreen mode, sidebar becomes thin
 
 8.3.15 - 29.04.2015
 -------------------
