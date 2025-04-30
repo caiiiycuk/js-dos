@@ -11,6 +11,7 @@ dev version
 * Change UI buttons for quick save/load in DOSBox-X mode
 * Fix mouse pointer position calculation
 * Change sliders ui
+* Add sensitivity slider when mouse capture mode is enabled 
 
 8.3.15 - 29.04.2015
 -------------------

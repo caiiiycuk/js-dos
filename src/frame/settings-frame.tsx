@@ -10,8 +10,8 @@ export function SettingsFrame(props: {}) {
         <MouseCapture />
         <MobileControls />
         <MirroredControls />
-        <ScaleControlsSlider class="mt-4" />
-        <MouseSensitiviySlider />
+        <MouseSensitiviySlider class="mt-4" />
+        <ScaleControlsSlider />
         <VolumeSlider />
         <RenderAspectSelect multiline={true} />
         <ImageRenderingSelect multiline={true} />

@@ -13,8 +13,8 @@ export function PreRunFrame(props: {}) {
         <MouseCapture />
         <MobileControls />
         <MirroredControls />
-        <ScaleControlsSlider class="mt-4" />
-        <MouseSensitiviySlider />
+        <MouseSensitiviySlider class="mt-4"/>
+        <ScaleControlsSlider/>
         <VolumeSlider />
         <BackendSelect multiline={true} />
         <WorkerCheckbox />

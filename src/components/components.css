@@ -7,16 +7,14 @@
         @apply flex flex-col items-start;
 
         .touch {
-            @apply cursor-pointer h-16 relative flex-grow flex flex-row items-center w-full;
+            @apply cursor-pointer relative flex;
 
-            .bg {
-                @apply w-full h-2 rounded-full;
-                background-color: hsl(var(--b2));
+            .bg-active {
+                @apply absolute bg-primary;
             }
 
             .point {
-                @apply absolute h-6 w-6 rounded-full;
-                background-color: hsl(var(--bc));
+                @apply absolute h-6 w-6 rounded-full bg-base-content text-base-200;
             }
         }
 

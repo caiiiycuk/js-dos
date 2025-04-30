@@ -4,6 +4,11 @@
     background: linear-gradient(90deg, hsl(var(--b3)) 0%, hsl(var(--b2)) 100%);
     width: var(--sidebar-width);
 
+    .sidebar-slider {
+      @apply absolute top-0 bottom-0;
+      left: var(--sidebar-width);
+    }
+
     .contentbar {
       @apply flex-grow;
     }

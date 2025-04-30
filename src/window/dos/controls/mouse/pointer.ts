@@ -103,7 +103,7 @@ export function getPointerState(e: Event, el: HTMLElement, sensitivity: number, 
         }
     }
 
-    pointerPositions[state.id] = {x: state.x, y: state.y};
+    pointerPositions[state.id] = { x: state.x, y: state.y };
     state.mX = calibrateMovement(state.mX, sensitivity);
     state.mY = calibrateMovement(state.mY, sensitivity);
     return state;
@@ -118,8 +118,11 @@ function calibrateMovement(value: number, sensitivity: number) {
         value = -MAX_MOVEMENT_REAL_SPEED;
     }
 
-    value = value * Math.pow(10, sensitivity * 0.8) / 10;
+    // Map sensitivity (0-1) to logarithmic scale (0.01-5)
+    // Scale will be 1 when sensitivity = 0.5
+    const scale = Math.pow(8, sensitivity * 2 - 1);
+    value = value * scale;
 
-    return value;   
+    return value;
 }
 
