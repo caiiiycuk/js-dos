@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-04-28T22:35:57.582373893"><script type="text/javascript" >
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-04-30T17:32:30.029928679"><script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -26,7 +26,7 @@
     "url": "https://js-dos.com/",
     "name": "js-dos Help"
 }</script><!-- End Schema.org --></head><body data-id="run-without-bundle" data-main-title="Run without bundle" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="Overview.md|js-dos///Advanced-Topics.md|Advanced Topics"><noscript><div><img src="https://mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="run-without-bundle" id="run-without-bundle.md">Run without bundle</h1><p id="-5hixo7_3">As explained in other topics, the bundle is a preferred way to run DOS program. Bundle can contain much more configuration that DOSBox excepts, for example, mobile controls, resources, etc.</p><aside class="prompt" data-type="warning" data-title="" id="-5hixo7_4"><p id="-5hixo7_6">If you are looking at the recommended and correct way to run DOS program just create <a href="jsdos-bundle.html" id="-5hixo7_7" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publis it on dos.zone">bundle</a> for it.</p></aside><section class="chapter"><h2 id="provide-dosbox-conf-directly" data-toc="provide-dosbox-conf-directly">Provide dosbox.conf directly</h2><p id="-5hixo7_8">js-dos can work without a bundle, but at least it needs a DOSBox config file to start. You can create js-dos player by providing config using javascript:</p><div class="code-block" data-lang="javascript">
+<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="run-without-bundle" id="run-without-bundle.md">Run without bundle</h1><p id="xwta82_3">As explained in other topics, the bundle is a preferred way to run DOS program. Bundle can contain much more configuration that DOSBox excepts, for example, mobile controls, resources, etc.</p><aside class="prompt" data-type="warning" data-title="" id="xwta82_4"><p id="xwta82_6">If you are looking at the recommended and correct way to run DOS program just create <a href="jsdos-bundle.html" id="xwta82_7" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publis it on dos.zone">bundle</a> for it.</p></aside><section class="chapter"><h2 id="provide-dosbox-conf-directly" data-toc="provide-dosbox-conf-directly">Provide dosbox.conf directly</h2><p id="xwta82_8">js-dos can work without a bundle, but at least it needs a DOSBox config file to start. You can create js-dos player by providing config using javascript:</p><div class="code-block" data-lang="javascript">
 Dos(document.getElementById(&quot;app&quot;), {
   dosboxConf: `
     [autoexec]
@@ -39,7 +39,7 @@ Dos(document.getElementById(&quot;app&quot;), {
     }
   },
 });
-</div><p id="-5hixo7_10">Additionally, you can provide <code class="code" id="-5hixo7_20">jsdos.json</code> configuration, for example, here we start js-dos with one virtual button.</p><div class="code-block" data-lang="javascript">
+</div><p id="xwta82_10">Additionally, you can provide <code class="code" id="xwta82_20">jsdos.json</code> configuration, for example, here we start js-dos with one virtual button.</p><div class="code-block" data-lang="javascript">
 Dos(document.getElementById(&quot;app&quot;), {
   dosboxConf: `
     [autoexec]
@@ -69,12 +69,12 @@ Dos(document.getElementById(&quot;app&quot;), {
     }
   },
 });
-</div><p id="-5hixo7_12">Having config allows you to start DOSBox / DOSBox-X, but it is not very useful without a program to run. To init FS before emulation starts, you need to use <code class="code" id="-5hixo7_21">initFs</code> property. It's a sequence of files, in the following format:</p><div class="code-block" data-lang="javascript">
+</div><p id="xwta82_12">Having config allows you to start DOSBox / DOSBox-X, but it is not very useful without a program to run. To init FS before emulation starts, you need to use <code class="code" id="xwta82_21">initFs</code> property. It's a sequence of files, in the following format:</p><div class="code-block" data-lang="javascript">
   initFs: [
     { path: string, contents: Uint8Array },
     ...
   ],
-</div><p id="-5hixo7_14">Where <code class="code" id="-5hixo7_22">path</code> is a full path to file, <code class="code" id="-5hixo7_23">contents</code> is a body of file.</p><p id="-5hixo7_15">Using the following snippet you will create two files:</p><ul class="list _bullet" id="-5hixo7_16"><li class="list__item" id="-5hixo7_24"><p id="-5hixo7_26"><span class="emphasis" id="-5hixo7_27">1.txt</span> with contents <span class="emphasis" id="-5hixo7_28">&quot;123&quot;</span></p></li><li class="list__item" id="-5hixo7_25"><p id="-5hixo7_29"><span class="emphasis" id="-5hixo7_30">2.txt</span> in directory <span class="emphasis" id="-5hixo7_31">D</span> with contents <span class="emphasis" id="-5hixo7_32">&quot;345&quot;</span></p></li></ul><div class="code-block" data-lang="javascript">
+</div><p id="xwta82_14">Where <code class="code" id="xwta82_22">path</code> is a full path to file, <code class="code" id="xwta82_23">contents</code> is a body of file.</p><p id="xwta82_15">Using the following snippet you will create two files:</p><ul class="list _bullet" id="xwta82_16"><li class="list__item" id="xwta82_24"><p id="xwta82_26"><span class="emphasis" id="xwta82_27">1.txt</span> with contents <span class="emphasis" id="xwta82_28">&quot;123&quot;</span></p></li><li class="list__item" id="xwta82_25"><p id="xwta82_29"><span class="emphasis" id="xwta82_30">2.txt</span> in directory <span class="emphasis" id="xwta82_31">D</span> with contents <span class="emphasis" id="xwta82_32">&quot;345&quot;</span></p></li></ul><div class="code-block" data-lang="javascript">
 Dos(document.getElementById(&quot;app&quot;), {
   dosboxConf: `
     [autoexec]
@@ -91,4 +91,4 @@ Dos(document.getElementById(&quot;app&quot;), {
     }
   },
 });
-</div><p id="-5hixo7_18">Now when you run it, you can check your files with <code class="code" id="-5hixo7_33">TYPE</code> command:</p><figure id="-5hixo7_19"><img alt="Init fs" src="images/initFs.jpg" title="Init fs" width="423" height="247"></figure></section><div class="last-modified">13 октября 2024</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="working-with-fs.html" class="navigation-links__prev">Working with File System</a><a href="multiple-instances.html" class="navigation-links__next">Multiple Instances</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b776/app.js"></script></body></html>
+</div><p id="xwta82_18">Now when you run it, you can check your files with <code class="code" id="xwta82_33">TYPE</code> command:</p><figure id="xwta82_19"><img alt="Init fs" src="images/initFs.jpg" title="Init fs" width="423" height="247"></figure></section><div class="last-modified">13 октября 2024</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="working-with-fs.html" class="navigation-links__prev">Working with File System</a><a href="multiple-instances.html" class="navigation-links__next">Multiple Instances</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b776/app.js"></script></body></html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-04-28T22:35:57.578772834"><script type="text/javascript" >
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-04-30T17:32:30.026006044"><script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -26,16 +26,16 @@
     "url": "https://js-dos.com/",
     "name": "js-dos Help"
 }</script><!-- End Schema.org --></head><body data-id="command-interface" data-main-title="Command Interface (CI)" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="emulators.md|emulators"><noscript><div><img src="https://mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="command-interface" id="command-interface.md">Command Interface (CI)</h1><p id="z6x3475_3">The <code class="code" id="z6x3475_9">Command Interface</code> is only one object that allows you to communicate with js-dos instance. Once you run some <a href="jsdos-bundle.html" id="z6x3475_10" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publis it on dos.zone">js-dos bundle</a> you will receive <code class="code" id="z6x3475_11">Command Interface</code> instance.</p><div class="tabs" id="z6x3475_4" data-anchors="[z6x3475_12,z6x3475_13]"><div class="tabs__content" data-gtm="tab" id="z6x3475_12" data-title="v8"><div class="code-block" data-lang="ts" data-title="TypeScript">
+<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="command-interface" id="command-interface.md">Command Interface (CI)</h1><p id="-urg4rc_3">The <code class="code" id="-urg4rc_9">Command Interface</code> is only one object that allows you to communicate with js-dos instance. Once you run some <a href="jsdos-bundle.html" id="-urg4rc_10" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publis it on dos.zone">js-dos bundle</a> you will receive <code class="code" id="-urg4rc_11">Command Interface</code> instance.</p><div class="tabs" id="-urg4rc_4" data-anchors="[-urg4rc_12,-urg4rc_13]"><div class="tabs__content" data-gtm="tab" id="-urg4rc_12" data-title="v8"><div class="code-block" data-lang="ts" data-title="TypeScript">
             Dos(/*element*/, {
                 url: /* bundle url */,
                 onEvent: (&quot;ci-ready&quot;, ci: CommandInterface) {
                     // now ci s ready
                 },
             );
-        </div></div><div class="tabs__content" data-gtm="tab" id="z6x3475_13" data-title="v7"><div class="code-block" data-lang="javascript" data-title="JavaScript">
+        </div></div><div class="tabs__content" data-gtm="tab" id="-urg4rc_13" data-title="v7"><div class="code-block" data-lang="javascript" data-title="JavaScript">
             const ci = await Dos(/*element*/).run(/*bundle url*/);
-        </div></div></div><p id="z6x3475_5">CI interface:</p><div class="code-block" data-lang="ts">
+        </div></div></div><p id="-urg4rc_5">CI interface:</p><div class="code-block" data-lang="ts">
 export interface CommandInterface {
     config: () =&gt; Promise&lt;DosConfig&gt;;
     height: () =&gt; number;
@@ -64,7 +64,7 @@ export interface CommandInterface {
     fsWriteFile(file: string, contents: ReadableStream&lt;Uint8Array&gt; | Uint8Array): Promise&lt;void&gt;;
     fsDeleteFile(file: string): Promise&lt;void&gt;;
 }
-</div><p id="z6x3475_7">Events interface:</p><div class="code-block" data-lang="ts">
+</div><p id="-urg4rc_7">Events interface:</p><div class="code-block" data-lang="ts">
 export type MessageType = &quot;log&quot; | &quot;warn&quot; | &quot;error&quot; | string;
 
 export interface CommandInterfaceEvents {
