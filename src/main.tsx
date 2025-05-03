@@ -26,6 +26,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     const cache = idbCache();
 
     setupRootElement(element, nonSerializableStore, store);
+    (navigator as any).keyboard?.lock(["KeyW", "Escape"]);
 
     let pollStep = "none";
     function pollEvents() {
