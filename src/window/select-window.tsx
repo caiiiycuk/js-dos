@@ -5,9 +5,7 @@ import { loadBundleFromFile, loadBundleFromUrl, loadEmptyBundle } from "../playe
 import { useState } from "preact/hooks";
 import { uiSlice } from "../store/ui";
 import { Store } from "../store";
-
-const fileInput = document.createElement("input");
-fileInput.type = "file";
+import { uploadFile } from "./file-input";
 
 export function SelectWindow() {
     const t = useT();
@@ -28,9 +26,7 @@ export function SelectWindow() {
         }
     }
 
-    async function onFileChange() {
-        fileInput.removeEventListener("change", onFileChange);
-
+    async function onFileChange(fileInput: HTMLInputElement) {
         if (fileInput.files === null || fileInput.files.length === 0) {
             return;
         }
@@ -44,8 +40,7 @@ export function SelectWindow() {
     }
 
     function onUpload() {
-        fileInput.addEventListener("change", onFileChange);
-        fileInput.click();
+        uploadFile(onFileChange);
     }
 
     return <div class="select-window overflow-hidden flex-grow flex flex-col items-center justify-center px-8">

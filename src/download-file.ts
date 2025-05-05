@@ -10,9 +10,9 @@ export function downloadUrlToFs(fileName: string, url: string, targetBlank = tru
     a.remove();
 }
 
-export function downloadArrayToFs(fileName: string, data: Uint8Array) {
+export function downloadArrayToFs(fileName: string, data: Uint8Array, type = "application/zip") {
     const blob = new Blob([data], {
-        type: "application/zip",
+        type,
     });
     downloadUrlToFs(fileName, URL.createObjectURL(blob));
 }

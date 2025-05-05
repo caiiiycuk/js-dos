@@ -98,6 +98,11 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         emulation_ended: "Эмуляция завершена",
         saving_game: "Сохранение игры...",
         sockdrive_save_in_the_middle: "Win9x безопаснее сохранять после выключении системы",
+        changes_loaded: "Сохранения загружены в игру",
+        error_deleting_changes: "Ошибка удаления сохранений",
+        no_changes_loaded: "Нет сохранений",
+        upload: "Загрузить",
+        error_uploading_changes: "Ошибка загрузки сохранений",
     },
     en: {
         click_to_lock: "Click to capture mouse",
@@ -193,6 +198,11 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         emulation_ended: "Emulation ended",
         saving_game: "Saving game...",
         sockdrive_save_in_the_middle: "Win9x is safer to save after shutting down the system",
+        changes_loaded: "Changes loaded in game",
+        error_deleting_changes: "Error deleting changes",
+        no_changes_loaded: "No changes loaded",
+        upload: "Upload",
+        error_uploading_changes: "Error uploading changes",
     },
     pt: {
         click_to_lock: "Clique para capturar o mouse",
@@ -288,6 +298,11 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         emulation_ended: "Emulação terminada",
         saving_game: "Salvando jogo...",
         sockdrive_save_in_the_middle: "Win9x é mais seguro salvar após desligar o sistema",
+        changes_loaded: "Alterações carregadas no jogo",
+        error_deleting_changes: "Erro ao deletar alterações",
+        no_changes_loaded: "Nenhuma alteração carregada",
+        upload: "Carregar",
+        error_uploading_changes: "Erro ao carregar alterações",
     },
 };
 

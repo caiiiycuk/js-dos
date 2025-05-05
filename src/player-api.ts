@@ -11,10 +11,11 @@ import { CommandInterface } from "emulators";
 export async function apiSave(state: State,
                               nonSerializableStore: NonSerializableStore,
                               dispatch: Dispatch,
-                              emulationEnded: boolean = false): Promise<boolean> {
+                              emulationEnded: boolean = false,
+                              encodedChanges: Uint8Array | null = null): Promise<boolean> {
     const ci = nonSerializableStore.ci;
     const changesUrl = nonSerializableStore.loadedBundle?.bundleChangesUrl;
-    if (ci === null || !changesUrl || !state.ui.canSave) {
+    if ((ci === null && encodedChanges === null) || !changesUrl || !state.ui.canSave) {
         return false;
     }
 
@@ -33,9 +34,12 @@ export async function apiSave(state: State,
                 (!account.premium) ? t("warn_save_no_premium") :
                     t("warn_save_big_file");
 
-        const changes = await ci.persist(true);
-        const encodedChanges = encodeChanges(changes);
-        const warnAboutSaves = encodedChanges !== changes && !emulationEnded;
+        let warnAboutSaves = false;
+        if (encodedChanges === null) {
+            const changes = await ci!.persist(true);
+            encodedChanges = encodeChanges(changes);
+            warnAboutSaves = encodedChanges !== changes && !emulationEnded;
+        }
         if (encodedChanges !== null) {
             if (warnAboutSaves) {
                 dispatch(uiSlice.actions.showToast({
@@ -48,8 +52,8 @@ export async function apiSave(state: State,
             if (canDoCloudSave(account, encodedChanges)) {
                 await putChanges(changesUrl, encodedChanges);
                 savedInIndexedDb = false;
-            } else if (changes instanceof Uint8Array) {
-                await nonSerializableStore.cache.put(changesUrl, changes);
+            } else {
+                await nonSerializableStore.cache.put(changesUrl, encodedChanges);
             }
         }
 
@@ -92,6 +96,15 @@ export function canDoCloudSave(account: Account | null, changes: Uint8Array | nu
 }
 
 export async function applySockdriveChanges(encoded: Uint8Array): Promise<boolean> {
+    return traverseSockdriveChanges(encoded, async (url, persist) => {
+        const idb = await idbSockdrive(url);
+        await idb.put(0 as any, persist);
+        idb.close();
+    });
+}
+
+export async function traverseSockdriveChanges(encoded: Uint8Array,
+                                               callback: (url: string, persist: Uint8Array) => Promise<void>) {
     const decoder = new TextDecoder();
     let offset = 0;
     while (offset < encoded.length) {
@@ -115,10 +128,7 @@ export async function applySockdriveChanges(encoded: Uint8Array): Promise<boolea
 
         const persist = encoded.slice(offset, offset + persistLength);
         offset += persistLength;
-
-        const idb = await idbSockdrive(url);
-        await idb.put(0 as any, persist);
-        idb.close();
+        await callback(url, persist);
     }
 
     return true;

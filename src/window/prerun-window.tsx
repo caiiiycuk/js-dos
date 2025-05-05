@@ -7,6 +7,11 @@ import { Emulators } from "emulators";
 import { useEffect, useState } from "preact/hooks";
 import { authSlice, loadAccount } from "../store/auth";
 import { loadBundleFromUrl } from "../player-api-load";
+import { downloadArrayToFs } from "../download-file";
+import { idbCache, idbSockdrive } from "../host/idb";
+import { uploadFile } from "./file-input";
+import { apiSave, canDoCloudSave, traverseSockdriveChanges } from "../player-api";
+import { presignDelete } from "../v8/config";
 
 declare const emulators: Emulators;
 
@@ -14,8 +19,8 @@ export function PreRunWindow() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
 
     return <div class="pre-run-window">
-        <div class="bg-base-100/50 mx-4 my-2 px-8 py-4 flex flex-col gap-2 items-center rounded-xl">
-            <Play />
+        <Play />
+        <div class="bg-base-200/80 mx-4 my-2 px-8 py-4 flex flex-col gap-2 items-center rounded-xl">
             <SecretKey />
             <div class="self-end mt-8 absolute bottom-3">
                 <span class="text-ellipsis overflow-hidden">
@@ -26,8 +31,114 @@ export function PreRunWindow() {
     </div>;
 }
 
-let knownToken = "-----";
+function Changes() {
+    const t = useT();
+    const nonSerializableStore = useNonSerializableStore();
+    const [busy, setBusy] = useState(false);
+    const bundleUrl = nonSerializableStore.loadedBundle?.bundleUrl;
+    const changesUrl = nonSerializableStore.loadedBundle?.bundleChangesUrl;
+    const sockdriveChanges = nonSerializableStore.loadedBundle?.appliedBundleChanges ?? null;
+    const bundleChanges = nonSerializableStore.loadedBundle?.bundleChanges ?? sockdriveChanges;
+    const haveChanges = bundleChanges !== null;
+    const account = useSelector((state: State) => state.auth.account);
+    const store = useStore();
+    const dispatch = useDispatch();
 
+    if (bundleUrl === null || changesUrl === null) {
+        return null;
+    }
+
+    if (busy) {
+        return <span class="loading loading-spinner loading-md"></span>;
+    }
+
+    const icon = <svg xmlns="http://www.w3.org/2000/svg"
+        style="padding: 2px"
+        viewBox="0 0 16 16" enable-background="new 0 0 16 16"
+        fill="currentColor" class="w-4 h-4 ">
+        <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M15.71,2.29l-2-2C13.53,0.11,13.28,0,13,0h-1v6H4V0H1C0.45,0,0,0.45,0,1v14
+                c0,0.55,0.45,1,1,1h14c0.55,0,1-0.45,1-1V3C16,2.72,15.89,2.47,15.71,2.29z
+                M14,15H2V9c0-0.55,0.45-1,1-1h10c0.55,0,1,0.45,1,1V15
+                z M11,1H9v4h2V1z"/>
+    </svg>;
+
+    if (haveChanges) {
+        return <div class="flex flex-row items-baseline gap-1">
+            <p class="text-accent">{t("changes_loaded")}</p>
+            <button class="btn btn-ghost btn-xs text-accent underline self-center" onClick={() => {
+                downloadArrayToFs("changes.bin",
+                    bundleChanges,
+                    "application/octet-stream");
+            }}>
+                {icon}
+                {t("download")}
+            </button>
+            <button class="btn btn-ghost btn-xs underline -ml-2" onClick={() => {
+                setBusy(true);
+                idbCache().then(async (cache) => {
+                    await cache.del(changesUrl!);
+                    if (sockdriveChanges !== null) {
+                        await traverseSockdriveChanges(sockdriveChanges, async (url, _persist) => {
+                            const db = await idbSockdrive(url);
+                            await db.del(0 as any);
+                            db.close();
+                        });
+                    }
+                    if (canDoCloudSave(account, null) && changesUrl) {
+                        await fetch(presignDelete + "?bundleUrl=" + encodeURIComponent(changesUrl));
+                    }
+                    await loadBundleFromUrl(bundleUrl!, store);
+                })
+                    .catch((e) => {
+                        console.error(e);
+                        dispatch(uiSlice.actions.showToast({
+                            message: t("error_deleting_changes"),
+                            intent: "error",
+                        }));
+                    })
+                    .finally(() => setBusy(false));
+            }}>
+                {t("delete")}
+            </button>
+        </div>;
+    }
+
+    async function onUploadChanges(fileInput: HTMLInputElement) {
+        try {
+            if (fileInput.files === null || fileInput.files.length === 0) {
+                return;
+            }
+
+            const file = fileInput.files[0];
+            await apiSave(store.getState() as State,
+                nonSerializableStore, dispatch, false,
+                new Uint8Array(await file.arrayBuffer()));
+            await loadBundleFromUrl(bundleUrl!, store);
+        } catch (e: any) {
+            console.error(e);
+            dispatch(uiSlice.actions.showToast({
+                message: t("error_uploading_changes"),
+                intent: "error",
+            }));
+        } finally {
+            setBusy(false);
+        }
+    }
+
+    return <div class="flex flex-row items-baseline gap-1">
+        {t("no_changes_loaded")}
+        <button class="btn btn-ghost btn-xs text-accent underline self-center" onClick={() => {
+            setBusy(true);
+            uploadFile(onUploadChanges);
+        }}>
+            {icon}
+            {t("upload")}
+        </button>
+    </div>;
+}
+
+let knownToken = "-----";
 function SecretKey() {
     const t = useT();
     const account = useSelector((state: State) => state.auth.account);
@@ -92,6 +203,7 @@ function SecretKey() {
                     dispatch(uiSlice.actions.autoStart(false));
                 }}>({t("logout")})</span>
         </div>}
+        <Changes />
         <div class="mt-2">
             {account === null && <>
                 {t("no_cloud_access")}

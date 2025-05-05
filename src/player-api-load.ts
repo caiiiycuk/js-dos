@@ -50,6 +50,7 @@ export async function loadBundleFromConfg(config: DosConfig, initFs: InitFs | nu
         bundleChangesUrl: null,
         bundle: config,
         bundleChanges: null,
+        appliedBundleChanges: null,
         initFs,
     };
     dispatch(dosSlice.actions.bndReady({}));
@@ -93,6 +94,7 @@ async function doLoadBundle(bundleName: string,
         bundleChangesUrl: bundleChanges?.url ?? null,
         bundle,
         bundleChanges: bundleChanges?.bundle ?? null,
+        appliedBundleChanges: bundleChanges?.appliedBundleChanges ?? null,
         initFs: null,
     };
     dispatch(dosSlice.actions.bndReady({}));
@@ -101,6 +103,7 @@ async function doLoadBundle(bundleName: string,
 async function changesProducer(bundleUrl: string, store: Store): Promise<{
     url: string,
     bundle: Uint8Array | null,
+    appliedBundleChanges: Uint8Array | null,
 }> {
     const account = getState(store).auth.account;
     const owner = account?.email ?? "guest";
@@ -119,12 +122,14 @@ async function changesProducer(bundleUrl: string, store: Store): Promise<{
         return {
             url,
             bundle: null,
+            appliedBundleChanges: changes,
         };
     }
 
     return {
         url,
         bundle: changes,
+        appliedBundleChanges: null,
     };
 }
 

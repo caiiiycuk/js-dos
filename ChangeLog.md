@@ -8,6 +8,7 @@ dev
 ---
 
 * Added keyboard.lock() for "Esc" & "Ctrl+W" keys
+* Added UI to download/upload and delete saved games
 
 8.3.16 - 30.04.2015
 -------------------

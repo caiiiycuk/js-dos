@@ -55,6 +55,7 @@ export function DosWindow(props: {
 
             loadedBundle.bundle = null;
             loadedBundle.bundleChanges = null;
+            loadedBundle.appliedBundleChanges = null;
             loadedBundle.initFs = null;
 
             const ci: Promise<CommandInterface> = (async () => {
