@@ -41,6 +41,7 @@ const initialState: {
     haveQuickSave: boolean,
     thinSidebar: boolean,
     pointerLocked: boolean,
+    clickToLockModal: boolean,
 } = {
     hidden: false,
     frame: "none",
@@ -70,6 +71,7 @@ const initialState: {
     haveQuickSave: false,
     thinSidebar: false,
     pointerLocked: false,
+    clickToLockModal: true,
 };
 
 export type UiState = typeof initialState;
@@ -198,6 +200,9 @@ export const uiSlice = createSlice({
         },
         pointerLocked: (state, a: { payload: boolean }) => {
             state.pointerLocked = a.payload;
+        },
+        clickToLockModal: (state, a: { payload: boolean }) => {
+            state.clickToLockModal = a.payload;
         },
     },
     extraReducers: (builder) => {

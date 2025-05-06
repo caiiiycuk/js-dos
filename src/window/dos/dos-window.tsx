@@ -119,19 +119,32 @@ function ClickToLock() {
     const locked = useSelector((state: State) => state.ui.pointerLocked);
     const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
     const mouseSensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
+    const clickToLockModal = useSelector((state: State) => state.ui.clickToLockModal);
     const t = useT();
 
     if (locked || !pointer.canLock || !mouseCapture) {
         return null;
     }
 
-    return <div class="absolute top-0 left-0 w-full h-full flex flex-col items-center
+    if (clickToLockModal) {
+        return <div class="absolute top-0 left-0 w-full h-full flex flex-col items-center
         justify-center pointer-events-none bg-black/70 gap-2 px-4 py-2 text-white text-center">
-        <div class="text-4xl">{t("click_to_lock")}</div>
-        <div class="text-xl">{t("use_esc_key_to_unlock")}</div>
-        <div class="text-xl">{t("use_slider_to_change_sensitivity")}</div>
-        <div class="text-sm">{t("current_sensitivity")}: {mouseSensitivity.toFixed(2)}</div>
-    </div>;
+            <div class="text-4xl">{t("click_to_lock")}</div>
+            <div class="text-xl">{t("use_esc_key_to_unlock")}</div>
+            <div class="text-xl">{t("use_slider_to_change_sensitivity")}</div>
+            <div class="text-sm">{t("current_sensitivity")}: {mouseSensitivity.toFixed(2)}</div>
+        </div>;
+    } else {
+        return <div class="absolute top-6 left-0 w-full pointer-events-none flex flex-row items-center justify-center">
+            <div class="flex flex-col items-center justify-center bg-black/70 gap-2 px-4 py-2 text-white text-center
+                rounded-lg">
+                <div class="text-4xl">{t("click_to_lock")}</div>
+                <div class="text-xl">{t("use_esc_key_to_unlock")}</div>
+                <div class="text-xl">{t("use_slider_to_change_sensitivity")}</div>
+                <div class="text-sm">{t("current_sensitivity")}: {mouseSensitivity.toFixed(2)}</div>
+            </div>
+        </div>;
+    }
 }
 
 function DosRuntime(props: { canvas: HTMLCanvasElement, ci: CommandInterface }) {
@@ -146,7 +159,7 @@ function DosRuntime(props: { canvas: HTMLCanvasElement, ci: CommandInterface }) 
     </>;
 }
 
-let unloadResolveFn = () => {};
+let unloadResolveFn = () => { };
 function Unload(props: { ci: CommandInterface }) {
     const ci = props.ci;
     const t = useT();

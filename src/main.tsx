@@ -404,6 +404,9 @@ function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSeriali
     });
     document.addEventListener("pointerlockchange", () => {
         store.dispatch(uiSlice.actions.pointerLocked(document.pointerLockElement !== null));
+        if (document.pointerLockElement !== null && store.getState().ui.clickToLockModal) {
+            store.dispatch(uiSlice.actions.clickToLockModal(false));
+        }
         if (document.pointerLockElement === null && store.getState().ui.autoSave) {
             apiSave(getState(store) as any, nonSerializableStore, store.dispatch);
         }
