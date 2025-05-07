@@ -45,6 +45,7 @@
           // url: "https://cdn.dos.zone/custom/dos/blood-lowres.jsdos", // blood
           // url: "https://br.cdn.dos.zone/published/br.fuggxt.DisNormal.jsdos",
           // url: "https://br.cdn.dos.zone/published/br.pojmnc.SimTowerupd.jsdos",
+          // url: "https://cdn.dos.zone/custom/dos/gta-mobile.jsdos",
           // dosboxConf: `
           //   [autoexec]
           //   mount c .
@@ -92,10 +93,10 @@
           //     host: "wss://netherlands.dos.zone",
           //   }
           // ],
-          // backendHardware: (backend) => {
-          //  console.log("Hardware backend for", backend);
-          //  return Promise.resolve("ws://127.0.0.1:8888");
-          // },
+          backendHardware: (backend) => {
+           console.log("Hardware backend for", backend);
+           return Promise.resolve("ws://127.0.0.1:8888");
+          },
           // backendHardware: window.backendHardware,
           noNetworking: false,
           // noCloud: true,

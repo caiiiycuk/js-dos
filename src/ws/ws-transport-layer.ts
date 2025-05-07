@@ -48,8 +48,101 @@ const serverMessageValues: ServerMessage[] = [
 const serverMessageEnum: { [num: string]: ServerMessage } = {};
 serverMessageValues.forEach((v, i) => serverMessageEnum[i] = v);
 
-export class WsTransportLayer implements TransportLayer {
+export interface WsSocket {
+    send: (data: Uint8Array) => void;
+    onMessage: (handler: (data: Uint8Array) => void) => void;
+    onError: (handler: (error: Error) => void) => void;
+}
+
+export class WsSocketImpl implements WsSocket {
     socket: WebSocket;
+    constructor(socket: WebSocket) {
+        this.socket = socket;
+    }
+
+    send(data: Uint8Array) {
+        this.socket.send(data);
+    }
+
+    onMessage(handler: (data: Uint8Array) => void) {
+        let version: number | null = null;
+        let payloadLength: number | null = null;
+        let chunkslength = 0;
+        let chunks: Uint8Array[] = [];
+        const onMessage = (payload: Uint8Array) => {
+            if (version === null || version < 7) {
+                if (version === null) {
+                    if (payload.length < 6 || payload[0] !== 1 || readUint32(payload, 1) !== 1) {
+                        console.error("unparsable version message on transport layer, blob size:",
+                            payload.length, " error: too short");
+                        return;
+                    } else {
+                        version = payload[5];
+                    }
+                }
+                handler(payload);
+            } else if (payloadLength === null) {
+                payloadLength = readUint32(payload, 0);
+                chunks.push(payload.slice(4));
+                chunkslength += payload.length - 4;
+            } else {
+                chunks.push(payload);
+                chunkslength += payload.length;
+            }
+
+            if (payloadLength !== null && chunkslength === payloadLength) {
+                const combined = new Uint8Array(payloadLength);
+                let offset = 0;
+                for (const chunk of chunks) {
+                    combined.set(chunk, offset);
+                    offset += chunk.length;
+                }
+                chunks = [];
+                chunkslength = 0;
+                payloadLength = null;
+                handler(combined);
+            }
+        };
+
+        const queue: Blob[] = [];
+        let processing = false;
+        this.socket.addEventListener("message", (ev) => {
+            queue.push(ev.data);
+
+            if (!processing) {
+                processing = true;
+                processQueue()
+                    .catch(console.error)
+                    .finally(() => processing = false);
+            }
+        });
+
+        const processQueue = async () => {
+            while (queue.length > 0) {
+                const blob: Blob = queue.shift()!;
+                const size = blob.size;
+
+                try {
+                    const payload = new Uint8Array(await blob.arrayBuffer());
+                    onMessage(payload);
+                } catch (e: any) {
+                    console.error("unparsable message on transport layer, blob size:", size, " error:", e.message);
+                    console.error(e);
+                }
+            }
+        };
+    }
+
+    onError(handler: (error: Error) => void) {
+        this.socket.addEventListener("error", (e) => {
+            handler(e as any);
+            this.socket.close();
+        });
+    }
+}
+
+export class WsTransportLayer implements TransportLayer {
+    socket: WsSocket;
     sessionId: string = Date.now() + "";
     hardware: Hardware;
     onInit: (version: number) => void = () => {/**/};
@@ -269,7 +362,6 @@ export class WsTransportLayer implements TransportLayer {
                 });
             } break;
             case "ws-unload": {
-                debugger;
                 this.handler("ws-unload", {});
             } break;
             case "ws-sockdrive-open": {
@@ -307,29 +399,13 @@ export class WsTransportLayer implements TransportLayer {
         }
     }
 
-    constructor(socket: WebSocket, onInit: (version: number) => void) {
+    constructor(socket: WsSocket, onInit: (version: number) => void) {
         this.socket = socket;
-        this.socket.addEventListener("error", (e) => {
-            this.handler("ws-err", { tag: "ws", message: (e as any).message ?? "Unknown transport layer error" });
+        this.socket.onError((e) => {
+            this.handler("ws-err", { tag: "ws", message: e.message ?? "Unknown transport layer error" });
             this.handler("ws-exit", {});
-            this.socket.close();
         });
-        const onMessage = async (ev: MessageEvent) => {
-            const blob: Blob = ev.data;
-            const size = blob.size;
-            try {
-                this.onMessage(new Uint8Array(await blob.arrayBuffer()));
-            } catch (e: any) {
-                console.error("unparsable message on transport layer, blob size:", size, " error:", e.message);
-                // happens on unload
-                this.handler("ws-unload", {});
-                this.socket.removeEventListener("message", onMessage);
-                if (this.socket.readyState === WebSocket.OPEN) {
-                    this.socket.close();
-                }
-            }
-        };
-        this.socket.addEventListener("message", onMessage);
+        this.socket.onMessage(this.onMessage.bind(this));
         this.sendMessageToSocket("wc-install");
         this.hardware = (null) as any;
         this.onInit = onInit;
@@ -446,6 +522,9 @@ export class WsTransportLayer implements TransportLayer {
                 writeUint32(payload, range, 4);
                 this.sendMessageToSocket(messageId, payload, new Uint8Array(buffer));
             } break;
+            case "wc-unload": {
+                this.sendMessageToSocket(messageId);
+            } break;
             default: {
                 console.log("Unhandled client message (wc):", name, messageId, props);
             } break;
@@ -477,7 +556,7 @@ export function createWsTransportLayer(url: string, onInit: (version: number) =>
             const onSuccess = () => {
                 clearInterval(inervalId);
                 console.log("Connected to", url);
-                resolve(new WsTransportLayer(ws, onInit));
+                resolve(new WsTransportLayer(new WsSocketImpl(ws), onInit));
             };
 
             ws.addEventListener("error", (error) => {
