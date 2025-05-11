@@ -105,15 +105,15 @@ export class WsSocketImpl implements WsSocket {
             }
         };
 
-        const queue: { 
-            size: number, 
-            buffer: Promise<ArrayBuffer> 
+        const queue: {
+            size: number,
+            buffer: Promise<ArrayBuffer>
         }[] = [];
         let processing = false;
         this.socket.addEventListener("message", (ev) => {
-            queue.push({ 
-                size: ev.data.size, 
-                buffer: ev.data.arrayBuffer() 
+            queue.push({
+                size: ev.data.size,
+                buffer: ev.data.arrayBuffer(),
             });
 
             if (!processing) {
