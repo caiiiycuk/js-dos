@@ -105,10 +105,16 @@ export class WsSocketImpl implements WsSocket {
             }
         };
 
-        const queue: Blob[] = [];
+        const queue: { 
+            size: number, 
+            buffer: Promise<ArrayBuffer> 
+        }[] = [];
         let processing = false;
         this.socket.addEventListener("message", (ev) => {
-            queue.push(ev.data);
+            queue.push({ 
+                size: ev.data.size, 
+                buffer: ev.data.arrayBuffer() 
+            });
 
             if (!processing) {
                 processing = true;
@@ -120,11 +126,10 @@ export class WsSocketImpl implements WsSocket {
 
         const processQueue = async () => {
             while (queue.length > 0) {
-                const blob: Blob = queue.shift()!;
-                const size = blob.size;
+                const { size, buffer } = queue.shift()!;
 
                 try {
-                    const payload = new Uint8Array(await blob.arrayBuffer());
+                    const payload = new Uint8Array(await buffer);
                     onMessage(payload);
                 } catch (e: any) {
                     console.error("unparsable message on transport layer, blob size:", size, " error:", e.message);
