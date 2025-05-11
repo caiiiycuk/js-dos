@@ -4,6 +4,7 @@ import {
 } from "emulators/dist/types/protocol/protocol";
 
 import { readUint32, writeUint32 } from "../player-api";
+import { base91 } from "./base91";
 
 export interface Hardware {
     readConfig(): string;
@@ -552,21 +553,44 @@ export function createWsTransportLayer(url: string, onInit: (version: number) =>
             }
 
             locked = true;
-            const ws = new WebSocket(url);
-            const onSuccess = () => {
+            if (url === "android://") {
                 clearInterval(inervalId);
                 console.log("Connected to", url);
-                resolve(new WsTransportLayer(new WsSocketImpl(ws), onInit));
-            };
+                resolve(new WsTransportLayer(new AndroidWsSocket(), onInit));
+            } else {
+                const ws = new WebSocket(url);
+                const onSuccess = () => {
+                    clearInterval(inervalId);
+                    console.log("Connected to", url);
+                    resolve(new WsTransportLayer(new WsSocketImpl(ws), onInit));
+                };
 
-            ws.addEventListener("error", (error) => {
-                console.error("Can't conect to ", url, error);
-                ws.removeEventListener("open", onSuccess);
-                ws.close();
-                locked = false;
-            });
+                ws.addEventListener("error", (error) => {
+                    console.error("Can't conect to ", url, error);
+                    ws.removeEventListener("open", onSuccess);
+                    ws.close();
+                    locked = false;
+                });
 
-            ws.addEventListener("open", onSuccess);
+                ws.addEventListener("open", onSuccess);
+            }
         }, 1000);
     });
+}
+
+class AndroidWsSocket implements WsSocket {
+    private handler: (data: Uint8Array) => void = () => {/**/};
+    constructor() {
+        (window as any).wsMessage = (encoded: string) => {
+            this.handler(base91.decode(encoded));
+        };
+    }
+    send(data: Uint8Array) {
+        (window as any).android.wcMessage(base91.encode(data));
+    }
+    onMessage(handler: (data: Uint8Array) => void) {
+        this.handler = handler;
+    }
+    onError(_: (error: Error) => void) {
+    }
 }
