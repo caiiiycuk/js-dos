@@ -5,8 +5,6 @@ import { State, useNonSerializableStore } from "../../store";
 import { systemInfo } from "../../host/device";
 import { apiEndpoint } from "../../v8/config";
 
-export const dhry2Bundle = "/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos";
-
 export function Dhry2Results(props: { ci: CommandInterface }) {
     const ci = props.ci;
     const nonSerializableStore = useNonSerializableStore();

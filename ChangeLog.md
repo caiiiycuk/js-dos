@@ -4,11 +4,12 @@ Note that version numbers do not necessarily reflect the amount of changes betwe
 
 Not all changes are documented here. To examine the full set of changes between versions, you can use git to browse the changes between the tags.
 
-dev
----
+8.3.17 - 13.05.2025
+-------------------
 
 * Added keyboard.lock() for "Esc" & "Ctrl+W" keys
 * Added UI to download/upload and delete saved games
+* Disabled cache for dhry2 test program
 
 8.3.16 - 30.04.2015
 -------------------

@@ -16,3 +16,5 @@ export const cancelSubscriptionPage = {
 };
 
 export const actualWsVersion = 5;
+
+export const dhry2Bundle = "/b4b5275904d86a4ab8a20917b2b7e34f0df47bf7.jsdos";
