@@ -20,13 +20,11 @@ export function PreRunWindow() {
 
     return <div class="pre-run-window">
         <Play />
-        <div class="bg-base-200/80 mx-4 my-2 px-8 py-4 flex flex-col gap-2 items-center rounded-xl">
-            <SecretKey />
-            <div class="self-end mt-8 absolute bottom-3">
-                <span class="text-ellipsis overflow-hidden">
-                    js-{JSDOS_VERSION}/emu-{emuVersion.substring(0, emuVersion.indexOf(" "))}
-                </span>
-            </div>
+        <PersonalFrame />
+        <div class="self-end mt-8 fixed bottom-3">
+            <span class="text-ellipsis overflow-hidden">
+                js-{JSDOS_VERSION}/emu-{emuVersion.substring(0, emuVersion.indexOf(" "))}
+            </span>
         </div>
     </div>;
 }
@@ -139,7 +137,7 @@ function Changes() {
 }
 
 let knownToken = "-----";
-function SecretKey() {
+function PersonalFrame() {
     const t = useT();
     const account = useSelector((state: State) => state.auth.account);
     const kiosk = useSelector((state: State) => state.ui.kiosk);
@@ -152,7 +150,7 @@ function SecretKey() {
     const dispatch = useDispatch();
     const store = useStore();
 
-    if (kiosk || noCloud) {
+    if (kiosk) {
         return null;
     }
 
@@ -193,43 +191,47 @@ function SecretKey() {
     }
 
     const dzMark = account?.email === "dz.caiiiycuk@gmail.com";
-    return <div class="mt-4 flex flex-col items-center gap-2">
-        {account === null && t("hello_guest")}
-        {account !== null && <div class={dzMark ? "bg-warning px-2" : ""}>
-            {t("hello") + ", " + (dzMark ? "DOS Zone" : (account.name ?? account.email)) + "!"}
-            <span class="link link-neutral lowercase inline ml-1"
-                onClick={() => {
-                    setToken("");
-                    dispatch(uiSlice.actions.autoStart(false));
-                }}>({t("logout")})</span>
-        </div>}
-        <Changes />
-        <div class="mt-2">
-            {account === null && <>
-                {t("no_cloud_access")}
-                <a href="https://v8.js-dos.com/key"
-                    onClick={fireOpenKey}
-                    target="_blank" class="link link-warning ml-1">{t("key")}</a>
-                &nbsp;{t("no_cloud_access2")}.
+    return <div class="bg-base-200/80 mx-4 my-5 px-8 py-4 flex flex-col gap-2 items-center rounded-xl">
+        <div class="mt-4 flex flex-col items-center gap-2">
+            {account === null && t("hello_guest")}
+            {account !== null && <div class={dzMark ? "bg-warning px-2" : ""}>
+                {t("hello") + ", " + (dzMark ? "DOS Zone" : (account.name ?? account.email)) + "!"}
+                <span class="link link-neutral lowercase inline ml-1"
+                    onClick={() => {
+                        setToken("");
+                        dispatch(uiSlice.actions.autoStart(false));
+                    }}>({t("logout")})</span>
+            </div>}
+            <Changes />
+            {!noCloud && <>
+                <div class="mt-2">
+                    {account === null && <>
+                        {t("no_cloud_access")}
+                        <a href="https://v8.js-dos.com/key"
+                            onClick={fireOpenKey}
+                            target="_blank" class="link link-warning ml-1">{t("key")}</a>
+                        &nbsp;{t("no_cloud_access2")}.
+                    </>}
+                </div>
+                {premium === false && <>
+                    <span class="text-xs">
+                        {t("no_cloud_access3")}
+                        {account !== null && <a href="https://v8.js-dos.com/key"
+                            onClick={fireOpenKey}
+                            target="_blank" class={"link ml-1 lowercase " +
+                                (warnOnPremium ? "" : "link-warning")} >({t("fix")})</a>}
+                    </span>
+                </>}
+                {account === null &&
+                    <div class="-ml-4">
+                        <input maxLength={5} value={token} onChange={(e) => setToken(e.currentTarget.value)}
+                            placeholder="-----"
+                            class={"input input-bordered mt-4 mb-4 text-center w-24 bg-blend-multiply bg-opacity-40" +
+                                (warnOnKey ? " input-warning " : "")}
+                            onClick={() => dispatch(uiSlice.actions.autoStart(false))}></input>
+                    </div>}
             </>}
         </div>
-        {premium === false && <>
-            <span class="text-xs">
-                {t("no_cloud_access3")}
-                {account !== null && <a href="https://v8.js-dos.com/key"
-                    onClick={fireOpenKey}
-                    target="_blank" class={"link ml-1 lowercase " +
-                        (warnOnPremium ? "" : "link-warning")} >({t("fix")})</a>}
-            </span>
-        </>}
-        {account === null &&
-            <div class="-ml-4">
-                <input maxLength={5} value={token} onChange={(e) => setToken(e.currentTarget.value)}
-                    placeholder="-----"
-                    class={"input input-bordered mt-4 mb-4 text-center w-24 bg-blend-multiply bg-opacity-40" +
-                        (warnOnKey ? " input-warning " : "")}
-                    onClick={() => dispatch(uiSlice.actions.autoStart(false))}></input>
-            </div>}
     </div>;
 }
 

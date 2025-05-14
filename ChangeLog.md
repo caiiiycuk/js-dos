@@ -4,6 +4,12 @@ Note that version numbers do not necessarily reflect the amount of changes betwe
 
 Not all changes are documented here. To examine the full set of changes between versions, you can use git to browse the changes between the tags.
 
+8.3.18 - 14.05.2025
+-------------------
+
+* Fix broken UI in noCloud mode
+* Switch to emulators 8.3.6 [dosbox-x 2023.10.06 -> 2025.05.14](https://docs.google.com/document/d/1zx9rEu9sEJxZxZq4ij27Kg-_61yIR5FCGJyHjnXx6RE)
+
 8.3.17 - 13.05.2025
 -------------------
 
