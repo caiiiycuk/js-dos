@@ -103,6 +103,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         no_changes_loaded: "Нет сохранений",
         upload: "Загрузить",
         error_uploading_changes: "Ошибка загрузки сохранений",
+        delete_changes_confirm: "Вы уверены что хотите удалить сохранения?",
     },
     en: {
         click_to_lock: "Click to capture mouse",
@@ -203,6 +204,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         no_changes_loaded: "No changes loaded",
         upload: "Upload",
         error_uploading_changes: "Error uploading changes",
+        delete_changes_confirm: "Are you sure you want to delete saves?",
     },
     pt: {
         click_to_lock: "Clique para capturar o mouse",
@@ -303,6 +305,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         no_changes_loaded: "Nenhuma alteração carregada",
         upload: "Carregar",
         error_uploading_changes: "Erro ao carregar alterações",
+        delete_changes_confirm: "Tem certeza que deseja deletar os salvamentos?",
     },
     ro: {
         click_to_lock: "Faceți clic pentru a captura mouse-ul",
@@ -403,6 +406,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         no_changes_loaded: "Nicio modificare încărcată",
         upload: "Încărcați",
         error_uploading_changes: "Eroare la încărcarea modificărilor",
+        delete_changes_confirm: "Sunteți sigur că doriți să ștergeți modificările?",
     },
 };
 

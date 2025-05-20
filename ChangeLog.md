@@ -4,6 +4,14 @@ Note that version numbers do not necessarily reflect the amount of changes betwe
 
 Not all changes are documented here. To examine the full set of changes between versions, you can use git to browse the changes between the tags.
 
+8.3.19 - 20.05.2025
+-------------------
+
+* Updated emulators to 8.3.7
+* Fixed disk I/O errors from 8.3.18
+* Added Romanian language
+* Added confirmation dialog when deleting saves
+
 8.3.18 - 14.05.2025
 -------------------
 

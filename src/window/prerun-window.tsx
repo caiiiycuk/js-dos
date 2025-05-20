@@ -73,29 +73,31 @@ function Changes() {
                 {t("download")}
             </button>
             <button class="btn btn-ghost btn-xs underline -ml-2" onClick={() => {
-                setBusy(true);
-                idbCache().then(async (cache) => {
-                    await cache.del(changesUrl!);
-                    if (sockdriveChanges !== null) {
-                        await traverseSockdriveChanges(sockdriveChanges, async (url, _persist) => {
-                            const db = await idbSockdrive(url);
-                            await db.del(0 as any);
-                            db.close();
-                        });
-                    }
-                    if (canDoCloudSave(account, null) && changesUrl) {
-                        await fetch(presignDelete + "?bundleUrl=" + encodeURIComponent(changesUrl));
-                    }
-                    await loadBundleFromUrl(bundleUrl!, store);
-                })
-                    .catch((e) => {
-                        console.error(e);
-                        dispatch(uiSlice.actions.showToast({
-                            message: t("error_deleting_changes"),
-                            intent: "error",
-                        }));
+                if (window.confirm(t("delete_changes_confirm"))) {
+                    setBusy(true);
+                    idbCache().then(async (cache) => {
+                        await cache.del(changesUrl!);
+                        if (sockdriveChanges !== null) {
+                            await traverseSockdriveChanges(sockdriveChanges, async (url, _persist) => {
+                                const db = await idbSockdrive(url);
+                                await db.del(0 as any);
+                                db.close();
+                            });
+                        }
+                        if (canDoCloudSave(account, null) && changesUrl) {
+                            await fetch(presignDelete + "?bundleUrl=" + encodeURIComponent(changesUrl));
+                        }
+                        await loadBundleFromUrl(bundleUrl!, store);
                     })
-                    .finally(() => setBusy(false));
+                        .catch((e) => {
+                            console.error(e);
+                            dispatch(uiSlice.actions.showToast({
+                                message: t("error_deleting_changes"),
+                                intent: "error",
+                            }));
+                        })
+                        .finally(() => setBusy(false));
+                }
             }}>
                 {t("delete")}
             </button>
