@@ -408,7 +408,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
 
 const initialLang = navigator.language.startsWith("ru") ? "ru" :
     (navigator.language.startsWith("pt") ? "pt" :
-    (navigator.language.startsWith("ro") ? "ro" : "en"));
+        (navigator.language.startsWith("ro") ? "ro" : "en"));
 
 
 const initialState: {
