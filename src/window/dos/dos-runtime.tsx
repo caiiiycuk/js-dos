@@ -173,17 +173,22 @@ function useStats(ci: CommandInterface): void {
                     };
                     dispatch(dosSlice.actions.stats(dStats));
 
-                    for (const drive of dStats.driveIo) {
-                        const name = drive.url.substring(drive.url.lastIndexOf("/") + 1);
-                        const progress = Math.round(drive.read * 100 / drive.total);
-                        if (progress < 100) {
+                    if (dStats.driveIo.length > 0) {
+                        let message = t("preloading_sockdrive");
+                        let showToast = false;
+                        for (let i = 0; i < dStats.driveIo.length; i++) {
+                            const drive = dStats.driveIo[i];
+                            const progress = Math.min(100, Math.round(drive.read * 100 / drive.preload));
+                            message += " " + (i === 0 ? "C: " : ", D: ") + " " + progress + "%";
+                            showToast = showToast || progress < 100;
+                        };
+                        if (showToast) {
                             dispatch(uiSlice.actions.showToast({
-                                message: t("preloading_sockdrive") + " " + name + " — " + progress + "%",
+                                message,
                                 long: true,
                             }));
-                            break;
                         }
-                    };
+                    }
 
                     prevCycles = stats.cycles;
                     prevNonSkippableSleepCount = stats.nonSkippableSleepCount;
