@@ -6,7 +6,9 @@ export const uploadNamspace = "dzapi";
 export const apiEndpoint = "https://d5dn8hh4ivlobv6682ep.apigw.yandexcloud.net";
 export const presignPut = apiEndpoint + "/presign-put";
 export const presignDelete = apiEndpoint + "/presign-delete";
-export const tokenGet = apiEndpoint + "/token/get";
+
+export const cloudEndpoint = "https://cloud.js-dos.com";
+export const tokenGet = cloudEndpoint + "/token/get";
 
 export const brCdn = "https://br.cdn.dos.zone";
 

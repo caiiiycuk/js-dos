@@ -21,11 +21,9 @@ export function PreRunWindow() {
     return <div class="pre-run-window">
         <Play />
         <PersonalFrame />
-        <div class="self-end mt-8 fixed bottom-3">
-            <span class="text-ellipsis overflow-hidden">
-                js-{JSDOS_VERSION}/emu-{emuVersion.substring(0, emuVersion.indexOf(" "))}
-            </span>
-        </div>
+        <span class="mt-4 bottom-3 text-ellipsis overflow-hidden text-sm text-neutral/80">
+            js-{JSDOS_VERSION}/emu-{emuVersion.substring(0, emuVersion.indexOf(" "))}
+        </span>
     </div>;
 }
 
