@@ -4,6 +4,12 @@ Note that version numbers do not necessarily reflect the amount of changes betwe
 
 Not all changes are documented here. To examine the full set of changes between versions, you can use git to browse the changes between the tags.
 
+8.3.20 - 31.05.2025
+-------------------
+
+* Fixed incorrect toast message when there are no changes to save
+* Fixed issue where persist() functions ignore some updates
+
 8.3.19 - 20.05.2025
 -------------------
 

@@ -57,7 +57,13 @@ export async function apiSave(state: State,
             }
         }
 
-        if (savedInIndexedDb) {
+        if (encodedChanges === null) {
+            dispatch(uiSlice.actions.showToast({
+                message: t("no_changes_to_save"),
+                intent: "warning",
+                long: true,
+            }));
+        } else if (savedInIndexedDb) {
             setTimeout(() => {
                 dispatch(uiSlice.actions.showToast({
                     message: warnText,
