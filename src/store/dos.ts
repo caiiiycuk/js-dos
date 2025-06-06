@@ -27,6 +27,7 @@ export const ImageRenderingValues = <const>["pixelated", "smooth"];
 export type ImageRendering = typeof ImageRenderingValues[number];
 
 export interface EmulatorStats {
+    offscreenCanvas: boolean,
     cyclesPerMs: number,
     nonSkippableSleepPreSec: number,
     sleepPerSec: number,
@@ -52,6 +53,7 @@ const initialState: {
     "bnd-play",
     emuVersion: string,
     worker: boolean,
+    offscreenCanvas: boolean,
     backend: Backend,
     backendLocked: boolean,
     backendHardware: boolean,
@@ -103,6 +105,7 @@ const initialState: {
     mouseCapture: false,
     paused: false,
     stats: {
+        offscreenCanvas: false,
         cyclesPerMs: 0,
         nonSkippableSleepPreSec: 0,
         sleepPerSec: 0,
@@ -199,6 +202,7 @@ const initialState: {
     softKeyboardActiveSymbols: 0,
     softKeyboardActiveLayout: 0,
     noCursor: false,
+    offscreenCanvas: false,
 };
 
 export type DosState = typeof initialState;
@@ -378,6 +382,9 @@ export const dosSlice = createSlice({
         },
         noCursor: (s, a: { payload: boolean }) => {
             s.noCursor = a.payload;
+        },
+        offscreenCanvas: (s, a: { payload: boolean }) => {
+            s.offscreenCanvas = a.payload;
         },
     },
 });

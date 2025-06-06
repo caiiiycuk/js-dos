@@ -35,6 +35,7 @@ export interface DosOptions {
     backendLocked: boolean,
     backendHardware: ((backend: "dosbox" | "dosboxX") => Promise<string | null>),
     workerThread: boolean,
+    offscreenCanvas: boolean,
     mouseCapture: boolean,
     onEvent: (event: DosEvent, arg?: any /* CommandInterface | boolean */) => void,
     ipx: NamedHost[],
@@ -71,6 +72,7 @@ export interface DosProps {
     setBackend(backend: DosOptions["backend"]): void;
     setBackendLocked(locked: boolean): void;
     setWorkerThread(capture: DosOptions["workerThread"]): void;
+    setOffscreenCanvas(offscreenCanvas: DosOptions["offscreenCanvas"]): void;
     setMouseCapture(capture: DosOptions["mouseCapture"]): void;
     setIpx(ipx: DosOptions["ipx"]): void;
     setIpxBackend(backend: string): void;

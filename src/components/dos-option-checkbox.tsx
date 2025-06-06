@@ -95,6 +95,18 @@ export function WorkerCheckbox() {
     />;
 }
 
+export function OffscreenCanvasCheckbox() {
+    const t = useT();
+    const dispatch = useDispatch();
+    const offscreenCanvas = useSelector((state: State) => state.dos.offscreenCanvas);
+    return <Checkbox
+        class="mt-4"
+        label={t("offscreen_canvas")}
+        checked={offscreenCanvas}
+        onChange={(o) => dispatch(dosSlice.actions.offscreenCanvas(o))}
+    />;
+}
+
 export function HardwareCheckbox() {
     const t = useT();
     const dispatch = useDispatch();

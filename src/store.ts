@@ -29,6 +29,7 @@ export interface NonSerializableStore {
     options: Partial<DosOptions>,
     layers: Promise<LayersInstance> | null,
     gl: WebGLRenderingContext | null,
+    offscreenCanvas?: OffscreenCanvas,
 }
 
 export interface DosAction {

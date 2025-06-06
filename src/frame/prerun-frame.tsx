@@ -1,5 +1,6 @@
 import { Editor, HardwareCheckbox, MirroredControls, MobileControls,
     MouseCapture,
+    OffscreenCanvasCheckbox,
     SystemCursor,
     WorkerCheckbox } from "../components/dos-option-checkbox";
 import { BackendSelect, RenderAspectSelect, RenderSelect, ThemeSelect } from "../components/dos-option-select";
@@ -18,6 +19,7 @@ export function PreRunFrame(props: {}) {
         <VolumeSlider />
         <BackendSelect multiline={true} />
         <WorkerCheckbox />
+        <OffscreenCanvasCheckbox />
         <RenderSelect multiline={true} />
         <RenderAspectSelect multiline={true} />
         <HardwareCheckbox />

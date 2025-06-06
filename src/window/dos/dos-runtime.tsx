@@ -17,6 +17,7 @@ import { initLegacyLayersControl } from "../../layers/controls/legacy-layers-con
 import { initLayersControl } from "../../layers/controls/layers-control";
 import { LayersInstance } from "../../layers/instance";
 import { AsyncifyStats } from "emulators/dist/types/protocol/protocol";
+import { offscreenCanvas } from "./render/offscreen";
 
 export function useDosRuntime(canvas: HTMLCanvasElement,
                               ci: CommandInterface): void {
@@ -92,7 +93,9 @@ function useRenderBackend(canvas: HTMLCanvasElement,
     useEffect(() => {
         let unbind = () => { };
 
-        if (renderBackend === "canvas") {
+        if (nonSerializableStore.offscreenCanvas) {
+            unbind = offscreenCanvas(canvas, ci, aspect);
+        } else if (renderBackend === "canvas") {
             unbind = canvasRender(canvas, ci, aspect);
         } else {
             try {
@@ -158,6 +161,7 @@ function useStats(ci: CommandInterface): void {
                 const dtSec = dtMs / 1000;
                 if (dtSec > 0) {
                     const dStats = {
+                        offscreenCanvas: stats.offscreenCanvas ?? false,
                         cyclesPerMs: Math.round((stats.cycles - prevCycles) / dtMs),
                         nonSkippableSleepPreSec: Math.round((stats.nonSkippableSleepCount -
                             prevNonSkippableSleepCount) / dtSec),

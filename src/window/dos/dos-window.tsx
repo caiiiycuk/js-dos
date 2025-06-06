@@ -31,6 +31,7 @@ export function DosWindow(props: {
     const nonSerializableStore = useNonSerializableStore();
     const cursor = pointer.canLock && mouseCapture && !locked ? "cursor-pointer" :
         dosNoCursor ? "cursor-none" : "";
+    const useOffscreenCanvas = useSelector((state: State) => state.dos.offscreenCanvas);
 
     useEffect(() => {
         try {
@@ -71,9 +72,14 @@ export function DosWindow(props: {
                     }
                 };
 
+                if (useOffscreenCanvas) {
+                    nonSerializableStore.offscreenCanvas = canvasRef.current!.transferControlToOffscreen();
+                }
+
                 return (emulators as any)[((backend !== "dosbox" && backend !== "dosboxX") ? "dosbox" : backend) +
                     (worker ? "Worker" : "Direct")](bundles, {
                     token,
+                    canvas: nonSerializableStore.offscreenCanvas,
                 });
             })();
 
@@ -103,7 +109,7 @@ export function DosWindow(props: {
         } catch (e) {
             dispatch(dosSlice.actions.emuError((e as any).message));
         }
-    }, [worker, backend, token]);
+    }, [worker, backend, token, useOffscreenCanvas]);
 
     return <div class="flex flex-col flex-grow h-full overflow-hidden">
         <div class="bg-black h-full flex-grow overflow-hidden relative">

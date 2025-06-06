@@ -189,6 +189,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.volume(volume));
     }
 
+    function setOffscreenCanvas(offscreenCanvas: boolean) {
+        store.dispatch(dosSlice.actions.offscreenCanvas(offscreenCanvas));
+    }
+
     function setKey(key: string | null) {
         if (key === null || key.length !== 5) {
             store.dispatch(authSlice.actions.setAccount(null));
@@ -323,6 +327,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setThinSidebar(options.thinSidebar);
     }
 
+    if (options.offscreenCanvas !== undefined) {
+        setOffscreenCanvas(options.offscreenCanvas);
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -342,6 +350,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setBackend,
         setBackendLocked,
         setWorkerThread,
+        setOffscreenCanvas,
         setMouseCapture,
         setIpx,
         setIpxBackend,

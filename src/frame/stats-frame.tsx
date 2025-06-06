@@ -28,6 +28,10 @@ export function StatsFrame() {
                         <td>{backend + " " + (hardware ? "(WS)" : "(WA)")}</td>
                     </tr>
                     <tr>
+                        <td>Offscreen Canvas</td>
+                        <td>{stats.offscreenCanvas ? "Yes" : "No"}</td>
+                    </tr>
+                    <tr>
                         <td>Uptime</td>
                         <td>{Math.round((Date.now() - startedAt) / 100) / 10} s</td>
                     </tr>
