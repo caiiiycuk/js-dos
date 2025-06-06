@@ -72,8 +72,9 @@ export function DosWindow(props: {
                     }
                 };
 
-                if (useOffscreenCanvas) {
-                    nonSerializableStore.offscreenCanvas = canvasRef.current!.transferControlToOffscreen();
+                if (useOffscreenCanvas && canvasRef.current !== null &&
+                    typeof canvasRef.current.transferControlToOffscreen === "function") {
+                    nonSerializableStore.offscreenCanvas = canvasRef.current.transferControlToOffscreen();
                 }
 
                 return (emulators as any)[((backend !== "dosbox" && backend !== "dosboxX") ? "dosbox" : backend) +
