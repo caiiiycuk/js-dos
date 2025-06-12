@@ -27,6 +27,7 @@ export const ImageRenderingValues = <const>["pixelated", "smooth"];
 export type ImageRendering = typeof ImageRenderingValues[number];
 
 export interface EmulatorStats {
+    glfx: boolean,
     offscreenCanvas: boolean,
     cyclesPerMs: number,
     nonSkippableSleepPreSec: number,
@@ -105,6 +106,7 @@ const initialState: {
     mouseCapture: false,
     paused: false,
     stats: {
+        glfx: false,
         offscreenCanvas: false,
         cyclesPerMs: 0,
         nonSkippableSleepPreSec: 0,

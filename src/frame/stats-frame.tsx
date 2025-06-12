@@ -32,6 +32,10 @@ export function StatsFrame() {
                         <td>{stats.offscreenCanvas ? "Yes" : "No"}</td>
                     </tr>
                     <tr>
+                        <td>Glide GL (3D)</td>
+                        <td>{stats.glfx ? "Yes" : "No"}</td>
+                    </tr>
+                    <tr>
                         <td>Uptime</td>
                         <td>{Math.round((Date.now() - startedAt) / 100) / 10} s</td>
                     </tr>

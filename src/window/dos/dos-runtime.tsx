@@ -161,6 +161,7 @@ function useStats(ci: CommandInterface): void {
                 const dtSec = dtMs / 1000;
                 if (dtSec > 0) {
                     const dStats = {
+                        glfx: stats.glfx ?? false,
                         offscreenCanvas: stats.offscreenCanvas ?? false,
                         cyclesPerMs: Math.round((stats.cycles - prevCycles) / dtMs),
                         nonSkippableSleepPreSec: Math.round((stats.nonSkippableSleepCount -
