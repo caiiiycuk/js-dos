@@ -32,6 +32,7 @@ export function DosWindow(props: {
     const cursor = pointer.canLock && mouseCapture && !locked ? "cursor-pointer" :
         dosNoCursor ? "cursor-none" : "";
     const useOffscreenCanvas = useSelector((state: State) => state.dos.offscreenCanvas);
+    const sockdrivePreload = useSelector((state: State) => state.dos.sockdrivePreload);
 
     useEffect(() => {
         try {
@@ -81,6 +82,7 @@ export function DosWindow(props: {
                     (worker ? "Worker" : "Direct")](bundles, {
                     token,
                     canvas: nonSerializableStore.offscreenCanvas,
+                    sockdrivePreload,
                 });
             })();
 
@@ -110,7 +112,7 @@ export function DosWindow(props: {
         } catch (e) {
             dispatch(dosSlice.actions.emuError((e as any).message));
         }
-    }, [worker, backend, token, useOffscreenCanvas]);
+    }, [worker, backend, token, useOffscreenCanvas, sockdrivePreload]);
 
     return <div class="flex flex-col flex-grow h-full overflow-hidden">
         <div class="bg-black h-full flex-grow overflow-hidden relative">

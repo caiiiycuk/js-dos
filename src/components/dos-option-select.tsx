@@ -6,6 +6,8 @@ import { AnyAction } from "@reduxjs/toolkit";
 import {
     Backend, BackendValues, dosSlice, ImageRendering, ImageRenderingValues, RenderAspect, RenderAspectValues,
     RenderBackend, RenderBackendValues,
+    SockdrivePreload,
+    SockdrivePreloadValues,
 } from "../store/dos";
 import { ThemeValues, Theme, uiSlice } from "../store/ui";
 import { lStorage } from "../host/lstorage";
@@ -44,6 +46,16 @@ export function RenderAspectSelect(props: { multiline?: boolean }) {
         values={[...RenderAspectValues]}
         selector={(state: State) => state.dos.renderAspect}
         dispatch={(newValue: RenderAspect) => dosSlice.actions.renderAspect(newValue)}
+    />;
+}
+
+export function SockdrivePreloadSelect(props: { multiline?: boolean }) {
+    return <OptionSelect
+        label="Sockdrive Preload"
+        multiline={props.multiline}
+        values={[...SockdrivePreloadValues]}
+        selector={(state: State) => state.dos.sockdrivePreload}
+        dispatch={(newValue: SockdrivePreload) => dosSlice.actions.sockdrivePreload(newValue)}
     />;
 }
 

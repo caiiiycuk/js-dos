@@ -3,7 +3,8 @@ import { Editor, HardwareCheckbox, MirroredControls, MobileControls,
     OffscreenCanvasCheckbox,
     SystemCursor,
     WorkerCheckbox } from "../components/dos-option-checkbox";
-import { BackendSelect, RenderAspectSelect, RenderSelect, ThemeSelect } from "../components/dos-option-select";
+import { BackendSelect, RenderAspectSelect, RenderSelect,
+    SockdrivePreloadSelect, ThemeSelect } from "../components/dos-option-select";
 import { MouseSensitiviySlider, ScaleControlsSlider, VolumeSlider } from "../components/dos-option-slider";
 import { Play } from "../window/prerun-window";
 
@@ -24,6 +25,7 @@ export function PreRunFrame(props: {}) {
         <RenderAspectSelect multiline={true} />
         <HardwareCheckbox />
         <Editor />
+        <SockdrivePreloadSelect multiline={true} />
         <ThemeSelect multiline={true} />
     </div>;
 }

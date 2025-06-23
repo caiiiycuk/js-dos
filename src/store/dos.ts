@@ -23,6 +23,9 @@ export const RenderAspectValues = <const>["AsIs", "1/1", "5/4", "4/3", "16/10", 
 export type RenderAspect = typeof RenderAspectValues[number];
 export const FitConstant = 65535;
 
+export const SockdrivePreloadValues = <const>["none", "all", "default"];
+export type SockdrivePreload = typeof SockdrivePreloadValues[number];
+
 export const ImageRenderingValues = <const>["pixelated", "smooth"];
 export type ImageRendering = typeof ImageRenderingValues[number];
 
@@ -86,6 +89,7 @@ const initialState: {
     softKeyboardActiveSymbols: number,
     softKeyboardActiveLayout: number,
     noCursor: boolean,
+    sockdrivePreload: SockdrivePreload,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -205,6 +209,7 @@ const initialState: {
     softKeyboardActiveLayout: 0,
     noCursor: false,
     offscreenCanvas: false,
+    sockdrivePreload: "default",
 };
 
 export type DosState = typeof initialState;
@@ -387,6 +392,9 @@ export const dosSlice = createSlice({
         },
         offscreenCanvas: (s, a: { payload: boolean }) => {
             s.offscreenCanvas = a.payload;
+        },
+        sockdrivePreload: (s, a: { payload: SockdrivePreload }) => {
+            s.sockdrivePreload = a.payload;
         },
     },
 });

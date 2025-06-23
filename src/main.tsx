@@ -331,6 +331,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setOffscreenCanvas(options.offscreenCanvas);
     }
 
+    if (options.sockdrivePreload !== undefined) {
+        store.dispatch(dosSlice.actions.sockdrivePreload(options.sockdrivePreload));
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}

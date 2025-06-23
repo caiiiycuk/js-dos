@@ -2,6 +2,7 @@ export type DosEvent = "emu-ready" | "ci-ready" | "bnd-play" | "open-key" | "ful
 export type ImageRendering = "pixelated" | "smooth";
 export type RenderBackend = "webgl" | "canvas";
 export type RenderAspect = "AsIs" | "1/1" | "5/4" | "4/3" | "16/10" | "16/9" | "Fit";
+export type SockdrivePreload = "none" | "all" | "default";
 
 
 export type InitBundleEntry = Uint8Array;
@@ -61,6 +62,7 @@ export interface DosOptions {
     key: string,
     softFullscreen: boolean,
     thinSidebar: boolean,
+    sockdrivePreload: SockdrivePreload,
 }
 
 export interface DosProps {
