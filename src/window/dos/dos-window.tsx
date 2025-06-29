@@ -6,7 +6,7 @@ import { State, useNonSerializableStore, postJsDosEvent, Store } from "../../sto
 import { useDosRuntime } from "./dos-runtime";
 import { Dhry2Results } from "./dos-dhry2";
 import { createWsTransportLayer } from "../../ws/ws-transport-layer";
-import { actualWsVersion, dhry2Bundle } from "../../v8/config";
+import { actualWsVersion, isDhry2Bundle } from "../../v8/config";
 import { uiSlice } from "../../store/ui";
 import { extractLayersConfig } from "../../layers/controls/layers-config";
 import { pointer } from "./controls/mouse/pointer";
@@ -164,7 +164,7 @@ function DosRuntime(props: { canvas: HTMLCanvasElement, ci: CommandInterface }) 
 
     return <>
         <Unload ci={ci} />
-        {bundle?.endsWith(dhry2Bundle) && <Dhry2Results ci={ci} />}
+        {isDhry2Bundle(bundle) && <Dhry2Results ci={ci} />}
     </>;
 }
 

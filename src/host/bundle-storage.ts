@@ -1,6 +1,6 @@
 import { storageSlice } from "../store/storage";
 import { Account } from "../store/auth";
-import { brCdn, dhry2Bundle } from "../v8/config";
+import { brCdn, isDhry2Bundle } from "../v8/config";
 import { Store, getNonSerializableStore } from "../store";
 import { canDoCloudSave } from "../player-api";
 
@@ -44,7 +44,7 @@ export async function changesFromUrl(url: string, account: Account | null,
 
 export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Array> {
     try {
-        if (!url.endsWith(dhry2Bundle)) {
+        if (!isDhry2Bundle(url)) {
             return await getNonSerializableStore(store).cache.get(url);
         }
     } catch (e: any) {
