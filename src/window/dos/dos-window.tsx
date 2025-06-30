@@ -69,7 +69,10 @@ export function DosWindow(props: {
                                 dispatch(uiSlice.actions.updateWsWarning(true));
                             }
                             console.log("wsServer:", version, " expected:", actualWsVersion);
-                        }), { token });
+                        }), {
+                            token,
+                            sockdrivePreload,
+                        });
                     }
                 };
 
@@ -82,6 +85,7 @@ export function DosWindow(props: {
                     (worker ? "Worker" : "Direct")](bundles, {
                     token,
                     canvas: nonSerializableStore.offscreenCanvas,
+                    audioWorklet: true,
                     sockdrivePreload,
                 });
             })();

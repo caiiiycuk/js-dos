@@ -7,6 +7,7 @@ Not all changes are documented here. To examine the full set of changes between 
 8.3.21 - dev
 ------------
 
+* Added audioWorklet mode
 * Added sockdrive preload modes
 * Added information about GLFX status
 * Support background rendering (disabled by default)
