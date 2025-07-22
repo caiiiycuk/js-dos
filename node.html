@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-05-05T22:51:23.063549154"><script type="text/javascript" >
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-07-22T14:24:06.196978183"><script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -26,13 +26,13 @@
     "url": "https://js-dos.com/",
     "name": "js-dos Help"
 }</script><!-- End Schema.org --></head><body data-id="Node" data-main-title="Node" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="emulators.md|emulators///threejs.md|How-to use"><noscript><div><img src="https://mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="Node" id="Node.md">Node</h1><p id="kcmm78_3">In this tutorial we will run Digger game in Node.js and save game screenshot to the image.</p><p id="kcmm78_4">Let's start with creating empty project:</p><div class="code-block" data-lang="bash">
+<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="Node" id="Node.md">Node</h1><p id="nr0ddd_3">In this tutorial we will run Digger game in Node.js and save game screenshot to the image.</p><p id="nr0ddd_4">Let's start with creating empty project:</p><div class="code-block" data-lang="bash">
 npm init
-</div><p id="kcmm78_6">To run DOS in browser we need to install <a href="https://www.npmjs.com/package/emulators" id="kcmm78_26" data-external="true" rel="noopener noreferrer" target="_blank">emulators</a> package. For creating screenshot we will use <code class="code" id="kcmm78_27">jimp</code> library. So let's install them.</p><div class="code-block" data-lang="bash">
+</div><p id="nr0ddd_6">To run DOS in browser we need to install <a href="https://www.npmjs.com/package/emulators" id="nr0ddd_26" data-external="true" rel="noopener noreferrer" target="_blank">emulators</a> package. For creating screenshot we will use <code class="code" id="nr0ddd_27">jimp</code> library. So let's install them.</p><div class="code-block" data-lang="bash">
 npm install --save emulators jimp
-</div><p id="kcmm78_8">Next we need to download Digger <a href="jsdos-bundle.html" id="kcmm78_28" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publis it on dos.zone">js-dos bundle</a>:</p><div class="code-block" data-lang="bash">
+</div><p id="nr0ddd_8">Next we need to download Digger <a href="jsdos-bundle.html" id="nr0ddd_28" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publis it on dos.zone">js-dos bundle</a>:</p><div class="code-block" data-lang="bash">
 curl https://v8.js-dos.com/bundles/digger.jsdos -o digger.jsdos
-</div><p id="kcmm78_10">Let's create source file <code class="code" id="kcmm78_29">digger.js</code>. We can run it with this command <code class="code" id="kcmm78_30">node digger.js</code></p><p id="kcmm78_11"><span class="control" id="kcmm78_31">Use require to import all libraries</span></p><div class="code-block" data-lang="javascript">
+</div><p id="nr0ddd_10">Let's create source file <code class="code" id="nr0ddd_29">digger.js</code>. We can run it with this command <code class="code" id="nr0ddd_30">node digger.js</code></p><p id="nr0ddd_11"><span class="control" id="nr0ddd_31">Use require to import all libraries</span></p><div class="code-block" data-lang="javascript">
 const fs = require(&quot;fs&quot;);
 const jimp = require(&quot;jimp&quot;);
 
@@ -40,7 +40,7 @@ require(&quot;emulators&quot;);
 
 const emulators = global.emulators;
 emulators.pathPrefix = &quot;./&quot;;
-</div><aside class="prompt" data-type="tip" data-title="" id="kcmm78_14"><p id="kcmm78_32">emulators package does not use export system. It injects itself into global object. <code class="code" id="kcmm78_33">pathPrefix</code> is used to locate wasm files it relative to <code class="code" id="kcmm78_34">require</code> path.</p></aside><p id="kcmm78_15"><span class="control" id="kcmm78_35">Now we need to read contents of <code class="code" id="kcmm78_36">jsdos bundle</code> and start emulation</span></p><div class="code-block" data-lang="javascript">
+</div><aside class="prompt" data-type="tip" data-title="" id="nr0ddd_14"><p id="nr0ddd_32">emulators package does not use export system. It injects itself into global object. <code class="code" id="nr0ddd_33">pathPrefix</code> is used to locate wasm files it relative to <code class="code" id="nr0ddd_34">require</code> path.</p></aside><p id="nr0ddd_15"><span class="control" id="nr0ddd_35">Now we need to read contents of <code class="code" id="nr0ddd_36">jsdos bundle</code> and start emulation</span></p><div class="code-block" data-lang="javascript">
 const bundle = fs.readFileSync(&quot;digger.jsdos&quot;);
 
 emulators
@@ -48,11 +48,11 @@ emulators
     .then((ci) =&gt; {
       // ...
     });
-</div><p id="kcmm78_17">When dos emulation starts, we will receive <a href="command-interface.html" id="kcmm78_37" data-tooltip="The Command Interface is only one object that allows you to communicate with js-dos instance. Once you run some js-dos bundle you will receive Command Interface instance.">Command Interface</a>, we can use it to subscribe on frame updates and to send key/mouse events.</p><div class="code-block" data-lang="javascript">
+</div><p id="nr0ddd_17">When dos emulation starts, we will receive <a href="command-interface.html" id="nr0ddd_37" data-tooltip="The Command Interface is only one object that allows you to communicate with js-dos instance. Once you run some js-dos bundle you will receive Command Interface instance.">Command Interface</a>, we can use it to subscribe on frame updates and to send key/mouse events.</p><div class="code-block" data-lang="javascript">
     ci.events().onFrame((rgb, rgba) =&gt; {
         // use rgb or rgba image data
     });
-</div><aside class="prompt" data-type="warning" data-title="" id="kcmm78_19"><p id="kcmm78_38"><span class="control" id="kcmm78_39">onFrame</span> method have two arguments <code class="code" id="kcmm78_40">rgb</code> and <code class="code" id="kcmm78_41">rgba</code> image data. One of them is always <span class="control" id="kcmm78_42">null</span> while other is <span class="control" id="kcmm78_43">UInt8ClampedArray</span>. It depends on used emulator which data it uses rgb or rgba.</p></aside><p id="kcmm78_20">In the v7 we have frame in RGBA format with transparent alpha, let's fix this and save screenshot:</p><div class="code-block" data-lang="javascript">
+</div><aside class="prompt" data-type="warning" data-title="" id="nr0ddd_19"><p id="nr0ddd_38"><span class="control" id="nr0ddd_39">onFrame</span> method have two arguments <code class="code" id="nr0ddd_40">rgb</code> and <code class="code" id="nr0ddd_41">rgba</code> image data. One of them is always <span class="control" id="nr0ddd_42">null</span> while other is <span class="control" id="nr0ddd_43">UInt8ClampedArray</span>. It depends on used emulator which data it uses rgb or rgba.</p></aside><p id="nr0ddd_20">In the v7 we have frame in RGBA format with transparent alpha, let's fix this and save screenshot:</p><div class="code-block" data-lang="javascript">
     const width = ci.width();
     const height = ci.height();
     
@@ -65,7 +65,7 @@ emulators
             ci.exit();
         });
     });
-</div><p id="kcmm78_23">If you execute <code class="code" id="kcmm78_44">node digger.js</code> it will save the screenshot to <code class="code" id="kcmm78_45">./screenshot.png</code>.</p><p id="kcmm78_24">Full code of <code class="code" id="kcmm78_46">digger.js</code>:</p><div class="code-block" data-lang="javascript">
+</div><p id="nr0ddd_23">If you execute <code class="code" id="nr0ddd_44">node digger.js</code> it will save the screenshot to <code class="code" id="nr0ddd_45">./screenshot.png</code>.</p><p id="nr0ddd_24">Full code of <code class="code" id="nr0ddd_46">digger.js</code>:</p><div class="code-block" data-lang="javascript">
 const fs = require(&quot;fs&quot;);
 const jimp = require(&quot;jimp&quot;);
 
@@ -102,4 +102,4 @@ emulators
         }, 3000);
     })
     .catch(console.error);
-</div><div class="last-modified">21 апреля 2025</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="browser.html" class="navigation-links__prev">Browser</a><a href="save-load.html" class="navigation-links__next">Persist FS</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b776/app.js"></script></body></html>
+</div><div class="last-modified">01 апреля 2025</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="browser.html" class="navigation-links__prev">Browser</a><a href="save-load.html" class="navigation-links__next">Persist FS</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b776/app.js"></script></body></html>
