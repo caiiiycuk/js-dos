@@ -106,6 +106,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         delete_changes_confirm: "Вы уверены что хотите удалить сохранения?",
         no_changes_to_save: "Нет изменений для сохранения",
         offscreen_canvas: "Фоновый рендеринг",
+        special_keys: "Специальные клавиши",
     },
     en: {
         click_to_lock: "Click to capture mouse",
@@ -209,6 +210,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         delete_changes_confirm: "Are you sure you want to delete saves?",
         no_changes_to_save: "No changes to save",
         offscreen_canvas: "Background rendering",
+        special_keys: "Special keys",
     },
     pt: {
         click_to_lock: "Clique para capturar o mouse",
@@ -312,6 +314,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         delete_changes_confirm: "Tem certeza que deseja deletar os salvamentos?",
         no_changes_to_save: "Nenhuma alteração para salvar",
         offscreen_canvas: "Renderização de fundo",
+        special_keys: "Teclas especiais",
     },
     ro: {
         click_to_lock: "Faceți clic pentru a captura mouse-ul",
@@ -415,6 +418,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         delete_changes_confirm: "Sunteți sigur că doriți să ștergeți modificările?",
         no_changes_to_save: "Nu există modificări pentru a fi salvate",
         offscreen_canvas: "Renderizare în fundal",
+        special_keys: "Teclă speciale",
     },
 };
 

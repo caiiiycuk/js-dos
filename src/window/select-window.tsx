@@ -62,9 +62,15 @@ export function SelectWindow() {
                 { url: "https://br.cdn.dos.zone/js-dos/system/system-win311-ru.jsdos", label: "Windows 3.11 (RU)" },
                 { url: "https://br.cdn.dos.zone/js-dos/system/system-win95-v1.jsdos", label: "Windows 95" },
                 { url: "https://br.cdn.dos.zone/js-dos/system/system-win95-v2.jsdos", label: "Windows 95 (DT)" },
-                { url: "https://br.cdn.dos.zone/js-dos/system/system-win95-lock.jsdos", label: "Windows 95 (LOCK, DT)" },
+                {
+                    url: "https://br.cdn.dos.zone/js-dos/system/system-win95-lock.jsdos",
+                    label: "Windows 95 (LOCK, DT)",
+                },
                 { url: "https://br.cdn.dos.zone/js-dos/system/system-win95-ru.jsdos", label: "Windows 95 (RU)" },
-                { url: "https://br.cdn.dos.zone/js-dos/system/system-win95-ru-lock.jsdos", label: "Windows 95 (RU, DT, LOCK)" },
+                {
+                    url: "https://br.cdn.dos.zone/js-dos/system/system-win95-ru-lock.jsdos",
+                    label: "Windows 95 (RU, DT, LOCK)",
+                },
                 { url: "https://br.cdn.dos.zone/js-dos/system/system-win98-v1.jsdos", label: "Windows 98 (DT)" },
             ].map(({ url, label }) => (
                 <a href={url} target="_blank"
