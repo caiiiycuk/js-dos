@@ -77,6 +77,7 @@ export function getPointerState(e: Event, el: HTMLElement, sensitivity: number, 
                 y: evt.offsetY,
                 mX: evt.movementX,
                 mY: evt.movementY,
+                button: evt.button > 0 ? 1 : undefined,
             };
         } else {
             const evt = e as MouseEvent;
