@@ -28,6 +28,8 @@
         };
     }
     const params = new URLSearchParams(location.search);
+    const startIpxServer = params.get("startIpxServer") === "1";
+    const connectIpxAddress = params.get("connectIpxAddress") === "1" ? "js-dos-dev-room" : undefined;
     document.addEventListener("DOMContentLoaded", () => {
       /* eslint-disable max-len */
       /* eslint-enable max-len */
@@ -153,9 +155,14 @@
           onEvent: (event, arg) => {
             console.log("Event", event, arg);
             if (event === "ci-ready") {
-              console.log("js-dos version:", props.getVersion(), "net:", (arg.net() ? arg.net().peerId : "none"));
+              const net = arg.net();
+              console.log("js-dos version:", props.getVersion(), "net:", (net ? net.peerId : "none"));
               window.ci = arg;
-              // props.setFrame("network");
+
+              if (net && startIpxServer) {
+                net.registerAlias("js-dos-dev-room").catch(console);
+              }
+
               // props.setFullScreen(true);
             }
           },
@@ -163,7 +170,8 @@
           // renderBackend: "webgl",
           // imageRendering: "smooth",
           // thinSidebar: true,
-          // startIpxServer: true,
+          startIpxServer,
+          connectIpxAddress,
         });
 
       window.props = props;

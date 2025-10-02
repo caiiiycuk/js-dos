@@ -121,8 +121,21 @@ export function DosWindow(props: {
                             type: "wc-trigger-event",
                             event: "hand_ipx_startserver",
                         });
-                    } else if (connectIpxAddress) {
-                        ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */, connectIpxAddress);
+                    } else if (connectIpxAddress && nonSerializableStore.net) {
+                        if (Number.parseInt(connectIpxAddress)) {
+                            ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */, connectIpxAddress);
+                        } else {
+                            const net = nonSerializableStore.net;
+                            const resolveFn = async () => {
+                                const aliases = await net.queryAliases("=" + connectIpxAddress);
+                                if (aliases.length === 1) {
+                                    ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */, aliases[0].peerId.toString());
+                                } else {
+                                    setTimeout(resolveFn, 100);
+                                }
+                            };
+                            setTimeout(resolveFn, 100);
+                        }
                     }
                     postJsDosEvent(nonSerializableStore, "ci-ready", ci);
                 })
