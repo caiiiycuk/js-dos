@@ -13,11 +13,6 @@ export interface InitFileEntry {
 export type InitFsEntry = InitBundleEntry | InitFileEntry;
 export type InitFs = InitFsEntry | InitFsEntry[];
 
-export interface NamedHost {
-    name: string,
-    host: string,
-}
-
 export interface DosOptions {
     url: string,
     dosboxConf: string,
@@ -39,10 +34,6 @@ export interface DosOptions {
     offscreenCanvas: boolean,
     mouseCapture: boolean,
     onEvent: (event: DosEvent, arg?: any /* CommandInterface | boolean */) => void,
-    ipx: NamedHost[],
-    ipxBackend: string,
-    room: string,
-    server: string,
     fullScreen: boolean,
     autoStart: boolean,
     countDownStart: number,
@@ -51,7 +42,6 @@ export interface DosOptions {
     imageRendering: ImageRendering,
     renderBackend: RenderBackend,
     renderAspect: RenderAspect,
-    noNetworking: boolean,
     noCloud: boolean,
     scaleControls: number,
     mouseSensitivity: number,
@@ -63,6 +53,8 @@ export interface DosOptions {
     softFullscreen: boolean,
     thinSidebar: boolean,
     sockdrivePreload: SockdrivePreload,
+    startIpxServer: boolean,
+    connectIpxAddress: string,
 }
 
 export interface DosProps {
@@ -76,10 +68,6 @@ export interface DosProps {
     setWorkerThread(capture: DosOptions["workerThread"]): void;
     setOffscreenCanvas(offscreenCanvas: DosOptions["offscreenCanvas"]): void;
     setMouseCapture(capture: DosOptions["mouseCapture"]): void;
-    setIpx(ipx: DosOptions["ipx"]): void;
-    setIpxBackend(backend: string): void;
-    setRoom(room: DosOptions["room"]): void;
-    setFrame(frame: "network"): void;
     setBackground(background: string | null): void;
     setFullScreen(fullScreen: boolean): void;
     setAutoStart(autoStart: boolean): void;
@@ -89,7 +77,6 @@ export interface DosProps {
     setImageRendering(rendering: ImageRendering): void;
     setRenderBackend(backend: RenderBackend): void;
     setRenderAspect(aspect: RenderAspect): void;
-    setNoNetworking(noNetworking: boolean): void;
     setNoCloud(noCloud: boolean): void;
     setPaused(pause: boolean): void;
     setScaleControls(scaleControls: number): void;

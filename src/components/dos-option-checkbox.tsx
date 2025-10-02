@@ -107,6 +107,17 @@ export function OffscreenCanvasCheckbox() {
     />;
 }
 
+export function IpxServerCheckbox() {
+    const dispatch = useDispatch();
+    const ipxServer = useSelector((state: State) => state.dos.startIpxServer);
+    return <Checkbox
+        class="mt-4"
+        label="IPX Server"
+        checked={ipxServer}
+        onChange={(o) => dispatch(dosSlice.actions.startIpxServer(o))}
+    />;
+}
+
 export function HardwareCheckbox() {
     const t = useT();
     const dispatch = useDispatch();

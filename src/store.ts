@@ -11,6 +11,7 @@ import { useStore } from "react-redux";
 import { IDB, IDBNoop } from "./host/idb";
 import { InitState, createInitSlice } from "./store/init";
 import { LayersInstance } from "./layers/instance";
+import { Net } from "./humblenet/humblenet";
 
 export interface LoadedBundle {
     bundleUrl: string | null,
@@ -30,6 +31,7 @@ export interface NonSerializableStore {
     layers: Promise<LayersInstance> | null,
     gl: WebGLRenderingContext | null,
     offscreenCanvas?: OffscreenCanvas,
+    net?: Net,
 }
 
 export interface DosAction {

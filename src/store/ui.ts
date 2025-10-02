@@ -10,7 +10,7 @@ export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "eme
 export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "settings" |
-    "editor-conf" | "editor-fs" | "network" |
+    "editor-conf" | "editor-fs" |
     "stats" | "prerun";
 
 const initialState: {
@@ -33,7 +33,6 @@ const initialState: {
     autoSave: boolean,
     kiosk: boolean,
     documentHidden: boolean,
-    noNetworking: boolean,
     noCloud: boolean,
     warnOnPremium: boolean,
     warnOnKey: boolean,
@@ -63,7 +62,6 @@ const initialState: {
     autoSave: false,
     kiosk: false,
     documentHidden: document.hidden ?? false,
-    noNetworking: true,
     noCloud: false,
     warnOnKey: true,
     warnOnPremium: false,
@@ -90,10 +88,6 @@ export const uiSlice = createSlice({
         },
         frameSettings: (state) => {
             state.frame = "settings";
-            state.frameXs = false;
-        },
-        frameNetwork: (state) => {
-            state.frame = "network";
             state.frameXs = false;
         },
         frameStats: (state) => {
@@ -168,9 +162,6 @@ export const uiSlice = createSlice({
         },
         documentHidden: (s, a: { payload: boolean }) => {
             s.documentHidden = a.payload;
-        },
-        noNetworking: (state, a: { payload: boolean }) => {
-            state.noNetworking = a.payload;
         },
         noCloud: (state, a: { payload: boolean }) => {
             state.noCloud = a.payload;

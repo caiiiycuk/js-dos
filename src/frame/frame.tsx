@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 import { State } from "../store";
 import { EditorConf } from "./editor/editor-conf-frame";
 import { EditorFsFrame } from "./editor/editor-fs-frame";
-import { NetworkFrame } from "./network-frame";
 import { SettingsFrame } from "./settings-frame";
 import { StatsFrame } from "./stats-frame";
 import { PreRunFrame } from "./prerun-frame";
@@ -21,7 +20,6 @@ export function Frame(props: {}) {
         { frame === "settings" && <SettingsFrame /> }
         { frame === "editor-conf" && <EditorConf /> }
         { frame === "editor-fs" && <EditorFsFrame /> }
-        { frame === "network" && <NetworkFrame /> }
         { frame === "stats" && <StatsFrame /> }
         { frame === "prerun" && <PreRunFrame /> }
     </div>;

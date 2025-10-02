@@ -10,6 +10,11 @@ export const presignDelete = apiEndpoint + "/presign-delete";
 export const cloudEndpoint = "https://cloud.js-dos.com";
 export const tokenGet = cloudEndpoint + "/token/get";
 
+export const netEndpoint = "wss://net.js-dos.com:444";
+export const netToken = "mp";
+export const netSecret = "32r09j23f";
+
+
 export const brCdn = "https://br.cdn.dos.zone";
 
 export const cancelSubscriptionPage = {

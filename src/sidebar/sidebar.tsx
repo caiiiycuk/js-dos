@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { State } from "../store";
 import { FullscreenButton } from "./fullscreen-button";
-import { NetworkButton } from "./network-button";
 import {
     DosboxConfButton, SettingsButton, CyclesButton, FsButton,
     HddLed,
@@ -17,7 +16,6 @@ export function SideBar(props: {}) {
     const window = useSelector((state: State) => state.ui.window);
     const editor = useSelector((state: State) => state.ui.editor);
     const kiosk = useSelector((state: State) => state.ui.kiosk);
-    const networking = !useSelector((state: State) => state.ui.noNetworking);
     const frame = useSelector((state: State) => state.ui.frame) !== "none";
     const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
     const sidebarThin = useSelector((state: State) => state.ui.thinSidebar);
@@ -48,7 +46,6 @@ export function SideBar(props: {}) {
     return <div class="sidebar">
         {window === "run" && <SaveButtons />}
         {window === "run" && <SoftKeyboardButton />}
-        {window === "run" && networking && <NetworkButton />}
         {editor && window === "prerun" && <DosboxConfButton />}
         {editor && window === "run" && <FsButton />}
         <div class="contentbar"></div>

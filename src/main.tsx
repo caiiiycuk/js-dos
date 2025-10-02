@@ -101,22 +101,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.mouseCapture(capture));
     }
 
-    function setIpx(backends: DosOptions["ipx"]) {
-        store.dispatch(dosSlice.actions.setIpxBackends(backends));
-    }
-
-    function setIpxBackend(backend: string) {
-        store.dispatch(dosSlice.actions.setIpxBackend(backend));
-    }
-
-    function setRoom(room: DosOptions["room"]) {
-        store.dispatch(dosSlice.actions.setRoom(room));
-    }
-
-    function setFrame(frame: "network") {
-        store.dispatch(uiSlice.actions.frameNetwork());
-    }
-
     function setBackground(background: string) {
         store.dispatch(uiSlice.actions.background(background));
     }
@@ -151,10 +135,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
 
     function setRenderAspect(aspect: RenderAspect) {
         store.dispatch(dosSlice.actions.renderAspect(aspect));
-    }
-
-    function setNoNetworking(networking: boolean) {
-        store.dispatch(uiSlice.actions.noNetworking(networking));
     }
 
     function setNoCloud(cloud: boolean) {
@@ -231,18 +211,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setWorkerThread(options.workerThread);
     }
 
-    if (options.ipx) {
-        setIpx(options.ipx);
-    }
-
-    if (options.ipxBackend) {
-        setIpxBackend(options.ipxBackend);
-    }
-
-    if (options.room) {
-        setRoom(options.room);
-    }
-
     if (options.background) {
         setBackground(options.background);
     }
@@ -277,10 +245,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
 
     if (options.renderAspect !== undefined) {
         setRenderAspect(options.renderAspect);
-    }
-
-    if (options.noNetworking !== undefined) {
-        setNoNetworking(options.noNetworking);
     }
 
     if (options.noCloud !== undefined) {
@@ -335,6 +299,14 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.sockdrivePreload(options.sockdrivePreload));
     }
 
+    if (options.startIpxServer === true) {
+        store.dispatch(dosSlice.actions.startIpxServer(true));
+    }
+
+    if (options.connectIpxAddress) {
+        store.dispatch(dosSlice.actions.connectIpxAddress(options.connectIpxAddress));
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -356,10 +328,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setWorkerThread,
         setOffscreenCanvas,
         setMouseCapture,
-        setIpx,
-        setIpxBackend,
-        setRoom,
-        setFrame,
         setBackground,
         setFullScreen,
         setAutoStart,
@@ -369,7 +337,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setImageRendering,
         setRenderBackend,
         setRenderAspect,
-        setNoNetworking,
         setNoCloud,
         setPaused,
         setScaleControls,

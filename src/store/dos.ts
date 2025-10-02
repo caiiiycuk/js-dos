@@ -2,9 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { DosAction, getNonSerializableStore, makeStore, postJsDosEvent } from "../store";
 import { Emulators } from "emulators";
 import { lStorage } from "../host/lstorage";
-import { NamedHost } from "../public/types";
 
-const alphabet = "qwertyuiopasdfghjklzxcvbnm1234567890";
 declare const emulators: Emulators;
 export interface BundleConfig {
     name?: string,
@@ -77,9 +75,7 @@ const initialState: {
     ci: boolean,
     ciStartedAt: number,
     ipx: {
-        backends: NamedHost[],
-        backend: string,
-        room: string,
+        address: string,
         status: "connecting" | "connected" | "disconnected" | "error",
     },
     imageRendering: ImageRendering,
@@ -90,6 +86,8 @@ const initialState: {
     softKeyboardActiveLayout: number,
     noCursor: boolean,
     sockdrivePreload: SockdrivePreload,
+    startIpxServer: boolean,
+    connectIpxAddress: string | null,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -125,12 +123,7 @@ const initialState: {
         driveIo: [],
     },
     ipx: {
-        backends: [{
-            name: "dos.zone",
-            host: "wss://netherlands.dos.zone",
-        }],
-        backend: lStorage.getItem("net.ipx.server") ?? "netherlands",
-        room: randomRoom(),
+        address: "",
         status: "disconnected",
     },
     ci: false,
@@ -210,6 +203,8 @@ const initialState: {
     noCursor: false,
     offscreenCanvas: false,
     sockdrivePreload: "default",
+    startIpxServer: false,
+    connectIpxAddress: null,
 };
 
 export type DosState = typeof initialState;
@@ -337,25 +332,8 @@ export const dosSlice = createSlice({
                 getNonSerializableStore(store).ci?.networkDisconnect(0 /* IPX */);
             });
         },
-        setRoom: (s, a: { payload: string }) => {
-            s.ipx.room = a.payload;
-        },
-        setIpxBackends: (s, a: { payload: NamedHost[] }) => {
-            s.ipx.backends = a.payload;
-            const selected = lStorage.getItem("net.ipx.server");
-            if (selected !== null && a.payload.find((b) => b.name === selected) !== undefined) {
-                s.ipx.backend = selected;
-            } else {
-                s.ipx.backend = a.payload[0].name;
-                lStorage.setItem("net.ipx.server", s.ipx.backend);
-            }
-        },
-        setIpxBackend: (s, a: { payload: string }) => {
-            const backend = s.ipx.backends.find((v) => v.name === a.payload);
-            if (backend) {
-                s.ipx.backend = backend.name;
-                lStorage.setItem("net.ipx.server", a.payload);
-            }
+        setIpxAddress: (s, a: { payload: string }) => {
+            s.ipx.address = a.payload;
         },
         mobileControls: (s, a: { payload: boolean }) => {
             s.mobileControls = a.payload;
@@ -395,6 +373,12 @@ export const dosSlice = createSlice({
         },
         sockdrivePreload: (s, a: { payload: SockdrivePreload }) => {
             s.sockdrivePreload = a.payload;
+        },
+        startIpxServer: (s, a: { payload: boolean }) => {
+            s.startIpxServer = a.payload;
+        },
+        connectIpxAddress: (s, a: { payload: string }) => {
+            s.connectIpxAddress = a.payload;
         },
     },
 });
@@ -441,10 +425,3 @@ function initEmulatorsJs(pathPrefix: string, pathSuffix: string) {
     });
 };
 
-function randomSymbol() {
-    return alphabet[Math.round(Math.random() * (alphabet.length - 1))];
-}
-
-function randomRoom() {
-    return randomSymbol() + randomSymbol() + randomSymbol();
-}

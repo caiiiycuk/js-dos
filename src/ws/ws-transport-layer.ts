@@ -41,7 +41,7 @@ const serverMessageValues: ServerMessage[] = [
     "ws-stdout", "ws-exit", "ws-persist", "ws-sound-init", "ws-sound-push",
     "ws-config", "ws-sync-sleep", "ws-connected", "ws-disconnected",
     "ws-asyncify-stats", "ws-fs-tree", "ws-send-data-chunk",
-    "ws-net-connect", "ws-net-disconnect", "ws-net-send",
+    "ws-net-disconnect", "ws-net-send",
     "ws-sockdrive-open", "ws-sockdrive-ready", "ws-sockdrive-close",
     "ws-sockdrive-load-range", "ws-sockdrive-write-sector",
     "ws-unload",
@@ -152,6 +152,7 @@ export class WsTransportLayer implements TransportLayer {
     sessionId: string = Date.now() + "";
     hardware: Hardware;
     onInit: (version: number) => void = () => {/**/};
+    net = null;
 
     private cycles = 0;
     private version = 0;
@@ -345,16 +346,6 @@ export class WsTransportLayer implements TransportLayer {
                 this.handler("ws-persist", {
                     bundle: payload.length > 0 ? payload[0]! : null,
                 });
-            } break;
-            case "ws-net-connect": {
-                let address = textDecoder.decode(payload[0]!);
-                if (!address.startsWith("wss://") && !address.startsWith("ws://")) {
-                    address = ((
-                        window.location.protocol === "http:" &&
-                        window.location.hostname !== "localhost"
-                    ) ? "ws://" : "wss://") + address;
-                }
-                this.handler("ws-net-connect", { address });
             } break;
             case "ws-net-send": {
                 this.handler("ws-net-send", {

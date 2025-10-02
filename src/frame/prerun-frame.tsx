@@ -1,4 +1,5 @@
-import { Editor, HardwareCheckbox, MirroredControls, MobileControls,
+import { useDispatch, useSelector } from "react-redux";
+import { Editor, HardwareCheckbox, IpxServerCheckbox, MirroredControls, MobileControls,
     MouseCapture,
     OffscreenCanvasCheckbox,
     SystemCursor,
@@ -7,6 +8,8 @@ import { BackendSelect, RenderAspectSelect, RenderSelect,
     SockdrivePreloadSelect, ThemeSelect } from "../components/dos-option-select";
 import { MouseSensitiviySlider, ScaleControlsSlider, VolumeSlider } from "../components/dos-option-slider";
 import { Play } from "../window/prerun-window";
+import { State } from "../store";
+import { dosSlice } from "../store/dos";
 
 export function PreRunFrame(props: {}) {
     return <div class="prerun-frame frame-root items-start pl-4">
@@ -21,11 +24,25 @@ export function PreRunFrame(props: {}) {
         <BackendSelect multiline={true} />
         <WorkerCheckbox />
         <OffscreenCanvasCheckbox />
+        <div class="h-4" />
+        <IpxServerCheckbox />
+        <ConnectToIpxServer />
+        <div class="h-4" />
         <RenderSelect multiline={true} />
         <RenderAspectSelect multiline={true} />
         <HardwareCheckbox />
         <Editor />
         <SockdrivePreloadSelect multiline={true} />
         <ThemeSelect multiline={true} />
+    </div>;
+}
+
+function ConnectToIpxServer() {
+    const dispatch = useDispatch();
+    const ipxAddress = useSelector((state: State) => state.dos.connectIpxAddress);
+    return <div class="flex flex-col mt-4 gap-2">
+        <div>IPX Address</div>
+        <input type="text" class="input input-bordered" value={ipxAddress ?? ""}
+            onChange={(e) => dispatch(dosSlice.actions.connectIpxAddress((e.target as HTMLInputElement).value))} />
     </div>;
 }

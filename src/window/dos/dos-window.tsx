@@ -6,13 +6,14 @@ import { State, useNonSerializableStore, postJsDosEvent, Store } from "../../sto
 import { useDosRuntime } from "./dos-runtime";
 import { Dhry2Results } from "./dos-dhry2";
 import { createWsTransportLayer } from "../../ws/ws-transport-layer";
-import { actualWsVersion, isDhry2Bundle } from "../../v8/config";
+import { actualWsVersion, isDhry2Bundle, netEndpoint, netSecret, netToken } from "../../v8/config";
 import { uiSlice } from "../../store/ui";
 import { extractLayersConfig } from "../../layers/controls/layers-config";
 import { pointer } from "./controls/mouse/pointer";
 import { SoftKeyboard } from "../soft-keyboard";
 import { useT } from "../../i18n";
 import { apiSave } from "../../player-api";
+import { createNet } from "../../humblenet/humblenet";
 
 declare const emulators: Emulators;
 
@@ -33,6 +34,8 @@ export function DosWindow(props: {
         dosNoCursor ? "cursor-none" : "";
     const useOffscreenCanvas = useSelector((state: State) => state.dos.offscreenCanvas);
     const sockdrivePreload = useSelector((state: State) => state.dos.sockdrivePreload);
+    const startIpxServer = useSelector((state: State) => state.dos.startIpxServer);
+    const connectIpxAddress = useSelector((state: State) => state.dos.connectIpxAddress);
 
     useEffect(() => {
         try {
@@ -81,12 +84,23 @@ export function DosWindow(props: {
                     nonSerializableStore.offscreenCanvas = canvasRef.current.transferControlToOffscreen();
                 }
 
+                nonSerializableStore.net?.shutdown();
+                if (startIpxServer || connectIpxAddress) {
+                    nonSerializableStore.net = await createNet(netEndpoint, netToken, netSecret,
+                        (peerId) => console.log("network error for peer", peerId),
+                        () => console.log("network disconnected"),
+                    );
+                } else {
+                    nonSerializableStore.net = undefined;
+                }
+
                 return (emulators as any)[((backend !== "dosbox" && backend !== "dosboxX") ? "dosbox" : backend) +
                     (worker ? "Worker" : "Direct")](bundles, {
                     token,
                     canvas: nonSerializableStore.offscreenCanvas,
                     audioWorklet: true,
                     sockdrivePreload,
+                    net: nonSerializableStore.net,
                 });
             })();
 
@@ -102,6 +116,14 @@ export function DosWindow(props: {
                             .catch((e) => dispatch(dosSlice.actions.emuError(e.message)));
                     }
                     nonSerializableStore.ci = ci;
+                    if (startIpxServer) {
+                        ci.sendBackendEvent({
+                            type: "wc-trigger-event",
+                            event: "hand_ipx_startserver",
+                        });
+                    } else if (connectIpxAddress) {
+                        ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */, connectIpxAddress);
+                    }
                     postJsDosEvent(nonSerializableStore, "ci-ready", ci);
                 })
                 .catch((e) => dispatch(dosSlice.actions.emuError(e.message)));
@@ -116,7 +138,7 @@ export function DosWindow(props: {
         } catch (e) {
             dispatch(dosSlice.actions.emuError((e as any).message));
         }
-    }, [worker, backend, token, useOffscreenCanvas, sockdrivePreload]);
+    }, [worker, backend, token, useOffscreenCanvas, sockdrivePreload, startIpxServer, connectIpxAddress]);
 
     return <div class="flex flex-col flex-grow h-full overflow-hidden">
         <div class="bg-black h-full flex-grow overflow-hidden relative">
