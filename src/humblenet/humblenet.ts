@@ -1,6 +1,7 @@
 import { NonSerializableStore } from "../store";
 
 declare const HumbleNet: () => any;
+declare const HumbleNetImpl: (module: any) => any;
 
 type Peer = {
     peerId: number;
@@ -19,18 +20,25 @@ export type Net = {
     shutdown: () => void;
 }
 
-function injectHumbleNet(nonSerializableStore: NonSerializableStore) {
+async function injectHumbleNet(nonSerializableStore: NonSerializableStore) {
+    const url = (nonSerializableStore.options.pathPrefix ?
+        nonSerializableStore.options.pathPrefix + "jsapi.mjs" :
+        "jsapi.mjs") + (nonSerializableStore.options.pathSuffix ?? "");
+    const wasmUrl = (nonSerializableStore.options.pathPrefix ?
+        nonSerializableStore.options.pathPrefix + "jsapi.wasm" :
+        "jsapi.wasm") + (nonSerializableStore.options.pathSuffix ?? "");
+
+    const jsapi = await (await fetch(url)).text();
+    const jsapiURL = URL.createObjectURL(new Blob([jsapi], { type: "text/javascript" }));
     return new Promise<void>((resolve, reject) => {
         if ((window as any).HumbleNet === undefined) {
             const script = document.createElement("script");
             script.type = "module";
 
-            const url = nonSerializableStore.options.pathPrefix ?
-                nonSerializableStore.options.pathPrefix + "jsapi.mjs" :
-                "jsapi.mjs";
+
             script.text = `
-import HumbleNet from "${url}";
-window.HumbleNet = HumbleNet;
+import HumbleNet from "${jsapiURL}";
+window.HumbleNetImpl = HumbleNet;
 `;
 
 
@@ -38,8 +46,16 @@ window.HumbleNet = HumbleNet;
             document.body.appendChild(script);
 
             const intervalId = setInterval(() => {
-                if ((window as any).HumbleNet !== undefined) {
+                if ((window as any).HumbleNetImpl !== undefined) {
                     clearInterval(intervalId);
+                    URL.revokeObjectURL(jsapiURL);
+
+                    (window as any).HumbleNet = () => {
+                        /* eslint-disable-next-line new-cap */
+                        return HumbleNetImpl({
+                            locateFile: (path: string) => (path.endsWith(".wasm") ? wasmUrl : path),
+                        });
+                    };
                     resolve();
                 }
             }, 1000);
