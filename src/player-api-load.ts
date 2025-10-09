@@ -95,7 +95,7 @@ async function doLoadBundle(bundleName: string,
         bundle,
         bundleChanges: bundleChanges?.bundle ?? null,
         appliedBundleChanges: bundleChanges?.appliedBundleChanges ?? null,
-        initFs: null,
+        initFs: nonSerializableStore.options.initFs ?? null,
     };
     dispatch(dosSlice.actions.bndReady({}));
 }
