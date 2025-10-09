@@ -13,7 +13,7 @@ rm -rf /tmp/$VERSION
 ## Release version
 
 ```
-rm -rf build && \
+rm -rf dist && \
     yarn run vite build --base /latest --sourcemap true --minify terser && \
     aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
     dist s3://jsdos/latest --delete 
@@ -27,7 +27,7 @@ Clear the CDN cache (v8.js-dos.com) in dashboard, pattern:
 ## DOS.Zone (early access) version
 
 ```
-rm -rf build && \
+rm -rf dist && \
     yarn run vite build --base /js-dos/latest --sourcemap true --minify terser && \
     python scripts/brotli-dist.py && \
     aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
