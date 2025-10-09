@@ -1,5 +1,6 @@
-// @ts-ignore
-import HumbleNet from "./jsapi.mjs";
+import { NonSerializableStore } from "../store";
+
+declare const HumbleNet: () => any;
 
 type Peer = {
     peerId: number;
@@ -18,10 +19,43 @@ export type Net = {
     shutdown: () => void;
 }
 
+function injectHumbleNet(nonSerializableStore: NonSerializableStore) {
+    return new Promise<void>((resolve, reject) => {
+        if ((window as any).HumbleNet === undefined) {
+            const script = document.createElement("script");
+            script.type = "module";
+
+            const url = nonSerializableStore.options.pathPrefix ?
+                nonSerializableStore.options.pathPrefix + "jsapi.mjs" :
+                "jsapi.mjs";
+            script.text = `
+import HumbleNet from "${url}";
+window.HumbleNet = HumbleNet;
+`;
+
+
+            script.onerror = reject;
+            document.body.appendChild(script);
+
+            const intervalId = setInterval(() => {
+                if ((window as any).HumbleNet !== undefined) {
+                    clearInterval(intervalId);
+                    resolve();
+                }
+            }, 1000);
+        } else {
+            resolve();
+        }
+    });
+}
+
 export async function createNet(url: string, token: string, secret: string,
                                 onNetworkError: (peerId: number) => void,
                                 onDisconnect: () => void,
+                                nonSerializableStore: NonSerializableStore,
 ) {
+    await injectHumbleNet(nonSerializableStore);
+
     /* eslint-disable-next-line new-cap */
     const lib = await HumbleNet();
     lib.onNetworkError = onNetworkError;

@@ -89,6 +89,7 @@ export function DosWindow(props: {
                     nonSerializableStore.net = await createNet(netEndpoint, netToken, netSecret,
                         (peerId) => console.log("network error for peer", peerId),
                         () => console.log("network disconnected"),
+                        nonSerializableStore,
                     );
                 } else {
                     nonSerializableStore.net = undefined;
@@ -129,7 +130,8 @@ export function DosWindow(props: {
                             const resolveFn = async () => {
                                 const aliases = await net.queryAliases("=" + connectIpxAddress);
                                 if (aliases.length === 1) {
-                                    ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */, aliases[0].peerId.toString());
+                                    ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */,
+                                        aliases[0].peerId.toString());
                                 } else {
                                     setTimeout(resolveFn, 100);
                                 }
