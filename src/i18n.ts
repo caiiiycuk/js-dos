@@ -107,6 +107,10 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         no_changes_to_save: "Нет изменений для сохранения",
         offscreen_canvas: "Фоновый рендеринг",
         special_keys: "Специальные клавиши",
+        create_server: "Создание сервера",
+        connect_to_network: "Подключение к сети",
+        lookup_address: "Поиск адреса",
+        unable_to_connect_to_network: "Не удалось подключиться к сети",
     },
     en: {
         click_to_lock: "Click to capture mouse",
@@ -211,6 +215,10 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         no_changes_to_save: "No changes to save",
         offscreen_canvas: "Background rendering",
         special_keys: "Special keys",
+        create_server: "Creating server",
+        connect_to_network: "Connecting to network",
+        lookup_address: "Looking up address",
+        unable_to_connect_to_network: "Unable to connect to network",
     },
     pt: {
         click_to_lock: "Clique para capturar o mouse",
@@ -315,6 +323,10 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         no_changes_to_save: "Nenhuma alteração para salvar",
         offscreen_canvas: "Renderização de fundo",
         special_keys: "Teclas especiais",
+        create_server: "Criando servidor",
+        connect_to_network: "Conectando à rede",
+        lookup_address: "Procurando endereço",
+        unable_to_connect_to_network: "Não foi possível conectar à rede",
     },
     ro: {
         click_to_lock: "Faceți clic pentru a captura mouse-ul",
@@ -419,6 +431,10 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         no_changes_to_save: "Nu există modificări pentru a fi salvate",
         offscreen_canvas: "Renderizare în fundal",
         special_keys: "Teclă speciale",
+        create_server: "Creare server",
+        connect_to_network: "Conectare la rețea",
+        lookup_address: "Căutare adresă",
+        unable_to_connect_to_network: "Nu s-a putut conecta la rețea",
     },
 };
 

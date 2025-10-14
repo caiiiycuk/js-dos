@@ -41,6 +41,8 @@ const initialState: {
     thinSidebar: boolean,
     pointerLocked: boolean,
     clickToLockModal: boolean,
+    modalText: string | null,
+    modalTextLoading: boolean,
 } = {
     hidden: false,
     frame: "none",
@@ -70,6 +72,8 @@ const initialState: {
     thinSidebar: false,
     pointerLocked: false,
     clickToLockModal: true,
+    modalText: null,
+    modalTextLoading: false,
 };
 
 export type UiState = typeof initialState;
@@ -194,6 +198,14 @@ export const uiSlice = createSlice({
         },
         clickToLockModal: (state, a: { payload: boolean }) => {
             state.clickToLockModal = a.payload;
+        },
+        modalText: (state, a: { payload: { text: string, loading?: boolean } }) => {
+            state.modalText = a.payload.text;
+            state.modalTextLoading = a.payload.loading ?? true;
+        },
+        modalTextClear: (state) => {
+            state.modalText = null;
+            state.modalTextLoading = false;
         },
     },
     extraReducers: (builder) => {

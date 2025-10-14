@@ -36,6 +36,7 @@ export function DosWindow(props: {
     const sockdrivePreload = useSelector((state: State) => state.dos.sockdrivePreload);
     const startIpxServer = useSelector((state: State) => state.dos.startIpxServer);
     const connectIpxAddress = useSelector((state: State) => state.dos.connectIpxAddress);
+    const t = useT();
 
     useEffect(() => {
         try {
@@ -63,6 +64,7 @@ export function DosWindow(props: {
             loadedBundle.appliedBundleChanges = null;
             loadedBundle.initFs = null;
 
+            let serverPeerId: number = 0;
             const ci: Promise<CommandInterface> = (async () => {
                 if (backendHardware && nonSerializableStore.options.backendHardware) {
                     const ws = await nonSerializableStore.options.backendHardware(backend);
@@ -86,11 +88,34 @@ export function DosWindow(props: {
 
                 nonSerializableStore.net?.shutdown();
                 if (startIpxServer || connectIpxAddress) {
+                    const text = startIpxServer ? t("create_server") : t("lookup_address") + ": " + connectIpxAddress;
+                    dispatch(uiSlice.actions.modalText({ text }));
                     nonSerializableStore.net = await createNet(netEndpoint, netToken, netSecret,
                         (peerId) => console.log("network error for peer", peerId),
                         () => console.log("network disconnected"),
                         nonSerializableStore,
                     );
+                    if (connectIpxAddress) {
+                        const net = nonSerializableStore.net;
+                        const parsedId = Number.parseInt(connectIpxAddress);
+                        if (parsedId) {
+                            serverPeerId = Number.parseInt(connectIpxAddress);
+                        } else {
+                            serverPeerId = await new Promise<number>((resolve) => {
+                                const resolveFn = async () => {
+                                    const aliases = await net.queryAliases("=" + connectIpxAddress);
+                                    if (aliases.length === 1) {
+                                        resolve(aliases[0].peerId);
+                                    } else {
+                                        setTimeout(resolveFn, 100);
+                                    }
+                                };
+                                setTimeout(resolveFn, 4);
+                            });
+                        }
+                    }
+
+                    dispatch(uiSlice.actions.modalTextClear());
                 } else {
                     nonSerializableStore.net = undefined;
                 }
@@ -123,21 +148,20 @@ export function DosWindow(props: {
                             event: "hand_ipx_startserver",
                         });
                     } else if (connectIpxAddress && nonSerializableStore.net) {
-                        if (Number.parseInt(connectIpxAddress)) {
-                            ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */, connectIpxAddress);
-                        } else {
-                            const net = nonSerializableStore.net;
-                            const resolveFn = async () => {
-                                const aliases = await net.queryAliases("=" + connectIpxAddress);
-                                if (aliases.length === 1) {
-                                    ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */,
-                                        aliases[0].peerId.toString());
-                                } else {
-                                    setTimeout(resolveFn, 100);
-                                }
-                            };
-                            setTimeout(resolveFn, 100);
-                        }
+                        dispatch(uiSlice.actions.modalText({
+                            text: t("connect_to_network") + ": " + connectIpxAddress,
+                        }));
+                        ci.events().onNetworkConnected(() => {
+                            dispatch(uiSlice.actions.modalTextClear());
+                        });
+                        ci.events().onNetworkDisconnected(() => {
+                            dispatch(uiSlice.actions.modalText({
+                                text: t("unable_to_connect_to_network"),
+                                loading: false,
+                            }));
+                            ci.exit();
+                        });
+                        ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */, serverPeerId.toString());
                     }
                     postJsDosEvent(nonSerializableStore, "ci-ready", ci);
                 })
@@ -160,6 +184,7 @@ export function DosWindow(props: {
             <canvas class={cursor} ref={canvasRef} />
             {canvasRef.current && ci && <DosRuntime canvas={canvasRef.current} ci={ci} />}
             <ClickToLock />
+            <ModalText />
         </div>
         <SoftKeyboard ci={ci} />
     </div>;
@@ -195,6 +220,21 @@ function ClickToLock() {
             </div>
         </div>;
     }
+}
+
+function ModalText() {
+    const modalText = useSelector((state: State) => state.ui.modalText);
+    const modalTextLoading = useSelector((state: State) => state.ui.modalTextLoading);
+
+    if (!modalText) {
+        return null;
+    }
+
+    return <div class="absolute top-0 left-0 w-full h-full flex flex-row items-center
+        justify-center pointer-events-none bg-black/70 gap-2 px-4 py-2 text-white text-center">
+        {modalTextLoading && <span class="loading loading-spinner loading-md"></span>}
+        <div class="text-4xl">{modalText}</div>
+    </div>;
 }
 
 function DosRuntime(props: { canvas: HTMLCanvasElement, ci: CommandInterface }) {
