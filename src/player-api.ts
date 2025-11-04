@@ -96,7 +96,7 @@ export function canDoCloudSave(account: Account | null, changes: Uint8Array | nu
     if (account) {
         return account.email !== undefined &&
             (account.email === "dz.caiiiycuk@gmail.com" || account.premium === true) &&
-            (changes === null || changes.length <= 25 * 1024 * 1024);
+            (changes === null || changes.length <= 30 * 1024 * 1024);
     }
     return false;
 }
