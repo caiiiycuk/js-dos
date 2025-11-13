@@ -126,12 +126,12 @@ export function DosWindow(props: {
 
                 return (emulators as any)[((backend !== "dosbox" && backend !== "dosboxX") ? "dosbox" : backend) +
                     (worker ? "Worker" : "Direct")](bundles, {
-                        token,
-                        canvas: nonSerializableStore.offscreenCanvas,
-                        audioWorklet: true,
-                        sockdrivePreload,
-                        net: nonSerializableStore.net,
-                    });
+                    token,
+                    canvas: nonSerializableStore.offscreenCanvas,
+                    audioWorklet: true,
+                    sockdrivePreload,
+                    net: nonSerializableStore.net,
+                });
             })();
 
             ci

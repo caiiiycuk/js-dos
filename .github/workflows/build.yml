@@ -28,7 +28,7 @@ jobs:
         cache: 'npm'
     - run: npm install -g yarn
     - run: yarn
-    - run: yarn run eslint . --ext ts,tsx --max-warnings 0
+    - run: yarn run eslint src --ext ts,tsx --max-warnings 0
     - run: mkdir -p public/emulators && cp -rv node_modules/emulators/dist/* public/emulators
     - run: NODE_ENV=production yarn run vite build --base /latest --sourcemap true --minify terser
     - run: zip -9r release.zip dist/*
