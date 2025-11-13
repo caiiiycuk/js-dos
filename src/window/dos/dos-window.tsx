@@ -67,17 +67,21 @@ export function DosWindow(props: {
             let serverPeerId: number = 0;
             const ci: Promise<CommandInterface> = (async () => {
                 if (backendHardware && nonSerializableStore.options.backendHardware) {
-                    const ws = await nonSerializableStore.options.backendHardware(backend);
-                    if (ws !== null) {
-                        return emulators.backend(bundles, await createWsTransportLayer(ws, (version) => {
-                            if (version < actualWsVersion) {
-                                dispatch(uiSlice.actions.updateWsWarning(true));
-                            }
-                            console.log("wsServer:", version, " expected:", actualWsVersion);
-                        }), {
-                            token,
-                            sockdrivePreload,
-                        });
+                    if (backend === "dosboxX") {
+                        console.error("backendHardware is not supported for dosboxX");
+                    } else {
+                        const ws = await nonSerializableStore.options.backendHardware(backend);
+                        if (ws !== null) {
+                            return emulators.backend(bundles, await createWsTransportLayer(ws, (version) => {
+                                if (version < actualWsVersion) {
+                                    dispatch(uiSlice.actions.updateWsWarning(true));
+                                }
+                                console.log("wsServer:", version, " expected:", actualWsVersion);
+                            }), {
+                                token,
+                                sockdrivePreload,
+                            });
+                        }
                     }
                 };
 
@@ -122,12 +126,12 @@ export function DosWindow(props: {
 
                 return (emulators as any)[((backend !== "dosbox" && backend !== "dosboxX") ? "dosbox" : backend) +
                     (worker ? "Worker" : "Direct")](bundles, {
-                    token,
-                    canvas: nonSerializableStore.offscreenCanvas,
-                    audioWorklet: true,
-                    sockdrivePreload,
-                    net: nonSerializableStore.net,
-                });
+                        token,
+                        canvas: nonSerializableStore.offscreenCanvas,
+                        audioWorklet: true,
+                        sockdrivePreload,
+                        net: nonSerializableStore.net,
+                    });
             })();
 
             ci
