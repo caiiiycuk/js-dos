@@ -13,6 +13,7 @@ export function Window(props: {}) {
     const background = useSelector((state: State) => state.ui.background);
     const kiosk = useSelector((state: State) => state.ui.kiosk);
     const sidebarThin = useSelector((state: State) => state.ui.thinSidebar);
+    const mouseCapture = useSelector((state: State) => state.dos.mouseCapture);
 
     let windowComponent = <Loading />;
     switch (window) {
@@ -34,10 +35,11 @@ export function Window(props: {}) {
         default: ;
     };
 
+    const slider = window === "run" && mouseCapture;
     let bgClass = "left-12";
-    let widthClass = "w-12";
+    let widthClass = slider ? "w-14" : "w-12";
     if (sidebarThin && !frameOpened) {
-        widthClass = "w-4";
+        widthClass = slider ? "w-6" : "w-4";
         bgClass = "left-4";
     } else if (frameOpened) {
         widthClass = frameXs ? "w-24" : "w-96";
@@ -48,6 +50,7 @@ export function Window(props: {}) {
             style={{ backgroundImage: (background ? "url(" + background + ")" : undefined ) }} />
         <div class="relative flex flex-row h-full w-full items-start justify-start overflow-auto">
             { !kiosk && <div class={widthClass + " flex-shrink-0"}></div> }
+            { kiosk && slider &&<div class={"w-2 flex-shrink-0"}></div> }
             {windowComponent}
         </div>
     </div>;

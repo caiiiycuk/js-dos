@@ -21,6 +21,9 @@ export function SideBar(props: {}) {
     const sidebarThin = useSelector((state: State) => state.ui.thinSidebar);
     const dispatch = useDispatch();
     if (kiosk) {
+        if (window === "run" && mouseCapture) {
+            return <SidebarSlider class="h-full" />;
+        }
         return null;
     }
 
@@ -58,10 +61,10 @@ export function SideBar(props: {}) {
     </div>;
 };
 
-function SidebarSlider(props: {}) {
+function SidebarSlider(props: { class?: string }) {
     const sensitivity = useSelector((state: State) => state.dos.mouseSensitivity);
     const dispatch = useDispatch();
-    return <div class="sidebar-slider">
+    return <div class={"sidebar-slider " + props.class}>
         <Slider
             bgClass="bg-base-300"
             vertical={true}
