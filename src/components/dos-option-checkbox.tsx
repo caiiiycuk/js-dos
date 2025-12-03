@@ -95,6 +95,17 @@ export function WorkerCheckbox() {
     />;
 }
 
+export function JspiCheckbox() {
+    const dispatch = useDispatch();
+    const jspi = useSelector((state: State) => state.dos.jspi);
+    return <Checkbox
+        class="mt-4"
+        label="JSPI"
+        checked={jspi}
+        onChange={(j) => dispatch(dosSlice.actions.dosJspi(j))}
+    />;
+}
+
 export function OffscreenCanvasCheckbox() {
     const t = useT();
     const dispatch = useDispatch();

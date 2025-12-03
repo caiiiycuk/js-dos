@@ -14,6 +14,7 @@ export function StatsFrame() {
     const stats = useSelector((state: State) => state.dos.stats);
     const cycles = Math.round(useSelector((state: State) => state.dos.stats.cyclesPerMs) / 1000);
     const startIpxServer = useSelector((state: State) => state.dos.startIpxServer);
+    const jspi = useSelector((state: State) => state.dos.jspi);
     const dispatch = useDispatch();
     const t = useT();
     return <div class="stats-frame frame-root items-start px-4">
@@ -31,7 +32,7 @@ export function StatsFrame() {
                 <tbody>
                     <tr>
                         <td>Emulation</td>
-                        <td>{backend + " " + (hardware ? "(WS)" : "(WA)")}</td>
+                        <td>{backend + " " + (hardware ? "(WS)" : "(WA)") + (jspi ? " +JSPI" : "")}</td>
                     </tr>
                     <tr>
                         <td>Offscreen Canvas</td>

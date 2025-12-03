@@ -23,6 +23,7 @@ export function DosWindow(props: {
     const [ci, setCi] = useState<CommandInterface | null>(null);
     const token = useSelector((state: State) => state.auth.account?.token) ?? "";
     const worker = useSelector((state: State) => state.dos.worker);
+    const jspi = useSelector((state: State) => state.dos.jspi);
     const backend = useSelector((state: State) => state.dos.backend);
     const backendHardware = useSelector((state: State) => state.dos.backendHardware);
     const dosNoCursor = useSelector((state: State) => state.dos.noCursor);
@@ -124,8 +125,20 @@ export function DosWindow(props: {
                     nonSerializableStore.net = undefined;
                 }
 
-                return (emulators as any)[((backend !== "dosbox" && backend !== "dosboxX") ? "dosbox" : backend) +
-                    (worker ? "Worker" : "Direct")](bundles, {
+                let backendName = "dosbox";
+                switch (backend) {
+                    case "dosboxX":
+                        backendName = "dosboxX";
+                        if (jspi) {
+                            backendName += "Jspi";
+                        }
+                        break;
+                    default:
+                        // dosbox
+                        break;
+                }
+
+                return (emulators as any)[backendName + (worker ? "Worker" : "Direct")](bundles, {
                     token,
                     canvas: nonSerializableStore.offscreenCanvas,
                     audioWorklet: true,

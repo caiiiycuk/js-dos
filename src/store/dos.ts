@@ -55,6 +55,7 @@ const initialState: {
     "bnd-play",
     emuVersion: string,
     worker: boolean,
+    jspi: boolean,
     offscreenCanvas: boolean,
     backend: Backend,
     backendLocked: boolean,
@@ -95,6 +96,7 @@ const initialState: {
     bundle: null,
     config: {},
     worker: lStorage.getItem("worker") !== "false",
+    jspi: lStorage.getItem("jspi") === "true" && typeof (WebAssembly as any).promising === "function",
     backend: (lStorage.getItem("backend") ?? "dosbox") as Backend,
     backendLocked: false,
     backendHardware: (lStorage.getItem("backendHardware") !== "false"),
@@ -245,6 +247,15 @@ export const dosSlice = createSlice({
         dosWorker: (s, a: { payload: boolean }) => {
             s.worker = a.payload;
             lStorage.setItem("worker", s.worker ? "true" : "false");
+        },
+        dosJspi: (s, a: { payload: boolean }) => {
+            if (a.payload && typeof (WebAssembly as any).promising !== "function") {
+                s.jspi = false;
+                alert("JSPI is not supported by this browser");
+            } else {
+                s.jspi = a.payload;
+            }
+            lStorage.setItem("jspi", s.jspi ? "true" : "false");
         },
         dosBackend: (s, a: { payload: Backend }) => {
             s.backend = a.payload as Backend;
