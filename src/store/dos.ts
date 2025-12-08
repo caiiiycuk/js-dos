@@ -95,6 +95,8 @@ const initialState: {
     cpuAuto: boolean,
     cycles: string,
     speed: number,
+    fastForwardOnBoot: boolean,
+    withSockdrive: boolean,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -218,6 +220,8 @@ const initialState: {
     cpuAuto: true,
     cycles: "3000",
     speed: 100,
+    fastForwardOnBoot: false,
+    withSockdrive: false,
 };
 
 export type DosState = typeof initialState;
@@ -416,6 +420,12 @@ export const dosSlice = createSlice({
         },
         speed: (s, a: { payload: number }) => {
             s.speed = a.payload;
+        },
+        fastForwardOnBoot: (s, a: { payload: boolean }) => {
+            s.fastForwardOnBoot = a.payload;
+        },
+        withSockdrive: (s, a: { payload: boolean }) => {
+            s.withSockdrive = a.payload;
         },
     },
 });

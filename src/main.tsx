@@ -307,6 +307,10 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.connectIpxAddress(options.connectIpxAddress));
     }
 
+    if (options.fastForwardOnBoot !== undefined) {
+        store.dispatch(dosSlice.actions.fastForwardOnBoot(options.fastForwardOnBoot));
+    }
+
     render(
         <Provider store={store}>
             {<Ui /> as any}

@@ -32,14 +32,16 @@ export function TurboFrame() {
     const ticksDone = cpuMetrics.ticksDone.reduce((a, b) => a + b, 0) / cpuMetrics.ticksDone.length;
     const ticksScheduled = cpuMetrics.ticksScheduled.reduce((a, b) => a + b, 0) / cpuMetrics.ticksScheduled.length;
     const cpuLoad = ticksDone / ticksScheduled;
+    const speedDisabled = !(cpuAuto && cpuMetrics.cpuAuto);
 
     return <div class="turbo-frame frame-root items-start px-4">
         <div class="flex flex-col gap-4 w-full text-sm">
             {cpuMetrics.emulatorSpeed > 0 && <div class="flex flex-col gap-2 mb-8">
                 <p>Speed</p>
                 <input type="range" min={cpuSpeedMin} max={cpuSpeedMax}
-                    value={speed} step={5} class="range range-sm" onChange={(e: any) =>
-                        dispatch(dosSlice.actions.speed(Number(e.target.value)))} />
+                    value={speed} step={5} class={"range range-sm " + (speedDisabled ? "opacity-20" : "")}
+                    onChange={(e: any) => dispatch(dosSlice.actions.speed(Number(e.target.value)))}
+                    disabled={speedDisabled} />
                 <div class="flex justify-between px-2.5 mt-2 text-xs">
                     <span>|</span>
                     <span>|</span>
@@ -83,6 +85,7 @@ export function TurboFrame() {
                         checked={cpuAuto} disabled={false} onClick={() => {
                             dispatch(dosSlice.actions.cpuAuto(!cpuAuto));
                             if (cpuAuto) {
+                                dispatch(dosSlice.actions.speed(100));
                                 dispatch(dosSlice.actions.cycles(cycles));
                             }
                         }} />

@@ -37,25 +37,55 @@ function useCpuControl(ci: CommandInterface): void {
     const fastForward = useSelector((state: State) => state.dos.fastForward);
     const frameSkip = useSelector((state: State) => state.dos.frameSkip);
     const cpuAuto = useSelector((state: State) => state.dos.cpuAuto);
-    let cycles = parseInt(useSelector((state: State) => state.dos.cycles));
     const speed = useSelector((state: State) => state.dos.speed);
+    const fastForwardOnBoot = useSelector((state: State) => state.dos.fastForwardOnBoot);
+    const withSockdrive = useSelector((state: State) => state.dos.withSockdrive);
+    let cycles = parseInt(useSelector((state: State) => state.dos.cycles));
 
     if (isNaN(cycles) || cycles < 3000 || cycles > 1000000) {
         cycles = 0;
     }
 
     useEffect(() => {
-        ci.sendBackendEvent({
-            type: "wc-trigger-event",
-            event: "fast_forward:" + (fastForward ? "1" : "0"),
-        });
-    }, [ci, fastForward]);
+        if (fastForwardOnBoot && withSockdrive) {
+            const intervalId = setInterval(() => {
+                ci.sendBackendEvent({
+                    type: "wc-trigger-event",
+                    event: "fast_forward:1",
+                });
+            }, 300);
+            setTimeout(() => {
+                clearInterval(intervalId);
+                ci.sendBackendEvent({
+                    type: "wc-trigger-event",
+                    event: "fast_forward:0",
+                });
+            }, 5000);
+        }
+    }, [ci, fastForwardOnBoot, withSockdrive]);
+
     useEffect(() => {
-        ci.sendBackendEvent({
-            type: "wc-trigger-event",
-            event: "frame_skip:" + frameSkip,
-        });
+        if ((ci as any).canSetFastForward) {
+            ci.sendBackendEvent({
+                type: "wc-trigger-event",
+                event: "fast_forward:" + (fastForward ? "1" : "0"),
+            });
+        } else {
+            (ci as any).canSetFastForward = true;
+        }
+    }, [ci, fastForward]);
+
+    useEffect(() => {
+        if ((ci as any).canSetFrameSkip) {
+            ci.sendBackendEvent({
+                type: "wc-trigger-event",
+                event: "frame_skip:" + frameSkip,
+            });
+        } else {
+            (ci as any).canSetFrameSkip = true;
+        }
     }, [ci, frameSkip]);
+
     useEffect(() => {
         if ((ci as any).canAdjustCpu) {
             ci.sendBackendEvent({
@@ -66,6 +96,7 @@ function useCpuControl(ci: CommandInterface): void {
             (ci as any).canAdjustCpu = true;
         }
     }, [ci, cpuAuto]);
+
     useEffect(() => {
         if ((ci as any).canSetCycles && cycles > 0) {
             ci.sendBackendEvent({
@@ -76,11 +107,16 @@ function useCpuControl(ci: CommandInterface): void {
             (ci as any).canSetCycles = true;
         }
     }, [ci, cycles]);
+
     useEffect(() => {
-        ci.sendBackendEvent({
-            type: "wc-trigger-event",
-            event: "speed:" + speed,
-        });
+        if ((ci as any).canSetSpeed) {
+            ci.sendBackendEvent({
+                type: "wc-trigger-event",
+                event: "speed:" + speed,
+            });
+        } else {
+            (ci as any).canSetSpeed = true;
+        }
     }, [ci, speed]);
 }
 

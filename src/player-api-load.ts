@@ -143,6 +143,7 @@ export function applySockdriveOptionsIfNeeded(config: string, dispatch: Dispatch
         dispatch(dosSlice.actions.dosBackendLocked(true));
         dispatch(dosSlice.actions.dosBackend("dosboxX"));
         dispatch(dosSlice.actions.noCursor(true));
+        dispatch(dosSlice.actions.withSockdrive(true));
         dispatch(uiSlice.actions.canSave(config.indexOf(".qcow2") === -1));
     }
 }
