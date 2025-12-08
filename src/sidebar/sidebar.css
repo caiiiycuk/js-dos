@@ -65,4 +65,21 @@
     }
   }
 
+  .turbo {
+    @apply w-8 h-8;
+    background: radial-gradient(circle at 50% 50%, hsl(var(--bc)/50%), hsl(var(--b1)) 90%);
+    border-radius: 50%;
+    border: 2px solid hsl(var(--bc));
+    color: hsl(var(--bc));
+  }
+
+  .turbo:hover, .turbo.sidebar-highlight {
+    @apply border-accent border-2 text-accent;
+  }
+
+  .turbo.used {
+    @apply border-green-300 border-2 text-green-300;
+    background: radial-gradient(circle at 50% 50%, rgb(86 239 172 / 40%), hsl(var(--b1)) 90%);
+  }
+
 }

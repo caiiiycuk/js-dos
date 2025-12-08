@@ -46,14 +46,18 @@ export function FsButton(props: {
 }
 
 export function CyclesButton() {
-    const cycles = Math.round(useSelector((state: State) => state.dos.stats.cyclesPerMs) / 1000);
+    const cpuMetrics = useSelector((state: State) => state.dos.stats.cpuMetrics);
+    let cpuUsage = 1;
+    if (cpuMetrics && cpuMetrics.ticksDone.length > 0) {
+        cpuUsage = cpuMetrics.ticksDone.reduce((a, b) => a + b, 0) /
+            cpuMetrics.ticksScheduled.reduce((a, b) => a + b, 0);
+    }
+
     return <SidebarButton
         class="cycles"
         frame="stats"
         action={uiSlice.actions.frameStats()}>
-        {cycles <= 0 && <><span>~</span><sup>KC</sup></>}
-        {cycles > 0 && cycles <= 1000 && <><span>{cycles}</span><sup>KC</sup></>}
-        {cycles > 0 && cycles > 1000 && <><span>{Math.round(cycles / 1000)}</span><sup><strong>K</strong>KC</sup></>}
+        <span>{Math.round(cpuUsage * 100)}%</span>
     </SidebarButton>;
 }
 
@@ -223,4 +227,19 @@ export function PreRunButton(props: { class?: string }) {
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
     </SidebarButton>;
+}
+
+export function TurboButton() {
+    const highlight = useSelector((state: State) => state.ui.frame) === "turbo";
+    const cpuAuto = useSelector((state: State) => state.dos.cpuAuto);
+    const speed = useSelector((state: State) => state.dos.speed);
+    const fastForward = useSelector((state: State) => state.dos.fastForward);
+    const frameSkip = useSelector((state: State) => state.dos.frameSkip);
+    const turboActive = cpuAuto === false || speed !== 100 || fastForward || frameSkip > 0;
+    const dispatch = useDispatch();
+    return <div class={"sidebar-button turbo flex flex-col items-center justify-center " +
+        (highlight ? "sidebar-highlight " : "") + (turboActive ? " used" : "")}
+    onClick={() => dispatch(highlight ? uiSlice.actions.frameNone() : uiSlice.actions.frameTurbo())}>
+        <p class="font-mono text-micro mt-1">TURBO</p>
+    </div>;
 }

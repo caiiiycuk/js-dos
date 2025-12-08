@@ -85,4 +85,13 @@
       }
     }
   }
+
+  .turbo-frame {
+    .grid2 {
+      @apply grid grid-cols-2 gap-4 w-full;
+    }
+    .value {
+      @apply flex flex-row gap-2 text-sm justify-between;
+    }
+  }
 }

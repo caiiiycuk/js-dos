@@ -22,6 +22,7 @@ import { offscreenCanvas } from "./render/offscreen";
 export function useDosRuntime(canvas: HTMLCanvasElement,
                               ci: CommandInterface): void {
     useLog(ci);
+    useCpuControl(ci);
     useRenderImage(canvas);
     useStats(ci);
     usePause(ci);
@@ -30,6 +31,57 @@ export function useDosRuntime(canvas: HTMLCanvasElement,
     useLayers(canvas, ci);
     useRenderBackend(canvas, ci);
     useAudioBackend(ci);
+}
+
+function useCpuControl(ci: CommandInterface): void {
+    const fastForward = useSelector((state: State) => state.dos.fastForward);
+    const frameSkip = useSelector((state: State) => state.dos.frameSkip);
+    const cpuAuto = useSelector((state: State) => state.dos.cpuAuto);
+    let cycles = parseInt(useSelector((state: State) => state.dos.cycles));
+    const speed = useSelector((state: State) => state.dos.speed);
+
+    if (isNaN(cycles) || cycles < 3000 || cycles > 1000000) {
+        cycles = 0;
+    }
+
+    useEffect(() => {
+        ci.sendBackendEvent({
+            type: "wc-trigger-event",
+            event: "fast_forward:" + (fastForward ? "1" : "0"),
+        });
+    }, [ci, fastForward]);
+    useEffect(() => {
+        ci.sendBackendEvent({
+            type: "wc-trigger-event",
+            event: "frame_skip:" + frameSkip,
+        });
+    }, [ci, frameSkip]);
+    useEffect(() => {
+        if ((ci as any).canAdjustCpu) {
+            ci.sendBackendEvent({
+                type: "wc-trigger-event",
+                event: "auto_adjust:" + (cpuAuto ? "1" : "0"),
+            });
+        } else {
+            (ci as any).canAdjustCpu = true;
+        }
+    }, [ci, cpuAuto]);
+    useEffect(() => {
+        if ((ci as any).canSetCycles && cycles > 0) {
+            ci.sendBackendEvent({
+                type: "wc-trigger-event",
+                event: "cycles:" + cycles,
+            });
+        } else {
+            (ci as any).canSetCycles = true;
+        }
+    }, [ci, cycles]);
+    useEffect(() => {
+        ci.sendBackendEvent({
+            type: "wc-trigger-event",
+            event: "speed:" + speed,
+        });
+    }, [ci, speed]);
 }
 
 function useLog(ci: CommandInterface): void {
@@ -146,7 +198,6 @@ function useStats(ci: CommandInterface): void {
     const t = useT();
 
     useEffect(() => {
-        let prevCycles = 0;
         let prevNonSkippableSleepCount = 0;
         let prevSleepCount = 0;
         let prevSleepTime = KBD_0;
@@ -161,9 +212,10 @@ function useStats(ci: CommandInterface): void {
                 const dtSec = dtMs / 1000;
                 if (dtSec > 0) {
                     const dStats = {
+                        cpuMetrics: stats.cpuMetrics ?? null,
                         glfx: stats.glfx ?? false,
                         offscreenCanvas: stats.offscreenCanvas ?? false,
-                        cyclesPerMs: Math.round((stats.cycles - prevCycles) / dtMs),
+                        cycles: 0,
                         nonSkippableSleepPreSec: Math.round((stats.nonSkippableSleepCount -
                             prevNonSkippableSleepCount) / dtSec),
                         sleepPerSec: Math.round((stats.sleepCount - prevSleepCount) / dtSec),
@@ -195,7 +247,6 @@ function useStats(ci: CommandInterface): void {
                         }
                     }
 
-                    prevCycles = stats.cycles;
                     prevNonSkippableSleepCount = stats.nonSkippableSleepCount;
                     prevSleepCount = stats.sleepCount;
                     prevSleepTime = stats.sleepTime;

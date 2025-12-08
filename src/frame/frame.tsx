@@ -5,6 +5,7 @@ import { EditorFsFrame } from "./editor/editor-fs-frame";
 import { SettingsFrame } from "./settings-frame";
 import { StatsFrame } from "./stats-frame";
 import { PreRunFrame } from "./prerun-frame";
+import { TurboFrame } from "./trubo-frame";
 
 export function Frame(props: {}) {
     const frame = useSelector((state: State) => state.ui.frame);
@@ -22,5 +23,6 @@ export function Frame(props: {}) {
         { frame === "editor-fs" && <EditorFsFrame /> }
         { frame === "stats" && <StatsFrame /> }
         { frame === "prerun" && <PreRunFrame /> }
+        { frame === "turbo" && <TurboFrame /> }
     </div>;
 };

@@ -6,6 +6,7 @@ import {
     HddLed,
     SoftKeyboardButton,
     PreRunButton,
+    TurboButton,
 } from "./sidebar-button";
 import { SaveButtons } from "./save-buttons";
 import { Slider } from "../components/slider";
@@ -53,6 +54,7 @@ export function SideBar(props: {}) {
         {editor && window === "run" && <FsButton />}
         <div class="contentbar"></div>
         {window === "run" && <FullscreenButton />}
+        {window === "run" && <TurboButton />}
         {window === "run" && <CyclesButton />}
         {window === "run" && <HddLed />}
         {window === "prerun" && <PreRunButton />}

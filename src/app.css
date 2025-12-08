@@ -11,6 +11,10 @@
     background: black;
     z-index: 999;
   }
+
+  .text-micro {
+    font-size: 0.4rem;
+  }
 }
 
 .jsdos-rso {

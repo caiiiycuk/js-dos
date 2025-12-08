@@ -28,9 +28,9 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
         pc: null,
     });
 
-    const [stats, setStats] = useState<{ sleepPerSec: number, cyclesPerMs: number }>({
+    const [stats, setStats] = useState<{ sleepPerSec: number, cpuMax: number }>({
         sleepPerSec: 0,
-        cyclesPerMs: 0,
+        cpuMax: 0,
     });
 
     useEffect(() => {
@@ -50,21 +50,19 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
         // listen program outpus for `~>dtime` marker
         let startedAt = Date.now();
         let prevSleepCount = 0;
-        let prevCycles = 0;
         ci.events().onStdout((message) => {
             if (!message.startsWith("dhry2:")) {
                 return;
             }
 
-            ci.asyncifyStats().then((stats) => {
+            ci.asyncifyStats().then((emuStats) => {
                 const dt = Date.now() - startedAt;
                 setStats({
-                    sleepPerSec: Math.round((stats.sleepCount - prevSleepCount) * 1000 / dt),
-                    cyclesPerMs: Math.round((stats.cycles - prevCycles) / dt),
+                    sleepPerSec: Math.round((emuStats.sleepCount - prevSleepCount) * 1000 / dt),
+                    cpuMax: Math.max(emuStats.cpuMetrics?.cpuMax ?? 0, stats.cpuMax),
                 });
                 startedAt = Date.now();
-                prevSleepCount = stats.sleepCount;
-                prevCycles = stats.cycles;
+                prevSleepCount = emuStats.sleepCount;
             });
 
             // eslint-disable-next-line
@@ -126,8 +124,8 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
         <div class="results">
             <div>VAX:</div>
             <div>{results.vax}</div>
-            <div>Cycles p/ms:</div>
-            <div>{stats.cyclesPerMs}</div>
+            <div>Cycles MAX:</div>
+            <div>{stats.cpuMax}</div>
             <div>Sleep p/sec:</div>
             <div>{stats.sleepPerSec}</div>
             <div>Runs:</div>

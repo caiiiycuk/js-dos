@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { DosAction, getNonSerializableStore, makeStore, postJsDosEvent } from "../store";
 import { Emulators } from "emulators";
 import { lStorage } from "../host/lstorage";
+import { CPUMetrics } from "emulators/dist/types/protocol/protocol";
 
 declare const emulators: Emulators;
 export interface BundleConfig {
@@ -28,9 +29,9 @@ export const ImageRenderingValues = <const>["pixelated", "smooth"];
 export type ImageRendering = typeof ImageRenderingValues[number];
 
 export interface EmulatorStats {
+    cpuMetrics: CPUMetrics | null,
     glfx: boolean,
     offscreenCanvas: boolean,
-    cyclesPerMs: number,
     nonSkippableSleepPreSec: number,
     sleepPerSec: number,
     sleepTimePerSec: number,
@@ -89,6 +90,11 @@ const initialState: {
     sockdrivePreload: SockdrivePreload,
     startIpxServer: boolean,
     connectIpxAddress: string | null,
+    fastForward: boolean,
+    frameSkip: number,
+    cpuAuto: boolean,
+    cycles: string,
+    speed: number,
 } = {
     step: "emu-init",
     emuVersion: "-",
@@ -112,7 +118,7 @@ const initialState: {
     stats: {
         glfx: false,
         offscreenCanvas: false,
-        cyclesPerMs: 0,
+        cpuMetrics: null,
         nonSkippableSleepPreSec: 0,
         sleepPerSec: 0,
         sleepTimePerSec: 0,
@@ -207,6 +213,11 @@ const initialState: {
     sockdrivePreload: "default",
     startIpxServer: false,
     connectIpxAddress: null,
+    fastForward: false,
+    frameSkip: 0,
+    cpuAuto: true,
+    cycles: "3000",
+    speed: 100,
 };
 
 export type DosState = typeof initialState;
@@ -390,6 +401,21 @@ export const dosSlice = createSlice({
         },
         connectIpxAddress: (s, a: { payload: string }) => {
             s.connectIpxAddress = a.payload;
+        },
+        fastForward: (s, a: { payload: boolean }) => {
+            s.fastForward = a.payload;
+        },
+        frameSkip: (s, a: { payload: number }) => {
+            s.frameSkip = a.payload;
+        },
+        cpuAuto: (s, a: { payload: boolean }) => {
+            s.cpuAuto = a.payload;
+        },
+        cycles: (s, a: { payload: string }) => {
+            s.cycles = a.payload;
+        },
+        speed: (s, a: { payload: number }) => {
+            s.speed = a.payload;
         },
     },
 });

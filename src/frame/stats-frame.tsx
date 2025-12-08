@@ -12,7 +12,7 @@ export function StatsFrame() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
     const startedAt = useSelector((state: State) => state.dos.ciStartedAt);
     const stats = useSelector((state: State) => state.dos.stats);
-    const cycles = Math.round(useSelector((state: State) => state.dos.stats.cyclesPerMs) / 1000);
+    const cpuMetrics = useSelector((state: State) => state.dos.stats.cpuMetrics);
     const startIpxServer = useSelector((state: State) => state.dos.startIpxServer);
     const jspi = useSelector((state: State) => state.dos.jspi);
     const dispatch = useDispatch();
@@ -47,10 +47,8 @@ export function StatsFrame() {
                         <td>{Math.round((Date.now() - startedAt) / 100) / 10} s</td>
                     </tr>
                     <tr>
-                        <td>Cycles/ms</td>
-                        {cycles <= 0 && <td>~ K</td>}
-                        {cycles > 0 && cycles <= 1000 && <td>{cycles} K</td>}
-                        {cycles > 1000 && <td>{Math.round(cycles / 1000)} KK</td>}
+                        <td>Cycles</td>
+                        <td>{cpuMetrics?.cpuMax ?? "???"}</td>
                     </tr>
                     <tr>
                         <td>NonSkipSleep COUNT/s</td>

@@ -11,7 +11,7 @@ export type Theme = typeof ThemeValues[number];
 
 export type Frame = "none" | "settings" |
     "editor-conf" | "editor-fs" |
-    "stats" | "prerun";
+    "stats" | "prerun" | "turbo";
 
 const initialState: {
     hidden: boolean,
@@ -108,6 +108,10 @@ export const uiSlice = createSlice({
         },
         framePreRun: (state) => {
             state.frame = "prerun";
+            state.frameXs = false;
+        },
+        frameTurbo: (state) => {
+            state.frame = "turbo";
             state.frameXs = false;
         },
         windowSelect: (state) => {
