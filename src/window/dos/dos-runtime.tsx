@@ -47,7 +47,7 @@ function useCpuControl(ci: CommandInterface): void {
     }
 
     useEffect(() => {
-        if (fastForwardOnBoot && withSockdrive) {
+        if (fastForwardOnBoot > 0 && withSockdrive) {
             const intervalId = setInterval(() => {
                 ci.sendBackendEvent({
                     type: "wc-trigger-event",
@@ -60,7 +60,7 @@ function useCpuControl(ci: CommandInterface): void {
                     type: "wc-trigger-event",
                     event: "fast_forward:0",
                 });
-            }, 5000);
+            }, fastForwardOnBoot * 1000);
         }
     }, [ci, fastForwardOnBoot, withSockdrive]);
 

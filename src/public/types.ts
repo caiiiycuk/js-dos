@@ -36,7 +36,7 @@ export interface DosOptions {
     onEvent: (event: DosEvent, arg?: any /* CommandInterface | boolean */) => void,
     fullScreen: boolean,
     autoStart: boolean,
-    fastForwardOnBoot: boolean,
+    fastForwardOnBoot: number,
     countDownStart: number,
     autoSave: boolean,
     kiosk: boolean,
