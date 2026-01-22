@@ -70,6 +70,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         loading_saves: "Загрузка сохранений",
         success: "Успешно",
         success_save: "Сохранено в облаке",
+        warn_save_locally: "Сохранено в браузере",
         warn_save_no_account: "Cохранено в браузере (вы не вошли)",
         warn_save_no_premium: "Cохранено в браузере (нет подписки)",
         warn_save_big_file: "Cохранено в браузере (большой файл)",
@@ -113,6 +114,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         unable_to_connect_to_network: "Не удалось подключиться к сети",
     },
     en: {
+        warn_save_locally: "Saved in browser",
         click_to_lock: "Click to capture mouse",
         use_esc_key_to_unlock: "Use `Esc` to unlock",
         use_slider_to_change_sensitivity: "Use slider on the left to change sensitivity",
@@ -221,6 +223,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         unable_to_connect_to_network: "Unable to connect to network",
     },
     pt: {
+        warn_save_locally: "Salvo no navegador",
         click_to_lock: "Clique para capturar o mouse",
         use_esc_key_to_unlock: "Use `Esc` para desbloquear",
         use_slider_to_change_sensitivity: "Use o slider à esquerda para alterar a sensibilidade",
@@ -329,6 +332,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         unable_to_connect_to_network: "Não foi possível conectar à rede",
     },
     ro: {
+        warn_save_locally: "Salvat în browser",
         click_to_lock: "Faceți clic pentru a captura mouse-ul",
         use_esc_key_to_unlock: "Folosește `Esc` pentru a debloca",
         use_slider_to_change_sensitivity: "Folosește cursorul din stânga pentru a schimba sensibilitatea",
@@ -437,6 +441,7 @@ const translations: { [lang: string]: { [key: string]: string } } = {
         unable_to_connect_to_network: "Nu s-a putut conecta la rețea",
     },
     zhs: {
+        warn_save_locally: "已保存到浏览器",
         click_to_lock: "单击捕获鼠标",
         use_esc_key_to_unlock: "按下 `Esc` 键解锁",
         use_slider_to_change_sensitivity: "拖动左侧的滑块调整灵敏度.",

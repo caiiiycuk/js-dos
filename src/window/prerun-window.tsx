@@ -1,17 +1,15 @@
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { dosSlice } from "../store/dos";
-import { postJsDosEvent, State, useNonSerializableStore } from "../store";
+import { State, useNonSerializableStore } from "../store";
 import { useT } from "../i18n";
 import { uiSlice } from "../store/ui";
 import { Emulators } from "emulators";
 import { useEffect, useState } from "preact/hooks";
-import { authSlice, loadAccount } from "../store/auth";
 import { loadBundleFromUrl } from "../player-api-load";
 import { downloadArrayToFs } from "../download-file";
 import { idbCache, idbSockdrive } from "../host/idb";
 import { uploadFile } from "./file-input";
-import { apiSave, canDoCloudSave, traverseSockdriveChanges } from "../player-api";
-import { presignDelete } from "../v8/config";
+import { apiSave, traverseSockdriveChanges } from "../player-api";
 
 declare const emulators: Emulators;
 
@@ -20,8 +18,8 @@ export function PreRunWindow() {
 
     return <div class="pre-run-window">
         <Play />
-        <PersonalFrame />
-        <span class="mt-4 bottom-3 text-ellipsis overflow-hidden text-sm text-neutral/80">
+        <ChangesFrame />
+        <span class="mt-4 bottom-3 text-ellipsis overflow-hidden text-sm text-neutral-content/50">
             js-{JSDOS_VERSION}/emu-{emuVersion.substring(0, emuVersion.indexOf(" "))}
         </span>
     </div>;
@@ -36,7 +34,6 @@ function Changes() {
     const sockdriveChanges = nonSerializableStore.loadedBundle?.appliedBundleChanges ?? null;
     const bundleChanges = nonSerializableStore.loadedBundle?.bundleChanges ?? sockdriveChanges;
     const haveChanges = bundleChanges !== null;
-    const account = useSelector((state: State) => state.auth.account);
     const store = useStore();
     const dispatch = useDispatch();
 
@@ -82,8 +79,8 @@ function Changes() {
                                 db.close();
                             });
                         }
-                        if (canDoCloudSave(account, null) && changesUrl) {
-                            await fetch(presignDelete + "?bundleUrl=" + encodeURIComponent(changesUrl));
+                        if (nonSerializableStore.options.fsChanges?.delete && changesUrl) {
+                            await nonSerializableStore.options.fsChanges.delete(changesUrl);
                         }
                         await loadBundleFromUrl(bundleUrl!, store);
                     })
@@ -136,101 +133,15 @@ function Changes() {
     </div>;
 }
 
-let knownToken = "-----";
-function PersonalFrame() {
-    const t = useT();
-    const account = useSelector((state: State) => state.auth.account);
+function ChangesFrame() {
     const kiosk = useSelector((state: State) => state.ui.kiosk);
-    const noCloud = useSelector((state: State) => state.ui.noCloud);
-    const [token, stateSetToken] = useState<string>(account?.token ?? "");
-    const premium = (account?.premium ?? false);
-    const nonSerializableStore = useNonSerializableStore();
-    const warnOnKey = useSelector((state: State) => state.ui.warnOnKey);
-    const warnOnPremium = useSelector((state: State) => state.ui.warnOnPremium);
-    const dispatch = useDispatch();
-    const store = useStore();
-
     if (kiosk) {
         return null;
     }
 
-    function setToken(token: string) {
-        if (token === knownToken) {
-            return;
-        }
-
-        dispatch(uiSlice.actions.warnOnKey(false));
-        dispatch(uiSlice.actions.warnOnPremium(false));
-
-        knownToken = token;
-        stateSetToken(token);
-        loadAccount(token)
-            .then(({ token, account }) => {
-                if (token === knownToken) {
-                    dispatch(authSlice.actions.setAccount(account));
-                    if (account !== null && nonSerializableStore.options.url) {
-                        loadBundleFromUrl(nonSerializableStore.options.url, store).catch((e) => {
-                            store.dispatch(dosSlice.actions.bndError(e.message));
-                        });
-                    } else if (account === null && token.length === 5) {
-                        stateSetToken("");
-                    }
-                }
-            }).catch(console.error);
-    }
-
-    useEffect(() => {
-        loadAccount(token).then(({ token, account }) => {
-            dispatch(authSlice.actions.setAccount(account));
-        });
-    }, []);
-
-    function fireOpenKey() {
-        dispatch(uiSlice.actions.autoStart(false));
-        postJsDosEvent(nonSerializableStore, "open-key");
-    }
-
-    const dzMark = account?.email === "dz.caiiiycuk@gmail.com";
-    return <div class="bg-base-200/80 mx-4 my-5 px-8 py-4 flex flex-col gap-2 items-center rounded-xl">
+    return <div class="bg-base-200/80 mx-4 my-5 px-8 pt-4 pb-6 flex flex-col gap-2 items-center rounded-xl">
         <div class="mt-4 flex flex-col items-center gap-2">
-            {account === null && t("hello_guest")}
-            {account !== null && <div class={dzMark ? "bg-warning px-2" : ""}>
-                {t("hello") + ", " + (dzMark ? "DOS Zone" : (account.name ?? account.email)) + "!"}
-                <span class="link link-neutral lowercase inline ml-1"
-                    onClick={() => {
-                        setToken("");
-                        dispatch(uiSlice.actions.autoStart(false));
-                    }}>({t("logout")})</span>
-            </div>}
             <Changes />
-            {!noCloud && <>
-                <div class="mt-2">
-                    {account === null && <>
-                        {t("no_cloud_access")}
-                        <a href="https://v8.js-dos.com/key"
-                            onClick={fireOpenKey}
-                            target="_blank" class="link link-warning ml-1">{t("key")}</a>
-                        &nbsp;{t("no_cloud_access2")}.
-                    </>}
-                </div>
-                {premium === false && <>
-                    <span class="text-xs">
-                        {t("no_cloud_access3")}
-                        {account !== null && <a href="https://v8.js-dos.com/key"
-                            onClick={fireOpenKey}
-                            target="_blank" class={"link ml-1 lowercase " +
-                                (warnOnPremium ? "" : "link-warning")} >({t("fix")})</a>}
-                    </span>
-                </>}
-                {account === null &&
-                    <div class="-ml-4">
-                        <input maxLength={5} value={token} onChange={(e) => setToken(e.currentTarget.value)}
-                            placeholder="-----"
-                            class={"input input-bordered mt-4 mb-4 text-center w-24 bg-blend-multiply bg-opacity-40" +
-                                (warnOnKey ? " input-warning " : "")}
-                            onClick={() => dispatch(uiSlice.actions.autoStart(false))}></input>
-                    </div>}
-            </>}
         </div>
     </div>;
 }

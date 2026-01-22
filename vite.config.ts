@@ -5,7 +5,7 @@ import preact from "@preact/preset-vite";
 export default defineConfig({
     plugins: [preact()],
     server: {
-        port: 3000,
+        port: 80,
         host: "0.0.0.0",
         cors: true,
         allowedHosts: ["test.js-dos.com"],

@@ -21,7 +21,6 @@ export function DosWindow(props: {
 }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [ci, setCi] = useState<CommandInterface | null>(null);
-    const token = useSelector((state: State) => state.auth.account?.token) ?? "";
     const worker = useSelector((state: State) => state.dos.worker);
     const jspi = useSelector((state: State) => state.dos.jspi);
     const backend = useSelector((state: State) => state.dos.backend);
@@ -79,7 +78,6 @@ export function DosWindow(props: {
                                 }
                                 console.log("wsServer:", version, " expected:", actualWsVersion);
                             }), {
-                                token,
                                 sockdrivePreload,
                             });
                         }
@@ -139,7 +137,6 @@ export function DosWindow(props: {
                 }
 
                 return (emulators as any)[backendName + (worker ? "Worker" : "Direct")](bundles, {
-                    token,
                     canvas: nonSerializableStore.offscreenCanvas,
                     audioWorklet: true,
                     sockdrivePreload,
@@ -194,7 +191,7 @@ export function DosWindow(props: {
         } catch (e) {
             dispatch(dosSlice.actions.emuError((e as any).message));
         }
-    }, [worker, backend, token, useOffscreenCanvas, sockdrivePreload, startIpxServer, connectIpxAddress]);
+    }, [worker, backend, useOffscreenCanvas, sockdrivePreload, startIpxServer, connectIpxAddress]);
 
     return <div class="flex flex-col flex-grow h-full overflow-hidden">
         <div class="bg-black h-full flex-grow overflow-hidden relative">

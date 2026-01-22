@@ -43,24 +43,29 @@ export interface DosOptions {
     imageRendering: ImageRendering,
     renderBackend: RenderBackend,
     renderAspect: RenderAspect,
-    noCloud: boolean,
     scaleControls: number,
     mouseSensitivity: number,
     noCursor: boolean,
     softKeyboardLayout: string[] | string[][][],
     softKeyboardSymbols: {[key: string]: string}[],
     volume: number,
-    key: string,
     softFullscreen: boolean,
     thinSidebar: boolean,
     sockdrivePreload: SockdrivePreload,
     startIpxServer: boolean,
     connectIpxAddress: string,
+    fsChanges: {
+        local: boolean,
+        urlToKey?: (url: string) => Promise<string>,
+        pull?: (key: string) => Promise<Uint8Array | null>;
+        push?: (key: string, data: Uint8Array) => Promise<void>;
+        delete?: (key: string) => Promise<void>;
+    },
 }
 
 export interface DosProps {
     getVersion(): [string, string];
-    getToken(): string | null;
+    getLocalChanges(key: string): Promise<Uint8Array | null>;
 
     setTheme(theme: DosOptions["theme"]): void;
     setLang(lang: DosOptions["lang"]): void;
@@ -86,7 +91,6 @@ export interface DosProps {
     setSoftKeyboardLayout(layout: string[] | string[][][]): void;
     setSoftKeyboardSymbols(symbols: {[key: string]: string}[]): void;
     setVolume(volume: number): void;
-    setKey(key: string | null): void;
     setSoftFullscreen(softFullscreen: boolean): void;
     setThinSidebar(thinSidebar: boolean): void;
     save(): Promise<boolean>;

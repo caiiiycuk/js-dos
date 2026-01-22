@@ -17,7 +17,6 @@ import { NonSerializableStore, State, Store, getNonSerializableStore,
     getState,
     makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
 import { apiSave } from "./player-api";
-import { authSlice, loadAccount } from "./store/auth";
 
 export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
@@ -173,16 +172,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.offscreenCanvas(offscreenCanvas));
     }
 
-    function setKey(key: string | null) {
-        if (key === null || key.length !== 5) {
-            store.dispatch(authSlice.actions.setAccount(null));
-        } else {
-            loadAccount(key).then(({ account }) => {
-                store.dispatch(authSlice.actions.setAccount(account));
-            }).catch(console.error);
-        }
-    }
-
     function setSoftFullscreen(softFullscreen: boolean) {
         store.dispatch(uiSlice.actions.softFullscreen(softFullscreen));
     }
@@ -247,10 +236,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setRenderAspect(options.renderAspect);
     }
 
-    if (options.noCloud !== undefined) {
-        setNoCloud(options.noCloud);
-    }
-
     if (options.scaleControls !== undefined) {
         setScaleControls(options.scaleControls);
     }
@@ -273,10 +258,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
 
     if (options.volume !== undefined) {
         setVolume(options.volume);
-    }
-
-    if (options.key !== undefined) {
-        setKey(options.key);
     }
 
     if (options.backendHardware !== undefined) {
@@ -322,8 +303,8 @@ export const Dos: DosFn = (element: HTMLDivElement,
         getVersion: () => {
             return [JSDOS_VERSION, store.getState().dos.emuVersion];
         },
-        getToken: () => {
-            return getState(store).auth.account?.token ?? null;
+        getLocalChanges: (key: string) => {
+            return nonSerializableStore.cache.get(key).catch(() => null);
         },
         setTheme,
         setLang,
@@ -349,7 +330,6 @@ export const Dos: DosFn = (element: HTMLDivElement,
         setSoftKeyboardLayout,
         setSoftKeyboardSymbols,
         setVolume,
-        setKey,
         setSoftFullscreen,
         setThinSidebar,
         save: () => {

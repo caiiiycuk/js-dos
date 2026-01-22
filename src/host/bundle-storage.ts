@@ -1,8 +1,6 @@
 import { storageSlice } from "../store/storage";
-import { Account } from "../store/auth";
 import { brCdn, isDhry2Bundle } from "../v8/config";
 import { Store, getNonSerializableStore } from "../store";
-import { canDoCloudSave } from "../player-api";
 
 export function bundleFromFile(file: File, store: Store): Promise<Uint8Array> {
     return new Promise<Uint8Array>((resolve) => {
@@ -19,27 +17,18 @@ export function bundleFromFile(file: File, store: Store): Promise<Uint8Array> {
 }
 
 
-export async function changesFromUrl(url: string, account: Account | null,
-                                     store: Store): Promise<Uint8Array | null> {
-    if (!canDoCloudSave(account, null)) {
-        return await getNonSerializableStore(store).cache.get(url).catch(() => null);
+export async function changesFromUrl(url: string, store: Store): Promise<Uint8Array | null> {
+    const nonSerializableStore = await getNonSerializableStore(store);
+
+    if (nonSerializableStore.options.fsChanges?.pull) {
+        return await nonSerializableStore.options.fsChanges.pull(url);
     }
 
-    try {
-        const response = await fetch(url, {
-            cache: "no-cache",
-        });
-
-        if (response.status !== 200) {
-            throw new Error("Resource not avalible (" + response.status + "): " + response.statusText);
-        }
-
-        return await readResponseBody(response, url, (bytes, length) => {
-            store.dispatch(storageSlice.actions.changedProgress([bytes, length]));
-        });
-    } catch (e: any) {
-        return await getNonSerializableStore(store).cache.get(url).catch(() => null);
+    if (nonSerializableStore.options.fsChanges?.local !== false) {
+        return await nonSerializableStore.cache.get(url).catch(() => null);
     }
+
+    return null;
 }
 
 export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Array> {

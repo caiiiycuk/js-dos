@@ -50,3 +50,18 @@ Clear the CDN cache (br.cdn.js-dos.com) in dashboard, pattern:
 ```
 /js-dos/latest,/js-dos/latest/*
 ```
+
+### Deploy nigthly
+
+```
+rm -rf dist && \
+    yarn run vite build --base /js-dos/nightly --sourcemap true --minify terser && \
+    python scripts/brotli-dist.py && \
+    aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
+    dist s3://br-bundles/js-dos/nightly --delete 
+```
+
+Clear the CDN cache (br.cdn.js-dos.com) in dashboard, pattern:
+```
+/js-dos/nightly,/js-dos/nightly/*
+```

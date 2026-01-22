@@ -56,7 +56,8 @@
     }
 
     .pre-run-window {
-      @apply overflow-x-hidden overflow-y-auto flex-grow flex flex-col items-center justify-center px-8 mx-auto md:my-auto;
+      @apply overflow-x-hidden overflow-y-auto flex-grow flex flex-col items-center justify-center px-8 mx-auto md:my-auto
+        select-none;
     }
 
     .select-window {

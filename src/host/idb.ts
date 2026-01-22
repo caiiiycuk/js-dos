@@ -5,7 +5,6 @@ export interface IDB {
     get: (key: string, defaultValue?: Uint8Array) => Promise<Uint8Array>;
     del: (key: string) => Promise<void>;
     keys: () => Promise<string[]>;
-    forEach: (each: (key: string, value: Uint8Array) => void) => Promise<void>;
     close: () => void;
 }
 
@@ -31,10 +30,6 @@ export class IDBNoop implements IDB {
     public keys(): Promise<string[]> {
         return Promise.resolve([]);
     }
-
-    public forEach(each: (key: string, value: Uint8Array) => void) {
-        return Promise.resolve();
-    }
 }
 
 class IDBImpl implements IDB {
@@ -44,7 +39,7 @@ class IDBImpl implements IDB {
 
     constructor(dbName: string,
         storeName: string,
-        stores: [string, string, boolean][],
+        stores: string[],
         onready: (cache: IDB) => void,
         onerror: (msg: string) => void) {
         this.storeName = storeName;
@@ -73,12 +68,8 @@ class IDBImpl implements IDB {
                         onerror("Can't upgrade cache database");
                     };
 
-                    for (const [name, index, unique] of stores) {
-                        this.db.createObjectStore(name)
-                            .createIndex(index, "", {
-                                unique,
-                                multiEntry: false,
-                            });
+                    for (const name of stores) {
+                        this.db.createObjectStore(name);
                     }
                 } catch (e) {
                     onerror("Can't upgrade cache database");
@@ -116,7 +107,11 @@ class IDBImpl implements IDB {
                 reject(new Error("Can't put key '" + key + "'"));
                 console.error(e);
             };
-            request.onsuccess = () => resolve();
+            transaction.onerror = (e) => {
+                reject(new Error("Can't put key '" + key + "'"));
+                console.error(e);
+            };
+            transaction.oncomplete = () => resolve();
         });
     }
 
@@ -129,8 +124,12 @@ class IDBImpl implements IDB {
 
             const transaction = this.db.transaction(this.storeName, "readwrite");
             const request = transaction.objectStore(this.storeName).delete(key);
-            request.onerror = () => reject;
-            request.onsuccess = () => resolve();
+            request.onerror = () => reject(new Error("Can't delete key '" + key + "'"));
+            transaction.oncomplete = () => resolve();
+            transaction.onerror = (e) => {
+                reject(new Error("Can't put key '" + key + "'"));
+                console.error(e);
+            };
         });
     }
 
@@ -153,7 +152,7 @@ class IDBImpl implements IDB {
             const transaction = this.db.transaction(this.storeName, "readonly");
             const request = transaction.objectStore(this.storeName).get(key) as IDBRequest<ArrayBuffer | Blob>;
             request.onerror = () => reject(new Error("Can't read value for key '" + key + "'"));
-            request.onsuccess = () => {
+            transaction.oncomplete = () => {
                 if (request.result) {
                     resolve(this.resultToUint8Array(request.result));
                 } else {
@@ -172,8 +171,8 @@ class IDBImpl implements IDB {
 
             const transaction = this.db.transaction(this.storeName, "readonly");
             const request = transaction.objectStore(this.storeName).getAllKeys();
-            request.onerror = reject;
-            request.onsuccess = (event) => {
+            request.onerror = () => reject(new Error("Can't get keys from cache database"));
+            transaction.oncomplete = () => {
                 if (request.result) {
                     resolve(request.result as string[]);
                 } else {
@@ -182,22 +181,12 @@ class IDBImpl implements IDB {
             };
         });
     }
-
-    public async forEach(each: (key: string, value: Uint8Array) => void): Promise<void> {
-        const keys = await this.keys();
-        for (const key of keys) {
-            const value = await this.get(key);
-            if (value) {
-                each(key, value);
-            }
-        }
-    }
 }
 
 export function idbCache(): Promise<IDB> {
     return new Promise((resolve) => {
         new IDBImpl("js-dos-cache (guest)", "files",
-            [["files", "key", true]], resolve, (msg: string) => {
+            ["files"], resolve, (msg: string) => {
                 console.error("Can't open IndexedDB cache", msg);
                 resolve(new IDBNoop());
             });
@@ -207,7 +196,7 @@ export function idbCache(): Promise<IDB> {
 export function idbSockdrive(url: string): Promise<IDB> {
     return new Promise((resolve) => {
         new IDBImpl("sockdrive (" + url + ")", "write",
-            [["raw", "range", false], ["write", "sector", false]], resolve, (msg: string) => {
+            ["raw", "write"], resolve, (msg: string) => {
                 console.error("Can't open IndexedDB cache", msg);
                 resolve(new IDBNoop());
             });

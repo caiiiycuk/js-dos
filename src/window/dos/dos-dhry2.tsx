@@ -10,7 +10,6 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
     const nonSerializableStore = useNonSerializableStore();
     const backend = useSelector((state: State) => state.dos.backend);
     const worker = useSelector((state: State) => state.dos.worker);
-    const token = useSelector((state: State) => state.auth.account?.token);
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
     const hardware = useSelector((state: State) => state.dos.backendHardware) &&
         nonSerializableStore.options.backendHardware;
@@ -83,7 +82,7 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
                     const gl = nonSerializableStore.gl;
                     if (gl) {
                         const payload = {
-                            token: token ?? "",
+                            token: "",
                             test: "dhry2",
                             jsdos: JSDOS_VERSION,
                             emu: emuVersion,
@@ -136,7 +135,6 @@ export function Dhry2Results(props: { ci: CommandInterface }) {
             {submited && results.pc !== null && <div>{results.pc ?? "..."}</div>}
         </div>
         {!submited && <div class="mt-14 text-yellow-500">Please wait until this message disappears</div>}
-        {!submited && !token && <div class="mt-14 text-yellow-500">Please enter your key to submit results</div>}
     </div>;
 }
 

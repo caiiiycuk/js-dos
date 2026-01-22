@@ -1,9 +1,7 @@
 import { Dispatch } from "@reduxjs/toolkit";
 import { NonSerializableStore, State } from "./store";
 import { getT } from "./i18n";
-import { putChanges } from "./v8/changes";
 import { uiSlice } from "./store/ui";
-import { Account } from "./store/auth";
 import { PersistedSockdrives } from "emulators";
 import { idbSockdrive } from "./host/idb";
 import { CommandInterface } from "emulators";
@@ -20,7 +18,6 @@ export async function apiSave(state: State,
     }
 
     const t = getT(state);
-    const account = state.auth.account;
     try {
         dispatch(uiSlice.actions.showToast({
             message: t("saving_game"),
@@ -29,11 +26,6 @@ export async function apiSave(state: State,
         }));
 
         let savedInIndexedDb = true;
-        const warnText =
-            (account === null || account.email === null) ? t("warn_save_no_account") :
-                (!account.premium) ? t("warn_save_no_premium") :
-                    t("warn_save_big_file");
-
         let warnAboutSaves = false;
         if (encodedChanges === null) {
             const changes = await ci!.persist(true);
@@ -49,10 +41,10 @@ export async function apiSave(state: State,
                 }));
             }
 
-            if (canDoCloudSave(account, encodedChanges)) {
-                await putChanges(changesUrl, encodedChanges);
+            if (nonSerializableStore.options.fsChanges?.push) {
+                await nonSerializableStore.options.fsChanges.push(changesUrl, encodedChanges);
                 savedInIndexedDb = false;
-            } else {
+            } else if (nonSerializableStore.options.fsChanges?.local !== false) {
                 await nonSerializableStore.cache.put(changesUrl, encodedChanges);
             }
         }
@@ -66,7 +58,7 @@ export async function apiSave(state: State,
         } else if (savedInIndexedDb) {
             setTimeout(() => {
                 dispatch(uiSlice.actions.showToast({
-                    message: warnText,
+                    message: t("warn_save_locally"),
                     intent: "success",
                     long: true,
                 }));
@@ -90,15 +82,6 @@ export async function apiSave(state: State,
 
         return false;
     }
-}
-
-export function canDoCloudSave(account: Account | null, changes: Uint8Array | null) {
-    if (account) {
-        return account.email !== undefined &&
-            (account.email === "dz.caiiiycuk@gmail.com" || account.premium === true) &&
-            (changes === null || changes.length <= 30 * 1024 * 1024);
-    }
-    return false;
 }
 
 export async function applySockdriveChanges(encoded: Uint8Array): Promise<boolean> {

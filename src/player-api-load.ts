@@ -4,9 +4,8 @@ import { dosSlice } from "./store/dos";
 import { changesFromUrl, bundleFromFile, bundleFromUrl } from "./host/bundle-storage";
 import { uiSlice } from "./store/ui";
 import { editorSlice } from "./store/editor";
-import { getChangesUrl } from "./v8/changes";
 import { storageSlice } from "./store/storage";
-import { getNonSerializableStore, getState } from "./store";
+import { getNonSerializableStore } from "./store";
 import { applySockdriveChanges } from "./player-api";
 
 declare const emulators: Emulators;
@@ -105,10 +104,9 @@ async function changesProducer(bundleUrl: string, store: Store): Promise<{
     bundle: Uint8Array | null,
     appliedBundleChanges: Uint8Array | null,
 }> {
-    const account = getState(store).auth.account;
-    const owner = account?.email ?? "guest";
-    const url = getChangesUrl(owner, bundleUrl);
-    const changes = await changesFromUrl(url, account, store);
+    const url = (await getNonSerializableStore(store).options.fsChanges?.urlToKey?.(bundleUrl)) ??
+        bundleUrl + ".changes";
+    const changes = await changesFromUrl(url, store);
 
     if (changes !== null && changes.length > 1 &&
         !(changes[0] === 0x50 && changes[1] === 0x4b)) {

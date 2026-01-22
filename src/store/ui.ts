@@ -34,8 +34,6 @@ const initialState: {
     kiosk: boolean,
     documentHidden: boolean,
     noCloud: boolean,
-    warnOnPremium: boolean,
-    warnOnKey: boolean,
     softFullscreen: boolean,
     haveQuickSave: boolean,
     thinSidebar: boolean,
@@ -65,8 +63,6 @@ const initialState: {
     kiosk: false,
     documentHidden: document.hidden ?? false,
     noCloud: false,
-    warnOnKey: true,
-    warnOnPremium: false,
     softFullscreen: false,
     haveQuickSave: false,
     thinSidebar: false,
@@ -176,14 +172,6 @@ export const uiSlice = createSlice({
         },
         hidden: (state, a: { payload: boolean }) => {
             state.hidden = a.payload;
-        },
-        warnOnKey: (state, a: { payload: boolean }) => {
-            state.warnOnKey = a.payload;
-            state.frame = "none";
-        },
-        warnOnPremium: (state, a: { payload: boolean }) => {
-            state.warnOnKey = a.payload;
-            state.frame = "none";
         },
         softFullscreen: (state, a: { payload: boolean }) => {
             state.softFullscreen = a.payload;
