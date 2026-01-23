@@ -1,13 +1,14 @@
 import { pointer } from "./pointer";
 
 export function mousePointerLock(el: HTMLElement) {
-    function requestLock() {
+    async function requestLock() {
         if (document.pointerLockElement !== el) {
-            const requestPointerLock = el.requestPointerLock ||
-                (el as any).mozRequestPointerLock ||
-                (el as any).webkitRequestPointerLock;
-
-            requestPointerLock.call(el);
+            try {
+                await el.requestPointerLock({ unadjustedMovement: true });
+            } catch (error) {
+                console.warn("Failed to request pointer lock with unadjusted movement, falling back to default");
+                await el.requestPointerLock();
+            }
 
             return;
         }

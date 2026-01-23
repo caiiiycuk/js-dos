@@ -9,14 +9,14 @@ export function mouseLocked(sensitivity: number, layers: Layers, ci: CommandInte
         return document.pointerLockElement !== el;
     }
 
-    function onMouseDown(x: number, y: number, button: number) {
+    async function onMouseDown(x: number, y: number, button: number) {
         if (isNotLocked()) {
-            const requestPointerLock = el.requestPointerLock ||
-                (el as any).mozRequestPointerLock ||
-                (el as any).webkitRequestPointerLock;
-
-            requestPointerLock.call(el);
-
+            try {
+                await el.requestPointerLock({ unadjustedMovement: true });
+            } catch (error) {
+                console.warn("Failed to request pointer lock with unadjusted movement, falling back to default");
+                await el.requestPointerLock();
+            }
             return;
         }
 

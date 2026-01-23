@@ -5,8 +5,8 @@ function initBind() {
         /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.userAgent) ||
         (/MacIntel/.test(navigator.platform) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
     const isTouch = isMobile && !!("ontouchstart" in window);
-    const isPointer = isMobile && (window.PointerEvent ? true : false);
-    const isMSPointer = isMobile && ((window as any).MSPointerEvent ? true : false);
+    const isPointer = window.PointerEvent ? true : false;
+    const isMSPointer = (window as any).MSPointerEvent ? true : false;
     let canLock = !isMobile;
 
     const starters: string[] = [];
