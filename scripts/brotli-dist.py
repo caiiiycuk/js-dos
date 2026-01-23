@@ -8,7 +8,7 @@ def brotli_compress_file(file_path):
     try:
         subprocess.run(['brotli', '-Zf', file_path], check=True)
         os.remove(file_path)
-        if (file_path.endswith(".js") or file_path.endswith(".wasm") or file_path.endswith(".css") or file_path.endswith(".mjs")):
+        if (file_path.endswith(".js") or file_path.endswith(".wasm") or file_path.endswith(".mjs")):
             os.rename(file_path + '.br', file_path + ".ea")
         else:
             os.rename(file_path + '.br', file_path)
