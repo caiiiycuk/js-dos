@@ -1,6 +1,6 @@
 import { CommandInterface } from "emulators";
 import { Layers } from "../../dom/layers";
-import { pointer, getPointerState } from "../../../window/dos/controls/mouse/pointer";
+import { pointer, getPointerState, isMobile } from "../../../window/dos/controls/mouse/pointer";
 import { mouseSwipe } from "./mouse-swipe";
 import { mouseNotLocked } from "./mouse-not-locked";
 import { mouseLocked } from "./mouse-locked";
@@ -76,7 +76,7 @@ export function mount(el: HTMLDivElement, layers: Layers,
         }
 
         const state = getPointerState(e, el, sensitivity, locked);
-        pressedButton = state.button || layers.pointerButton;
+        pressedButton = (isMobile && state.button === 0 ? layers.pointerButton : state.button) ?? 0;
         onMouseDown(state.x, state.y, pressedButton);
 
         e.stopPropagation();

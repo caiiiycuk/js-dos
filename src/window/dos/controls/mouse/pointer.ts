@@ -1,9 +1,9 @@
 const MAX_MOVEMENT_REAL_SPEED = 50;
+export const isMobile = /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.appVersion) ||
+    /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.userAgent) ||
+    (/MacIntel/.test(navigator.platform) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
 
 function initBind() {
-    const isMobile = /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.appVersion) ||
-        /Mobile|mini|Fennec|Android|iP(ad|od|hone)/.test(navigator.userAgent) ||
-        (/MacIntel/.test(navigator.platform) && navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
     const isTouch = isMobile && !!("ontouchstart" in window);
     const isPointer = window.PointerEvent ? true : false;
     const isMSPointer = (window as any).MSPointerEvent ? true : false;
@@ -56,7 +56,7 @@ export interface PointerState {
     button?: number,
 }
 
-const pointerPositions: {[id: string]: {x: number, y: number}} = {};
+const pointerPositions: { [id: string]: { x: number, y: number } } = {};
 export function getPointerState(e: Event, el: HTMLElement, sensitivity: number, locked: boolean): PointerState {
     function getState(e: Event): PointerState {
         if (e.type.match(/^touch/)) {
@@ -77,7 +77,7 @@ export function getPointerState(e: Event, el: HTMLElement, sensitivity: number, 
                 y: evt.offsetY,
                 mX: evt.movementX,
                 mY: evt.movementY,
-                button: evt.button > 0 ? 1 : undefined,
+                button: evt.button === 0 ? 0 : 1,
             };
         } else {
             const evt = e as MouseEvent;

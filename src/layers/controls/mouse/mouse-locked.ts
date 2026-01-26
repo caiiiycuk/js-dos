@@ -12,7 +12,7 @@ export function mouseLocked(sensitivity: number, layers: Layers, ci: CommandInte
     async function onMouseDown(x: number, y: number, button: number) {
         if (isNotLocked()) {
             try {
-                await el.requestPointerLock({ unadjustedMovement: true });
+                await (el as any).requestPointerLock({ unadjustedMovement: true });
             } catch (error) {
                 console.warn("Failed to request pointer lock with unadjusted movement, falling back to default");
                 await el.requestPointerLock();
