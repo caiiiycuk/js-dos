@@ -6,7 +6,6 @@ import { uiSlice } from "./store/ui";
 import { editorSlice } from "./store/editor";
 import { storageSlice } from "./store/storage";
 import { getNonSerializableStore } from "./store";
-import { applySockdriveChanges } from "./player-api";
 
 declare const emulators: Emulators;
 
@@ -49,7 +48,6 @@ export async function loadBundleFromConfg(config: DosConfig, initFs: InitFs | nu
         bundleChangesUrl: null,
         bundle: config,
         bundleChanges: null,
-        appliedBundleChanges: null,
         initFs,
     };
     dispatch(dosSlice.actions.bndReady({}));
@@ -93,7 +91,6 @@ async function doLoadBundle(bundleName: string,
         bundleChangesUrl: bundleChanges?.url ?? null,
         bundle,
         bundleChanges: bundleChanges?.bundle ?? null,
-        appliedBundleChanges: bundleChanges?.appliedBundleChanges ?? null,
         initFs: nonSerializableStore.options.initFs ?? null,
     };
     dispatch(dosSlice.actions.bndReady({}));
@@ -102,32 +99,13 @@ async function doLoadBundle(bundleName: string,
 async function changesProducer(bundleUrl: string, store: Store): Promise<{
     url: string,
     bundle: Uint8Array | null,
-    appliedBundleChanges: Uint8Array | null,
 }> {
     const url = (await getNonSerializableStore(store).options.fsChanges?.urlToKey?.(bundleUrl)) ??
         bundleUrl + ".changes";
-    const changes = await changesFromUrl(url, store);
-
-    if (changes !== null && changes.length > 1 &&
-        !(changes[0] === 0x50 && changes[1] === 0x4b)) {
-        if (!(await applySockdriveChanges(changes))) {
-            store.dispatch(uiSlice.actions.showToast({
-                message: "Changes is not a zip file",
-                intent: "error",
-            }));
-        }
-
-        return {
-            url,
-            bundle: null,
-            appliedBundleChanges: changes,
-        };
-    }
 
     return {
         url,
-        bundle: changes,
-        appliedBundleChanges: null,
+        bundle: await changesFromUrl(url, store),
     };
 }
 

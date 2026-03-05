@@ -192,13 +192,3 @@ export function idbCache(): Promise<IDB> {
             });
     });
 }
-
-export function idbSockdrive(url: string): Promise<IDB> {
-    return new Promise((resolve) => {
-        new IDBImpl("sockdrive (" + url + ")", "write",
-            ["raw", "write"], resolve, (msg: string) => {
-                console.error("Can't open IndexedDB cache", msg);
-                resolve(new IDBNoop());
-            });
-    });
-}

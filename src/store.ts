@@ -17,7 +17,6 @@ export interface LoadedBundle {
     bundleChangesUrl: string | null,
     bundle: InitFs | null,
     bundleChanges: Uint8Array | null,
-    appliedBundleChanges: Uint8Array | null,
     initFs: InitFs | null,
 }
 

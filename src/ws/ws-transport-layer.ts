@@ -24,8 +24,11 @@ const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
 const fMultiplier = 200000000;
 
+type ClientMessageLegacy = ClientMessage | "wc-sockdrive-opened" | "wc-sockdrive-new-range";
+type ServerMessageLegacy = ServerMessage | "ws-sockdrive-open" | "ws-sockdrive-ready" | "ws-sockdrive-close" | "ws-sockdrive-load-range" | "ws-sockdrive-write-sector";
+
 // eslint-disable-next-line max-len
-const clientMessageValues: ClientMessage[] = [
+const clientMessageValues: ClientMessageLegacy[] = [
     "wc-install", "wc-run", "wc-pack-fs-to-bundle", "wc-add-key", "wc-mouse-move", "wc-mouse-button", "wc-mouse-sync",
     "wc-exit", "wc-sync-sleep", "wc-pause", "wc-resume", "wc-mute", "wc-unmute", "wc-connect", "wc-disconnect",
     "wc-backend-event", "wc-asyncify-stats", "wc-fs-tree", "wc-fs-get-file", "wc-send-data-chunk",
@@ -35,7 +38,7 @@ const clientMessageValues: ClientMessage[] = [
 const clientMessageEnum: { [msg: string]: number } = {};
 clientMessageValues.forEach((v, i) => clientMessageEnum[v] = i);
 
-const serverMessageValues: ServerMessage[] = [
+const serverMessageValues: ServerMessageLegacy[] = [
     "ws-extract-progress", "ws-ready", "ws-server-ready", "ws-frame-set-size",
     "ws-update-lines", "ws-log", "ws-warn", "ws-err",
     "ws-stdout", "ws-exit", "ws-persist", "ws-sound-init", "ws-sound-push",
@@ -46,7 +49,7 @@ const serverMessageValues: ServerMessage[] = [
     "ws-sockdrive-load-range", "ws-sockdrive-write-sector",
     "ws-unload",
 ];
-const serverMessageEnum: { [num: string]: ServerMessage } = {};
+const serverMessageEnum: { [num: string]: ServerMessageLegacy } = {};
 serverMessageValues.forEach((v, i) => serverMessageEnum[i] = v);
 
 export interface WsSocket {
@@ -408,7 +411,7 @@ export class WsTransportLayer implements TransportLayer {
         this.onInit = onInit;
     }
 
-    async sendMessageToServer(name: ClientMessage, props?: { [key: string]: any; }) {
+    async sendMessageToServer(name: ClientMessageLegacy, props?: { [key: string]: any; }) {
         if (props === undefined || props?.sessionId !== this.sessionId) {
             return;
         }

@@ -7,9 +7,9 @@ import { Emulators } from "emulators";
 import { useEffect, useState } from "preact/hooks";
 import { loadBundleFromUrl } from "../player-api-load";
 import { downloadArrayToFs } from "../download-file";
-import { idbCache, idbSockdrive } from "../host/idb";
+import { idbCache } from "../host/idb";
 import { uploadFile } from "./file-input";
-import { apiSave, traverseSockdriveChanges } from "../player-api";
+import { apiSave } from "../player-api";
 
 declare const emulators: Emulators;
 
@@ -31,8 +31,7 @@ function Changes() {
     const [busy, setBusy] = useState(false);
     const bundleUrl = nonSerializableStore.loadedBundle?.bundleUrl;
     const changesUrl = nonSerializableStore.loadedBundle?.bundleChangesUrl;
-    const sockdriveChanges = nonSerializableStore.loadedBundle?.appliedBundleChanges ?? null;
-    const bundleChanges = nonSerializableStore.loadedBundle?.bundleChanges ?? sockdriveChanges;
+    const bundleChanges = nonSerializableStore.loadedBundle?.bundleChanges ?? null;
     const haveChanges = bundleChanges !== null;
     const store = useStore();
     const dispatch = useDispatch();
@@ -72,13 +71,6 @@ function Changes() {
                     setBusy(true);
                     idbCache().then(async (cache) => {
                         await cache.del(changesUrl!);
-                        if (sockdriveChanges !== null) {
-                            await traverseSockdriveChanges(sockdriveChanges, async (url, _persist) => {
-                                const db = await idbSockdrive(url);
-                                await db.del(0 as any);
-                                db.close();
-                            });
-                        }
                         if (nonSerializableStore.options.fsChanges?.delete && changesUrl) {
                             await nonSerializableStore.options.fsChanges.delete(changesUrl);
                         }

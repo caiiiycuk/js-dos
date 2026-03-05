@@ -61,7 +61,6 @@ export function DosWindow(props: {
 
             loadedBundle.bundle = null;
             loadedBundle.bundleChanges = null;
-            loadedBundle.appliedBundleChanges = null;
             loadedBundle.initFs = null;
 
             let serverPeerId: number = 0;

@@ -2,8 +2,6 @@ import { Dispatch } from "@reduxjs/toolkit";
 import { NonSerializableStore, State } from "./store";
 import { getT } from "./i18n";
 import { uiSlice } from "./store/ui";
-import { PersistedSockdrives } from "emulators";
-import { idbSockdrive } from "./host/idb";
 import { CommandInterface } from "emulators";
 
 export async function apiSave(state: State,
@@ -28,9 +26,8 @@ export async function apiSave(state: State,
         let savedInIndexedDb = true;
         let warnAboutSaves = false;
         if (encodedChanges === null) {
-            const changes = await ci!.persist(true);
-            encodedChanges = encodeChanges(changes);
-            warnAboutSaves = encodedChanges !== changes && !emulationEnded;
+            encodedChanges = await ci!.persist(true);
+            warnAboutSaves = encodedChanges !== null && !(encodedChanges[0] === 0x50 && encodedChanges[1] === 0x4b) && !emulationEnded;
         }
         if (encodedChanges !== null) {
             if (warnAboutSaves) {
@@ -82,77 +79,6 @@ export async function apiSave(state: State,
 
         return false;
     }
-}
-
-export async function applySockdriveChanges(encoded: Uint8Array): Promise<boolean> {
-    return traverseSockdriveChanges(encoded, async (url, persist) => {
-        const idb = await idbSockdrive(url);
-        await idb.put(0 as any, persist);
-        idb.close();
-    });
-}
-
-export async function traverseSockdriveChanges(encoded: Uint8Array,
-                                               callback: (url: string, persist: Uint8Array) => Promise<void>) {
-    const decoder = new TextDecoder();
-    let offset = 0;
-    while (offset < encoded.length) {
-        const urlLength = readUint32(encoded, offset);
-        offset += 4;
-
-        if (urlLength > 4096) {
-            return false;
-        }
-
-        const url = decoder.decode(encoded.slice(offset, offset + urlLength));
-
-        if (!(url.startsWith("http://") || url.startsWith("https://"))) {
-            return false;
-        }
-
-        offset += urlLength;
-
-        const persistLength = readUint32(encoded, offset);
-        offset += 4;
-
-        const persist = encoded.slice(offset, offset + persistLength);
-        offset += persistLength;
-        await callback(url, persist);
-    }
-
-    return true;
-}
-
-function encodeChanges(changes: Uint8Array | PersistedSockdrives | null) {
-    if (changes === null || changes instanceof Uint8Array) {
-        return changes;
-    }
-
-    const encoder = new TextEncoder();
-
-    const urls = [];
-    let totalSize = 0;
-    for (const { url, persist } of changes.drives) {
-        urls.push(encoder.encode(url));
-        totalSize += persist.length + urls[urls.length - 1].length + 8;
-    }
-
-    const result = new Uint8Array(totalSize);
-    let offset = 0;
-    for (let i = 0; i < changes.drives.length; i++) {
-        const url = urls[i];
-        const persist = changes.drives[i].persist;
-
-        offset = writeUint32(result, url.length, offset);
-        result.set(url, offset);
-        offset += url.length;
-
-        offset = writeUint32(result, persist.length, offset);
-        result.set(persist, offset);
-        offset += persist.length;
-    }
-
-    return result;
 }
 
 export function writeUint32(container: Uint8Array, value: number, offset: number) {
