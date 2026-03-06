@@ -41,6 +41,7 @@ rm -rf /tmp/$VERSION
 ```
 rm -rf dist && \
     yarn run vite build --base /js-dos/latest --sourcemap true --minify terser && \
+    rm dist/emulators/sockdrive* && \
     python scripts/brotli-dist.py && \
     aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
     dist s3://br-bundles/js-dos/latest --delete 
@@ -56,6 +57,7 @@ Clear the CDN cache (br.cdn.js-dos.com) in dashboard, pattern:
 ```
 rm -rf dist && \
     yarn run vite build --base /js-dos/nightly --sourcemap true --minify terser && \
+    rm dist/emulators/sockdrive* && \
     python scripts/brotli-dist.py && \
     aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
     dist s3://br-bundles/js-dos/nightly --delete 
