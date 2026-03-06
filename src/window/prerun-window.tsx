@@ -7,9 +7,9 @@ import { Emulators } from "emulators";
 import { useEffect, useState } from "preact/hooks";
 import { loadBundleFromUrl } from "../player-api-load";
 import { downloadArrayToFs } from "../download-file";
-import { idbCache } from "../host/idb";
 import { uploadFile } from "./file-input";
 import { apiSave } from "../player-api";
+import { deleteChanges } from "../host/opfs";
 
 declare const emulators: Emulators;
 
@@ -69,8 +69,7 @@ function Changes() {
             <button class="btn btn-ghost btn-xs underline -ml-2" onClick={() => {
                 if (window.confirm(t("delete_changes_confirm"))) {
                     setBusy(true);
-                    idbCache().then(async (cache) => {
-                        await cache.del(changesUrl!);
+                    deleteChanges(changesUrl!).then(async () => {
                         if (nonSerializableStore.options.fsChanges?.delete && changesUrl) {
                             await nonSerializableStore.options.fsChanges.delete(changesUrl);
                         }

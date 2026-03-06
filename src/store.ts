@@ -7,10 +7,10 @@ import { EditorState, editorSlice } from "./store/editor";
 import { DosEvent, DosOptions } from "./public/types";
 import { CommandInterface, InitFs } from "emulators";
 import { useStore } from "react-redux";
-import { IDB, IDBNoop } from "./host/idb";
 import { InitState, createInitSlice } from "./store/init";
 import { LayersInstance } from "./layers/instance";
 import { Net } from "./humblenet/humblenet";
+import { opfsSlice, OpfsState } from "./host/opfs";
 
 export interface LoadedBundle {
     bundleUrl: string | null,
@@ -24,7 +24,6 @@ export interface NonSerializableStore {
     root: HTMLDivElement,
     loadedBundle: LoadedBundle | null,
     ci: CommandInterface | null,
-    cache: IDB,
     options: Partial<DosOptions>,
     layers: Promise<LayersInstance> | null,
     gl: WebGLRenderingContext | null,
@@ -54,7 +53,6 @@ export function makeNonSerializableStore(options: Partial<DosOptions>): NonSeria
         root: null as any,
         loadedBundle: null,
         ci: null,
-        cache: new IDBNoop(),
         options,
         layers: null,
         gl: null,
@@ -71,6 +69,7 @@ export function makeStore(nonSerializableStore: NonSerializableStore, options: P
             dos: dosSlice.reducer,
             storage: storageSlice.reducer,
             editor: editorSlice.reducer,
+            opfs: opfsSlice.reducer,
         },
         middleware: (getDefault) => {
             const all = getDefault();
@@ -89,6 +88,7 @@ export interface State {
     i18n: I18NState,
     editor: EditorState,
     storage: StorageState,
+    opfs: OpfsState,
 }
 
 export type Store = ReturnType<typeof makeStore>;

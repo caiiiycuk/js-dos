@@ -7,6 +7,7 @@ import {
     SoftKeyboardButton,
     PreRunButton,
     TurboButton,
+    OpfsButton,
 } from "./sidebar-button";
 import { SaveButtons } from "./save-buttons";
 import { Slider } from "../components/slider";
@@ -47,6 +48,7 @@ export function SideBar(props: {}) {
         </div>;
     }
 
+
     return <div class="sidebar">
         {window === "run" && <SaveButtons />}
         {window === "run" && <SoftKeyboardButton />}
@@ -57,7 +59,8 @@ export function SideBar(props: {}) {
         {window === "run" && <TurboButton />}
         {window === "run" && <CyclesButton />}
         {window === "run" && <HddLed />}
-        {window === "prerun" && <PreRunButton />}
+        {(window === "prerun" || window === "file-explorer") && <OpfsButton />}
+        {(window === "prerun" || window === "select" || window === "file-explorer") && <PreRunButton />}
         {window === "run" && <SettingsButton />}
         {!frame && window === "run" && mouseCapture && <SidebarSlider />}
     </div>;

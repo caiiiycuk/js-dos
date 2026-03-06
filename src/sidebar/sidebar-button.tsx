@@ -4,6 +4,7 @@ import { getState, State, Store } from "../store";
 import { Frame, uiSlice } from "../store/ui";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { dosSlice } from "../store/dos";
+import { formatBytes } from "../host/opfs";
 
 export function DosboxConfButton(props: { class?: string }) {
     return <SidebarButton
@@ -44,6 +45,38 @@ export function FsButton(props: {
         </svg>
     </SidebarButton>;
 }
+
+export function OpfsButton(props: {
+    class?: string,
+}) {
+    const window = useSelector((state: State) => state.ui.window);
+    const freeSpace = useSelector((state: State) => state.opfs.freeSpace);
+    const freeSpaceTuple = typeof freeSpace === "number" ? formatBytes(freeSpace) : null;
+
+    return <>
+        {freeSpaceTuple && <div class="text-xs flex flex-row gap-0 items-end">
+            <span class={freeSpace! < 1024 * 1024 * 1024 ?
+                "text-error animate-pulse" :
+                (freeSpace! < 2 * 1024 * 1024 * 1024 ? "text-warning" : "")}>{freeSpaceTuple[0]}</span>
+            <span class="opacity-50">{freeSpaceTuple[1]}</span>
+        </div>}
+        <SidebarButton
+            class={props.class + window === "file-explorer" ? " sidebar-highlight" : ""}
+            frame="editor-fs"
+            action={uiSlice.actions.toggleFileExplorer()}
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 17.25v-.228a4.5 4.5
+                0 00-.12-1.03l-2.268-9.64a3.375 3.375 0 00-3.285-2.602H7.923a3.375
+                3.375 0 00-3.285 2.602l-2.268 9.64a4.5 4.5 0 00-.12 1.03v.228m19.5 0a3 3
+                0 01-3 3H5.25a3 3 0 01-3-3m19.5 0a3 3 0 00-3-3H5.25a3 3 0 00-3 3m16.5
+                0h.008v.008h-.008v-.008zm-3 0h.008v.008h-.008v-.008z" />
+            </svg>
+        </SidebarButton>
+    </>;
+}
+
 
 export function CyclesButton() {
     const cpuMetrics = useSelector((state: State) => state.dos.stats.cpuMetrics);

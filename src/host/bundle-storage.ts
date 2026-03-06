@@ -1,6 +1,7 @@
 import { storageSlice } from "../store/storage";
 import { brCdn, isDhry2Bundle } from "../v8/config";
 import { Store, getNonSerializableStore } from "../store";
+import { getBundle, getChanges, putBundle } from "./opfs";
 
 export function bundleFromFile(file: File, store: Store): Promise<Uint8Array> {
     return new Promise<Uint8Array>((resolve) => {
@@ -25,7 +26,12 @@ export async function changesFromUrl(url: string, store: Store): Promise<Uint8Ar
     }
 
     if (nonSerializableStore.options.fsChanges?.local !== false) {
-        return await nonSerializableStore.cache.get(url).catch(() => null);
+        try {
+            return await getChanges(url);
+        } catch (e: any) {
+            console.error(e);
+            return null;
+        }
     }
 
     return null;
@@ -34,7 +40,10 @@ export async function changesFromUrl(url: string, store: Store): Promise<Uint8Ar
 export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Array> {
     try {
         if (!isDhry2Bundle(url)) {
-            return await getNonSerializableStore(store).cache.get(url);
+            const bundle = await getBundle(url);
+            if (bundle !== null) {
+                return bundle;
+            }
         }
     } catch (e: any) {
         // ignore
@@ -53,16 +62,14 @@ export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Arr
         store.dispatch(storageSlice.actions.progress([bytes, length]));
     });
 
-    getNonSerializableStore(store).cache
-        .put(url, complete)
-        .catch(console.error);
+    putBundle(url, complete).catch(console.error);
 
     return complete;
 };
 
 
 async function readResponseBody(response: Response, url: string,
-                                onProgress: (bytes: number, total: number) => void): Promise<Uint8Array> {
+    onProgress: (bytes: number, total: number) => void): Promise<Uint8Array> {
     const lenHeader = response.headers.get("Content-Length");
     const length = lenHeader === null ? 0 :
         Number.parseInt(lenHeader);

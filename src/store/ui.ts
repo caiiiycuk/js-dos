@@ -17,7 +17,7 @@ const initialState: {
     hidden: boolean,
     frame: Frame,
     frameXs: boolean,
-    window: "none" | "error" | "loading" | "prerun" | "run" | "select",
+    window: "none" | "error" | "loading" | "prerun" | "run" | "select" | "file-explorer",
     theme: Theme,
     editor: boolean,
     wideScreen: boolean,
@@ -109,6 +109,13 @@ export const uiSlice = createSlice({
         frameTurbo: (state) => {
             state.frame = "turbo";
             state.frameXs = false;
+        },
+        toggleFileExplorer: (state) => {
+            if (state.window === "file-explorer") {
+                state.window = "prerun";
+            } else {
+                state.window = "file-explorer";
+            }
         },
         windowSelect: (state) => {
             state.window = "select";

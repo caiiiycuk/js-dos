@@ -25,7 +25,8 @@ const textEncoder = new TextEncoder();
 const fMultiplier = 200000000;
 
 type ClientMessageLegacy = ClientMessage | "wc-sockdrive-opened" | "wc-sockdrive-new-range";
-type ServerMessageLegacy = ServerMessage | "ws-sockdrive-open" | "ws-sockdrive-ready" | "ws-sockdrive-close" | "ws-sockdrive-load-range" | "ws-sockdrive-write-sector";
+type ServerMessageLegacy = ServerMessage | "ws-sockdrive-open" | "ws-sockdrive-ready" |
+    "ws-sockdrive-close" | "ws-sockdrive-load-range" | "ws-sockdrive-write-sector";
 
 // eslint-disable-next-line max-len
 const clientMessageValues: ClientMessageLegacy[] = [

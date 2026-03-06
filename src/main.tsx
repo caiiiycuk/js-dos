@@ -8,7 +8,6 @@ import { initEmulators } from "./store/dos";
 // eslint-disable-next-line
 import { uiSlice } from "./store/ui";
 import { i18nSlice } from "./i18n";
-import { idbCache } from "./host/idb";
 import { loadBundleFromConfg, loadBundleFromUrl } from "./player-api-load";
 
 import { DosOptions, DosProps, DosFn, ImageRendering, RenderBackend } from "./public/types";
@@ -17,12 +16,12 @@ import { NonSerializableStore, State, Store, getNonSerializableStore,
     getState,
     makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
 import { apiSave } from "./player-api";
+import { getChanges, updateOpfsStats } from "./host/opfs";
 
 export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
     const nonSerializableStore = makeNonSerializableStore(options);
     const store = makeStore(nonSerializableStore, options);
-    const cache = idbCache();
 
     setupRootElement(element, nonSerializableStore, store);
     (navigator as any).keyboard?.lock(["KeyW", "Escape"]);
@@ -45,11 +44,11 @@ export const Dos: DosFn = (element: HTMLDivElement,
                     }
                 } break;
                 case "emu-ready": {
-                    nonSerializableStore.cache = await cache;
                     if (nonSerializableStore.options.url) {
                         try {
                             await loadBundleFromUrl(nonSerializableStore.options.url, store);
                         } catch (e: any) {
+                            console.error(e);
                             store.dispatch(dosSlice.actions.bndError(e.message));
                         }
                     } else if (nonSerializableStore.options.dosboxConf) {
@@ -292,6 +291,8 @@ export const Dos: DosFn = (element: HTMLDivElement,
         store.dispatch(dosSlice.actions.fastForwardOnBoot(options.fastForwardOnBoot));
     }
 
+    updateOpfsStats(store);
+
     render(
         <Provider store={store}>
             {<Ui /> as any}
@@ -304,7 +305,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
             return [JSDOS_VERSION, store.getState().dos.emuVersion];
         },
         getLocalChanges: (key: string) => {
-            return nonSerializableStore.cache.get(key).catch(() => null);
+            return getChanges(key);
         },
         setTheme,
         setLang,

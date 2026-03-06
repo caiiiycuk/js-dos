@@ -3,6 +3,7 @@ import { NonSerializableStore, State } from "./store";
 import { getT } from "./i18n";
 import { uiSlice } from "./store/ui";
 import { CommandInterface } from "emulators";
+import { putChanges } from "./host/opfs";
 
 export async function apiSave(state: State,
                               nonSerializableStore: NonSerializableStore,
@@ -27,7 +28,8 @@ export async function apiSave(state: State,
         let warnAboutSaves = false;
         if (encodedChanges === null) {
             encodedChanges = await ci!.persist(true);
-            warnAboutSaves = encodedChanges !== null && !(encodedChanges[0] === 0x50 && encodedChanges[1] === 0x4b) && !emulationEnded;
+            warnAboutSaves = encodedChanges !== null &&
+                !(encodedChanges[0] === 0x50 && encodedChanges[1] === 0x4b) && !emulationEnded;
         }
         if (encodedChanges !== null) {
             if (warnAboutSaves) {
@@ -42,7 +44,7 @@ export async function apiSave(state: State,
                 await nonSerializableStore.options.fsChanges.push(changesUrl, encodedChanges);
                 savedInIndexedDb = false;
             } else if (nonSerializableStore.options.fsChanges?.local !== false) {
-                await nonSerializableStore.cache.put(changesUrl, encodedChanges);
+                await putChanges(changesUrl, encodedChanges);
             }
         }
 

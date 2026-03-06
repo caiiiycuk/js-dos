@@ -5,6 +5,7 @@ import { ErrorWindow } from "./error-window";
 import { LoadingWindow } from "./loading-window";
 import { PreRunWindow } from "./prerun-window";
 import { SelectWindow } from "./select-window";
+import { OPFSExplorer } from "../opfs-explorer/opfs-explorer";
 
 export function Window(props: {}) {
     const frameOpened = useSelector((state: State) => state.ui.frame) !== "none";
@@ -31,6 +32,9 @@ export function Window(props: {}) {
         } break;
         case "select": {
             windowComponent = <SelectWindow />;
+        } break;
+        case "file-explorer": {
+            windowComponent = <OPFSExplorer />;
         } break;
         default: ;
     };
