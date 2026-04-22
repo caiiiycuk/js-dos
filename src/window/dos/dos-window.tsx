@@ -6,14 +6,14 @@ import { State, useNonSerializableStore, postJsDosEvent, Store } from "../../sto
 import { useDosRuntime } from "./dos-runtime";
 import { Dhry2Results } from "./dos-dhry2";
 import { createWsTransportLayer } from "../../ws/ws-transport-layer";
-import { actualWsVersion, isDhry2Bundle, netEndpoint, netSecret, netToken } from "../../v8/config";
+import { actualWsVersion, isDhry2Bundle } from "../../v8/config";
 import { uiSlice } from "../../store/ui";
 import { extractLayersConfig } from "../../layers/controls/layers-config";
 import { pointer } from "./controls/mouse/pointer";
 import { SoftKeyboard } from "../soft-keyboard";
 import { useT } from "../../i18n";
 import { apiSave } from "../../player-api";
-import { createNet } from "../../humblenet/humblenet";
+import { createNet } from "../../webrtcnet/webrtcnet";
 
 declare const emulators: Emulators;
 
@@ -92,7 +92,7 @@ export function DosWindow(props: {
                 if (startIpxServer || connectIpxAddress) {
                     const text = startIpxServer ? t("create_server") : t("lookup_address") + ": " + connectIpxAddress;
                     dispatch(uiSlice.actions.modalText({ text }));
-                    nonSerializableStore.net = await createNet(netEndpoint, netToken, netSecret,
+                    nonSerializableStore.net = await createNet(
                         (peerId) => console.log("network error for peer", peerId),
                         () => console.log("network disconnected"),
                         nonSerializableStore,

@@ -9,7 +9,7 @@ import { CommandInterface, InitFs } from "emulators";
 import { useStore } from "react-redux";
 import { InitState, createInitSlice } from "./store/init";
 import { LayersInstance } from "./layers/instance";
-import { Net } from "./humblenet/humblenet";
+import { Net } from "./webrtcnet/webrtcnet";
 import { opfsSlice, OpfsState } from "./host/opfs";
 
 export interface LoadedBundle {

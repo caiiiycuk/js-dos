@@ -4,6 +4,11 @@ export type RenderBackend = "webgl" | "canvas";
 export type RenderAspect = "AsIs" | "1/1" | "5/4" | "4/3" | "16/10" | "16/9" | "Fit";
 export type SockdrivePreload = "none" | "all" | "default";
 
+export interface IceServer {
+    urls: string | string[];
+    username?: string;
+    credential?: string;
+}
 
 export type InitBundleEntry = Uint8Array;
 export interface InitFileEntry {
@@ -61,6 +66,12 @@ export interface DosOptions {
         push?: (key: string, data: Uint8Array) => Promise<void>;
         delete?: (key: string) => Promise<void>;
     },
+    net: {
+        peerServer: string,
+        token: string,
+        secret: string,
+        iceServers: () => Promise<IceServer[]>,
+    }
 }
 
 export interface DosProps {

@@ -125,8 +125,15 @@ function Changes() {
 }
 
 function ChangesFrame() {
+    const nonSerializableStore = useNonSerializableStore();
+    const bundleUrl = nonSerializableStore.loadedBundle?.bundleUrl;
+    const changesUrl = nonSerializableStore.loadedBundle?.bundleChangesUrl;
     const kiosk = useSelector((state: State) => state.ui.kiosk);
     if (kiosk) {
+        return null;
+    }
+
+    if (bundleUrl === null || changesUrl === null) {
         return null;
     }
 

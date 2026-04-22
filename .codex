@@ -1,0 +1,5 @@
+After making code changes, always run:
+
+    yarn run eslint src --ext ts,tsx --fix
+
+Make sure the command passes before considering the task complete.

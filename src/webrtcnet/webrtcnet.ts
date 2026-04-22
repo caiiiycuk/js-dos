@@ -1,7 +1,7 @@
 import { NonSerializableStore } from "../store";
 
-declare const HumbleNet: () => any;
-declare const HumbleNetImpl: (module: any) => any;
+declare const WebRTCNet: () => any;
+declare const WebRTCNetImpl: (module: any) => any;
 
 type Peer = {
     peerId: number;
@@ -20,25 +20,25 @@ export type Net = {
     shutdown: () => void;
 }
 
-async function injectHumbleNet(nonSerializableStore: NonSerializableStore) {
+async function injectWebRTCNet(nonSerializableStore: NonSerializableStore) {
     const url = (nonSerializableStore.options.pathPrefix ?
-        nonSerializableStore.options.pathPrefix + "jsapi.mjs" :
-        "jsapi.mjs") + (nonSerializableStore.options.pathSuffix ?? "");
+        nonSerializableStore.options.pathPrefix + "webrtcnet.mjs" :
+        "webrtcnet.mjs") + (nonSerializableStore.options.pathSuffix ?? "");
     const wasmUrl = (nonSerializableStore.options.pathPrefix ?
-        nonSerializableStore.options.pathPrefix + "jsapi.wasm" :
-        "jsapi.wasm") + (nonSerializableStore.options.pathSuffix ?? "");
+        nonSerializableStore.options.pathPrefix + "webrtcnet.wasm" :
+        "webrtcnet.wasm") + (nonSerializableStore.options.pathSuffix ?? "");
 
-    const jsapi = await (await fetch(url)).text();
-    const jsapiURL = URL.createObjectURL(new Blob([jsapi], { type: "text/javascript" }));
+    const webrtcNet = await (await fetch(url)).text();
+    const webrtcNetURL = URL.createObjectURL(new Blob([webrtcNet], { type: "text/javascript" }));
     return new Promise<void>((resolve, reject) => {
-        if ((window as any).HumbleNet === undefined) {
+        if ((window as any).WebRTCNet === undefined) {
             const script = document.createElement("script");
             script.type = "module";
 
 
             script.text = `
-import HumbleNet from "${jsapiURL}";
-window.HumbleNetImpl = HumbleNet;
+import WebRTCNet from "${webrtcNetURL}";
+window.WebRTCNetImpl = WebRTCNet;
 `;
 
 
@@ -46,13 +46,13 @@ window.HumbleNetImpl = HumbleNet;
             document.body.appendChild(script);
 
             const intervalId = setInterval(() => {
-                if ((window as any).HumbleNetImpl !== undefined) {
+                if ((window as any).WebRTCNetImpl !== undefined) {
                     clearInterval(intervalId);
-                    URL.revokeObjectURL(jsapiURL);
+                    URL.revokeObjectURL(webrtcNetURL);
 
-                    (window as any).HumbleNet = () => {
+                    (window as any).WebRTCNet = () => {
                         /* eslint-disable-next-line new-cap */
-                        return HumbleNetImpl({
+                        return WebRTCNetImpl({
                             locateFile: (path: string) => (path.endsWith(".wasm") ? wasmUrl : path),
                         });
                     };
@@ -65,15 +65,35 @@ window.HumbleNetImpl = HumbleNet;
     });
 }
 
-export async function createNet(url: string, token: string, secret: string,
-                                onNetworkError: (peerId: number) => void,
+export async function createNet(onNetworkError: (peerId: number) => void,
                                 onDisconnect: () => void,
                                 nonSerializableStore: NonSerializableStore,
 ) {
-    await injectHumbleNet(nonSerializableStore);
+    const iceServersPromise = nonSerializableStore.options.net?.iceServers?.();
+    await injectWebRTCNet(nonSerializableStore);
+
+    const netConfig = (window as any).netConfig || {};
+    netConfig.debug = true;
+    if (iceServersPromise) {
+        const iceServers = await iceServersPromise;
+        netConfig.iceServers = iceServers;
+    } else {
+        netConfig.iceServers = [
+            {
+                urls: [
+                    "stun:stun.l.google.com:19302",
+                    "stun:stun1.l.google.com:19302",
+                    "stun:stun2.l.google.com:19302",
+                    "stun:stun3.l.google.com:19302",
+                    "stun:stun4.l.google.com:19302",
+                ],
+            },
+        ];
+    }
+    (window as any).netConfig = netConfig;
 
     /* eslint-disable-next-line new-cap */
-    const lib = await HumbleNet();
+    const lib = await WebRTCNet();
     lib.onNetworkError = onNetworkError;
 
     const withStr = (str: string, callback: (ptr: number, size: number) => void) => {
@@ -110,9 +130,9 @@ export async function createNet(url: string, token: string, secret: string,
     };
 
     return new Promise<Net>((resolve, reject) => {
-        withStr(url, (urlPtr) => {
-            withStr(token, (tokenPtr) => {
-                withStr(secret, (secretPtr) => {
+        withStr(nonSerializableStore.options.net?.peerServer ?? "https://net.dos.zone", (urlPtr) => {
+            withStr(nonSerializableStore.options.net?.token ?? "js-dos", (tokenPtr) => {
+                withStr(nonSerializableStore.options.net?.secret ?? "fallback", (secretPtr) => {
                     try {
                         if (lib._connectTo(urlPtr, tokenPtr, secretPtr)) {
                             const recvLength = 4096 * 1024;

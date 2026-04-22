@@ -69,7 +69,7 @@ export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Arr
 
 
 async function readResponseBody(response: Response, url: string,
-    onProgress: (bytes: number, total: number) => void): Promise<Uint8Array> {
+                                onProgress: (bytes: number, total: number) => void): Promise<Uint8Array> {
     const lenHeader = response.headers.get("Content-Length");
     const length = lenHeader === null ? 0 :
         Number.parseInt(lenHeader);

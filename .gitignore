@@ -23,5 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-public/emulators
+public/emulators/*
+!public/emulators/webrtcnet.mjs
+!public/emulators/webrtcnet.wasm
 *.zip
