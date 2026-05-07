@@ -5,9 +5,7 @@ import { sendQuickLoadEvent, sendQuickSaveEvent } from "../../../player-api";
 import { uiSlice } from "../../../store/ui";
 import { dosSlice } from "../../../store/dos";
 
-let paused = false;
-
-export function keyboard(el: HTMLElement, ci: CommandInterface, handleQuickSaves: boolean, dispatch: Dispatch) {
+export function keyboard(el: HTMLElement, ci: CommandInterface, handleQuickSaves: boolean, dispatch: Dispatch, paused: boolean) {
     const pressedKeys = new Set<number>();
 
     function releaseKeys() {
@@ -35,10 +33,9 @@ export function keyboard(el: HTMLElement, ci: CommandInterface, handleQuickSaves
 
         const keyCode = domToKeyCode(e.keyCode, e.location);
         if (keyCode === KBD_pause) {
-            paused = !paused;
-            dispatch(dosSlice.actions.paused(paused));
-            if (paused) ci.pause();
-            else ci.resume();
+            if (paused) ci.resume();
+            else ci.pause();
+            dispatch(dosSlice.actions.paused(!paused));
         }
         else {
             ci.sendKeyEvent(keyCode, true);
