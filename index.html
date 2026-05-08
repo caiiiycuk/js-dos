@@ -94,7 +94,6 @@
           //   { path: "D/2.txt", contents: new TextEncoder().encode("345") },
           // ],
           // dosboxConf: diabloConf,
-          // loginUrl: "http://localhost:8080/subscription.html",
           // autoStart: true,
           // countDownStart: 5,
           // kiosk: true,
@@ -109,7 +108,6 @@
           //  return Promise.resolve("ws://127.0.0.1:8888");
           // },
           // backendHardware: window.backendHardware,
-          // noCloud: true,
           // noCursor: true,
           // softKeyboardLayout: [
           //   "q w e r t",
@@ -146,7 +144,7 @@
           //   ],
           // ],
           // softFullscreen: true,
-          softkeyboardlayout: [
+          softKeyboardLayout: [
             [
               [
                 "{layout} {up}",
@@ -158,7 +156,6 @@
               ],
             ],
           ],
-          // key: "-----",
           onEvent: (event, arg) => {
             console.log("Event", event, arg);
             if (event === "ci-ready") {
@@ -179,7 +176,7 @@
           // thinSidebar: true,
           startIpxServer,
           connectIpxAddress,
-          fastForwardOnBoot: true,
+          fastForwardOnBoot: 5,
         });
 
       window.props = props;
