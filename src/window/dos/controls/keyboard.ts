@@ -1,11 +1,16 @@
 import { CommandInterface } from "emulators";
+// eslint-disable-next-line camelcase
 import { domToKeyCode, KBD_pause } from "./keys";
 import { Dispatch } from "@reduxjs/toolkit";
 import { sendQuickLoadEvent, sendQuickSaveEvent } from "../../../player-api";
 import { uiSlice } from "../../../store/ui";
 import { dosSlice } from "../../../store/dos";
 
-export function keyboard(el: HTMLElement, ci: CommandInterface, handleQuickSaves: boolean, dispatch: Dispatch, paused: boolean) {
+export function keyboard(el: HTMLElement,
+                         ci: CommandInterface,
+                         handleQuickSaves: boolean,
+                         dispatch: Dispatch,
+                         paused: boolean) {
     const pressedKeys = new Set<number>();
 
     function releaseKeys() {
@@ -32,12 +37,11 @@ export function keyboard(el: HTMLElement, ci: CommandInterface, handleQuickSaves
         }
 
         const keyCode = domToKeyCode(e.keyCode, e.location);
-        if (keyCode === KBD_pause) {
+        if (keyCode === KBD_pause) { // eslint-disable-line camelcase
             if (paused) ci.resume();
             else ci.pause();
             dispatch(dosSlice.actions.paused(!paused));
-        }
-        else {
+        } else {
             ci.sendKeyEvent(keyCode, true);
             pressedKeys.add(keyCode);
             e.stopPropagation();
