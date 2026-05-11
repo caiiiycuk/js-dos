@@ -38,8 +38,6 @@ export function keyboard(el: HTMLElement,
 
         const keyCode = domToKeyCode(e.keyCode, e.location);
         if (keyCode === KBD_pause) { // eslint-disable-line camelcase
-            if (paused) ci.resume();
-            else ci.pause();
             dispatch(dosSlice.actions.paused(!paused));
         } else {
             ci.sendKeyEvent(keyCode, true);
