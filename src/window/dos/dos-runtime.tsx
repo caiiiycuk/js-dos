@@ -156,9 +156,10 @@ function useMouse(canvas: HTMLCanvasElement,
 function useKeyboard(ci: CommandInterface): void {
     const dispatch = useDispatch();
     const dosboxX = useSelector((state: State) => state.dos.backend) === "dosboxX";
+    const paused = useSelector((state: State) => state.dos.paused);
     useEffect(() => {
-        return keyboard(window as any, ci, dosboxX, dispatch);
-    }, [ci, dosboxX, dispatch]);
+        return keyboard(window as any, ci, dosboxX, dispatch, paused);
+    }, [ci, dosboxX, dispatch, paused]);
 }
 
 function useRenderBackend(canvas: HTMLCanvasElement,
