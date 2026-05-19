@@ -18,6 +18,21 @@ export interface InitFileEntry {
 export type InitFsEntry = InitBundleEntry | InitFileEntry;
 export type InitFs = InitFsEntry | InitFsEntry[];
 
+export type NetInstance = {
+    peerId: number;
+    connected: Set<number>;
+    wait: (ms: number) => void;
+    registerAlias: (alias: string) => Promise<void>;
+    unregisterAlias: (alias: string) => void;
+    queryAliases: (query: string) => Promise<{
+        peerId: number;
+    }[]>;
+    sendBinary: (data: Uint8Array, peerId: number) => number;
+    recvBinary: () => { data: Uint8Array, peerId: number } | null;
+    disconnect: (peerId: number) => void;
+    shutdown: () => void;
+}
+
 export interface DosOptions {
     url: string,
     dosboxConf: string,
@@ -52,7 +67,7 @@ export interface DosOptions {
     mouseSensitivity: number,
     noCursor: boolean,
     softKeyboardLayout: string[] | string[][][],
-    softKeyboardSymbols: {[key: string]: string}[],
+    softKeyboardSymbols: { [key: string]: string }[],
     volume: number,
     softFullscreen: boolean,
     thinSidebar: boolean,
@@ -71,7 +86,8 @@ export interface DosOptions {
         token: string,
         secret: string,
         iceServers: () => Promise<IceServer[]>,
-    }
+    },
+    sharedNet: NetInstance,
 }
 
 export interface DosProps {
@@ -100,7 +116,7 @@ export interface DosProps {
     setMouseSensitivity(mouseSensitivity: number): void;
     setNoCursor(noCursor: boolean): void;
     setSoftKeyboardLayout(layout: string[] | string[][][]): void;
-    setSoftKeyboardSymbols(symbols: {[key: string]: string}[]): void;
+    setSoftKeyboardSymbols(symbols: { [key: string]: string }[]): void;
     setVolume(volume: number): void;
     setSoftFullscreen(softFullscreen: boolean): void;
     setThinSidebar(thinSidebar: boolean): void;

@@ -1,24 +1,10 @@
+import { NetInstance } from "../public/types";
 import { NonSerializableStore } from "../store";
 
 declare const WebRTCNet: () => any;
 declare const WebRTCNetImpl: (module: any) => any;
 
-type Peer = {
-    peerId: number;
-}
-
-export type Net = {
-    peerId: number;
-    connected: Set<number>;
-    wait: (ms: number) => void;
-    registerAlias: (alias: string) => Promise<void>;
-    unregisterAlias: (alias: string) => void;
-    queryAliases: (query: string) => Promise<Peer[]>;
-    sendBinary: (data: Uint8Array, peerId: number) => number;
-    recvBinary: () => { data: Uint8Array, peerId: number } | null;
-    disconnect: (peerId: number) => void;
-    shutdown: () => void;
-}
+export type Net = NetInstance;
 
 async function injectWebRTCNet(nonSerializableStore: NonSerializableStore) {
     const url = (nonSerializableStore.options.pathPrefix ?
@@ -69,6 +55,10 @@ export async function createNet(onNetworkError: (peerId: number) => void,
                                 onDisconnect: () => void,
                                 nonSerializableStore: NonSerializableStore,
 ) {
+    if (nonSerializableStore.options.sharedNet) {
+        return nonSerializableStore.options.sharedNet;
+    }
+
     const iceServersPromise = nonSerializableStore.options.net?.iceServers?.();
     await injectWebRTCNet(nonSerializableStore);
 
