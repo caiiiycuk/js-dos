@@ -44,7 +44,7 @@ rm -rf dist && \
     rm dist/emulators/sockdrive* && \
     python scripts/brotli-dist.py && \
     aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
-    dist s3://br-bundles/js-dos/latest --delete 
+    dist s3://br-bundles/js-dos/latest
 ```
 
 Clear the CDN cache (br.cdn.js-dos.com) in dashboard, pattern:

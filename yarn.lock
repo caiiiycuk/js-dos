@@ -808,7 +808,7 @@
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
 "@vitejs/plugin-basic-ssl@^2.1.0":
-  version "2.1.0"
+  version "2.1.4"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-basic-ssl/-/plugin-basic-ssl-2.1.4.tgz#c45abecc7f373343132870eb23b7fe84dfc018a1"
   integrity sha512-HXciTXN/sDBYWgeAD4V4s0DN0g72x5mlxQhHxtYu3Tt8BLa6MzcJZUyDVFCdtjNs3bfENVHVzOsmooTVuNgAAw==
 
@@ -1194,10 +1194,10 @@ electron-to-chromium@^1.4.648:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.653.tgz#832ab25e80ad698ac09c1ca547bd9ee6cce7df10"
   integrity sha512-wA2A2LQCqnEwQAvwADQq3KpMpNwgAUBnRmrFgRzHnPhbQUFArTR32Ab46f4p0MovDLcg4uqd4nCsN2hTltslpA==
 
-emulators@8.3.9:
-  version "8.3.9"
-  resolved "https://registry.yarnpkg.com/emulators/-/emulators-8.3.9.tgz#b2ffe0143811fa65ea1c451eaa1dd80b892602e8"
-  integrity sha512-KRoi5rvWCrRTzboCQlftbASdsdmnAtkGQdBTcjXV9GZ9hmGL01cxDVUQYpKSH0O4Lcoatwb+2HcYUJFohijNmw==
+emulators@8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/emulators/-/emulators-8.4.0.tgz#5d544d46401574b2f5aa00c8a02a813b23dc06ca"
+  integrity sha512-97fQnp7ki7x9uTW6dbbpsQ3KboLYpyOP5gEIbzlPODGPx5tYU/buW0F2MeTZPvPh2drVyCJcLCEAgPlxhT+cpw==
 
 entities@^4.2.0:
   version "4.5.0"

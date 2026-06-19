@@ -526,6 +526,9 @@ export class WsTransportLayer implements TransportLayer {
             case "wc-unload": {
                 this.sendMessageToSocket(messageId);
             } break;
+            case "wc-persist-sockdrives": {
+                this.handler("ws-persist-sockdrives", { drives: null });
+            } break;
             default: {
                 console.log("Unhandled client message (wc):", name, messageId, props);
             } break;

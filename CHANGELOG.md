@@ -4,13 +4,36 @@ Note that version numbers do not necessarily reflect the amount of changes betwe
 
 Not all changes are documented here. To examine the full set of changes between versions, you can use git to browse the changes between the tags.
 
-8.3.21 - dev
-------------
+8.4.0 - 19.06.2026
+------------------
 
+* Updated emulators to 8.4.0
+* Added full 3Dfx acceleration support in browser through WebGL-backed rendering
+* Replaced HumbleNet with WebRTC-NET for browser networking and IPX multiplayer
+* Added support for shared network instances
+* Added support for starting an IPX server and connecting to an IPX address
 * Added audioWorklet mode
-* Added sockdrive preload modes
+* Added experimental JSPI backend support
+* Added sockdrive preload modes and improved sockdrive persist handling
+* Improved sockdrive range loading reliability
 * Added information about GLFX status
-* Support background rendering (disabled by default)
+* Added support for background rendering (disabled by default)
+* Replaced IndexedDB storage with OPFS for bundles and local filesystem changes
+* Removed auth/cloud code and added fsChanges hooks for custom save storage
+* Added OPFS explorer and storage usage statistics
+* Added turbo frame with CPU metrics, speed, cycles, fast forward and frame skip controls
+* Added support for fast forward during boot
+* Added special keys UI for Alt+Tab and Ctrl+Alt+Del
+* Added Simplified Chinese language
+* Added support for right mouse button on Bluetooth mice
+* Improved pointer events handling and pointer lock with unadjusted movement fallback
+* Fixed long mouse click handling with pointer events
+* Fixed Pause key handling
+* Applied initFs even when url is set
+* Disabled speed control when CPU auto-adjust is deselected
+* Updated WebAssembly build tooling to Emscripten SDK 5.0.2 and Node.js 22.x
+* Removed custom Binaryen override from the build workflow
+* Updated deployment documentation and Brotli packaging script
 
 8.3.20 - 31.05.2025
 -------------------
