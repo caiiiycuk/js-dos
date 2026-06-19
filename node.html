@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-07-22T14:24:06.196978183"><script type="text/javascript" >
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2026-06-19T15:30:35.474963986"><script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -11,7 +11,7 @@
         trackLinks:true,
         accurateTrackBounce:true
    });
-</script><title>Node | js-dos</title><script type="application/json" id="virtual-toc-data">[]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b776/app.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="16x16" href="images/logo-16.png"><link rel="icon" type="image/png" sizes="32x32" href="images/logo-32.png"><link rel="icon" type="image/png" sizes="96x96" href="images/logo-192.png"><link rel="icon" type="image/png" sizes="300x300" href="images/logo-512.png"><meta name="image" content="https://js-dos.com/images/seo.jpg"><!-- Open Graph --><meta property="og:title" content="Node | js-dos"><meta property="og:description" content=""><meta property="og:image" content="https://js-dos.com/images/seo.jpg"><meta property="og:site_name" content="js-dos Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://js-dos.com/node.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@caiiiycuk"><meta name="twitter:title" content="Node | js-dos"><meta name="twitter:description" content=""><meta name="twitter:creator" content="@caiiiycuk"><meta name="twitter:image:src" content="https://js-dos.com/images/seo.jpg"><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
+</script><title>Node | js-dos</title><script type="application/json" id="virtual-toc-data">[]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1031/app.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="16x16" href="images/logo-16.png"><link rel="icon" type="image/png" sizes="32x32" href="images/logo-32.png"><link rel="icon" type="image/png" sizes="96x96" href="images/logo-192.png"><link rel="icon" type="image/png" sizes="300x300" href="images/logo-512.png"><meta name="image" content="https://js-dos.com/images/seo.jpg"><!-- Open Graph --><meta property="og:title" content="Node | js-dos"><meta property="og:description" content=""><meta property="og:image" content="https://js-dos.com/images/seo.jpg"><meta property="og:site_name" content="js-dos Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://js-dos.com/node.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@caiiiycuk"><meta name="twitter:title" content="Node | js-dos"><meta name="twitter:description" content=""><meta name="twitter:creator" content="@caiiiycuk"><meta name="twitter:image:src" content="https://js-dos.com/images/seo.jpg"><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
     "@context": "http://schema.org",
     "@type": "WebPage",
     "@id": "https://js-dos.com/node.html#webpage",
@@ -26,13 +26,13 @@
     "url": "https://js-dos.com/",
     "name": "js-dos Help"
 }</script><!-- End Schema.org --></head><body data-id="Node" data-main-title="Node" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="emulators.md|emulators///threejs.md|How-to use"><noscript><div><img src="https://mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="Node" id="Node.md">Node</h1><p id="nr0ddd_3">In this tutorial we will run Digger game in Node.js and save game screenshot to the image.</p><p id="nr0ddd_4">Let's start with creating empty project:</p><div class="code-block" data-lang="bash">
+<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="Node" id="Node.md">Node</h1><p id="zcic5c_3">In this tutorial we will run the Digger game in Node.js and save a game screenshot to an image.</p><p id="zcic5c_4">Let's start by creating an empty project:</p><div class="code-block" data-lang="bash">
 npm init
-</div><p id="nr0ddd_6">To run DOS in browser we need to install <a href="https://www.npmjs.com/package/emulators" id="nr0ddd_26" data-external="true" rel="noopener noreferrer" target="_blank">emulators</a> package. For creating screenshot we will use <code class="code" id="nr0ddd_27">jimp</code> library. So let's install them.</p><div class="code-block" data-lang="bash">
+</div><p id="zcic5c_6">To run DOS in Node.js, we need to install the <a href="https://www.npmjs.com/package/emulators" id="zcic5c_26" data-external="true" rel="noopener noreferrer" target="_blank">emulators</a> package. To create a screenshot, we will use the <code class="code" id="zcic5c_27">jimp</code> library, so let's install both packages.</p><div class="code-block" data-lang="bash">
 npm install --save emulators jimp
-</div><p id="nr0ddd_8">Next we need to download Digger <a href="jsdos-bundle.html" id="nr0ddd_28" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publis it on dos.zone">js-dos bundle</a>:</p><div class="code-block" data-lang="bash">
+</div><p id="zcic5c_8">Next we need to download the Digger <a href="jsdos-bundle.html" id="zcic5c_28" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publish it on dos.zone">js-dos bundle</a>:</p><div class="code-block" data-lang="bash">
 curl https://v8.js-dos.com/bundles/digger.jsdos -o digger.jsdos
-</div><p id="nr0ddd_10">Let's create source file <code class="code" id="nr0ddd_29">digger.js</code>. We can run it with this command <code class="code" id="nr0ddd_30">node digger.js</code></p><p id="nr0ddd_11"><span class="control" id="nr0ddd_31">Use require to import all libraries</span></p><div class="code-block" data-lang="javascript">
+</div><p id="zcic5c_10">Let's create the source file <code class="code" id="zcic5c_29">digger.js</code>. We can run it with <code class="code" id="zcic5c_30">node digger.js</code>.</p><p id="zcic5c_11"><span class="control" id="zcic5c_31">Use require to import all libraries</span></p><div class="code-block" data-lang="javascript">
 const fs = require(&quot;fs&quot;);
 const jimp = require(&quot;jimp&quot;);
 
@@ -40,32 +40,35 @@ require(&quot;emulators&quot;);
 
 const emulators = global.emulators;
 emulators.pathPrefix = &quot;./&quot;;
-</div><aside class="prompt" data-type="tip" data-title="" id="nr0ddd_14"><p id="nr0ddd_32">emulators package does not use export system. It injects itself into global object. <code class="code" id="nr0ddd_33">pathPrefix</code> is used to locate wasm files it relative to <code class="code" id="nr0ddd_34">require</code> path.</p></aside><p id="nr0ddd_15"><span class="control" id="nr0ddd_35">Now we need to read contents of <code class="code" id="nr0ddd_36">jsdos bundle</code> and start emulation</span></p><div class="code-block" data-lang="javascript">
+</div><aside class="prompt" data-type="tip" data-title="" id="zcic5c_14"><p id="zcic5c_32">The <code class="code" id="zcic5c_33">emulators</code> package does not use the export system. It injects itself into the global object. <code class="code" id="zcic5c_34">pathPrefix</code> is used to locate wasm files relative to the <code class="code" id="zcic5c_35">require</code> path.</p></aside><p id="zcic5c_15"><span class="control" id="zcic5c_36">Now we need to read the contents of a <code class="code" id="zcic5c_37">js-dos bundle</code> and start emulation</span></p><div class="code-block" data-lang="javascript">
 const bundle = fs.readFileSync(&quot;digger.jsdos&quot;);
 
 emulators
-    .dosDirect(bundle)
+    .dosboxDirect(bundle)
     .then((ci) =&gt; {
       // ...
     });
-</div><p id="nr0ddd_17">When dos emulation starts, we will receive <a href="command-interface.html" id="nr0ddd_37" data-tooltip="The Command Interface is only one object that allows you to communicate with js-dos instance. Once you run some js-dos bundle you will receive Command Interface instance.">Command Interface</a>, we can use it to subscribe on frame updates and to send key/mouse events.</p><div class="code-block" data-lang="javascript">
+</div><p id="zcic5c_17">When DOS emulation starts, we will receive a <a href="command-interface.html" id="zcic5c_38" data-tooltip="The Command Interface is the object that allows you to communicate with a js-dos instance. Once you run a js-dos bundle, you will receive a Command Interface instance.">Command Interface</a>. We can use it to subscribe to frame updates and to send key/mouse events.</p><div class="code-block" data-lang="javascript">
     ci.events().onFrame((rgb, rgba) =&gt; {
         // use rgb or rgba image data
     });
-</div><aside class="prompt" data-type="warning" data-title="" id="nr0ddd_19"><p id="nr0ddd_38"><span class="control" id="nr0ddd_39">onFrame</span> method have two arguments <code class="code" id="nr0ddd_40">rgb</code> and <code class="code" id="nr0ddd_41">rgba</code> image data. One of them is always <span class="control" id="nr0ddd_42">null</span> while other is <span class="control" id="nr0ddd_43">UInt8ClampedArray</span>. It depends on used emulator which data it uses rgb or rgba.</p></aside><p id="nr0ddd_20">In the v7 we have frame in RGBA format with transparent alpha, let's fix this and save screenshot:</p><div class="code-block" data-lang="javascript">
-    const width = ci.width();
-    const height = ci.height();
-    
-    for (let next = 3; next &lt; width * height * 4; next = next + 4) {
-        rgba[next] = 255;
+</div><aside class="prompt" data-type="warning" data-title="" id="zcic5c_19"><p id="zcic5c_39">The <span class="control" id="zcic5c_40">onFrame</span> method has two arguments: <code class="code" id="zcic5c_41">rgb</code> and <code class="code" id="zcic5c_42">rgba</code> image data. One of them is always <span class="control" id="zcic5c_43">null</span>, while the other is <span class="control" id="zcic5c_44">Uint8Array</span>. The active format depends on the emulator.</p></aside><p id="zcic5c_20">To save a screenshot, convert the latest frame to RGBA:</p><div class="code-block" data-lang="javascript">
+function toRgba(frame, width, height) {
+    const screenshot = Buffer.alloc(width * height * 4);
+
+    for (let source = 0, target = 0; target &lt; screenshot.length;) {
+        screenshot[target++] = frame[source++];
+        screenshot[target++] = frame[source++];
+        screenshot[target++] = frame[source++];
+        screenshot[target++] = 255;
+        if (frame.length === screenshot.length) {
+            source++;
+        }
     }
 
-    new jimp({ data: rgba, width, height }, (err, image) =&gt; {
-        image.write(&quot;./screenshot.png&quot;, () =&gt; {
-            ci.exit();
-        });
-    });
-</div><p id="nr0ddd_23">If you execute <code class="code" id="nr0ddd_44">node digger.js</code> it will save the screenshot to <code class="code" id="nr0ddd_45">./screenshot.png</code>.</p><p id="nr0ddd_24">Full code of <code class="code" id="nr0ddd_46">digger.js</code>:</p><div class="code-block" data-lang="javascript">
+    return screenshot;
+}
+</div><p id="zcic5c_23">If you execute <code class="code" id="zcic5c_45">node digger.js</code> it will save the screenshot to <code class="code" id="zcic5c_46">./screenshot.png</code>.</p><p id="zcic5c_24">Full code of <code class="code" id="zcic5c_47">digger.js</code>:</p><div class="code-block" data-lang="javascript">
 const fs = require(&quot;fs&quot;);
 const jimp = require(&quot;jimp&quot;);
 
@@ -76,12 +79,28 @@ emulators.pathPrefix = &quot;./&quot;;
 
 const bundle = fs.readFileSync(&quot;digger.jsdos&quot;);
 
+function toRgba(frame, width, height) {
+    const screenshot = Buffer.alloc(width * height * 4);
+
+    for (let source = 0, target = 0; target &lt; screenshot.length;) {
+        screenshot[target++] = frame[source++];
+        screenshot[target++] = frame[source++];
+        screenshot[target++] = frame[source++];
+        screenshot[target++] = 255;
+        if (frame.length === screenshot.length) {
+            source++;
+        }
+    }
+
+    return screenshot;
+}
+
 emulators
-    .dosDirect(bundle)
+    .dosboxDirect(bundle)
     .then((ci) =&gt; {
-        let rgba = new Uint8Array(0);
-        ci.events().onFrame((_, _rgba) =&gt; {
-            rgba = _rgba;
+        let frame = new Uint8Array(0);
+        ci.events().onFrame((rgb, rgba) =&gt; {
+            frame = rgb ?? rgba ?? frame;
         });
 
         // capture the screen after 3 sec
@@ -89,12 +108,12 @@ emulators
         setTimeout(() =&gt; {
             const width = ci.width();
             const height = ci.height();
+            if (frame.length === 0) {
+                throw new Error(&quot;No frame received&quot;);
+            }
 
-            for (let next = 3; next &lt; width * height * 4; next = next + 4) {
-                rgba[next] = 255;
-            }           
-
-            new jimp({ data: rgba, width, height }, (err, image) =&gt; {
+            const screenshot = toRgba(frame, width, height);
+            new jimp({ data: screenshot, width, height }, (err, image) =&gt; {
                 image.write(&quot;./screenshot.png&quot;, () =&gt; {
                     ci.exit();
                 });
@@ -102,4 +121,4 @@ emulators
         }, 3000);
     })
     .catch(console.error);
-</div><div class="last-modified">01 апреля 2025</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="browser.html" class="navigation-links__prev">Browser</a><a href="save-load.html" class="navigation-links__next">Persist FS</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b776/app.js"></script></body></html>
+</div><div class="last-modified">19 июня 2026</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="browser.html" class="navigation-links__prev">Browser</a><a href="save-load.html" class="navigation-links__next">Persist FS</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1031/app.js"></script></body></html>

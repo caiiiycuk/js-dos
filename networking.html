@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2025-07-22T14:24:06.196934651"><script type="text/javascript" >
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2026-06-19T15:30:35.469639157"><script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -11,7 +11,7 @@
         trackLinks:true,
         accurateTrackBounce:true
    });
-</script><title>Networking | js-dos</title><script type="application/json" id="virtual-toc-data">[{"id":"deploy-own-ipx-backend","level":0,"title":"Deploy own ipx backend","anchor":"#deploy-own-ipx-backend"}]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b776/app.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="16x16" href="images/logo-16.png"><link rel="icon" type="image/png" sizes="32x32" href="images/logo-32.png"><link rel="icon" type="image/png" sizes="96x96" href="images/logo-192.png"><link rel="icon" type="image/png" sizes="300x300" href="images/logo-512.png"><meta name="image" content="https://js-dos.com/images/seo.jpg"><!-- Open Graph --><meta property="og:title" content="Networking | js-dos"><meta property="og:description" content=""><meta property="og:image" content="https://js-dos.com/images/seo.jpg"><meta property="og:site_name" content="js-dos Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://js-dos.com/networking.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@caiiiycuk"><meta name="twitter:title" content="Networking | js-dos"><meta name="twitter:description" content=""><meta name="twitter:creator" content="@caiiiycuk"><meta name="twitter:image:src" content="https://js-dos.com/images/seo.jpg"><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
+</script><title>Networking | js-dos</title><script type="application/json" id="virtual-toc-data">[{"id":"deploy-your-own-networking-backend","level":0,"title":"Deploy your own networking backend","anchor":"#deploy-your-own-networking-backend"},{"id":"reusing-a-network-instance","level":0,"title":"Reusing a network instance","anchor":"#reusing-a-network-instance"}]</script><script type="application/json" id="topic-shortcuts"></script><link href="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1031/app.css" rel="stylesheet"><link rel="icon" type="image/png" sizes="16x16" href="images/logo-16.png"><link rel="icon" type="image/png" sizes="32x32" href="images/logo-32.png"><link rel="icon" type="image/png" sizes="96x96" href="images/logo-192.png"><link rel="icon" type="image/png" sizes="300x300" href="images/logo-512.png"><meta name="image" content="https://js-dos.com/images/seo.jpg"><!-- Open Graph --><meta property="og:title" content="Networking | js-dos"><meta property="og:description" content=""><meta property="og:image" content="https://js-dos.com/images/seo.jpg"><meta property="og:site_name" content="js-dos Help"><meta property="og:type" content="website"><meta property="og:locale" content="en_US"><meta property="og:url" content="https://js-dos.com/networking.html"><!-- End Open Graph --><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@caiiiycuk"><meta name="twitter:title" content="Networking | js-dos"><meta name="twitter:description" content=""><meta name="twitter:creator" content="@caiiiycuk"><meta name="twitter:image:src" content="https://js-dos.com/images/seo.jpg"><!-- End Twitter Card --><!-- Schema.org WebPage --><script type="application/ld+json">{
     "@context": "http://schema.org",
     "@type": "WebPage",
     "@id": "https://js-dos.com/networking.html#webpage",
@@ -26,21 +26,97 @@
     "url": "https://js-dos.com/",
     "name": "js-dos Help"
 }</script><!-- End Schema.org --></head><body data-id="networking" data-main-title="Networking" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="Overview.md|js-dos"><noscript><div><img src="https://mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="networking" id="networking.md">Networking</h1><p id="z146y3j_3">Some DOS games offer multiplayer gaming based on ipx, modem, or direct connection. Using a browser, it's not possible to directly connect two clients. BUT, using js-dos cloud, you can emulate direct connection.</p><aside class="prompt" data-type="tip" data-title="" id="z146y3j_4"><p id="z146y3j_10">Only IPX protocol is supported right now.</p></aside><p id="z146y3j_5">Here is tutorial video how to use networking with js-dos:</p><div class="video-player" id="z146y3j_6"><object class="article__bordered-element" width="560" height="315" data-theme="light" type="application/x-shockwave-flash" data="https://www.youtube.com/v/YH22lZ1EUjM?color2=FBE9EC&amp;rel=0&amp;hd=1&amp;autoplay=0&amp;version=3&amp;modestbranding=1&amp;fs=1"></object></div><p id="z146y3j_7">By default, users are able to enjoy these games using the Netherlands server, which is provided by js-dos.</p><aside class="prompt" data-type="tip" data-title="" id="z146y3j_8"><p id="z146y3j_11">You need to enable networking features in player using <a href="player-api.html#options" id="z146y3j_12" data-tooltip="All options are optional">options</a></p></aside><section class="chapter"><h2 id="deploy-own-ipx-backend" data-toc="deploy-own-ipx-backend">Deploy own ipx backend</h2><p id="z146y3j_13">As mentioned, js-dos provides the Netherlands server for free, but it works well only for Europe region. To improve player experience you can deploy your own instance of ipx backend.</p><aside class="prompt" data-type="note" data-title="" id="z146y3j_14"><p id="z146y3j_17">If your deployment is permanent and well maintained, then please let us know, we will add it to js-dos player defaults</p></aside><section class="chapter"><h3 id="the-server" data-toc="the-server">The Server</h3><p id="z146y3j_18">The server code is licensed under GPL-2 and you can find it <a href="https://github.com/caiiiycuk/dosbox-ipx-server" id="z146y3j_20" data-external="true" rel="noopener noreferrer" target="_blank">here</a>. This server works as a relay, connecting multiple js-dos clients together. You need to deploy it on a publicly available server.</p><ol class="list _decimal" id="z146y3j_19" type="1"><li class="list__item" id="z146y3j_21"><p id="z146y3j_24">Download the server <a href="https://github.com/caiiiycuk/dosbox-ipx-server/releases/" id="z146y3j_25" data-external="true" rel="noopener noreferrer" target="_blank">binary</a></p></li><li class="list__item" id="z146y3j_22"><p id="z146y3j_26"><code class="code" id="z146y3j_27">chmod +x server</code> to make it executable</p></li><li class="list__item" id="z146y3j_23"><p id="z146y3j_28">Run it as follows:</p><div class="code-block" data-lang="none">
-./server -c cert.pem -k privkey.pem
-</div><div class="table-wrapper"><table class="wide" id="z146y3j_30"><thead><tr class="ijRowHead" id="z146y3j_31"><th id="z146y3j_35"><p>Argument</p></th><th id="z146y3j_36"><p>Description</p></th></tr></thead><tbody><tr id="z146y3j_32"><td id="z146y3j_37"><p>./server</p></td><td id="z146y3j_38"><p>server binary</p></td></tr><tr id="z146y3j_33"><td id="z146y3j_39"><p>-c cert.pem</p></td><td id="z146y3j_40"><p>path to SSL certificate</p></td></tr><tr id="z146y3j_34"><td id="z146y3j_41"><p>-k privekey.pem</p></td><td id="z146y3j_42"><p>path to private key file</p></td></tr></tbody></table></div></li></ol></section><section class="chapter"><h3 id="configuring-js-dos-player" data-toc="configuring-js-dos-player">Configuring js-dos player</h3><p id="z146y3j_43">When the server is started, you can use it with js-dos player. For example, if your server is available on host <code class="code" id="z146y3j_46">myipx.com</code>, <a href="player-api.html" id="z146y3j_47" data-tooltip="js-dos player provides a single entry point: the Dos function, it takes two arguments:">js-dos configuration</a> will be:</p><div class="code-block" data-lang="javascript">
-    const params = new URLSearchParams(location.search);
-// ...
-    Dos(el, {
-          ipxBackend: params.get(&quot;ipxBackend&quot;),
-          room: params.get(&quot;room&quot;),
-          ipx: [{
-              name: &quot;myipx&quot;,
-              host: &quot;wss://myipx.com&quot;,
-            }, {
-              name: &quot;dos.zone&quot;,
-              host: &quot;wss://netherlands.dos.zone&quot;,
+<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="networking" id="networking.md">Networking</h1><p id="-9vg8gi_3">Some DOS games offer multiplayer gaming based on IPX, modem, or direct connection. Using a browser, it's not possible to directly connect two clients. However, using js-dos cloud, you can emulate direct connection.</p><aside class="prompt" data-type="tip" data-title="" id="-9vg8gi_4"><p id="-9vg8gi_7">Only IPX protocol is supported right now.</p></aside><section class="chapter"><h2 id="deploy-your-own-networking-backend" data-toc="deploy-your-own-networking-backend">Deploy your own networking backend</h2><section class="chapter"><h3 id="how-networking-works" data-toc="how-networking-works">How networking works</h3><p id="-9vg8gi_12">js-dos networking uses <a href="https://github.com/caiiiycuk/WebRTC-NET" id="-9vg8gi_16" data-external="true" rel="noopener noreferrer" target="_blank">WebRTC-NET</a>. The browser player loads <code class="code" id="-9vg8gi_17">webrtcnet.mjs</code> and <code class="code" id="-9vg8gi_18">webrtcnet.wasm</code>, opens a WebSocket connection to a signaling server, and then creates WebRTC connections between players.</p><p id="-9vg8gi_13">The signaling server does not carry game traffic. It only:</p><ol class="list _decimal" id="-9vg8gi_14" type="1"><li class="list__item" id="-9vg8gi_19"><p id="-9vg8gi_22">assigns each player a <code class="code" id="-9vg8gi_23">peerId</code>;</p></li><li class="list__item" id="-9vg8gi_20"><p id="-9vg8gi_24">stores aliases registered by players;</p></li><li class="list__item" id="-9vg8gi_21"><p id="-9vg8gi_25">forwards WebRTC signaling messages such as SDP offers, SDP answers, and ICE candidates.</p></li></ol><p id="-9vg8gi_15">After signaling is complete, DOS/IPX packets go through the WebRTC data channel between players. If direct peer-to-peer connection is impossible because of NAT/firewall rules, WebRTC needs STUN/TURN servers from the ICE server list. TURN is the relay for game traffic; the signaling server is not a TURN relay.</p></section><section class="chapter"><h3 id="signaling-server" data-toc="signaling-server">Signaling server</h3><p id="-9vg8gi_26">Use the WebRTC-NET <code class="code" id="-9vg8gi_40">peer-server</code> from <a href="https://github.com/caiiiycuk/WebRTC-NET/releases" id="-9vg8gi_41" data-external="true" rel="noopener noreferrer" target="_blank">WebRTC-NET</a>.</p><p id="-9vg8gi_27">A production deployment usually has these public endpoints:</p><div class="table-wrapper"><table class="wide" id="-9vg8gi_28"><thead><tr class="ijRowHead" id="-9vg8gi_42"><th id="-9vg8gi_45"><p>endpoint</p></th><th id="-9vg8gi_46"><p>role</p></th></tr></thead><tbody><tr id="-9vg8gi_43"><td id="-9vg8gi_47"><p><code class="code" id="-9vg8gi_49">wss://net.example.com/ws</code></p></td><td id="-9vg8gi_48"><p>WebRTC-NET <code class="code" id="-9vg8gi_50">peer-server</code>; exchanges <code class="code" id="-9vg8gi_51">peerId</code>, aliases, SDP offers/answers, and ICE candidates.</p></td></tr><tr id="-9vg8gi_44"><td id="-9vg8gi_52"><p><code class="code" id="-9vg8gi_54">turn.example.com</code></p></td><td id="-9vg8gi_53"><p>STUN/TURN server; helps WebRTC discover routes and relays game traffic when needed.</p></td></tr></tbody></table></div><p id="-9vg8gi_29">The two roles may run on the same machine or on separate machines. They are configured separately in js-dos: <code class="code" id="-9vg8gi_55">net.peerServer</code> points to the signaling endpoint, while <code class="code" id="-9vg8gi_56">net.iceServers</code> returns STUN/TURN entries.</p><p id="-9vg8gi_30">Download the Linux <code class="code" id="-9vg8gi_57">peer-server</code> binary from the <a href="https://github.com/caiiiycuk/WebRTC-NET/releases" id="-9vg8gi_58" data-external="true" rel="noopener noreferrer" target="_blank">WebRTC-NET Releases</a> section. Use the Linux x86_64 binary, then copy it to your server and make it executable:</p><div class="code-block" data-lang="bash">
+sudo mkdir -p /opt/webrtc-net
+sudo install -m 755 peer-server.bin.x86_64 /opt/webrtc-net/peer-server.bin.x86_64
+</div><p id="-9vg8gi_32">Run it with TLS so browsers can connect from HTTPS pages:</p><div class="code-block" data-lang="bash">
+/opt/webrtc-net/peer-server.bin.x86_64 \
+    --port 443 \
+    --tls \
+    --tls-cert /etc/letsencrypt/live/net.example.com/fullchain.pem \
+    --tls-key /etc/letsencrypt/live/net.example.com/privkey.pem \
+    -v info
+</div><p id="-9vg8gi_34">Useful flags:</p><div class="table-wrapper"><table class="wide" id="-9vg8gi_35"><thead><tr class="ijRowHead" id="-9vg8gi_59"><th id="-9vg8gi_65"><p>argument</p></th><th id="-9vg8gi_66"><p>description</p></th></tr></thead><tbody><tr id="-9vg8gi_60"><td id="-9vg8gi_67"><p><code class="code" id="-9vg8gi_69">--port &lt;port&gt;</code></p></td><td id="-9vg8gi_68"><p>Signaling server port. Default is <code class="code" id="-9vg8gi_70">8080</code>.</p></td></tr><tr id="-9vg8gi_61"><td id="-9vg8gi_71"><p><code class="code" id="-9vg8gi_73">--tls</code></p></td><td id="-9vg8gi_72"><p>Serve HTTPS/WSS instead of plain HTTP/WebSocket.</p></td></tr><tr id="-9vg8gi_62"><td id="-9vg8gi_74"><p><code class="code" id="-9vg8gi_76">--tls-cert</code></p></td><td id="-9vg8gi_75"><p>TLS certificate chain file.</p></td></tr><tr id="-9vg8gi_63"><td id="-9vg8gi_77"><p><code class="code" id="-9vg8gi_79">--tls-key</code></p></td><td id="-9vg8gi_78"><p>TLS private key file.</p></td></tr><tr id="-9vg8gi_64"><td id="-9vg8gi_80"><p><code class="code" id="-9vg8gi_82">-v &lt;level&gt;</code></p></td><td id="-9vg8gi_81"><p>Log level: <code class="code" id="-9vg8gi_83">error</code>, <code class="code" id="-9vg8gi_84">warn</code>, <code class="code" id="-9vg8gi_85">notice</code>, <code class="code" id="-9vg8gi_86">info</code>, <code class="code" id="-9vg8gi_87">debug</code>.</p></td></tr></tbody></table></div><p id="-9vg8gi_36">With <code class="code" id="-9vg8gi_88">--tls</code>, <code class="code" id="-9vg8gi_89">peer-server</code> serves WSS on the same <code class="code" id="-9vg8gi_90">--port</code>. Without <code class="code" id="-9vg8gi_91">--tls</code>, it serves plain WS and should only be used behind a reverse proxy that terminates TLS and forwards WebSocket traffic to it.</p><p id="-9vg8gi_37">For a supervised deployment, run the same command under systemd or supervisor:</p><div class="code-block" data-lang="ini">
+[program:webrtc-net]
+command=/opt/webrtc-net/peer-server.bin.x86_64 --port 443 --tls --tls-cert /etc/letsencrypt/live/net.example.com/fullchain.pem --tls-key /etc/letsencrypt/live/net.example.com/privkey.pem -v info
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/webrtc-net.err.log
+stdout_logfile=/var/log/webrtc-net.out.log
+</div><p id="-9vg8gi_39">Open the signaling TCP port in your firewall. If you run the server on <code class="code" id="-9vg8gi_92">443</code>, open <code class="code" id="-9vg8gi_93">443/tcp</code>; if you run it on <code class="code" id="-9vg8gi_94">8080</code>, open <code class="code" id="-9vg8gi_95">8080/tcp</code>.</p></section><section class="chapter"><h3 id="ice-servers" data-toc="ice-servers">ICE servers</h3><p id="-9vg8gi_96">The signaling server does not provide STUN/TURN settings. js-dos passes ICE servers to WebRTC-NET from the player configuration.</p><p id="-9vg8gi_97">For LAN or simple public-network tests, a public STUN server may be enough:</p><div class="code-block" data-lang="javascript">
+iceServers: async () =&gt; [
+    { urls: [&quot;stun:stun.l.google.com:19302&quot;] },
+]
+</div><p id="-9vg8gi_99">For production internet play, deploy a TURN server such as coturn and return both STUN and TURN entries:</p><div class="code-block" data-lang="javascript">
+iceServers: async () =&gt; [
+    { urls: [&quot;stun:turn.example.com:3478&quot;] },
+    {
+        urls: [
+            &quot;turn:turn.example.com:3478?transport=udp&quot;,
+            &quot;turn:turn.example.com:3478?transport=tcp&quot;,
+            &quot;turns:turn.example.com:5349?transport=tcp&quot;,
+        ],
+        username: &quot;user&quot;,
+        credential: &quot;password&quot;,
+    },
+]
+</div><p id="-9vg8gi_101">If you use the coturn helper from WebRTC-NET, see <code class="code" id="-9vg8gi_103">coturn-docker/</code> in the WebRTC-NET repository. It provides Docker Compose setup for coturn, nginx, certbot, TLS certificates, and a browser latency test page.</p><p id="-9vg8gi_102">For coturn, expose at least <code class="code" id="-9vg8gi_104">3478/tcp</code>, <code class="code" id="-9vg8gi_105">3478/udp</code>, <code class="code" id="-9vg8gi_106">5349/tcp</code>, and the relay UDP range configured in coturn. The WebRTC-NET helper uses <code class="code" id="-9vg8gi_107">49152-65535/udp</code> for relay traffic.</p></section><section class="chapter"><h3 id="configuring-js-dos-player" data-toc="configuring-js-dos-player">Configuring js-dos player</h3><p id="-9vg8gi_108">When the signaling server and ICE servers are ready, configure js-dos player:</p><div class="code-block" data-lang="javascript">
+const params = new URLSearchParams(location.search);
+
+Dos(el, {
+    url: &quot;game.jsdos&quot;,
+    startIpxServer: params.get(&quot;server&quot;) === &quot;1&quot;,
+    connectIpxAddress: params.get(&quot;connect&quot;) ?? undefined,
+    net: {
+        peerServer: &quot;wss://net.example.com/ws&quot;,
+        token: &quot;my-game&quot;,
+        secret: &quot;fallback&quot;,
+        iceServers: async () =&gt; [
+            { urls: [&quot;stun:turn.example.com:3478&quot;] },
+            {
+                urls: [&quot;turn:turn.example.com:3478?transport=udp&quot;],
+                username: &quot;user&quot;,
+                credential: &quot;password&quot;,
+            },
+        ],
+    },
+});
+</div><p id="-9vg8gi_110"><code class="code" id="-9vg8gi_112">peerServer</code> is the WebSocket URL of your WebRTC-NET <code class="code" id="-9vg8gi_113">peer-server</code>. Use <code class="code" id="-9vg8gi_114">wss://</code> for HTTPS pages. <code class="code" id="-9vg8gi_115">token</code> and <code class="code" id="-9vg8gi_116">secret</code> are passed to WebRTC-NET as the game token and game secret; current <code class="code" id="-9vg8gi_117">peer-server</code> does not enforce user authentication, but use stable values per deployment.</p><p id="-9vg8gi_111">Use <code class="code" id="-9vg8gi_118">startIpxServer</code> on the host player, then pass the host <code class="code" id="-9vg8gi_119">peerId</code> or registered alias to another player through <code class="code" id="-9vg8gi_120">connectIpxAddress</code>. The actual game data will flow through WebRTC, using TURN only when direct peer-to-peer connection cannot be established.</p></section></section><section class="chapter"><h2 id="reusing-a-network-instance" data-toc="reusing-a-network-instance">Reusing a network instance</h2><p id="-9vg8gi_121">By default, each player creates its own WebRTC networking instance when <code class="code" id="-9vg8gi_128">startIpxServer</code> or <code class="code" id="-9vg8gi_129">connectIpxAddress</code> is used. If you run several players on the same page, you can pass the same <code class="code" id="-9vg8gi_130">NetInstance</code> through <code class="code" id="-9vg8gi_131">sharedNet</code>.</p><div class="code-block" data-lang="javascript">
+Dos(hostElement, {
+    url: &quot;game.jsdos&quot;,
+    startIpxServer: true,
+    onEvent: (event, ci) =&gt; {
+        if (event === &quot;ci-ready&quot;) {
+            const sharedNet = ci.net();
+            if (sharedNet === null) {
+                return;
             }
-          ],
-    });
-</div><p id="z146y3j_45">The first element in the ipx array will be used as the default ipx server.</p></section></section><div class="last-modified">01 апреля 2025</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="releases.html" class="navigation-links__prev">Releases</a><a href="v7.html" class="navigation-links__next">js-dos v7</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.22.0-b776/app.js"></script></body></html>
+
+            Dos(clientElement, {
+                url: &quot;game.jsdos&quot;,
+                connectIpxAddress: String(sharedNet.peerId),
+                sharedNet,
+            });
+        }
+    },
+});
+</div><p id="-9vg8gi_123"><code class="code" id="-9vg8gi_132">sharedNet</code> must be an object returned by <code class="code" id="-9vg8gi_133">ci.net()</code> or an object implementing the same interface:</p><div class="code-block" data-lang="ts">
+type NetInstance = {
+    peerId: number;
+    connected: Set&lt;number&gt;;
+    wait: (ms: number) =&gt; void;
+    registerAlias: (alias: string) =&gt; Promise&lt;void&gt;;
+    unregisterAlias: (alias: string) =&gt; void;
+    queryAliases: (query: string) =&gt; Promise&lt;{ peerId: number }[]&gt;;
+    sendBinary: (data: Uint8Array, peerId: number) =&gt; number;
+    recvBinary: () =&gt; { data: Uint8Array, peerId: number } | null;
+    disconnect: (peerId: number) =&gt; void;
+    shutdown: () =&gt; void;
+}
+</div><p id="-9vg8gi_125">You can register a readable alias for the current peer and then connect another player by that alias:</p><div class="code-block" data-lang="javascript">
+const net = ci.net();
+
+if (net !== null) {
+    await net.registerAlias(&quot;my-room&quot;);
+}
+</div><p id="-9vg8gi_127">Then pass <code class="code" id="-9vg8gi_134">&quot;my-room&quot;</code> as <code class="code" id="-9vg8gi_135">connectIpxAddress</code>.</p></section><div class="last-modified">19 июня 2026</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="releases.html" class="navigation-links__prev">Releases</a><a href="v7.html" class="navigation-links__next">js-dos v7</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1031/app.js"></script></body></html>
