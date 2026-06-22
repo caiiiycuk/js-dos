@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2026-06-19T16:30:20.549201427"><script type="text/javascript" >
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2026-06-22T18:16:30.752540637"><script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -26,7 +26,7 @@
     "url": "https://js-dos.com/",
     "name": "js-dos Help"
 }</script><!-- End Schema.org --></head><body data-id="command-interface" data-main-title="Command Interface (CI)" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="emulators.md|emulators"><noscript><div><img src="https://mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="command-interface" id="command-interface.md">Command Interface (CI)</h1><p id="-snyhjj_3">The <code class="code" id="-snyhjj_15">Command Interface</code> is the object that allows you to communicate with a js-dos instance. Once you run a <a href="jsdos-bundle.html" id="-snyhjj_16" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publish it on dos.zone">js-dos bundle</a>, you will receive a <code class="code" id="-snyhjj_17">Command Interface</code> instance.</p><div class="tabs" id="-snyhjj_4" data-anchors="[-snyhjj_18,-snyhjj_19]"><div class="tabs__content" data-gtm="tab" id="-snyhjj_18" data-title="v8"><div class="code-block" data-lang="ts" data-title="TypeScript">
+<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="command-interface" id="command-interface.md">Command Interface (CI)</h1><p id="z4ys98n_3">The <code class="code" id="z4ys98n_15">Command Interface</code> is the object that allows you to communicate with a js-dos instance. Once you run a <a href="jsdos-bundle.html" id="z4ys98n_16" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publish it on dos.zone">js-dos bundle</a>, you will receive a <code class="code" id="z4ys98n_17">Command Interface</code> instance.</p><div class="tabs" id="z4ys98n_4" data-anchors="[z4ys98n_18,z4ys98n_19]"><div class="tabs__content" data-gtm="tab" id="z4ys98n_18" data-title="v8"><div class="code-block" data-lang="ts" data-title="TypeScript">
             Dos(/*element*/, {
                 url: /* bundle url */,
                 onEvent: (event, ci: CommandInterface) =&gt; {
@@ -35,9 +35,9 @@
                     }
                 },
             });
-        </div></div><div class="tabs__content" data-gtm="tab" id="-snyhjj_19" data-title="v7"><div class="code-block" data-lang="javascript" data-title="JavaScript">
+        </div></div><div class="tabs__content" data-gtm="tab" id="z4ys98n_19" data-title="v7"><div class="code-block" data-lang="javascript" data-title="JavaScript">
             const ci = await Dos(/*element*/).run(/*bundle url*/);
-        </div></div></div><p id="-snyhjj_5">CI interface:</p><div class="code-block" data-lang="ts">
+        </div></div></div><p id="z4ys98n_5">CI interface:</p><div class="code-block" data-lang="ts">
 export interface CommandInterface {
     config: () =&gt; Promise&lt;DosConfig&gt;;
     height: () =&gt; number;
@@ -68,7 +68,7 @@ export interface CommandInterface {
     fsDeleteFile(file: string): Promise&lt;boolean&gt;;
     getRunningProgram(): Promise&lt;string&gt;;
 }
-</div><p id="-snyhjj_7">Events interface:</p><div class="code-block" data-lang="ts">
+</div><p id="z4ys98n_7">Events interface:</p><div class="code-block" data-lang="ts">
 export type MessageType = &quot;log&quot; | &quot;warn&quot; | &quot;error&quot; | string;
 
 export interface CommandInterfaceEvents {
@@ -82,7 +82,7 @@ export interface CommandInterfaceEvents {
     onNetworkDisconnected: (consumer: (networkType: NetworkType) =&gt; void) =&gt; void;
     onUnload: (consumer: () =&gt; Promise&lt;void&gt;) =&gt; void;
 }
-</div><section class="chapter"><h2 id="runtime-control" data-toc="runtime-control">Runtime control</h2><p id="-snyhjj_22">Use these methods to control a running backend:</p><div class="code-block" data-lang="javascript">
+</div><section class="chapter"><h2 id="runtime-control" data-toc="runtime-control">Runtime control</h2><p id="z4ys98n_22">Use these methods to control a running backend:</p><div class="code-block" data-lang="javascript">
 ci.pause();
 ci.resume();
 
@@ -90,14 +90,14 @@ ci.mute();
 ci.unmute();
 
 await ci.exit();
-</div><p id="-snyhjj_24"><code class="code" id="-snyhjj_28">pause()</code> stops emulation and mutes sound. <code class="code" id="-snyhjj_29">resume()</code> continues it. <code class="code" id="-snyhjj_30">exit()</code> stops the backend and releases its resources.</p><p id="-snyhjj_25">You can also get current runtime state:</p><div class="code-block" data-lang="javascript">
+</div><p id="z4ys98n_24"><code class="code" id="z4ys98n_28">pause()</code> stops emulation and mutes sound. <code class="code" id="z4ys98n_29">resume()</code> continues it. <code class="code" id="z4ys98n_30">exit()</code> stops the backend and releases its resources.</p><p id="z4ys98n_25">You can also get current runtime state:</p><div class="code-block" data-lang="javascript">
 const config = await ci.config();
 const width = ci.width();
 const height = ci.height();
 const frequency = ci.soundFrequency();
 const image = await ci.screenshot();
 const program = await ci.getRunningProgram();
-</div><p id="-snyhjj_27"><code class="code" id="-snyhjj_31">screenshot()</code> returns <code class="code" id="-snyhjj_32">ImageData</code> for the latest frame. <code class="code" id="-snyhjj_33">getRunningProgram()</code> returns the current DOS program name reported by the backend.</p></section><section class="chapter"><h2 id="input" data-toc="input">Input</h2><p id="-snyhjj_34">Keyboard methods use js-dos key codes. For common Latin letters and digits the codes match ASCII values. Special keys use the same numeric values as the virtual keyboard configuration, for example Enter is <code class="code" id="-snyhjj_38">257</code>, Left arrow is <code class="code" id="-snyhjj_39">263</code>, Up arrow is <code class="code" id="-snyhjj_40">265</code>, and Escape is <code class="code" id="-snyhjj_41">256</code>.</p><div class="code-block" data-lang="javascript">
+</div><p id="z4ys98n_27"><code class="code" id="z4ys98n_31">screenshot()</code> returns <code class="code" id="z4ys98n_32">ImageData</code> for the latest frame. <code class="code" id="z4ys98n_33">getRunningProgram()</code> returns the current DOS program name reported by the backend.</p></section><section class="chapter"><h2 id="input" data-toc="input">Input</h2><p id="z4ys98n_34">Keyboard methods use js-dos key codes. For common Latin letters and digits the codes match ASCII values. Special keys use the same numeric values as the virtual keyboard configuration, for example Enter is <code class="code" id="z4ys98n_38">257</code>, Left arrow is <code class="code" id="z4ys98n_39">263</code>, Up arrow is <code class="code" id="z4ys98n_40">265</code>, and Escape is <code class="code" id="z4ys98n_41">256</code>.</p><div class="code-block" data-lang="javascript">
 // Press and release Enter.
 ci.simulateKeyPress(257);
 
@@ -106,13 +106,13 @@ ci.sendKeyEvent(341, true);
 ci.sendKeyEvent(67, true);
 ci.sendKeyEvent(67, false);
 ci.sendKeyEvent(341, false);
-</div><p id="-snyhjj_36">Mouse coordinates for <code class="code" id="-snyhjj_42">sendMouseMotion</code> are normalized to the <code class="code" id="-snyhjj_43">[0, 1]</code> range:</p><div class="code-block" data-lang="javascript">
+</div><p id="z4ys98n_36">Mouse coordinates for <code class="code" id="z4ys98n_42">sendMouseMotion</code> are normalized to the <code class="code" id="z4ys98n_43">[0, 1]</code> range:</p><div class="code-block" data-lang="javascript">
 ci.sendMouseMotion(0.5, 0.5);
 ci.sendMouseRelativeMotion(10, -4);
 ci.sendMouseButton(0, true);
 ci.sendMouseButton(0, false);
 ci.sendMouseSync();
-</div></section><section class="chapter"><h2 id="frames-and-sound" data-toc="frames-and-sound">Frames and sound</h2><p id="-snyhjj_44">The backend emits frame and sound data through events:</p><div class="code-block" data-lang="javascript">
+</div></section><section class="chapter"><h2 id="frames-and-sound" data-toc="frames-and-sound">Frames and sound</h2><p id="z4ys98n_44">The backend emits frame and sound data through events:</p><div class="code-block" data-lang="javascript">
 ci.events().onFrameSize((width, height) =&gt; {
     console.log(&quot;frame size&quot;, width, height);
 });
@@ -130,7 +130,7 @@ ci.events().onFrame((rgb, rgba) =&gt; {
 ci.events().onSoundPush((samples) =&gt; {
     // samples is Float32Array with audio frames from the backend
 });
-</div></section><section class="chapter"><h2 id="backend-events" data-toc="backend-events">Backend events</h2><p id="-snyhjj_46"><code class="code" id="-snyhjj_50">sendBackendEvent()</code> sends a low-level backend event. It is mainly useful for features that are implemented by a specific backend.</p><div class="code-block" data-lang="javascript">
+</div></section><section class="chapter"><h2 id="backend-events" data-toc="backend-events">Backend events</h2><p id="z4ys98n_46"><code class="code" id="z4ys98n_50">sendBackendEvent()</code> sends a low-level backend event. It is mainly useful for features that are implemented by a specific backend.</p><div class="code-block" data-lang="javascript">
 ci.sendBackendEvent({
     type: &quot;wc-trigger-event&quot;,
     event: &quot;hand_savestate&quot;,
@@ -140,7 +140,7 @@ ci.sendBackendEvent({
     type: &quot;wc-trigger-event&quot;,
     event: &quot;hand_loadstate&quot;,
 });
-</div><p id="-snyhjj_48">Supported built-in trigger events include:</p><div class="table-wrapper"><table class="wide" id="-snyhjj_49"><thead><tr class="ijRowHead" id="-snyhjj_51"><th id="-snyhjj_55"><p>event</p></th><th id="-snyhjj_56"><p>backend</p></th><th id="-snyhjj_57"><p>description</p></th></tr></thead><tbody><tr id="-snyhjj_52"><td id="-snyhjj_58"><p><span class="control" id="-snyhjj_61">hand_savestate</span></p></td><td id="-snyhjj_59"><p>DOSBox-X</p></td><td id="-snyhjj_60"><p>Save emulator state</p></td></tr><tr id="-snyhjj_53"><td id="-snyhjj_62"><p><span class="control" id="-snyhjj_65">hand_loadstate</span></p></td><td id="-snyhjj_63"><p>DOSBox-X</p></td><td id="-snyhjj_64"><p>Load emulator state</p></td></tr><tr id="-snyhjj_54"><td id="-snyhjj_66"><p><span class="control" id="-snyhjj_69">hand_ipx_startserver</span></p></td><td id="-snyhjj_67"><p>DOSBox, DOSBox-X</p></td><td id="-snyhjj_68"><p>Start IPX server</p></td></tr></tbody></table></div></section><section class="chapter"><h2 id="networking" data-toc="networking">Networking</h2><p id="-snyhjj_70">Use <code class="code" id="-snyhjj_73">networkConnect()</code> and <code class="code" id="-snyhjj_74">networkDisconnect()</code> with <code class="code" id="-snyhjj_75">NetworkType.NETWORK_DOSBOX_IPX</code> to control IPX networking from code.</p><div class="code-block" data-lang="ts">
+</div><p id="z4ys98n_48">Supported built-in trigger events include:</p><div class="table-wrapper"><table class="wide" id="z4ys98n_49"><thead><tr class="ijRowHead" id="z4ys98n_51"><th id="z4ys98n_55"><p>event</p></th><th id="z4ys98n_56"><p>backend</p></th><th id="z4ys98n_57"><p>description</p></th></tr></thead><tbody><tr id="z4ys98n_52"><td id="z4ys98n_58"><p><span class="control" id="z4ys98n_61">hand_savestate</span></p></td><td id="z4ys98n_59"><p>DOSBox-X</p></td><td id="z4ys98n_60"><p>Save emulator state</p></td></tr><tr id="z4ys98n_53"><td id="z4ys98n_62"><p><span class="control" id="z4ys98n_65">hand_loadstate</span></p></td><td id="z4ys98n_63"><p>DOSBox-X</p></td><td id="z4ys98n_64"><p>Load emulator state</p></td></tr><tr id="z4ys98n_54"><td id="z4ys98n_66"><p><span class="control" id="z4ys98n_69">hand_ipx_startserver</span></p></td><td id="z4ys98n_67"><p>DOSBox, DOSBox-X</p></td><td id="z4ys98n_68"><p>Start IPX server</p></td></tr></tbody></table></div></section><section class="chapter"><h2 id="networking" data-toc="networking">Networking</h2><p id="z4ys98n_70">Use <code class="code" id="z4ys98n_73">networkConnect()</code> and <code class="code" id="z4ys98n_74">networkDisconnect()</code> with <code class="code" id="z4ys98n_75">NetworkType.NETWORK_DOSBOX_IPX</code> to control IPX networking from code.</p><div class="code-block" data-lang="ts">
 await ci.networkConnect(NetworkType.NETWORK_DOSBOX_IPX, &quot;12345&quot;);
 
 ci.events().onNetworkConnected((networkType, address) =&gt; {
@@ -152,14 +152,14 @@ ci.events().onNetworkDisconnected((networkType) =&gt; {
 });
 
 await ci.networkDisconnect(NetworkType.NETWORK_DOSBOX_IPX);
-</div><p id="-snyhjj_72"><code class="code" id="-snyhjj_76">ci.net()</code> returns the low-level WebRTC networking object when networking was enabled for this backend, otherwise it returns <code class="code" id="-snyhjj_77">null</code>.</p></section><section class="chapter"><h2 id="diagnostics" data-toc="diagnostics">Diagnostics</h2><p id="-snyhjj_78"><code class="code" id="-snyhjj_84">asyncifyStats()</code> returns runtime counters that are useful for performance overlays and debugging:</p><div class="code-block" data-lang="javascript">
+</div><p id="z4ys98n_72"><code class="code" id="z4ys98n_76">ci.net()</code> returns the low-level WebRTC networking object when networking was enabled for this backend, otherwise it returns <code class="code" id="z4ys98n_77">null</code>.</p></section><section class="chapter"><h2 id="diagnostics" data-toc="diagnostics">Diagnostics</h2><p id="z4ys98n_78"><code class="code" id="z4ys98n_84">asyncifyStats()</code> returns runtime counters that are useful for performance overlays and debugging:</p><div class="code-block" data-lang="javascript">
 const stats = await ci.asyncifyStats();
 console.log(stats.messageFrame, stats.messageSound, stats.cpuMetrics);
-</div><p id="-snyhjj_80">You can subscribe to backend logs with <code class="code" id="-snyhjj_85">onMessage()</code>:</p><div class="code-block" data-lang="javascript">
+</div><p id="z4ys98n_80">You can subscribe to backend logs with <code class="code" id="z4ys98n_85">onMessage()</code>:</p><div class="code-block" data-lang="javascript">
 ci.events().onMessage((type, ...args) =&gt; {
     console.log(type, ...args);
 });
-</div><p id="-snyhjj_82"><code class="code" id="-snyhjj_86">onUnload()</code> lets you delay backend unload until your cleanup promise is resolved:</p><div class="code-block" data-lang="javascript">
+</div><p id="z4ys98n_82"><code class="code" id="z4ys98n_86">onUnload()</code> lets you delay backend unload until your cleanup promise is resolved:</p><div class="code-block" data-lang="javascript">
 ci.events().onUnload(async () =&gt; {
     await saveExternalState();
 });

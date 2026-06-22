@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2026-06-19T16:30:20.541166725"><script type="text/javascript" >
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2026-06-22T18:16:30.713956853"><script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -26,22 +26,22 @@
     "url": "https://js-dos.com/",
     "name": "js-dos Help"
 }</script><!-- End Schema.org --></head><body data-id="dosbox-direct" data-main-title="DOSBox Direct" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="emulators.md|emulators"><noscript><div><img src="https://mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="dosbox-direct" id="dosbox-direct.md">DOSBox Direct</h1><p id="e1yd11_3">DOSBox Direct is an emulation backend based on DOSBox. You can create it with the following command:</p><div class="code-block" data-lang="javascript">
+<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="dosbox-direct" id="dosbox-direct.md">DOSBox Direct</h1><p id="v7oakr_3">DOSBox Direct is an emulation backend based on DOSBox. You can create it with the following command:</p><div class="code-block" data-lang="javascript">
 const ci = await emulators.dosboxDirect(bundle);
-</div><p id="e1yd11_5">The Direct version is universal and can work in a Node.js environment. Its main disadvantage is that it runs on the main browser thread, so it can freeze the app for some time and make it less responsive.</p><aside class="prompt" data-type="tip" data-title="" id="e1yd11_6"><p id="e1yd11_10"><a href="dosbox-worker.html" id="e1yd11_11" data-tooltip="DOSBox Worker is the worker version of the DOSBox Direct backend. It runs in its own browser thread, so it never blocks the browser. This version is recommended in most cases.">DOSBox Worker</a> is a more preferred version of the emulator backend, because it does not block the browser.</p></aside><section class="chapter"><h2 id="accessing-file-system" data-toc="accessing-file-system">Accessing file system</h2><p id="e1yd11_12">In direct mode you can easily access the Emscripten module:</p><div class="code-block" data-lang="javascript">
+</div><p id="v7oakr_5">The Direct version is universal and can work in a Node.js environment. Its main disadvantage is that it runs on the main browser thread, so it can freeze the app for some time and make it less responsive.</p><aside class="prompt" data-type="tip" data-title="" id="v7oakr_6"><p id="v7oakr_10"><a href="dosbox-worker.html" id="v7oakr_11" data-tooltip="DOSBox Worker is the worker version of the DOSBox Direct backend. It runs in its own browser thread, so it never blocks the browser. This version is recommended in most cases.">DOSBox Worker</a> is a more preferred version of the emulator backend, because it does not block the browser.</p></aside><section class="chapter"><h2 id="accessing-file-system" data-toc="accessing-file-system">Accessing file system</h2><p id="v7oakr_12">In direct mode you can easily access the Emscripten module:</p><div class="code-block" data-lang="javascript">
 const ci = await emulators.dosboxDirect(bundle);
 ci.transport.module // &lt;-- emscripten module
-</div><p id="e1yd11_14">The Emscripten module provides a low-level API to change the <a href="https://emscripten.org/docs/api_reference/Filesystem-API.html" id="e1yd11_18" data-external="true" rel="noopener noreferrer" target="_blank">file system</a>:</p><div class="code-block" data-lang="javascript">
+</div><p id="v7oakr_14">The Emscripten module provides a low-level API to change the <a href="https://emscripten.org/docs/api_reference/Filesystem-API.html" id="v7oakr_18" data-external="true" rel="noopener noreferrer" target="_blank">file system</a>:</p><div class="code-block" data-lang="javascript">
 const ci = await emulators.dosboxDirect(bundle);
 ci.transport.module.FS // &lt;-- emscripten FS api
-</div><p id="e1yd11_16">You can also rescan DOS devices:</p><div class="code-block" data-lang="javascript">
+</div><p id="v7oakr_16">You can also rescan DOS devices:</p><div class="code-block" data-lang="javascript">
 const ci = await emulators.dosboxDirect(bundle);
 ci.transport.module._rescanFilesystem();
-</div></section><section class="chapter"><h2 id="accessing-memory" data-toc="accessing-memory">Accessing memory</h2><p id="e1yd11_19">In direct mode you can dump the whole memory of DOS:</p><div class="code-block" data-lang="javascript">
+</div></section><section class="chapter"><h2 id="accessing-memory" data-toc="accessing-memory">Accessing memory</h2><p id="v7oakr_19">In direct mode you can dump the whole memory of DOS:</p><div class="code-block" data-lang="javascript">
 const ci = await emulators.dosboxDirect(bundle);
 ci.transport.module._dumpMemory(copyDosMemory);
 ci.transport.module.memoryContents // &lt;-- now you can access contents using this var
-</div><p id="e1yd11_21">If you need to copy the entire memory, pass <code class="code" id="e1yd11_23">true</code> as argument. The <code class="code" id="e1yd11_24">memoryContents</code> contains the following:</p><div class="code-block" data-lang="javascript">
+</div><p id="v7oakr_21">If you need to copy the entire memory, pass <code class="code" id="v7oakr_23">true</code> as argument. The <code class="code" id="v7oakr_24">memoryContents</code> contains the following:</p><div class="code-block" data-lang="javascript">
 {
         &quot;memBase&quot;: ...,
         &quot;ip&quot;: ...,
@@ -74,9 +74,9 @@ ci.transport.module.memoryContents // &lt;-- now you can access contents using t
         &quot;numPages&quot;: ...,
         &quot;memoryCopy&quot;: ...
 }
-</div></section><section class="chapter"><h2 id="pausing-execution" data-toc="pausing-execution">Pausing execution</h2><p id="e1yd11_25">In direct mode, you can pause the DOSBox execution loop without pausing the Emscripten loop. This lets you pause and inspect the current memory, for instance.</p><div class="code-block" data-lang="javascript">
+</div></section><section class="chapter"><h2 id="pausing-execution" data-toc="pausing-execution">Pausing execution</h2><p id="v7oakr_25">In direct mode, you can pause the DOSBox execution loop without pausing the Emscripten loop. This lets you pause and inspect the current memory, for instance.</p><div class="code-block" data-lang="javascript">
 const ci = await emulators.dosboxDirect(bundle);
 ci.transport.module._pauseExecution(true);
-</div><p id="e1yd11_27">The <code class="code" id="e1yd11_29">_pauseExecution</code> function takes as its argument whether it should be paused or should resume. To resume once you have completed:</p><div class="code-block" data-lang="javascript">
+</div><p id="v7oakr_27">The <code class="code" id="v7oakr_29">_pauseExecution</code> function takes as its argument whether it should be paused or should resume. To resume once you have completed:</p><div class="code-block" data-lang="javascript">
 ci.transport.module._pauseExecution(false);
-</div></section><div class="last-modified">08 мая 2026</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="command-interface.html" class="navigation-links__prev">Command Interface (CI)</a><a href="dosbox-worker.html" class="navigation-links__next">DOSBox Worker</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1031/app.js"></script></body></html>
+</div></section><div class="last-modified">08 октября 2026</div><div data-feedback-placeholder="true"></div><div class="navigation-links _bottom"><a href="command-interface.html" class="navigation-links__prev">Command Interface (CI)</a><a href="dosbox-worker.html" class="navigation-links__next">DOSBox Worker</a></div></article><div id="disqus_thread"></div></div></section></main></div><script src="https://resources.jetbrains.com/writerside/apidoc/6.27.0-b1031/app.js"></script></body></html>

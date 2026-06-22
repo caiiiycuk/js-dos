@@ -1,5 +1,5 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2026-06-19T16:30:20.551752132"><script type="text/javascript" >
+<html lang="en-US" data-preset="contrast" data-primary-color="#307FFF"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="UTF-8"><meta name="built-on" content="2026-06-22T18:16:30.769389055"><script type="text/javascript" >
    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
    m[i].l=1*new Date();
    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
@@ -26,13 +26,13 @@
     "url": "https://js-dos.com/",
     "name": "js-dos Help"
 }</script><!-- End Schema.org --></head><body data-id="Node" data-main-title="Node" data-article-props="{&quot;seeAlsoStyle&quot;:&quot;links&quot;}" data-template="article" data-breadcrumbs="emulators.md|emulators///threejs.md|How-to use"><noscript><div><img src="https://mc.yandex.ru/watch/27763311" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="Node" id="Node.md">Node</h1><p id="zcic5c_3">In this tutorial we will run the Digger game in Node.js and save a game screenshot to an image.</p><p id="zcic5c_4">Let's start by creating an empty project:</p><div class="code-block" data-lang="bash">
+<div class="wrapper"><main class="panel _main"><header class="panel__header"><div class="container"><h3>js-dos  Help</h3><div class="panel-trigger"></div></div></header><section class="panel__content"><div class="container"><article class="article" data-shortcut-switcher="inactive"><h1 data-toc="Node" id="Node.md">Node</h1><p id="k4njfu_3">In this tutorial we will run the Digger game in Node.js and save a game screenshot to an image.</p><p id="k4njfu_4">Let's start by creating an empty project:</p><div class="code-block" data-lang="bash">
 npm init
-</div><p id="zcic5c_6">To run DOS in Node.js, we need to install the <a href="https://www.npmjs.com/package/emulators" id="zcic5c_26" data-external="true" rel="noopener noreferrer" target="_blank">emulators</a> package. To create a screenshot, we will use the <code class="code" id="zcic5c_27">jimp</code> library, so let's install both packages.</p><div class="code-block" data-lang="bash">
+</div><p id="k4njfu_6">To run DOS in Node.js, we need to install the <a href="https://www.npmjs.com/package/emulators" id="k4njfu_26" data-external="true" rel="noopener noreferrer" target="_blank">emulators</a> package. To create a screenshot, we will use the <code class="code" id="k4njfu_27">jimp</code> library, so let's install both packages.</p><div class="code-block" data-lang="bash">
 npm install --save emulators jimp
-</div><p id="zcic5c_8">Next we need to download the Digger <a href="jsdos-bundle.html" id="zcic5c_28" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publish it on dos.zone">js-dos bundle</a>:</p><div class="code-block" data-lang="bash">
+</div><p id="k4njfu_8">Next we need to download the Digger <a href="jsdos-bundle.html" id="k4njfu_28" data-tooltip="If you are looking for a way to run your favorite game in browser, but do not want to develop website, then please create bundle for it using this guide, and send request to publish it on dos.zone">js-dos bundle</a>:</p><div class="code-block" data-lang="bash">
 curl https://v8.js-dos.com/bundles/digger.jsdos -o digger.jsdos
-</div><p id="zcic5c_10">Let's create the source file <code class="code" id="zcic5c_29">digger.js</code>. We can run it with <code class="code" id="zcic5c_30">node digger.js</code>.</p><p id="zcic5c_11"><span class="control" id="zcic5c_31">Use require to import all libraries</span></p><div class="code-block" data-lang="javascript">
+</div><p id="k4njfu_10">Let's create the source file <code class="code" id="k4njfu_29">digger.js</code>. We can run it with <code class="code" id="k4njfu_30">node digger.js</code>.</p><p id="k4njfu_11"><span class="control" id="k4njfu_31">Use require to import all libraries</span></p><div class="code-block" data-lang="javascript">
 const fs = require(&quot;fs&quot;);
 const jimp = require(&quot;jimp&quot;);
 
@@ -40,7 +40,7 @@ require(&quot;emulators&quot;);
 
 const emulators = global.emulators;
 emulators.pathPrefix = &quot;./&quot;;
-</div><aside class="prompt" data-type="tip" data-title="" id="zcic5c_14"><p id="zcic5c_32">The <code class="code" id="zcic5c_33">emulators</code> package does not use the export system. It injects itself into the global object. <code class="code" id="zcic5c_34">pathPrefix</code> is used to locate wasm files relative to the <code class="code" id="zcic5c_35">require</code> path.</p></aside><p id="zcic5c_15"><span class="control" id="zcic5c_36">Now we need to read the contents of a <code class="code" id="zcic5c_37">js-dos bundle</code> and start emulation</span></p><div class="code-block" data-lang="javascript">
+</div><aside class="prompt" data-type="tip" data-title="" id="k4njfu_14"><p id="k4njfu_32">The <code class="code" id="k4njfu_33">emulators</code> package does not use the export system. It injects itself into the global object. <code class="code" id="k4njfu_34">pathPrefix</code> is used to locate wasm files relative to the <code class="code" id="k4njfu_35">require</code> path.</p></aside><p id="k4njfu_15"><span class="control" id="k4njfu_36">Now we need to read the contents of a <code class="code" id="k4njfu_37">js-dos bundle</code> and start emulation</span></p><div class="code-block" data-lang="javascript">
 const bundle = fs.readFileSync(&quot;digger.jsdos&quot;);
 
 emulators
@@ -48,11 +48,11 @@ emulators
     .then((ci) =&gt; {
       // ...
     });
-</div><p id="zcic5c_17">When DOS emulation starts, we will receive a <a href="command-interface.html" id="zcic5c_38" data-tooltip="The Command Interface is the object that allows you to communicate with a js-dos instance. Once you run a js-dos bundle, you will receive a Command Interface instance.">Command Interface</a>. We can use it to subscribe to frame updates and to send key/mouse events.</p><div class="code-block" data-lang="javascript">
+</div><p id="k4njfu_17">When DOS emulation starts, we will receive a <a href="command-interface.html" id="k4njfu_38" data-tooltip="The Command Interface is the object that allows you to communicate with a js-dos instance. Once you run a js-dos bundle, you will receive a Command Interface instance.">Command Interface</a>. We can use it to subscribe to frame updates and to send key/mouse events.</p><div class="code-block" data-lang="javascript">
     ci.events().onFrame((rgb, rgba) =&gt; {
         // use rgb or rgba image data
     });
-</div><aside class="prompt" data-type="warning" data-title="" id="zcic5c_19"><p id="zcic5c_39">The <span class="control" id="zcic5c_40">onFrame</span> method has two arguments: <code class="code" id="zcic5c_41">rgb</code> and <code class="code" id="zcic5c_42">rgba</code> image data. One of them is always <span class="control" id="zcic5c_43">null</span>, while the other is <span class="control" id="zcic5c_44">Uint8Array</span>. The active format depends on the emulator.</p></aside><p id="zcic5c_20">To save a screenshot, convert the latest frame to RGBA:</p><div class="code-block" data-lang="javascript">
+</div><aside class="prompt" data-type="warning" data-title="" id="k4njfu_19"><p id="k4njfu_39">The <span class="control" id="k4njfu_40">onFrame</span> method has two arguments: <code class="code" id="k4njfu_41">rgb</code> and <code class="code" id="k4njfu_42">rgba</code> image data. One of them is always <span class="control" id="k4njfu_43">null</span>, while the other is <span class="control" id="k4njfu_44">Uint8Array</span>. The active format depends on the emulator.</p></aside><p id="k4njfu_20">To save a screenshot, convert the latest frame to RGBA:</p><div class="code-block" data-lang="javascript">
 function toRgba(frame, width, height) {
     const screenshot = Buffer.alloc(width * height * 4);
 
@@ -68,7 +68,7 @@ function toRgba(frame, width, height) {
 
     return screenshot;
 }
-</div><p id="zcic5c_23">If you execute <code class="code" id="zcic5c_45">node digger.js</code> it will save the screenshot to <code class="code" id="zcic5c_46">./screenshot.png</code>.</p><p id="zcic5c_24">Full code of <code class="code" id="zcic5c_47">digger.js</code>:</p><div class="code-block" data-lang="javascript">
+</div><p id="k4njfu_23">If you execute <code class="code" id="k4njfu_45">node digger.js</code> it will save the screenshot to <code class="code" id="k4njfu_46">./screenshot.png</code>.</p><p id="k4njfu_24">Full code of <code class="code" id="k4njfu_47">digger.js</code>:</p><div class="code-block" data-lang="javascript">
 const fs = require(&quot;fs&quot;);
 const jimp = require(&quot;jimp&quot;);
 
