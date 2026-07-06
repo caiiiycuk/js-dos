@@ -4,8 +4,9 @@
   "private": true,
   "description": "Cloudflare Worker that packages a DOS game folder into a .jsdos bundle",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "build": "node scripts/build-bundles.mjs",
+    "dev": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "fflate": "^0.8.3"
