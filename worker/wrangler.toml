@@ -1,0 +1,13 @@
+name = "jsdos-bundle-worker"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# Static bundles generated from the repo's dos/ folder by scripts/build-bundles.mjs.
+# Served at /games/*.jsdos and /games.json; the Worker handles all other routes.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# Uploaded/served games can be a few MB; raise if you hit request-size limits.
+# [limits]
+# cpu_ms = 50

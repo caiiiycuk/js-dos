@@ -27,3 +27,6 @@ public/emulators/*
 !public/emulators/webrtcnet.mjs
 !public/emulators/webrtcnet.wasm
 *.zip
+
+# Worker: bundles generated from dos/ at build time
+worker/public/
