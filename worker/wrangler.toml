@@ -1,0 +1,7 @@
+name = "jsdos-bundle-worker"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# Uploaded DOS games can be a few MB; raise if you hit request-size limits.
+# [limits]
+# cpu_ms = 50
