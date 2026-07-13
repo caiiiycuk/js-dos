@@ -4,6 +4,15 @@ Note that version numbers do not necessarily reflect the amount of changes betwe
 
 Not all changes are documented here. To examine the full set of changes between versions, you can use git to browse the changes between the tags.
 
+8.4.1 - 13.07.2026
+------------------
+
+* Improve sockdrive in direct mode
+* Fix for #303
+* Fix for #310
+* Fix for #426
+
+
 8.4.0 - 19.06.2026
 ------------------
 

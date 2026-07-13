@@ -1,6 +1,6 @@
 {
   "name": "js-dos",
-  "version": "8.4.0",
+  "version": "8.4.1",
   "description": "Full-featured DOS player with multiple emulator backends",
   "type": "module",
   "keywords": [
@@ -38,7 +38,7 @@
     "@vitejs/plugin-basic-ssl": "^2.1.0",
     "autoprefixer": "^10.4.17",
     "daisyui": "^3.9.3",
-    "emulators": "8.4.0",
+    "emulators": "8.4.1",
     "eslint": "^8.56.0",
     "eslint-config-google": "^0.14.0",
     "postcss": "^8.4.33",
