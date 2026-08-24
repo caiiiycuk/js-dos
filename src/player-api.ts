@@ -44,7 +44,7 @@ export async function apiSave(state: State,
                 await nonSerializableStore.options.fsChanges.push(changesUrl, encodedChanges);
                 savedInIndexedDb = false;
             } else if (nonSerializableStore.options.fsChanges?.local !== false) {
-                await putChanges(changesUrl, encodedChanges);
+                await putChanges(changesUrl, encodedChanges, nonSerializableStore.opfsRoot);
             }
         }
 

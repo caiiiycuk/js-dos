@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 import { useEffect, useRef, useState } from "preact/hooks";
-import { NonSerializableStore, useNonSerializableStore } from "../store";
+import { NonSerializableStore, getNonSerializableStore, useNonSerializableStore } from "../store";
 import { useDispatch, useStore } from "react-redux";
 import { dosSlice } from "../store/dos";
 import { getEntries, getPath as getOPFSHandle, updateOpfsStats } from "../host/opfs";
@@ -91,6 +91,7 @@ type FEEntry = {
 }
 
 function FileExplorerElement(root: HTMLDivElement, store: Store) {
+    const opfsRoot = getNonSerializableStore(store).opfsRoot;
     new FileExplorer(root, {
         initpath: [["", "/"]],
 
@@ -116,7 +117,7 @@ function FileExplorerElement(root: HTMLDivElement, store: Store) {
                 const path = folder.GetPath();
                 const pathIds = path.map((seg: string[]) => seg[0]);
                 this.SetNamedStatusBarText("path", "/" + pathIds.filter(Boolean).join("/"), 0);
-                const dir = await getOPFSHandle(pathIds);
+                const dir = await getOPFSHandle(pathIds, opfsRoot);
                 const opfsEntries = await getEntries(dir);
                 const entries: FEEntry[] = opfsEntries.map((entry) => {
                     const feEntry: FEEntry = {
@@ -150,7 +151,7 @@ function FileExplorerElement(root: HTMLDivElement, store: Store) {
             try {
                 const path = folder.GetPath();
                 const pathIds = path.map((seg: string[]) => seg[0]);
-                const dir = await getOPFSHandle(pathIds);
+                const dir = await getOPFSHandle(pathIds, opfsRoot);
 
                 for (const entry of entries) {
                     if (entry.type === "file") {
@@ -184,7 +185,7 @@ function FileExplorerElement(root: HTMLDivElement, store: Store) {
             try {
                 const path = folder.GetPath();
                 const pathIds = path.map((seg: string[]) => seg[0]);
-                const dir = await getOPFSHandle(pathIds);
+                const dir = await getOPFSHandle(pathIds, opfsRoot);
 
                 for (const entry of entries) {
                     await dir.removeEntry(entry.name, { recursive: true });

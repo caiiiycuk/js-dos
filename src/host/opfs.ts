@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Store } from "../store";
+import { Store, getNonSerializableStore } from "../store";
 
 const initialState: {
     freeSpace: number | null,
@@ -28,7 +28,7 @@ export function updateOpfsStats(store: Store) {
     getFreeSpace().then((freeSpace) => {
         store.dispatch(opfsSlice.actions.setFreeSpace(freeSpace));
     }).catch(console.error);
-    getUsage().then((usage) => {
+    getUsage(getNonSerializableStore(store).opfsRoot).then((usage) => {
         store.dispatch(opfsSlice.actions.setUsage(usage));
     }).catch(console.error);
 }
@@ -39,12 +39,12 @@ export type Entry = {
     size?: number,
 }
 
-async function getRootHandle(): Promise<FileSystemDirectoryHandle> {
-    return await (await navigator.storage.getDirectory()).getDirectoryHandle("jsdos", { create: true });
+async function getRootHandle(root: string): Promise<FileSystemDirectoryHandle> {
+    return await (await navigator.storage.getDirectory()).getDirectoryHandle(root, { create: true });
 }
 
-export async function getPath(pathIds: string[]): Promise<FileSystemDirectoryHandle> {
-    let dir = await getRootHandle();
+export async function getPath(pathIds: string[], root: string): Promise<FileSystemDirectoryHandle> {
+    let dir = await getRootHandle(root);
 
     for (const segment of pathIds) {
         if (segment !== "") {
@@ -112,36 +112,36 @@ async function put(key: string, data: Uint8Array, handle: FileSystemDirectoryHan
 }
 
 
-export async function getChanges(key: string) {
-    const saves = await getPath(["saves"]);
+export async function getChanges(key: string, root: string) {
+    const saves = await getPath(["saves"], root);
     return get(key, saves);
 }
 
-export async function getBundle(key: string) {
-    const bundles = await getPath(["caches", "bundles"]);
+export async function getBundle(key: string, root: string) {
+    const bundles = await getPath(["caches", "bundles"], root);
     return get(key, bundles);
 }
 
-export async function putChanges(key: string, data: Uint8Array) {
-    const saves = await getPath(["saves"]);
+export async function putChanges(key: string, data: Uint8Array, root: string) {
+    const saves = await getPath(["saves"], root);
     return put(key, data, saves);
 }
 
-export async function putBundle(key: string, data: Uint8Array) {
-    const bundles = await getPath(["caches", "bundles"]);
+export async function putBundle(key: string, data: Uint8Array, root: string) {
+    const bundles = await getPath(["caches", "bundles"], root);
     return put(key, data, bundles);
 }
 
-export async function deleteChanges(key: string) {
-    const saves = await getPath(["saves"]);
+export async function deleteChanges(key: string, root: string) {
+    const saves = await getPath(["saves"], root);
     const filename = keyToDirectory(key);
     try {
         await saves.removeEntry(filename, { recursive: false });
     } catch { }
 }
 
-export async function getUsage() {
-    return getDirSize(await getRootHandle());
+export async function getUsage(root: string) {
+    return getDirSize(await getRootHandle(root));
 }
 
 export async function getFreeSpace() {

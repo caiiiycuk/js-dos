@@ -19,7 +19,7 @@ export function bundleFromFile(file: File, store: Store): Promise<Uint8Array> {
 
 
 export async function changesFromUrl(url: string, store: Store): Promise<Uint8Array | null> {
-    const nonSerializableStore = await getNonSerializableStore(store);
+    const nonSerializableStore = getNonSerializableStore(store);
 
     if (nonSerializableStore.options.fsChanges?.pull) {
         return await nonSerializableStore.options.fsChanges.pull(url);
@@ -27,7 +27,7 @@ export async function changesFromUrl(url: string, store: Store): Promise<Uint8Ar
 
     if (nonSerializableStore.options.fsChanges?.local !== false) {
         try {
-            return await getChanges(url);
+            return await getChanges(url, nonSerializableStore.opfsRoot);
         } catch (e: any) {
             console.error(e);
             return null;
@@ -38,9 +38,10 @@ export async function changesFromUrl(url: string, store: Store): Promise<Uint8Ar
 }
 
 export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Array> {
+    const opfsRoot = getNonSerializableStore(store).opfsRoot;
     try {
         if (!isDhry2Bundle(url)) {
-            const bundle = await getBundle(url);
+            const bundle = await getBundle(url, opfsRoot);
             if (bundle !== null) {
                 return bundle;
             }
@@ -62,7 +63,7 @@ export async function bundleFromUrl(url: string, store: Store): Promise<Uint8Arr
         store.dispatch(storageSlice.actions.progress([bytes, length]));
     });
 
-    putBundle(url, complete).catch(console.error);
+    putBundle(url, complete, opfsRoot).catch(console.error);
 
     return complete;
 };

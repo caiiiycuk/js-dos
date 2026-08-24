@@ -139,6 +139,7 @@ export function DosWindow(props: {
                     canvas: nonSerializableStore.offscreenCanvas,
                     audioWorklet: true,
                     sockdrivePreload,
+                    sockdriveOpfsRoot: nonSerializableStore.opfsRoot,
                     net: nonSerializableStore.net,
                 });
             })();

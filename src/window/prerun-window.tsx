@@ -69,7 +69,7 @@ function Changes() {
             <button class="btn btn-ghost btn-xs underline -ml-2" onClick={() => {
                 if (window.confirm(t("delete_changes_confirm"))) {
                     setBusy(true);
-                    deleteChanges(changesUrl!).then(async () => {
+                    deleteChanges(changesUrl!, nonSerializableStore.opfsRoot).then(async () => {
                         if (nonSerializableStore.options.fsChanges?.delete && changesUrl) {
                             await nonSerializableStore.options.fsChanges.delete(changesUrl);
                         }

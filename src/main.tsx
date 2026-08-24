@@ -305,7 +305,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
             return [JSDOS_VERSION, store.getState().dos.emuVersion];
         },
         getLocalChanges: (key: string) => {
-            return getChanges(key);
+            return getChanges(key, nonSerializableStore.opfsRoot);
         },
         setTheme,
         setLang,

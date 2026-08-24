@@ -41,6 +41,7 @@ export interface DosOptions {
     background: string,
     pathPrefix: string,
     pathSuffix: string,
+    opfsRoot: string,
     theme: "light" | "dark" | "cupcake" | "bumblebee" | "emerald" | "corporate" |
     "synthwave" | "retro" | "cyberpunk" | "valentine" | "halloween" | "garden" |
     "forest" | "aqua" | "lofi" | "pastel" | "fantasy" | "wireframe" | "black" |

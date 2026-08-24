@@ -27,6 +27,7 @@ export interface NonSerializableStore {
     options: Partial<DosOptions>,
     layers: Promise<LayersInstance> | null,
     gl: WebGLRenderingContext | null,
+    opfsRoot: string,
     offscreenCanvas?: OffscreenCanvas,
     net?: Net,
 }
@@ -56,6 +57,7 @@ export function makeNonSerializableStore(options: Partial<DosOptions>): NonSeria
         options,
         layers: null,
         gl: null,
+        opfsRoot: options.opfsRoot ?? "jsdos",
     };
 }
 
