@@ -366,29 +366,29 @@ export class WsTransportLayer implements TransportLayer {
                 this.handler("ws-unload", {});
             } break;
             case "ws-sockdrive-open": {
-                this.handler("ws-sockdrive-open", {
+                this.handler("ws-sockdrive-open" as any, {
                     handle: readUint32(payload[0]!, 0),
                     url: textDecoder.decode(payload[1]!),
                 });
             } break;
             case "ws-sockdrive-ready": {
-                this.handler("ws-sockdrive-ready", {
+                this.handler("ws-sockdrive-ready" as any, {
                     handle: readUint32(payload[0]!, 0),
                 });
             } break;
             case "ws-sockdrive-close": {
-                this.handler("ws-sockdrive-close", {
+                this.handler("ws-sockdrive-close" as any, {
                     handle: readUint32(payload[0]!, 0),
                 });
             } break;
             case "ws-sockdrive-load-range": {
-                this.handler("ws-sockdrive-load-range", {
+                this.handler("ws-sockdrive-load-range" as any, {
                     handle: readUint32(payload[0]!, 0),
                     range: readUint32(payload[0]!, 4),
                 });
             } break;
             case "ws-sockdrive-write-sector": {
-                this.handler("ws-sockdrive-write-sector", {
+                this.handler("ws-sockdrive-write-sector" as any, {
                     handle: readUint32(payload[0]!, 0),
                     sector: readUint32(payload[0]!, 4),
                     data: payload[1],
