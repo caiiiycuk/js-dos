@@ -8,10 +8,11 @@ import { uiSlice } from "../store/ui";
 export function SaveButtons() {
     const showQuickLoad = useSelector((state: State) => state.ui.haveQuickSave);
     const dosboxX = useSelector((state: State) => state.dos.backend) === "dosboxX";
+    const quickSave = useNonSerializableStore().options.quickSave !== false;
     return <div class="save-buttons flex flex-col justify-center items-center -my-2">
         <SaveButton />
-        {dosboxX && <QuickSaveButton label="X" bgcolor="bg-primary" textcolor="text-primary-content" />}
-        {dosboxX && showQuickLoad && <QuickLoadButton label="X" bgcolor="bg-primary" />}
+        {dosboxX && quickSave && <QuickSaveButton label="X" bgcolor="bg-primary" textcolor="text-primary-content" />}
+        {dosboxX && quickSave && showQuickLoad && <QuickLoadButton label="X" bgcolor="bg-primary" />}
     </div>;
 }
 

@@ -60,6 +60,7 @@ export interface DosOptions {
     fastForwardOnBoot: number,
     countDownStart: number,
     autoSave: boolean,
+    quickSave: boolean,
     kiosk: boolean,
     imageRendering: ImageRendering,
     renderBackend: RenderBackend,
