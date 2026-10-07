@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>js-dos IPX network repro — "Connection is still being established"</title>
+<script type="module" src="/src/main.tsx"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/js-dos@8.4.1/dist/js-dos.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #111; color: #eee; font: 14px/1.4 monospace; }
+  #ui { padding: 12px; }
+  #ui input, #ui button, #ui select { font: inherit; padding: 4px 8px; margin-right: 6px; }
+  #dos { width: 640px; height: 480px; background: #000; }
+  #log {
+    white-space: pre-wrap;
+    background: #000;
+    color: #7fff7f;
+    padding: 8px;
+    height: 260px;
+    overflow-y: auto;
+    border-top: 2px solid #444;
+  }
+  #peerid { font-weight: bold; color: #ffd479; }
+</style>
+</head>
+<body>
+
+<div id="ui">
+  <b>js-dos IPX-over-WebRTC minimal repro</b><br><br>
+  Role:
+  <select id="role">
+    <option value="host">host (startIpxServer)</option>
+    <option value="join">join (connectIpxAddress)</option>
+  </select>
+  Peer id to join (numeric, from host's log): <input id="joinId" placeholder="e.g. 731935952" size="14">
+  <button id="go">Start</button>
+  <div>My peer id: <span id="peerid">(not yet)</span></div>
+</div>
+
+<div id="dos"></div>
+<div id="log"></div>
+
+<script>
+// Minimal, self-contained reproduction of:
+//   https://github.com/caiiiycuk/js-dos/issues/<this issue>
+//
+// No .jsdos bundle is required to reproduce the bug: Dos() is called with
+// no `url` at all (boots straight to an empty DOSBox-X session), because
+// the failure happens purely inside the IPX network setup
+// (startIpxServer / connectIpxAddress + the WebRTC-NET connection
+// lifecycle), before any game/program ever runs.
+//
+// Steps to reproduce:
+//   1. Open this page in tab A, choose "host", click Start.
+//      Wait for "My peer id" to show a number, copy it.
+//   2. Open this page in tab B (can be same machine/browser, or a
+//      different machine), choose "join", paste the peer id from
+//      step 1 into "Peer id to join", click Start.
+//   3. Watch the log in tab B (the joining side). Signaling + ICE
+//      negotiation succeed (icestate: connected, connected channel: ...),
+//      but the connection is torn down immediately afterward:
+//      "Marking connections closed" (x2), an uncaught rejected promise
+//      at protocol.ts:385, then "read from peer ...failed with
+//      Connection is still being established" and "closing connection
+//      to peer".
+//
+// Reproduces identically with default STUN-only ICE servers (as below,
+// no TURN needed) on js-dos 8.4.0 and 8.4.1.
+
+var logEl = document.getElementById("log");
+function log(line) {
+  logEl.textContent += line + "\n";
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+// Mirror console output into the on-page log too, so this is reproducible
+// without opening devtools.
+["log", "info", "warn", "error"].forEach(function (level) {
+  var orig = console[level];
+  console[level] = function () {
+    var msg = Array.prototype.slice.call(arguments).map(String).join(" ");
+    log("[" + level + "] " + msg);
+    orig.apply(console, arguments);
+  };
+});
+
+document.getElementById("go").addEventListener("click", function () {
+  var role = document.getElementById("role").value;
+  var joinId = document.getElementById("joinId").value.trim();
+  var el = document.getElementById("dos");
+
+  var opts = {
+    backend: "dosboxX",
+    pathPrefix: "/emulators/",
+    net: {
+      token: "jsdos-ipx-repro",
+      // Default STUN-only servers — bug reproduces the same with or
+      // without a TURN relay configured here.
+      iceServers: function () {
+        return Promise.resolve([
+          { urls: "stun:stun.l.google.com:19302" }
+        ]);
+      }
+    }
+  };
+
+  if (role === "host") {
+    opts.startIpxServer = true;
+    log("Starting as HOST (startIpxServer: true)...");
+  } else {
+    if (!joinId) {
+      alert("Enter the host's numeric peer id first.");
+      return;
+    }
+    opts.connectIpxAddress = joinId;
+    log("Starting as JOIN (connectIpxAddress: " + joinId + ")...");
+  }
+
+  Dos(el, opts);
+
+  var tries = 0;
+  var poll = setInterval(function () {
+    tries++;
+    var pid = window.net && window.net.peerId;
+    if (pid) {
+      clearInterval(poll);
+      document.getElementById("peerid").textContent = String(pid);
+      log("My peer id is " + pid);
+    } else if (tries > 60) {
+      clearInterval(poll);
+      log("(peer id never became available)");
+    }
+  }, 500);
+});
+</script>
+
+</body>
+</html>

@@ -15,7 +15,7 @@ rm -rf /tmp/$VERSION
 ```
 rm -rf dist && \
     yarn run vite build --base /latest --sourcemap true --minify terser && \
-    aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
+    AWS_SHARED_CREDENTIALS_FILE="$HOME/.aws.yandex/credentials" AWS_CONFIG_FILE="$HOME/.aws.yandex/config" aws s3 --endpoint-url=https://storage.yandexcloud.net sync --acl public-read \
     dist s3://jsdos/latest --delete 
 ```
 
