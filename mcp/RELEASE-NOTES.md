@@ -1,6 +1,6 @@
 # js-dos MCP
 
-Draft only. Published emulators 8.5.3 is integrated and Linux checks pass, including native audio cleanup, all five presets without a local SDK patch and connection through OpenCode 2.2.5. That OpenCode version has a cold-start readiness race described in the README. Native release acceptance is incomplete. See `VERIFICATION.md`. The rebuilt Linux executable is 15,622,640 bytes; Windows/macOS sizes have not been measured.
+Draft only. Published emulators 8.5.3 is integrated and Linux checks pass, including native audio cleanup, all five presets without a local SDK patch, normalized project-root validation, an extracted-archive smoke test and connection through OpenCode 2.2.5. That OpenCode version has a cold-start readiness race described in the README. Native release acceptance is incomplete. See `VERIFICATION.md`. The rebuilt Linux executable is 15,623,344 bytes; Windows/macOS sizes have not been measured.
 
 The release contains a local stdio MCP executable with embedded Studio, DOSBox and DOSBox-X workers, libzip and standalone HTML, Vite, React, Vue and Angular templates.
 

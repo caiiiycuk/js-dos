@@ -1,6 +1,6 @@
 # Verification
 
-Status on 2026-11-10: published emulators 8.5.3 is integrated. The recorded full Linux suite and OpenCode checks passed without an SDK override or local patch. They predate the native-path correction below; fresh full runs are pending. The full release remains blocked on native matrix acceptance.
+Status on 2026-11-10: published emulators 8.5.3 is integrated. The full Linux suite, extracted-archive smoke test and OpenCode connection pass after the native-path correction below, without an SDK override or local patch. The full release remains blocked on native matrix acceptance.
 
 ## Environment
 
@@ -10,19 +10,21 @@ Linux 7.0.0-42-generic x86_64, Chrome 157.0.8103.50, Node.js 22.17.1, Yarn 1.22.
 
 - `yarn install --frozen-lockfile --ignore-scripts` installed npm emulators 8.5.3. TypeScript checks, source/test ESLint, the existing player build and the dedicated MCP asset build passed without changing the user's root `index.html`.
 - A clean directory with no existing `node_modules`, root `dist/` or MCP assets reproduced the complete asset manifest from the lockfile. Its SHA-256 is `af07f54f2bacfedc39d6f76d4025bbd98f67a0ade1e018ef4b47cfcddf343c31`. `node test/assets.mjs` confirmed that a missing required WASM file fails the Rust build.
-- `cargo test --locked` passed all nine tests. `cargo clippy --locked --all-targets -- -D warnings`, `cargo fmt --check` and the Linux release build passed. Rust metadata checks passed for Windows x86_64 and macOS x86_64/arm64; they are not native linking or runtime tests.
+- `cargo test --locked` passed all ten tests with a symlinked temporary root. `cargo clippy --locked --all-targets -- -D warnings`, `cargo fmt --check` and the Linux release build passed. Earlier Rust metadata checks passed for Windows x86_64 and macOS x86_64/arm64; they are not native linking or runtime tests.
 - `node test/stdio.mjs mcp/target/release/jsdos-mcp` passed with an empty child PATH: eight tools, generation of all five presets without Node.js, two isolated processes and port cleanup on EOF.
 - `node mcp/package-release.mjs linux-x86_64` packaged the Linux draft with source metadata, the asset manifest and 166 Rust dependency notice entries. Its `.sha256` matched the archive. After extraction, the executable hash and packaged SDK version matched, and `test/stdio.mjs` passed against that extracted executable with an empty child PATH. The archive records `workingTreeDirty:true`; it is not a published release.
-- OpenCode 2.2.5 connected to that extracted executable using the documented V2 `mcp.servers` entry. Its log records `mcp connected` with `tools=8`, the CLI reports `connected`, and explicit connection returns HTTP 204. Both a persistent foreground server and the private background service passed after initialization. The check used isolated HOME/XDG directories and did not change the user's configuration or main service.
+- OpenCode 2.2.5 connected to the newly extracted executable using the documented V2 `mcp.servers` entry. Its log records `mcp connected` with `tools=8`, the CLI reports `connected`, and explicit connection returns HTTP 204. The persistent foreground server passed again; the private background service passed in the earlier readiness investigation. Checks used isolated HOME/XDG directories and did not change the user's configuration or main service.
 - `JSDOS_MCP_BINARY="$PWD/mcp/target/release/jsdos-mcp" npm run test:presets` passed both DOSBox and DOSBox-X editor suites, all MCP checks and all five standalone presets with external runtime HTTP(S) denied. Checks include UI/MCP revisions, import/config/files, legacy changes save, full export/reimport, destination conflicts, diagnostics, input, screenshots, recovery and secret redaction.
 - HTML startup and all framework dev/build/production checks passed after MCP shutdown. React, Vue and Angular passed remount checks with actual AudioContexts closed after unmount, exactly one active context after remount and all contexts closed after the final unmount. Vite and Angular opt-in diagnostic checks also passed.
 - The upgrade exposed DOSBox `[LOG_*]` messages on the SDK error channel. Studio now retains those messages without treating them as a failed browser backend. Regression checks confirm that stdout waits still time out and that worker, panic and other backend errors still return errors.
 
-The browser report is `mcp/release/verification-linux-x64.json`, recorded at `2026-11-10T13:59:15.410Z`. It records `status:passed`, `editor:true`, `mcp:true`, `presets:true` and `emulatorsOverrideSha256:null`, tied to the executable hash below. This ignored local report is not a remote CI result.
+The browser report is `mcp/release/verification-linux-x64.json`, recorded at `2026-11-10T15:31:53.191Z`. It records `status:passed`, `editor:true`, `mcp:true`, `presets:true` and `emulatorsOverrideSha256:null`, tied to the executable hash below. This ignored local report is not a remote CI result.
 
 ## Native path regression
 
 The first native Windows and macOS arm64 jobs failed at `cargo test`, before browser acceptance. Full remote logs were unavailable through the current access. A concrete path bug was reproduced locally: with `TMPDIR` pointing through a symlink, the existing static-verification test panicked with `Path escapes project root`. The helper compared the file's canonical path against an unnormalized root. It now canonicalizes both sides; child-path and symlink validation remain in place. A portable regression also checks a root containing `nested/..` and rejects an escaping child path. All ten Rust tests pass with the symlinked temporary root; formatting, Clippy and workflow validation pass. This is a verified local fix, not yet proof that every remote failure has the same cause. CI now includes failing Rust test output in its job summary for further diagnosis.
+
+Packaging now extracts each native archive, checks the extracted executable's SHA-256 against the browser-tested binary and runs the empty-PATH stdio smoke test against that extracted copy. It reports binary/archive sizes and hashes in a CI notice. The Linux package passed this check locally; Windows/macOS results are still pending.
 
 ## OpenCode readiness investigation
 
@@ -49,6 +51,6 @@ The override is test-only. Its report has status `development-sdk`, never `passe
 
 ## Draft size and limitations
 
-The rebuilt local Linux executable measured 15,622,640 bytes with SHA-256 `80c9bfd8c9e57b36288a5b1d59d02f25b9653c083ade5ae5f3a4cb970dbac690`. It embeds published emulators 8.5.3 and passed the checks above. The local Linux archive is a draft from a dirty working tree, not an accepted release. Windows/macOS sizes are not measured.
+The rebuilt local Linux executable measured 15,623,344 bytes with SHA-256 `60d983e07f973ae226f86d21b70b77e14c6fd0d187b469a2b66b403bc9d6982e`. It embeds published emulators 8.5.3 and passed the checks above. The local Linux archive is a draft from a dirty working tree, not an accepted release. Windows/macOS sizes are not measured.
 
 Browser autoplay and background throttling remain external constraints. A suspended or backend-managed audio context is not a game error. External sockdrive/qcow2 resources are not included in exported archives. Readiness and observed stdout do not prove arbitrary game correctness. Fatal worker crashes were not tested. Existing peer-dependency, caniuse-lite and CSS `start` compatibility warnings remain.

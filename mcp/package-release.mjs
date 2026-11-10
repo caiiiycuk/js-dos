@@ -44,7 +44,14 @@ try {
         workingTreeDirty: execFileSync("git", ["status", "--porcelain"], { encoding: "utf8" }).trim().length > 0,
         binarySha256: createHash("sha256").update(bytes).digest("hex"), externalResources: "sockdrive/qcow2 resources are not embedded; they require separate access" }, null, 2));
     execFileSync("tar", ["-czf", path.join(output, `jsdos-mcp-${name}.tar.gz`), "-C", temporary, "jsdos-mcp"]);
+    const extracted = path.join(temporary, "extracted");
+    await mkdir(extracted);
+    execFileSync("tar", ["-xzf", path.join(output, `jsdos-mcp-${name}.tar.gz`), "-C", extracted]);
+    assert.equal(createHash("sha256").update(await readFile(path.join(extracted, "jsdos-mcp", binary))).digest("hex"), verification.mcpBinarySha256);
+    execFileSync(process.execPath, ["test/stdio.mjs", path.join(extracted, "jsdos-mcp", binary)], { stdio: "inherit" });
     const archive = await readFile(path.join(output, `jsdos-mcp-${name}.tar.gz`));
-    await writeFile(path.join(output, `jsdos-mcp-${name}.sha256`), `${createHash("sha256").update(archive).digest("hex")}  jsdos-mcp-${name}.tar.gz\n`);
-    console.log(JSON.stringify({ name, binaryBytes: bytes.length, archiveBytes: archive.length }));
+    const report = { name, binaryBytes: bytes.length, archiveBytes: archive.length, binarySha256: verification.mcpBinarySha256, archiveSha256: createHash("sha256").update(archive).digest("hex") };
+    await writeFile(path.join(output, `jsdos-mcp-${name}.sha256`), `${report.archiveSha256}  jsdos-mcp-${name}.tar.gz\n`);
+    console.log(JSON.stringify(report));
+    if (process.env.GITHUB_ACTIONS) console.log(`::notice title=${name} release::${JSON.stringify(report)}`);
 } finally { await rm(temporary, { recursive: true, force: true }); }
