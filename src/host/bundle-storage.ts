@@ -4,9 +4,11 @@ import { Store, getNonSerializableStore } from "../store";
 import { getBundle, getChanges, putBundle } from "./opfs";
 
 export function bundleFromFile(file: File, store: Store): Promise<Uint8Array> {
-    return new Promise<Uint8Array>((resolve) => {
+    return new Promise<Uint8Array>((resolve, reject) => {
         store.dispatch(storageSlice.actions.reset());
         const reader = new FileReader();
+        reader.addEventListener("error", () => reject(reader.error ?? new Error("Unable to read bundle")));
+        reader.addEventListener("abort", () => reject(new Error("Bundle reading was aborted")));
         reader.addEventListener("load", async (e) => {
             resolve(new Uint8Array(reader.result as ArrayBuffer));
         });

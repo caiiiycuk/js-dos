@@ -5,7 +5,8 @@ import { changesFromUrl, bundleFromFile, bundleFromUrl } from "./host/bundle-sto
 import { uiSlice } from "./store/ui";
 import { editorSlice } from "./store/editor";
 import { storageSlice } from "./store/storage";
-import { getNonSerializableStore } from "./store";
+import { getNonSerializableStore, LoadedBundle } from "./store";
+import { editorOperation } from "./player-editor-queue";
 
 declare const emulators: Emulators;
 
@@ -36,21 +37,13 @@ export function loadBundleFromFile(file: File, store: Store) {
 }
 
 export async function loadBundleFromConfg(config: DosConfig, initFs: InitFs | null, store: Store) {
-    const nonSerializableStore = getNonSerializableStore(store);
-    const dispatch = store.dispatch;
-    nonSerializableStore.loadedBundle = null;
-
-    dispatch(editorSlice.actions.init(config));
-    syncWithConfig(config, dispatch);
-
-    nonSerializableStore.loadedBundle = {
+    return editorOperation(store, {}, async () => commitBundle(store, {
         bundleUrl: null,
         bundleChangesUrl: null,
         bundle: config,
         bundleChanges: null,
         initFs,
-    };
-    dispatch(dosSlice.actions.bndReady({}));
+    }, config, "bundle.jsdos"));
 }
 
 export async function loadBundleFromUrl(url: string, store: Store) {
@@ -66,34 +59,47 @@ async function doLoadBundle(bundleName: string,
                             bundleChangesPromise: (ReturnType<typeof changesProducer>) | null,
                             bundleUrl: string | null,
                             store: Store) {
-    const nonSerializableStore = getNonSerializableStore(store);
-    const dispatch = store.dispatch;
-    nonSerializableStore.loadedBundle = null;
+    return editorOperation(store, {}, async () => {
+        const nonSerializableStore = getNonSerializableStore(store);
+        const bundle = await bundlePromise;
+        const bundleChanges = await bundleChangesPromise;
+        const config = await readBundleConfig(bundle);
+        if (nonSerializableStore.stopped) {
+            return;
+        }
+        commitBundle(store, {
+            bundleUrl,
+            bundleChangesUrl: bundleChanges?.url ?? null,
+            bundle,
+            bundleChanges: bundleChanges?.bundle ?? null,
+            initFs: nonSerializableStore.options.initFs ?? null,
+        }, config, bundleName);
+    });
+}
 
-
-    dispatch(dosSlice.actions.bndLoad(bundleName));
-
-    const bundle = await bundlePromise;
-    dispatch(storageSlice.actions.ready());
-    const bundleChanges = await bundleChangesPromise;
-    dispatch(dosSlice.actions.bndConfig());
-
-    const config = await emulators.bundleConfig(bundle);
-    dispatch(editorSlice.actions.init(config));
-    if (config === null) {
-        dispatch(uiSlice.actions.frameConf());
-    } else {
-        syncWithConfig(config, dispatch);
+export async function readBundleConfig(bundle: Uint8Array) {
+    if (!(bundle instanceof Uint8Array) || bundle.length < 22 || bundle[0] !== 0x50 || bundle[1] !== 0x4b ||
+        !((bundle[2] === 3 && bundle[3] === 4) || (bundle[2] === 5 && bundle[3] === 6))) {
+        throw new Error("Invalid ZIP bundle");
     }
+    return emulators.bundleConfig(bundle);
+}
 
-    nonSerializableStore.loadedBundle = {
-        bundleUrl,
-        bundleChangesUrl: bundleChanges?.url ?? null,
-        bundle,
-        bundleChanges: bundleChanges?.bundle ?? null,
-        initFs: nonSerializableStore.options.initFs ?? null,
-    };
-    dispatch(dosSlice.actions.bndReady({}));
+export function commitBundle(store: Store, loaded: LoadedBundle, config: DosConfig | null, name: string) {
+    if (getNonSerializableStore(store).stopped) {
+        return;
+    }
+    store.dispatch(dosSlice.actions.bndLoad(name));
+    store.dispatch(storageSlice.actions.ready());
+    store.dispatch(dosSlice.actions.bndConfig());
+    store.dispatch(editorSlice.actions.init(config));
+    if (config === null) {
+        store.dispatch(uiSlice.actions.frameConf());
+    } else {
+        syncWithConfig(config, store.dispatch);
+    }
+    getNonSerializableStore(store).loadedBundle = loaded;
+    store.dispatch(dosSlice.actions.bndReady({}));
 }
 
 async function changesProducer(bundleUrl: string, store: Store): Promise<{

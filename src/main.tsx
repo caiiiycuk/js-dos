@@ -12,22 +12,39 @@ import { loadBundleFromConfg, loadBundleFromUrl } from "./player-api-load";
 
 import { DosOptions, DosProps, DosFn, ImageRendering, RenderBackend } from "./public/types";
 import { browserSetFullScreen } from "./host/fullscreen";
-import { NonSerializableStore, State, Store, getNonSerializableStore,
+import { NonSerializableStore, State, Store,
     getState,
     makeNonSerializableStore, makeStore, postJsDosEvent } from "./store";
 import { apiSave } from "./player-api";
 import { getChanges, updateOpfsStats } from "./host/opfs";
+import { getEditor } from "./player-editor";
+import { apiExit } from "./player-api-exit";
+
+let keyboardLockOwner: HTMLElement | null = null;
 
 export const Dos: DosFn = (element: HTMLDivElement,
     options: Partial<DosOptions> = {}): DosProps => {
     const nonSerializableStore = makeNonSerializableStore(options);
     const store = makeStore(nonSerializableStore, options);
 
-    setupRootElement(element, nonSerializableStore, store);
-    (navigator as any).keyboard?.lock(["KeyW", "Escape"]);
+    const rootEvents = setupRootElement(element, nonSerializableStore, store);
+    if ((navigator as any).keyboard) {
+        keyboardLockOwner = element;
+        // SAFETY: Optional keyboard capture may be denied or superseded during remount.
+        (navigator as any).keyboard.lock(["KeyW", "Escape"]).catch(() => undefined);
+        rootEvents.signal.addEventListener("abort", () => {
+            if (keyboardLockOwner === element) {
+                keyboardLockOwner = null;
+                (navigator as any).keyboard.unlock();
+            }
+        }, { once: true });
+    }
 
     let pollStep = "none";
     function pollEvents() {
+        if (nonSerializableStore.stopped) {
+            return;
+        }
         (async () => {
             const state = getState(store);
             const step = state.dos.step;
@@ -71,7 +88,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
             };
         })().catch(console.error);
     }
-    store.subscribe(pollEvents);
+    const unsubscribe = store.subscribe(pollEvents);
 
     initEmulators(store, options.pathPrefix ?? "https://v8.js-dos.com/latest/emulators/", options.pathSuffix ?? "");
 
@@ -301,6 +318,7 @@ export const Dos: DosFn = (element: HTMLDivElement,
     );
 
     return {
+        editor: getEditor(store),
         getVersion: () => {
             return [JSDOS_VERSION, store.getState().dos.emuVersion];
         },
@@ -337,16 +355,24 @@ export const Dos: DosFn = (element: HTMLDivElement,
             return apiSave(getState(store) as any as State, nonSerializableStore, store.dispatch);
         },
         stop: async () => {
-            store.dispatch(uiSlice.actions.hidden(true));
-            const nonSerializableStore = getNonSerializableStore(store);
-            if (nonSerializableStore.ci) {
-                return nonSerializableStore.ci.exit();
+            if (nonSerializableStore.stopped) {
+                return;
             }
+            nonSerializableStore.stopped = true;
+            nonSerializableStore.editorExiting = true;
+            unsubscribe();
+            rootEvents.abort();
+            render(null, element);
+            const ci = nonSerializableStore.ci ?? await nonSerializableStore.pendingCi?.catch(() => null);
+            await apiExit(ci);
+            nonSerializableStore.net?.shutdown();
+            nonSerializableStore.ci = null;
         },
     };
 };
 
 function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSerializableStore, store: Store) {
+    const controller = new AbortController();
     nonSerializableStore.root = root;
     root.classList.add("jsdos-rso");
     root.addEventListener("contextmenu", (e) => {
@@ -357,7 +383,7 @@ function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSeriali
         e.stopPropagation();
         e.preventDefault();
         return false;
-    });
+    }, { signal: controller.signal });
     document.addEventListener("fullscreenchange", (e) => {
         if (!store.getState().ui.softFullscreen) {
             const fullscreen = document.fullscreenElement === root;
@@ -366,7 +392,7 @@ function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSeriali
                 apiSave(getState(store) as any, nonSerializableStore, store.dispatch);
             }
         }
-    });
+    }, { signal: controller.signal });
     document.addEventListener("pointerlockchange", () => {
         store.dispatch(uiSlice.actions.pointerLocked(document.pointerLockElement !== null));
         if (document.pointerLockElement !== null && store.getState().ui.clickToLockModal) {
@@ -375,11 +401,12 @@ function setupRootElement(root: HTMLDivElement, nonSerializableStore: NonSeriali
         if (document.pointerLockElement === null && store.getState().ui.autoSave) {
             apiSave(getState(store) as any, nonSerializableStore, store.dispatch);
         }
-    });
+    }, { signal: controller.signal });
     function listen() {
         store.dispatch(uiSlice.actions.documentHidden(document.hidden));
     };
-    document.addEventListener("visibilitychange", listen);
+    document.addEventListener("visibilitychange", listen, { signal: controller.signal });
+    return controller;
 }
 
 (window as any).Dos = Dos;

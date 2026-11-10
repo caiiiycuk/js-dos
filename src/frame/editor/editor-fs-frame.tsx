@@ -3,15 +3,17 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import CheckboxTree, { Node, OnCheckNode, OnExpandNode } from "react-checkbox-tree";
 import { useSelector, useStore } from "react-redux";
 import { useT } from "../../i18n";
-import { loadBundle } from "../../player-api-load";
+import { getEditor } from "../../player-editor";
 import { State, useNonSerializableStore } from "../../store";
 import { downloadArrayToFs } from "../../download-file";
+import { uiSlice } from "../../store/ui";
 
 interface NodeExt extends Node {
     fsNode: FsNode,
 }
 
 export function EditorFsFrame() {
+    const store = useStore();
     const t = useT();
     const haveCi = useSelector((state: State) => state.dos.ci);
     const nonSerializableStore = useNonSerializableStore();
@@ -33,7 +35,7 @@ export function EditorFsFrame() {
         }
 
         let cancled = false;
-        nonSerializableStore.ci.fsTree()
+        getEditor(store).tree()
             .then((tree) => {
                 if (!cancled) {
                     setFsTree(toNodes(tree));
@@ -71,7 +73,7 @@ export function EditorFsFrame() {
         if (nonSerializableStore.ci === null || !haveCi) {
             return;
         }
-        const tree = await nonSerializableStore.ci.fsTree();
+        const tree = await getEditor(store).tree();
         setFsTree(toNodes(tree));
     }
 
@@ -80,12 +82,11 @@ export function EditorFsFrame() {
         if (ci !== null) {
             try {
                 setUploadingFile("DELETE_OPERATION");
-                for (let path of checked) {
-                    if (path.startsWith("./")) {
-                        path = path.slice(2);
-                    }
-                    await ci.fsDeleteFile(path);
-                }
+                await getEditor(store).files(checked.map((path) => ({
+                    path: path.startsWith("./") ? path.slice(2) : path, delete: true,
+                })));
+            } catch (error) {
+                store.dispatch(uiSlice.actions.showToast({ message: (error as Error).message, intent: "error" }));
             } finally {
                 setUploadingFile(null);
             }
@@ -204,13 +205,17 @@ function Actions(props: {
         }
 
         try {
-            for (const file of files) {
+            await getEditor(store).files(Array.from(files, (file) => {
                 onUploadingFile(file.name);
                 const parts = (file.webkitRelativePath ?? "").split("/");
                 parts.shift();
                 const relPath = parts.join("/");
-                await ci.fsWriteFile(relPath.length == 0 ? file.name : relPath, file.stream());
-            }
+                return {
+                    path: relPath.length == 0 ? file.name : relPath, contents: file.stream(),
+                };
+            }));
+        } catch (error) {
+            store.dispatch(uiSlice.actions.showToast({ message: (error as Error).message, intent: "error" }));
         } finally {
             onUploadingFile(null);
         }
@@ -226,10 +231,9 @@ function Actions(props: {
 
         onMakingBundle(true);
         try {
-            const bundle = await ci.persist(false) as Uint8Array;
-            if (bundle) {
-                loadBundle(bundle, true, store);
-            }
+            await getEditor(store).restart();
+        } catch (error) {
+            store.dispatch(uiSlice.actions.showToast({ message: (error as Error).message, intent: "error" }));
         } finally {
             onMakingBundle(false);
         }
@@ -243,10 +247,9 @@ function Actions(props: {
 
         onMakingBundle(true);
         try {
-            const bundle = await ci.persist(false) as Uint8Array;
-            if (bundle) {
-                downloadArrayToFs("bundle.jsdos", bundle);
-            }
+            downloadArrayToFs("bundle.jsdos", (await getEditor(store).snapshot()).bundle);
+        } catch (error) {
+            store.dispatch(uiSlice.actions.showToast({ message: (error as Error).message, intent: "error" }));
         } finally {
             onMakingBundle(false);
         }

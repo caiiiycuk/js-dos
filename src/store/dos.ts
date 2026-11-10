@@ -233,6 +233,7 @@ export const dosSlice = createSlice({
     initialState,
     reducers: {
         emuReady: (s, a: { payload: string }) => {
+            s.error = null;
             s.step = "emu-ready";
             s.emuVersion = a.payload;
         },
@@ -241,6 +242,7 @@ export const dosSlice = createSlice({
             s.error = a.payload ?? "Unexpeceted error";
         },
         bndLoad: (s, a: { payload: string }) => {
+            s.error = null;
             s.step = "bnd-load";
             s.bundle = a.payload;
         },
@@ -256,6 +258,7 @@ export const dosSlice = createSlice({
             s.config = a.payload;
         },
         bndPlay: (s, a) => {
+            s.error = null;
             s.step = "bnd-play";
             (a as unknown as DosAction).asyncStore((store) => {
                 postJsDosEvent(getNonSerializableStore(store), "bnd-play");
@@ -437,6 +440,7 @@ export const dosSlice = createSlice({
 });
 
 let emulatorsReady = false;
+let emulatorsLoading: Promise<void> | undefined;
 export function initEmulators(store: ReturnType<typeof makeStore>, pathPrefix: string, pathSuffix: string) {
     store.dispatch(async (dispatch) => {
         try {
@@ -453,12 +457,15 @@ export function initEmulators(store: ReturnType<typeof makeStore>, pathPrefix: s
 }
 
 function initEmulatorsJs(pathPrefix: string, pathSuffix: string) {
+    if (emulatorsLoading) {
+        return emulatorsLoading;
+    }
     const el = document.querySelector("#emulators-js");
     if (el !== null) {
         return Promise.resolve();
     }
 
-    return new Promise<void>((resolve, reject) => {
+    emulatorsLoading = new Promise<void>((resolve, reject) => {
         const script = document.createElement("script");
         script.id = "emulators-js";
         script.async = true;
@@ -476,4 +483,5 @@ function initEmulatorsJs(pathPrefix: string, pathSuffix: string) {
 
         document.head.appendChild(script);
     });
+    return emulatorsLoading;
 };

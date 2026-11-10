@@ -4,6 +4,7 @@ import { useDispatch, useSelector, useStore } from "react-redux";
 import { dosSlice } from "../../store/dos";
 import { State, useNonSerializableStore, postJsDosEvent, Store } from "../../store";
 import { useDosRuntime } from "./dos-runtime";
+import { apiExit } from "../../player-api-exit";
 import { Dhry2Results } from "./dos-dhry2";
 import { createWsTransportLayer } from "../../ws/ws-transport-layer";
 import { actualWsVersion, isDhry2Bundle } from "../../v8/config";
@@ -40,6 +41,7 @@ export function DosWindow(props: {
     const t = useT();
 
     useEffect(() => {
+        let disposed = false;
         try {
             const loadedBundle = nonSerializableStore.loadedBundle!;
             let bundles: InitFs = (loadedBundle.bundleChanges !== null ?
@@ -60,7 +62,6 @@ export function DosWindow(props: {
                 }
             }
 
-            loadedBundle.bundle = null;
             loadedBundle.bundleChanges = null;
             loadedBundle.initFs = null;
 
@@ -150,8 +151,12 @@ export function DosWindow(props: {
                 });
             })();
 
+            nonSerializableStore.pendingCi = ci;
             ci
                 .then((ci) => {
+                    if (nonSerializableStore.stopped || disposed) {
+                        return apiExit(ci);
+                    }
                     setCi(ci);
                     dispatch(dosSlice.actions.ci(true));
                     if (pointer.mobile) {
@@ -179,20 +184,26 @@ export function DosWindow(props: {
                                 text: t("unable_to_connect_to_network"),
                                 loading: false,
                             }));
-                            ci.exit();
+                            apiExit(ci).catch((error) => console.warn("Unable to stop DOS backend", error));
                         });
                         ci.networkConnect(0 /* NetworkType.NETWORK_DOSBOX_IPX */, serverPeerId.toString());
                     }
                     postJsDosEvent(nonSerializableStore, "ci-ready", ci);
                 })
-                .catch((e) => dispatch(dosSlice.actions.emuError(e.message)));
+                .catch((error) => {
+                    if (nonSerializableStore.pendingCi === ci) nonSerializableStore.pendingCi = undefined;
+                    if (!nonSerializableStore.stopped && !disposed) dispatch(dosSlice.actions.emuError(error.message));
+                });
 
             return () => {
+                disposed = true;
                 ci.then((ci) => {
-                    dispatch(dosSlice.actions.ci(false));
-                    nonSerializableStore.ci = null;
-                    ci.exit();
-                });
+                    if (nonSerializableStore.ci === ci) {
+                        dispatch(dosSlice.actions.ci(false));
+                        nonSerializableStore.ci = null;
+                    }
+                    return apiExit(ci);
+                }).catch((error) => console.warn("Unable to clean up DOS backend", error));
             };
         } catch (e) {
             dispatch(dosSlice.actions.emuError((e as any).message));
@@ -299,6 +310,9 @@ function Unload(props: { ci: CommandInterface }) {
 
     useEffect(() => {
         ci.events().onUnload(() => {
+            if (nonSerializableStore.editorExiting) {
+                return Promise.resolve();
+            }
             return new Promise((resolve) => {
                 setOpen(true);
                 unloadResolveFn = resolve;
