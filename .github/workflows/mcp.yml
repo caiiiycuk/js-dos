@@ -61,7 +61,21 @@ jobs:
       - run: yarn install --frozen-lockfile --ignore-scripts
       - run: cargo fmt --manifest-path mcp/Cargo.toml --check
       - run: cargo clippy --manifest-path mcp/Cargo.toml --locked --all-targets -- -D warnings
-      - run: cargo test --manifest-path mcp/Cargo.toml --locked
+      - name: Rust tests
+        shell: bash
+        run: cargo test --manifest-path mcp/Cargo.toml --locked 2>&1 | tee "$RUNNER_TEMP/mcp-rust-tests.log"
+      - name: Rust failure summary
+        if: failure()
+        shell: bash
+        run: |
+          if [[ -f "$RUNNER_TEMP/mcp-rust-tests.log" ]]; then
+            {
+              echo '### Rust test failure'
+              echo '```text'
+              tail -n 100 "$RUNNER_TEMP/mcp-rust-tests.log"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
       - run: node test/assets.mjs
       - run: cargo build --manifest-path mcp/Cargo.toml --locked --release
       - run: node test/stdio.mjs

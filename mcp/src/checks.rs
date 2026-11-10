@@ -21,7 +21,7 @@ pub fn selected(root: &Path, name: &str) -> Result<PathBuf> {
         );
     }
     ensure!(
-        path.canonicalize()?.starts_with(root),
+        path.canonicalize()?.starts_with(root.canonicalize()?),
         "Path escapes project root"
     );
     Ok(path)
@@ -204,6 +204,17 @@ impl Drop for ProcessTree {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn selected_normalizes_root_without_allowing_escape() {
+        let root = tempfile::tempdir().unwrap();
+        fs::create_dir(root.path().join("nested")).unwrap();
+        fs::write(root.path().join("file"), b"inside").unwrap();
+        assert_eq!(
+            fs::read(selected(&root.path().join("nested/.."), "file").unwrap()).unwrap(),
+            b"inside"
+        );
+        assert!(selected(root.path(), "../file").is_err());
+    }
     #[tokio::test]
     async fn cancellation_terminates_descendants() {
         let root = tempfile::tempdir().unwrap();

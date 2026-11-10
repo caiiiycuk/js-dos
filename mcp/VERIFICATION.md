@@ -1,6 +1,6 @@
 # Verification
 
-Status on 2026-11-10: published emulators 8.5.3 is integrated and Linux verification passes without an SDK override or local patch. OpenCode 2.2.5 connects to the extracted Linux executable and discovers eight tools. The full release remains blocked on native matrix acceptance.
+Status on 2026-11-10: published emulators 8.5.3 is integrated. The recorded full Linux suite and OpenCode checks passed without an SDK override or local patch. They predate the native-path correction below; fresh full runs are pending. The full release remains blocked on native matrix acceptance.
 
 ## Environment
 
@@ -19,6 +19,10 @@ Linux 7.0.0-42-generic x86_64, Chrome 157.0.8103.50, Node.js 22.17.1, Yarn 1.22.
 - The upgrade exposed DOSBox `[LOG_*]` messages on the SDK error channel. Studio now retains those messages without treating them as a failed browser backend. Regression checks confirm that stdout waits still time out and that worker, panic and other backend errors still return errors.
 
 The browser report is `mcp/release/verification-linux-x64.json`, recorded at `2026-11-10T13:59:15.410Z`. It records `status:passed`, `editor:true`, `mcp:true`, `presets:true` and `emulatorsOverrideSha256:null`, tied to the executable hash below. This ignored local report is not a remote CI result.
+
+## Native path regression
+
+The first native Windows and macOS arm64 jobs failed at `cargo test`, before browser acceptance. Full remote logs were unavailable through the current access. A concrete path bug was reproduced locally: with `TMPDIR` pointing through a symlink, the existing static-verification test panicked with `Path escapes project root`. The helper compared the file's canonical path against an unnormalized root. It now canonicalizes both sides; child-path and symlink validation remain in place. A portable regression also checks a root containing `nested/..` and rejects an escaping child path. All ten Rust tests pass with the symlinked temporary root; formatting, Clippy and workflow validation pass. This is a verified local fix, not yet proof that every remote failure has the same cause. CI now includes failing Rust test output in its job summary for further diagnosis.
 
 ## OpenCode readiness investigation
 
