@@ -67,7 +67,7 @@ async function test() {
     });
     await wait(() => player.editor.state().step === "emu-ready");
     const fixture = await emulators.bundle();
-    fixture.dosboxConf = await (await fetch("/fixture.conf")).text();
+    fixture.dosboxConf = (await (await fetch("/fixture.conf")).text()).replace(/\r?\n/g, "\r\n");
     const bytes = await fixture.toUint8Array();
     await player.editor.open(bytes);
     await rejects(player.editor.files([{ path: "test.txt", delete: true }]), "not-ready");
@@ -82,8 +82,9 @@ async function test() {
     assert(overlapping[0].status === "fulfilled" && overlapping[1].status === "rejected",
         "Overlapping edits lost a revision");
     await rejects(player.editor.open(bytes), "conflict");
-    await wait(() => root.querySelector("textarea")?.value === config.dosboxConf);
-    assert(root.querySelector("textarea")!.value === config.dosboxConf, "API edit is missing from Studio");
+    const textareaConfig = config.dosboxConf.replace(/\r\n?/g, "\n");
+    await wait(() => root.querySelector("textarea")?.value === textareaConfig);
+    assert(root.querySelector("textarea")!.value === textareaConfig, "API edit is missing from Studio");
     const textarea = root.querySelector("textarea")!;
     textarea.value += "\necho UI_EDIT\n";
     const revision = player.editor.state().revision;

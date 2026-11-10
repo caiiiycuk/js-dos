@@ -2,6 +2,8 @@
 
 Draft only. Published emulators 8.5.3 is integrated and Linux checks pass, including native audio cleanup, all five presets without a local SDK patch, normalized project-root validation, an extracted-archive smoke test and connection through OpenCode 2.2.5. That OpenCode version has a cold-start readiness race described in the README. Native release acceptance is incomplete. See `VERIFICATION.md`. The rebuilt Linux executable is 15,623,344 bytes; Windows/macOS sizes have not been measured.
 
+The successful Linux native job in CI run `42849310083` produced a 15,618,392-byte executable and a 5,976,678-byte draft archive. Their SHA-256 values are recorded in `VERIFICATION.md`; these are CI artifacts, not a published release. Windows/macOS acceptance still fails and no sizes are claimed for those platforms.
+
 The release contains a local stdio MCP executable with embedded Studio, DOSBox and DOSBox-X workers, libzip and standalone HTML, Vite, React, Vue and Angular templates.
 
 Each archive includes `release.json` with the binary size, SHA-256 and source commit. A separate `.sha256` file covers the archive. Runtime asset sizes and hashes are in `asset-manifest.json`. License notices and immutable upstream source revisions are included beside the executable.

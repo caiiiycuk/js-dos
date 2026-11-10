@@ -67,18 +67,19 @@ const profile = await mkdtemp(path.join(tmpdir(), "opencode", "jsdos-test-"));
 const chrome = spawn(process.env.CHROME ?? "google-chrome", [
     "--proxy-server=http://127.0.0.1:" + proxy.address().port,
     "--proxy-bypass-list=<-loopback>;127.0.0.1;localhost", "--disable-quic",
-    "--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--remote-debugging-port=0",
+    "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", "--remote-debugging-port=0",
     "--remote-debugging-address=127.0.0.1", "--no-first-run", `--user-data-dir=${profile}`, "about:blank",
 ], { stdio: ["ignore", "ignore", "pipe"] });
 let socket;
+let chromeStderr = "";
+let browserVersion;
 try {
     const debuggerUrl = await new Promise((resolve, reject) => {
         const timeout = setTimeout(() => reject(new Error("Chrome debugger did not start")), 15000);
         chrome.once("error", reject);
-        let stderr = "";
         chrome.stderr.on("data", (data) => {
-            stderr += data;
-            const match = stderr.match(/DevTools listening on (ws:\/\/[^\s]+)/);
+            chromeStderr = (chromeStderr + data).slice(-16384);
+            const match = chromeStderr.match(/DevTools listening on (ws:\/\/[^\s]+)/);
             if (match) { clearTimeout(timeout); resolve(match[1]); }
         });
     });
@@ -99,7 +100,7 @@ try {
     function call(method, params = {}, sessionId) {
         return new Promise((resolve, reject) => {
             const current = ++id;
-            const timeout = setTimeout(() => { pending.delete(current); reject(new Error("CDP timeout: " + method)); }, 120000);
+            const timeout = setTimeout(() => { pending.delete(current); reject(new Error("CDP timeout: " + method + " (#" + current + ")\nBrowser: " + JSON.stringify(browserVersion) + "\nChrome stderr:\n" + chromeStderr)); }, 120000);
             pending.set(current, (message) => {
                 clearTimeout(timeout);
                 if (message.error) reject(new Error(JSON.stringify(message.error)));
@@ -108,6 +109,7 @@ try {
             socket.send(JSON.stringify({ id: current, method, params, sessionId }));
         });
     }
+    browserVersion = await call("Browser.getVersion");
     for (const backend of process.argv.includes("--mcp-only") ? [] : ["dosbox", "dosboxX"]) {
         const { targetId } = await call("Target.createTarget", { url: "about:blank" });
         const { sessionId } = await call("Target.attachToTarget", { targetId, flatten: true });
@@ -132,7 +134,7 @@ try {
     const binary = process.env.JSDOS_MCP_BINARY ?? path.join(root, "mcp/target/debug/jsdos-mcp" + (process.platform === "win32" ? ".exe" : ""));
     await writeFile(verificationFile, JSON.stringify({
         at: new Date().toISOString(), platform: process.platform, arch: process.arch, osRelease: release(),
-        browser: await call("Browser.getVersion"), status: process.env.JSDOS_TEST_EMULATORS_JS ? "development-sdk" : "passed", editor: !process.argv.includes("--mcp-only"),
+        browser: browserVersion, status: process.env.JSDOS_TEST_EMULATORS_JS ? "development-sdk" : "passed", editor: !process.argv.includes("--mcp-only"),
         emulatorsOverrideSha256: process.env.JSDOS_TEST_EMULATORS_JS ? createHash("sha256").update(await readFile(process.env.JSDOS_TEST_EMULATORS_JS)).digest("hex") : null,
         mcp: process.argv.includes("--mcp"), presets: process.argv.includes("--presets"),
         mcpBinarySha256: process.argv.includes("--mcp") ? createHash("sha256").update(await readFile(binary)).digest("hex") : null,
