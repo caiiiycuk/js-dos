@@ -3,6 +3,7 @@ import preact from "@preact/preset-vite";
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
 import { readFile, mkdtemp, rm, mkdir, writeFile } from "node:fs/promises";
+import { writeFileSync, appendFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { tmpdir, release } from "node:os";
 import { fileURLToPath } from "node:url";
@@ -10,10 +11,23 @@ import path from "node:path";
 import assert from "node:assert/strict";
 import { testMcp } from "./mcp.mjs";
 
+const redactFailure = (value) => String(value).replace(/\b[0-9a-f]{8}(?:-?[0-9a-f]{4}){3}-?[0-9a-f]{12}\b/gi, "[REDACTED]").slice(0, 8192);
+assert.equal(redactFailure("http://localhost/#00112233-4455-6677-8899-aabbccddeeff"), "http://localhost/#[REDACTED]");
+assert.equal(redactFailure("00112233445566778899aabbccddeeff"), "[REDACTED]");
+assert.equal(redactFailure("x".repeat(9000)).length, 8192);
+
 const root = fileURLToPath(new URL("../", import.meta.url));
 const verificationFile = path.join(root, `mcp/release/verification-${process.platform}-${process.arch}.json`);
 await mkdir(path.dirname(verificationFile), { recursive: true });
 await writeFile(verificationFile, JSON.stringify({ at: new Date().toISOString(), status: "running" }));
+// SAFETY: Observe terminal failures, including cleanup, without changing Node's nonzero exit.
+process.on("uncaughtExceptionMonitor", (error) => {
+    writeFileSync(verificationFile, JSON.stringify({ at: new Date().toISOString(), status: "failed" }));
+    const failure = redactFailure(error.stack ?? error);
+    if (process.env.GITHUB_ACTIONS) console.log("::error title=Browser acceptance::" + failure.replaceAll("%", "%25").replaceAll("\r", "%0D").replaceAll("\n", "%0A"));
+    if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+        "\n### Browser failure\n\n```text\n" + failure + "\n```\n");
+});
 const output = await build({
     configFile: false, root, publicDir: false, plugins: [preact()],
     define: { JSDOS_VERSION: JSON.stringify("test"), "process.env.NODE_ENV": JSON.stringify("production") },
