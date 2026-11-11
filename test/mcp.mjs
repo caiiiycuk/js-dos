@@ -124,10 +124,14 @@ export async function testMcp(call) {
         const original = await readFile(destination);
         await assert.rejects(tool("editor", { operation: "export", destination, expected_revision: state.revision }), /Destination exists/);
         assert.deepEqual(await readFile(destination), original);
+        state = await tool("editor", { operation: "config", dosbox_conf: draft + "rem REPLACED_EXPORT\n", jsdos_version: "8.5.3", expected_revision: state.revision });
         await tool("editor", { operation: "export", destination, expected_revision: state.revision, replace: true });
+        const replaced = await readFile(destination);
+        assert.notDeepEqual(replaced, original);
         await assert.rejects(tool("editor", { operation: "open", source: destination, expected_revision: state.revision }), /discardChanges/);
         state = (await tool("editor", { operation: "open", source: destination, expected_revision: state.revision, discard_changes: true })).state;
         assert(state.config.dosboxConf.includes("RESTORED_DRAFT"));
+        assert(state.config.dosboxConf.includes("REPLACED_EXPORT"));
         state = await tool("editor", { operation: "start", expected_revision: state.revision });
         assert.equal(Buffer.from((await tool("editor", { operation: "read", path: "RESULT.TXT" })).contents, "base64").toString(), "edited via MCP");
         await tool("editor", { operation: "restart", expected_revision: state.revision });
@@ -174,7 +178,7 @@ export async function testMcp(call) {
         assert.equal(code, 0);
         assert(!stderr.includes(secret), "Diagnostic output leaked the session secret");
         await assert.rejects(fetch(address.origin));
-        assert.deepEqual(await readFile(destination), original);
+        assert.deepEqual(await readFile(destination), replaced);
         console.log(JSON.stringify({ suite: "mcp", status: "passed", tools: tools.length, platform: process.platform }));
         if (process.argv.includes("--presets")) await testPresets(call, temporary);
         return { temporary, bundle: destination };

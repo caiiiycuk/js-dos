@@ -1,6 +1,6 @@
 # Verification
 
-Status on 2026-11-10: published emulators 8.5.3 is integrated. The full Linux suite, extracted-archive smoke test and OpenCode connection pass after the native-path correction below, without an SDK override or local patch. The full release remains blocked on native matrix acceptance.
+Status on 2026-11-11: published emulators 8.5.3 is integrated. The full Linux suite, extracted-archive smoke test and OpenCode connection pass after the native-path correction below, without an SDK override or local patch. The full release remains blocked on native matrix acceptance.
 
 ## Environment
 
@@ -44,7 +44,9 @@ Run `42998924538` passed the entire Linux, macOS Intel and macOS arm64 native jo
 
 Windows failed while removing the owned temporary Angular directory with `EBUSY`. That cleanup exception may have hidden an earlier test failure, so the Windows functional result is not inferred from it. The harness now waits for build processes' `close` event, waits up to ten seconds for terminated development processes to close their pipes, and retries owned-directory removal with Node's bounded `maxRetries:10,retryDelay:100`. A permanent cleanup error still fails verification; if a test had already failed, its original stack is retained in the combined error. The next native Windows run must pass the complete suite and cleanup. The temporary CI-branch push trigger was removed now that the PR exists, leaving PR, manual and release-tag triggers and avoiding cancelled duplicate jobs being reported as failures.
 
-Packaging now extracts each native archive, checks the extracted executable's SHA-256 against the browser-tested binary and runs the empty-PATH stdio smoke test against that extracted copy. It reports binary/archive sizes and hashes in a CI notice. The Linux package passed this check locally; Windows/macOS results are still pending.
+Run `43002493796` exposed an incorrect Linux test expectation after an authorized export replacement. The final shutdown check compared the file against the first export, not the later replacement; ZIP entry timestamps could differ between those snapshots. The test now changes the draft before the authorized replacement, requires different archive bytes, checks the replacement configuration on reimport and compares the final file against that replacement. The rejected-overwrite check still requires the first file to remain byte-for-byte unchanged. The complete local editor/MCP/five-preset suite passed after this correction. Native verification of the correction remains pending.
+
+Packaging now extracts each native archive, checks the extracted executable's SHA-256 against the browser-tested binary and runs the empty-PATH stdio smoke test against that extracted copy. It reports binary/archive sizes and hashes in a CI notice. This check passed locally and in the three native jobs recorded above; Windows is still pending.
 
 ## OpenCode readiness investigation
 
@@ -66,11 +68,11 @@ The override is test-only. Its report has status `development-sdk`, never `passe
 
 ## Remaining blockers
 
-1. Native Linux/Windows/macOS release-matrix results and Windows/macOS browser acceptance are pending in [PR #458](https://github.com/caiiiycuk/js-dos/pull/458), created by the user after the integration could not create it. With the user's approval, implementation snapshot `6bcf9c0e8120bba68c91fe791ce86b384e60ca1f` and the workflow were pushed to `ci/jsdos-mcp-native-acceptance`. The current checkout remains on `mcp`; unrelated root `README.md`, `index.html`, `.opencode` and local OpenSpec planning files were excluded from that snapshot. Initial checks returned no jobs; the Actions page later showed queued/running PR and push runs. The cause of the delay is not established. `actionlint 1.7.12` accepted the workflow. Pushes to the acceptance branch also trigger CI; a shared concurrency group prevents duplicate branch/PR matrices on subsequent pushes. No authorization settings, release tags or publications were changed. Tasks 8.1 and 8.3 remain open until native results pass.
+1. The complete four-target release matrix remains pending in [PR #458](https://github.com/caiiiycuk/js-dos/pull/458). Linux and both macOS targets passed run `42998924538`; Windows acceptance and the corrected export test still require passing native results. With the user's approval, implementation snapshot `6bcf9c0e8120bba68c91fe791ce86b384e60ca1f` and subsequent CI fixes were pushed to `ci/jsdos-mcp-native-acceptance`. The current checkout remains on `mcp`; unrelated root `README.md`, `index.html`, `.opencode` and local OpenSpec planning files were excluded. Initial checks returned no jobs before queued/running jobs appeared; the delay's cause is not established. `actionlint 1.7.12` accepted the workflow. The temporary acceptance-branch push trigger was removed to avoid duplicate PR runs. PR, manual and release-tag triggers remain. No authorization settings, release tags or publications were changed. Tasks 8.1 and 8.3 remain open until native results pass.
 2. All presets now pass locally with the fixed SDK, but final per-platform binary sizes, checksums and licenses must come from the passing native matrix. Task 8.4 remains open pending those outputs. No release was published by this upgrade.
 
 ## Draft size and limitations
 
-The rebuilt local Linux executable measured 15,623,344 bytes with SHA-256 `60d983e07f973ae226f86d21b70b77e14c6fd0d187b469a2b66b403bc9d6982e`. It embeds published emulators 8.5.3 and passed the checks above. The local Linux archive is a draft from a dirty working tree, not an accepted release. Windows/macOS sizes are not measured.
+The rebuilt local Linux executable measured 15,623,344 bytes with SHA-256 `60d983e07f973ae226f86d21b70b77e14c6fd0d187b469a2b66b403bc9d6982e`. It embeds published emulators 8.5.3 and passed the checks above. The local Linux archive is a draft from a dirty working tree, not an accepted release. Separate native Linux/macOS measurements appear above; Windows sizes are not measured.
 
 Browser autoplay and background throttling remain external constraints. A suspended or backend-managed audio context is not a game error. External sockdrive/qcow2 resources are not included in exported archives. Readiness and observed stdout do not prove arbitrary game correctness. Fatal worker crashes were not tested. Existing peer-dependency, caniuse-lite and CSS `start` compatibility warnings remain.
