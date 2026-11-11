@@ -2,11 +2,13 @@
 
 The server runs over stdio and serves a local Studio in your installed browser. Its executable contains the player, DOSBox and DOSBox-X workers, libzip, styles, templates and notices. Running the executable does not need Node.js, npm, Rust, Tauri or Playwright.
 
-This source checkout pins published emulators 8.5.3 with native audio cleanup. Linux checks, including the OpenCode connection, pass. Native release-matrix acceptance remains incomplete. See `VERIFICATION.md` for passing checks and outstanding work.
+This source checkout pins published emulators 8.5.3 with native audio cleanup. Native acceptance passed on Linux x86_64, Windows x86_64 and macOS Intel/arm64. The OpenCode connection was also verified on Linux. See `VERIFICATION.md` and `acceptance/43047052131.json` for the tested environments, checksums and limitations.
 
 ## Install a release
 
 Download the matching archive and `.sha256` file from [Releases](https://github.com/caiiiycuk/js-dos/releases). MCP tags use `mcp-v*`, separately from the existing js-dos npm releases. A platform is not accepted until its native CI and browser checks have passed. See `VERIFICATION.md` for the checks actually run in this checkout.
+
+This change has not published a release tag. Verified draft archives for all four targets are available in [CI run 43047052131](https://github.com/caiiiycuk/js-dos/actions/runs/43047052131).
 
 Archives are named `jsdos-mcp-linux-x86_64.tar.gz`, `jsdos-mcp-windows-x86_64.tar.gz`, `jsdos-mcp-macos-x86_64.tar.gz` and `jsdos-mcp-macos-arm64.tar.gz`. Verify the hash before extracting:
 

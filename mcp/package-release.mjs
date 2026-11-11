@@ -19,6 +19,7 @@ try {
     await cp(path.resolve("mcp/target/release", binary), path.join(folder, binary));
     await cp("mcp/assets/notices", path.join(folder, "notices"), { recursive: true });
     for (const source of ["README.md", "VERIFICATION.md", "RELEASE-NOTES.md", "Cargo.lock", "sources.json"]) await cp("mcp/" + source, path.join(folder, source));
+    await cp("mcp/acceptance", path.join(folder, "acceptance"), { recursive: true });
     await cp("mcp/assets/manifest.json", path.join(folder, "asset-manifest.json"));
     const target = execFileSync("rustc", ["-vV"], { encoding: "utf8" }).match(/^host: (.+)$/m)[1];
     const metadata = JSON.parse(execFileSync("cargo", ["metadata", "--locked", "--format-version", "1", "--filter-platform", target, "--manifest-path", "mcp/Cargo.toml"], { maxBuffer: 32 * 1024 * 1024 }));

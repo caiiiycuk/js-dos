@@ -1,0 +1,81 @@
+{
+  "workflowRun": "https://github.com/caiiiycuk/js-dos/actions/runs/43047052131",
+  "pullRequest": "https://github.com/caiiiycuk/js-dos/pull/458",
+  "status": "passed",
+  "headCommit": "0372f4487d6d1b1cc181c8eff29b85b41f91cad4",
+  "testedMergeCommit": "0a311e56644b8dbc095fba3587cad2e45f49d811",
+  "workingTreeDirty": false,
+  "releasePublished": false,
+  "emulatorsVersion": "8.5.3",
+  "assetManifestSha256": "af07f54f2bacfedc39d6f76d4025bbd98f67a0ade1e018ef4b47cfcddf343c31",
+  "checks": {
+    "rust": "passed",
+    "editor": "passed",
+    "mcp": "passed",
+    "presets": "passed",
+    "extractedArchiveStdio": "passed",
+    "emulatorsOverride": false,
+    "externalRuntimeNetwork": "denied",
+    "downloadedArchiveChecksums": "passed",
+    "packagedBrowserReports": "matched",
+    "declaredRustNotices": "present"
+  },
+  "targets": [
+    {
+      "name": "linux-x86_64",
+      "runner": "ubuntu-22.04",
+      "platform": "linux",
+      "arch": "x64",
+      "osRelease": "6.8.0-1070-azure",
+      "browser": "Chrome/157.0.8103.50",
+      "reportAt": "2026-11-11T15:23:45.707Z",
+      "binaryBytes": 15618392,
+      "binarySha256": "748fd07b8e1f37b08f67992ad375e7f2c2f4ff8bea11a5abe756363991410afe",
+      "archiveBytes": 5982171,
+      "archiveSha256": "9a2752aa91ab860222e6216cf4ec4f639c213ddc39b8a507c3fc2f6dce8f96b6",
+      "rustDependencies": 166
+    },
+    {
+      "name": "windows-x86_64",
+      "runner": "windows-2022",
+      "platform": "win32",
+      "arch": "x64",
+      "osRelease": "10.0.20348",
+      "browser": "Chrome/157.0.8103.50",
+      "reportAt": "2026-11-11T15:32:05.836Z",
+      "binaryBytes": 16906752,
+      "binarySha256": "e2d4dbfaa0f8edceea314857232270c3caac92d4d218becdfe644df51c259e71",
+      "archiveBytes": 6052627,
+      "archiveSha256": "b1bf21244bfc1a2dd170d836552b8b6496ee6e2f2822e6d0e8b955922647ae18",
+      "rustDependencies": 171
+    },
+    {
+      "name": "macos-x86_64",
+      "runner": "macos-15-intel",
+      "platform": "darwin",
+      "arch": "x64",
+      "osRelease": "24.6.0",
+      "browser": "Chrome/151.0.7922.174",
+      "reportAt": "2026-11-11T15:31:54.445Z",
+      "binaryBytes": 15348224,
+      "binarySha256": "847e55f03bf5ba23312ba1a7bf789f9810fc7886ba235ebb2e0ec8f4d7f219ae",
+      "archiveBytes": 5915516,
+      "archiveSha256": "ca99e62cda15455b02033f4c64e83ba20a046db37949025dd3b946655d09d86a",
+      "rustDependencies": 166
+    },
+    {
+      "name": "macos-arm64",
+      "runner": "macos-15",
+      "platform": "darwin",
+      "arch": "arm64",
+      "osRelease": "24.6.0",
+      "browser": "Chrome/157.0.8103.39",
+      "reportAt": "2026-11-11T15:26:41.313Z",
+      "binaryBytes": 15145952,
+      "binarySha256": "ee16d51b8e1a09ce6eee2716fa4ccf921d08680a998bf0c13e962186afdf2794",
+      "archiveBytes": 5867979,
+      "archiveSha256": "f86390cc1736bee554af539d363d493d9355d699e0d11a3be3952e3b4a1caf17",
+      "rustDependencies": 166
+    }
+  ]
+}

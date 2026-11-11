@@ -1,6 +1,6 @@
 # Verification
 
-Status on 2026-11-11: published emulators 8.5.3 is integrated. The full Linux suite, extracted-archive smoke test and OpenCode connection pass after the native-path correction below, without an SDK override or local patch. The full release remains blocked on native matrix acceptance.
+Status on 2026-11-11: all four native targets passed CI run `43047052131` at PR head `0372f4487d6d1b1cc181c8eff29b85b41f91cad4`. Published emulators 8.5.3 is integrated without an SDK override or local patch. Native archives, embedded browser reports, checksums and notices were downloaded and checked. All implementation tasks are complete; no merge, release tag or publication was performed.
 
 ## Environment
 
@@ -72,13 +72,25 @@ The installed `dist/emulators.js` SHA-256 is `52598b412977a892fa81c5613c653ed233
 
 The override is test-only. Its report has status `development-sdk`, never `passed`, and records the selected JavaScript hash. It does not change installed dependencies, embedded release assets or generated projects. Browser reports are invalidated at the beginning of a run and failures replace older successes, so a failed run cannot leave a stale release pass.
 
-## Remaining blockers
+## Final native acceptance
 
-1. The complete four-target release matrix remains pending in [PR #458](https://github.com/caiiiycuk/js-dos/pull/458). Linux and both macOS targets passed run `42998924538`; Windows acceptance and the corrected export test still require passing native results. With the user's approval, implementation snapshot `6bcf9c0e8120bba68c91fe791ce86b384e60ca1f` and subsequent CI fixes were pushed to `ci/jsdos-mcp-native-acceptance`. The current checkout remains on `mcp`; unrelated root `README.md`, `index.html`, `.opencode` and local OpenSpec planning files were excluded. Initial checks returned no jobs before queued/running jobs appeared; the delay's cause is not established. `actionlint 1.7.12` accepted the workflow. The temporary acceptance-branch push trigger was removed to avoid duplicate PR runs. PR, manual and release-tag triggers remain. No authorization settings, release tags or publications were changed. Tasks 8.1 and 8.3 remain open until native results pass.
-2. All presets now pass locally with the fixed SDK, but final per-platform binary sizes, checksums and licenses must come from the passing native matrix. Task 8.4 remains open pending those outputs. No release was published by this upgrade.
+[Run 43047052131](https://github.com/caiiiycuk/js-dos/actions/runs/43047052131) completed successfully on all four native targets. The shared web-assets job passed once; every native job passed Rust checks, missing-asset rejection, release build, empty-PATH stdio smoke, browser/editor/MCP checks, all five preset checks and packaging with a second smoke test against the extracted archive. The release job was skipped because this was a PR, not a release tag. Windows completed in 12m26s, including its complete browser suite and cleanup, rather than the earlier four-hour wait.
+
+| Target | Runner | Reported OS release | Browser |
+| --- | --- | --- | --- |
+| linux-x86_64 | ubuntu-22.04 | Linux 6.8.0-1070-azure | Chrome 157.0.8103.50 |
+| windows-x86_64 | windows-2022 | Windows 10.0.20348 | Chrome 157.0.8103.50 |
+| macos-x86_64 | macos-15-intel | Darwin 24.6.0 | Chrome 151.0.7922.174 |
+| macos-arm64 | macos-15 | Darwin 24.6.0 | Chrome 157.0.8103.39 |
+
+The downloaded archives match their `.sha256` files. Each extracted executable matches both `release.json` and its embedded `browser-verification.json`, which is identical to the separately uploaded browser report. Every report records `status:passed`, editor/MCP/presets enabled, no SDK override and external runtime HTTP(S) denied. All four asset manifests have SHA-256 `af07f54f2bacfedc39d6f76d4025bbd98f67a0ade1e018ef4b47cfcddf343c31`; all source metadata identifies published emulators 8.5.3. Each declared Rust dependency notice exists in the archive: 166 dependencies on Linux/macOS and 171 on Windows. The downloaded Linux executable also passed the empty-PATH stdio smoke locally after extraction.
+
+`acceptance/43047052131.json` preserves the tested PR head and merge commit, browser/OS versions, report timestamps, binary/archive sizes and SHA-256 values. Packaging copies the acceptance record alongside the documentation; a local package check confirmed the exact record is present and the extracted executable still passes stdio smoke. `RELEASE-NOTES.md` records the measured sizes and external-resource warnings. These observations complete tasks 8.1, 8.3 and 8.4; the earlier failure descriptions above are historical, not remaining blockers. UI/MCP revisions, hidden-tab behavior, bounded input, export/reimport, destination conflicts and all five standalone presets passed on each native target. Framework checks include actual AudioContext cleanup and remount; Vite/Angular diagnostic checks remain opt-in and absent from ordinary production output.
+
+The current checkout remains on `mcp`; unrelated root `README.md`, `index.html`, `.opencode` and local OpenSpec planning files were excluded from the CI branch. The original CDN workflow is unchanged. No authorization settings were changed. Merge, release publication and OpenSpec archival remain separate actions, not unfinished implementation tasks.
 
 ## Draft size and limitations
 
-The rebuilt local Linux executable measured 15,623,344 bytes with SHA-256 `60d983e07f973ae226f86d21b70b77e14c6fd0d187b469a2b66b403bc9d6982e`. It embeds published emulators 8.5.3 and passed the checks above. The local Linux archive is a draft from a dirty working tree, not an accepted release. Separate native Linux/macOS measurements appear above; Windows sizes are not measured.
+The rebuilt local Linux executable measured 15,623,344 bytes with SHA-256 `60d983e07f973ae226f86d21b70b77e14c6fd0d187b469a2b66b403bc9d6982e`. It embeds published emulators 8.5.3 and passed the local checks above. Its archive is a draft from a dirty working tree, distinct from the clean native CI artifacts. Current native sizes for all four targets are in `RELEASE-NOTES.md` and the acceptance record.
 
 Browser autoplay and background throttling remain external constraints. A suspended or backend-managed audio context is not a game error. External sockdrive/qcow2 resources are not included in exported archives. Readiness and observed stdout do not prove arbitrary game correctness. Fatal worker crashes were not tested. Existing peer-dependency, caniuse-lite and CSS `start` compatibility warnings remain.
