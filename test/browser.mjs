@@ -75,8 +75,12 @@ let chromeStderr = "";
 let browserVersion;
 try {
     const debuggerUrl = await new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error("Chrome debugger did not start")), 15000);
-        chrome.once("error", reject);
+        const timeout = setTimeout(() => reject(new Error("Chrome debugger did not start within 60000ms\nChrome stderr:\n" + chromeStderr)), 60000);
+        chrome.once("error", (error) => { clearTimeout(timeout); reject(error); });
+        chrome.once("close", (code, signal) => {
+            clearTimeout(timeout);
+            reject(new Error("Chrome exited before debugger startup: code=" + code + ", signal=" + signal + "\nChrome stderr:\n" + chromeStderr));
+        });
         chrome.stderr.on("data", (data) => {
             chromeStderr = (chromeStderr + data).slice(-16384);
             const match = chromeStderr.match(/DevTools listening on (ws:\/\/[^\s]+)/);
