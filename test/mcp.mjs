@@ -1,13 +1,13 @@
 import { spawn } from "node:child_process";
 import { createInterface } from "node:readline";
-import { readFile, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { readFile, mkdtemp, rm, writeFile, realpath } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import assert from "node:assert/strict";
 import { testPresets } from "./presets.mjs";
 
 export async function testMcp(call) {
-    const temporary = await mkdtemp(path.join(tmpdir(), "opencode", "jsdos-mcp-test-"));
+    const temporary = await realpath(await mkdtemp(path.join(tmpdir(), "opencode", "jsdos-mcp-test-")));
     const child = spawn(process.env.JSDOS_MCP_BINARY ?? path.resolve("mcp/target/debug/jsdos-mcp" + (process.platform === "win32" ? ".exe" : "")), [], { stdio: ["pipe", "pipe", "pipe"] });
     const pending = new Map();
     let stderr = "";

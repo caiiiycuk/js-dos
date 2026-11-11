@@ -67,7 +67,7 @@ const profile = await mkdtemp(path.join(tmpdir(), "opencode", "jsdos-test-"));
 const chrome = spawn(process.env.CHROME ?? "google-chrome", [
     "--proxy-server=http://127.0.0.1:" + proxy.address().port,
     "--proxy-bypass-list=<-loopback>;127.0.0.1;localhost", "--disable-quic",
-    "--headless=new", "--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", "--remote-debugging-port=0",
+    "--headless=new", "--no-sandbox", "--disable-dev-shm-usage", "--remote-debugging-port=0",
     "--remote-debugging-address=127.0.0.1", "--no-first-run", `--user-data-dir=${profile}`, "about:blank",
 ], { stdio: ["ignore", "ignore", "pipe"] });
 let socket;

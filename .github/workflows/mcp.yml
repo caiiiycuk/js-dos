@@ -80,10 +80,11 @@ jobs:
       - run: cargo build --manifest-path mcp/Cargo.toml --locked --release
       - run: node test/stdio.mjs
       - uses: browser-actions/setup-chrome@v2
+        if: runner.os != 'macOS'
         id: chrome
       - run: yarn test:presets
         env:
-          CHROME: ${{ steps.chrome.outputs.chrome-path }}
+          CHROME: ${{ runner.os == 'macOS' && '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' || steps.chrome.outputs.chrome-path }}
           JSDOS_MCP_BINARY: ${{ github.workspace }}/mcp/target/release/jsdos-mcp${{ runner.os == 'Windows' && '.exe' || '' }}
       - run: node mcp/package-release.mjs ${{ matrix.name }}
       - uses: actions/upload-artifact@v4
