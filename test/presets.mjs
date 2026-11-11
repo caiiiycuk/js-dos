@@ -11,15 +11,19 @@ function command(args, directory) {
     return process.platform === "win32" ? spawn("cmd.exe", ["/d", "/s", "/c", "npm " + args.join(" ")], { cwd: directory, env, stdio: ["ignore", "pipe", "pipe"] }) :
         spawn("npm", args, { cwd: directory, env, detached: true, stdio: ["ignore", "pipe", "pipe"] });
 }
-async function run(args, directory) {
+export async function run(args, directory, timeoutMs = 180000) {
     const child = command(args, directory);
     let output = "";
+    let timedOut = false;
     child.stdout.on("data", (data) => output += data);
     child.stderr.on("data", (data) => output += data);
-    const timeout = setTimeout(() => terminate(child), 180000);
+    const timeout = setTimeout(() => {
+        timedOut = true;
+        terminate(child).catch((error) => output += "\nCleanup failed: " + error.message);
+    }, timeoutMs);
     const code = await new Promise((resolve, reject) => { child.once("close", resolve); child.once("error", reject); });
     clearTimeout(timeout);
-    assert.equal(code, 0, output);
+    assert(!timedOut && code === 0, `${path.basename(directory)}: npm ${args.join(" ")} ${timedOut ? "timed out after " + timeoutMs + "ms" : "exited with code " + code}\n${output}`);
     return output;
 }
 async function freePort() {
@@ -125,7 +129,7 @@ export async function testPresets(call, root) {
             console.log(JSON.stringify({ preset, status: "passed", nodeRequired: false }));
             continue;
         }
-        await run(["install", "--include=dev", "--ignore-scripts", "--no-audit", "--no-fund"], directory);
+        await run(["install", "--include=dev", "--ignore-scripts", "--no-audit", "--no-fund"], directory, 600000);
         const sourceName = preset === "react" ? "main.jsx" : preset === "angular" ? "main.ts" : "main.js";
         const source = await readFile(path.join(directory, sourceName), "utf8");
         const lifecycle = ["react", "vue", "angular"].includes(preset);

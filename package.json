@@ -25,7 +25,7 @@
     "build:mcp-assets": "node mcp/build-assets.mjs",
     "test:editor": "node test/browser.mjs",
     "test:mcp": "node test/browser.mjs --mcp",
-    "test:presets": "node test/browser.mjs --mcp --presets"
+    "test:presets": "node --test test/presets-process.mjs && node test/browser.mjs --mcp --presets"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",

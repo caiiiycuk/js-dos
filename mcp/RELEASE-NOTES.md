@@ -1,6 +1,6 @@
 # js-dos MCP
 
-Draft only. Published emulators 8.5.3 is integrated. Native Linux, macOS Intel and macOS arm64 jobs pass, including native audio cleanup, all five presets without a local SDK patch and extracted-archive smoke tests. Connection through OpenCode 2.2.5 is verified on Linux; that version has a cold-start readiness race described in the README. Windows verification still fails during temporary Angular directory cleanup, so native release acceptance is incomplete. See `VERIFICATION.md`. The local Linux executable is 15,623,344 bytes.
+Draft only. Published emulators 8.5.3 is integrated. Native Linux, macOS Intel and macOS arm64 jobs pass, including native audio cleanup, all five presets without a local SDK patch and extracted-archive smoke tests. Connection through OpenCode 2.2.5 is verified on Linux; that version has a cold-start readiness race described in the README. Windows acceptance remains incomplete after an Angular dependency installation failure; command deadlines and their diagnostics have been corrected for the next run. See `VERIFICATION.md`. The local Linux executable is 15,623,344 bytes.
 
 CI run `42998924538` produced these measured draft artifacts. SHA-256 values are recorded in `VERIFICATION.md`; no release is published and no Windows size is claimed yet.
 
