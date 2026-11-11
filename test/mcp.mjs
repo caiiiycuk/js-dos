@@ -15,6 +15,7 @@ export async function testMcp(call) {
     let id = 0;
     let targetId;
     let previewTarget;
+    let failure;
     child.stderr.on("data", (data) => stderr += data);
     child.on("exit", (code) => {
         for (const callback of pending.values()) callback({ error: { message: "MCP process exited", code } });
@@ -178,12 +179,20 @@ export async function testMcp(call) {
         if (process.argv.includes("--presets")) await testPresets(call, temporary);
         return { temporary, bundle: destination };
     } catch (error) {
+        failure = error;
         console.error(stderr.replaceAll(secret ?? "__no_secret__", "[redacted]"));
         throw error;
     } finally {
         if (targetId) await call("Target.closeTarget", { targetId });
         if (previewTarget) await call("Target.closeTarget", { targetId: previewTarget });
         if (child.exitCode === null) child.kill();
-        if (!process.env.JSDOS_KEEP_TEST_PROJECTS) await rm(temporary, { recursive: true, force: true });
+        if (!process.env.JSDOS_KEEP_TEST_PROJECTS) {
+            try {
+                await rm(temporary, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
+            } catch (error) {
+                if (failure) throw new Error((failure.stack ?? String(failure)) + "\nCleanup also failed: " + error.message);
+                throw error;
+            }
+        }
     }
 }

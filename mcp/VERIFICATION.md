@@ -34,6 +34,16 @@ Run `42861387795` confirmed that Windows advanced through the editor, MCP, HTML 
 
 The same run confirmed that disabling GPU use did not resolve either macOS timeout. Its Chrome 157.0.8103.50 stderr repeatedly reported `MachPortRendezvousServer` lookup failures and network-service subprocess crashes before the first player test. The ineffective GPU flag was removed. The macOS jobs now use the ordinary Chrome application preinstalled in the runner images instead of the downloaded Chrome for Testing bundle; Linux and Windows keep the existing installer. Both runner image inventories list ordinary Chrome. The full macOS assertions remain enabled, and the next native run must establish whether this browser selection resolves the subprocess failure. No macOS pass is claimed yet.
 
+Run `42998924538` passed the entire Linux, macOS Intel and macOS arm64 native jobs, including browser/editor/MCP/preset checks, native audio lifecycle assertions, packaging and the extracted-archive smoke test. Selecting the installed Chrome resolved the observed macOS startup failure in both jobs. Their measured draft artifacts are:
+
+| Target | Executable bytes | Executable SHA-256 | Archive bytes | Archive SHA-256 |
+| --- | ---: | --- | ---: | --- |
+| linux-x86_64 | 15618392 | `748fd07b8e1f37b08f67992ad375e7f2c2f4ff8bea11a5abe756363991410afe` | 5978266 | `f901dbfa45d12e5ac371c8042a52a95abde00d3e4ccd839bb8d52adaaadd9d3a` |
+| macos-x86_64 | 15348224 | `847e55f03bf5ba23312ba1a7bf789f9810fc7886ba235ebb2e0ec8f4d7f219ae` | 5912915 | `f371d5f9373258461fd5807014e674613f55b8e3580908b8d744c143c8819df6` |
+| macos-arm64 | 15145952 | `ee16d51b8e1a09ce6eee2716fa4ccf921d08680a998bf0c13e962186afdf2794` | 5865319 | `2976fd379fadcad8797b35d0c338bf48211efefbf971618f70270b1d1878eacb` |
+
+Windows failed while removing the owned temporary Angular directory with `EBUSY`. That cleanup exception may have hidden an earlier test failure, so the Windows functional result is not inferred from it. The harness now waits for build processes' `close` event, waits up to ten seconds for terminated development processes to close their pipes, and retries owned-directory removal with Node's bounded `maxRetries:10,retryDelay:100`. A permanent cleanup error still fails verification; if a test had already failed, its original stack is retained in the combined error. The next native Windows run must pass the complete suite and cleanup. The temporary CI-branch push trigger was removed now that the PR exists, leaving PR, manual and release-tag triggers and avoiding cancelled duplicate jobs being reported as failures.
+
 Packaging now extracts each native archive, checks the extracted executable's SHA-256 against the browser-tested binary and runs the empty-PATH stdio smoke test against that extracted copy. It reports binary/archive sizes and hashes in a CI notice. The Linux package passed this check locally; Windows/macOS results are still pending.
 
 ## OpenCode readiness investigation

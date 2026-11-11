@@ -1,8 +1,14 @@
 # js-dos MCP
 
-Draft only. Published emulators 8.5.3 is integrated and Linux checks pass, including native audio cleanup, all five presets without a local SDK patch, normalized project-root validation, an extracted-archive smoke test and connection through OpenCode 2.2.5. That OpenCode version has a cold-start readiness race described in the README. Native release acceptance is incomplete. See `VERIFICATION.md`. The rebuilt Linux executable is 15,623,344 bytes; Windows/macOS sizes have not been measured.
+Draft only. Published emulators 8.5.3 is integrated. Native Linux, macOS Intel and macOS arm64 jobs pass, including native audio cleanup, all five presets without a local SDK patch and extracted-archive smoke tests. Connection through OpenCode 2.2.5 is verified on Linux; that version has a cold-start readiness race described in the README. Windows verification still fails during temporary Angular directory cleanup, so native release acceptance is incomplete. See `VERIFICATION.md`. The local Linux executable is 15,623,344 bytes.
 
-The successful Linux native job in CI run `42849310083` produced a 15,618,392-byte executable and a 5,976,678-byte draft archive. Their SHA-256 values are recorded in `VERIFICATION.md`; these are CI artifacts, not a published release. Windows/macOS acceptance still fails and no sizes are claimed for those platforms.
+CI run `42998924538` produced these measured draft artifacts. SHA-256 values are recorded in `VERIFICATION.md`; no release is published and no Windows size is claimed yet.
+
+| Target | Executable bytes | Archive bytes |
+| --- | ---: | ---: |
+| linux-x86_64 | 15618392 | 5978266 |
+| macos-x86_64 | 15348224 | 5912915 |
+| macos-arm64 | 15145952 | 5865319 |
 
 The release contains a local stdio MCP executable with embedded Studio, DOSBox and DOSBox-X workers, libzip and standalone HTML, Vite, React, Vue and Angular templates.
 

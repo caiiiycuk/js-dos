@@ -4,6 +4,7 @@ import { readFile, writeFile, stat, readdir } from "node:fs/promises";
 import path from "node:path";
 import assert from "node:assert/strict";
 import { createInterface } from "node:readline";
+import { once } from "node:events";
 
 function command(args, directory) {
     const env = { ...process.env, NODE_ENV: args[1] === "build" ? "production" : "development" };
@@ -16,7 +17,7 @@ async function run(args, directory) {
     child.stdout.on("data", (data) => output += data);
     child.stderr.on("data", (data) => output += data);
     const timeout = setTimeout(() => terminate(child), 180000);
-    const code = await new Promise((resolve, reject) => { child.once("exit", resolve); child.once("error", reject); });
+    const code = await new Promise((resolve, reject) => { child.once("close", resolve); child.once("error", reject); });
     clearTimeout(timeout);
     assert.equal(code, 0, output);
     return output;
@@ -28,9 +29,12 @@ async function freePort() {
     await new Promise((resolve) => reserve.close(resolve));
     return port;
 }
-function terminate(child) {
+async function terminate(child) {
+    const closed = child.exitCode === null && child.signalCode === null ?
+        once(child, "close", { signal: AbortSignal.timeout(10000) }) : null;
     if (process.platform === "win32") spawnSync("taskkill.exe", ["/pid", String(child.pid), "/T", "/F"], { stdio: "ignore" });
     else { try { process.kill(-child.pid, "SIGKILL"); } catch {} }
+    await closed;
 }
 async function serve(directory) {
     const server = createServer(async (request, response) => {
@@ -140,7 +144,7 @@ export async function testPresets(call, root) {
             }
             await browser(call, url, lifecycle);
         } finally {
-            terminate(dev);
+            await terminate(dev);
             if (lifecycle) await writeFile(path.join(directory, sourceName), source);
         }
         if (preset === "vite" || preset === "angular") await diagnosticPreview(call, directory, preset);
@@ -219,7 +223,7 @@ async function diagnosticPreview(call, directory, preset) {
         child.stdin.end();
         assert.equal(await new Promise((resolve) => child.once("exit", resolve)), 0);
     } finally {
-        terminate(dev);
+        await terminate(dev);
         if (targetId) await call("Target.closeTarget", { targetId });
         if (child.exitCode === null) child.kill();
     }

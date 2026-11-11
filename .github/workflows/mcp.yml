@@ -4,7 +4,6 @@ on:
   pull_request:
     paths: ['mcp/**', 'src/**', 'test/**', 'package.json', 'yarn.lock', '.github/workflows/mcp.yml']
   push:
-    branches: ['ci/jsdos-mcp-native-acceptance']
     tags: ['mcp-v*']
 
 permissions:
