@@ -14,17 +14,24 @@ function command(args, directory) {
 export async function run(args, directory, timeoutMs = 180000) {
     const child = command(args, directory);
     let output = "";
-    let timedOut = false;
+    let timeout;
+    const description = `${path.basename(directory)}: npm ${args.join(" ")}`;
     child.stdout.on("data", (data) => output += data);
     child.stderr.on("data", (data) => output += data);
-    const timeout = setTimeout(() => {
-        timedOut = true;
-        terminate(child).catch((error) => output += "\nCleanup failed: " + error.message);
-    }, timeoutMs);
-    const code = await new Promise((resolve, reject) => { child.once("close", resolve); child.once("error", reject); });
-    clearTimeout(timeout);
-    assert(!timedOut && code === 0, `${path.basename(directory)}: npm ${args.join(" ")} ${timedOut ? "timed out after " + timeoutMs + "ms" : "exited with code " + code}\n${output}`);
-    return output;
+    try {
+        const code = await new Promise((resolve, reject) => {
+            child.once("close", resolve);
+            child.once("error", reject);
+            timeout = setTimeout(() => reject(new Error(`${description} timed out after ${timeoutMs}ms\n${output}`)), timeoutMs);
+        });
+        assert.equal(code, 0, `${description} exited with code ${code}\n${output}`);
+        return output;
+    } catch (error) {
+        try { await terminate(child); } catch (cleanupError) {
+            throw new Error((error.stack ?? String(error)) + "\nCleanup also failed: " + cleanupError.message);
+        }
+        throw error;
+    } finally { clearTimeout(timeout); }
 }
 async function freePort() {
     const reserve = createServer();
@@ -36,9 +43,13 @@ async function freePort() {
 async function terminate(child) {
     const closed = child.exitCode === null && child.signalCode === null ?
         once(child, "close", { signal: AbortSignal.timeout(10000) }) : null;
-    if (process.platform === "win32") spawnSync("taskkill.exe", ["/pid", String(child.pid), "/T", "/F"], { stdio: "ignore" });
-    else { try { process.kill(-child.pid, "SIGKILL"); } catch {} }
-    await closed;
+    child.stdout?.destroy();
+    child.stderr?.destroy();
+    try {
+        if (process.platform === "win32") spawnSync("taskkill.exe", ["/pid", String(child.pid), "/T", "/F"], { stdio: "ignore", timeout: 10000 });
+        else { try { process.kill(-child.pid, "SIGKILL"); } catch {} }
+        await closed;
+    } finally { child.unref(); }
 }
 async function serve(directory) {
     const server = createServer(async (request, response) => {
@@ -52,7 +63,7 @@ async function serve(directory) {
         } catch { response.writeHead(404).end(); }
     });
     await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-    return { url: "http://127.0.0.1:" + server.address().port, stop: () => new Promise((resolve) => server.close(resolve)) };
+    return { url: "http://127.0.0.1:" + server.address().port, stop: () => new Promise((resolve) => { server.close(resolve); server.closeAllConnections(); }) };
 }
 const observe = `
 window.__players=[];window.__liveCis=0;window.__ws=[];let createDos;
@@ -157,7 +168,11 @@ export async function testPresets(call, root) {
         await stat(path.join(outputDirectory, "runtime/emulators/wdosbox-x.wasm"));
         await noControl(outputDirectory);
         const server = await serve(outputDirectory);
-        try { await browser(call, server.url); } finally { await server.stop(); }
+        console.log(JSON.stringify({ preset, stage: "production-browser" }));
+        try { await browser(call, server.url); } finally {
+            console.log(JSON.stringify({ preset, stage: "production-server-cleanup" }));
+            await server.stop();
+        }
         console.log(JSON.stringify({ preset, status: "passed", checks: ["dev", "build", "production", ...(lifecycle ? ["remount"] : [])] }));
     }
 }
