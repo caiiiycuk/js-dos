@@ -8,7 +8,7 @@ This source checkout pins published emulators 8.5.3 with native audio cleanup. N
 
 Download the matching archive and `.sha256` file from [Releases](https://github.com/caiiiycuk/js-dos/releases). MCP tags use `mcp-v*`, separately from the existing js-dos npm releases. A platform is not accepted until its native CI and browser checks have passed. See `VERIFICATION.md` for the checks actually run in this checkout.
 
-This change has not published a release tag. Verified draft archives for all four targets are available in [CI run 43047052131](https://github.com/caiiiycuk/js-dos/actions/runs/43047052131).
+Verified pre-release archives for all four targets are available in [CI run 43047052131](https://github.com/caiiiycuk/js-dos/actions/runs/43047052131). Use Releases above for published versions.
 
 Archives are named `jsdos-mcp-linux-x86_64.tar.gz`, `jsdos-mcp-windows-x86_64.tar.gz`, `jsdos-mcp-macos-x86_64.tar.gz` and `jsdos-mcp-macos-arm64.tar.gz`. Verify the hash before extracting:
 

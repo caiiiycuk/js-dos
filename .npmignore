@@ -1,5 +1,9 @@
 .idea
 .vscode
+.opencode
+mcp
+openspec
+test
 dist.zip
 src
 .github
@@ -13,4 +17,4 @@ tailwind.config.cjs
 tsconfig.json
 tsconfig.node.json
 vite.config.ts
-README.deployment.md 
+README.deployment.md

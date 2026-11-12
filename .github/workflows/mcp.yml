@@ -105,6 +105,6 @@ jobs:
           pattern: jsdos-mcp-*
           path: release
           merge-multiple: true
-      - run: gh release create "$GITHUB_REF_NAME" release/* --title "$GITHUB_REF_NAME" --notes-file mcp/RELEASE-NOTES.md
+      - run: gh release create "$GITHUB_REF_NAME" release/* --title "$GITHUB_REF_NAME" --latest=false --notes-file mcp/RELEASE-NOTES.md
         env:
           GH_TOKEN: ${{ github.token }}
