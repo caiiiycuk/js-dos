@@ -2,6 +2,12 @@
 
 Status on 2026-11-11: all four native targets passed CI run `43047052131` at PR head `0372f4487d6d1b1cc181c8eff29b85b41f91cad4`. Published emulators 8.5.3 is integrated without an SDK override or local patch. Native archives, embedded browser reports, checksums and notices were downloaded and checked. All implementation tasks are complete; no merge, release tag or publication was performed.
 
+## Release preparation on 2026-11-12
+
+The js-dos version is 8.5.4 and the MCP crate version is 0.1.0. The npm package excludes MCP sources/builds, tests, OpenSpec and local OpenCode configuration. MCP publication does not replace the main js-dos GitHub Latest release.
+
+Release preflight found [GHSA-m665-v7pm-7grj](https://github.com/advisories/GHSA-m665-v7pm-7grj) in zip 6.0.0. A regression demonstrated that validation accepted a ZIP with central path `.jsdos/dosbox.conf` and local path `../bad/dosbox.conf`. After upgrading to zip 9.0.5 and explicitly calling `validate_header_consistency`, all eleven Rust tests and Clippy pass. The full local editor/MCP/five-preset suite and Rust cross-target checks also passed. This demonstrates rejection of inconsistent archives, not a host RCE exploit against MCP. Release CI must repeat native acceptance for the updated source.
+
 ## Environment
 
 Linux 7.0.0-42-generic x86_64, Chrome 157.0.8103.50, Node.js 22.17.1, Yarn 1.22.22 and Rust/Cargo 1.95.0. OpenCode 2.2.5 was checked again with the release executable in an isolated environment. These are observed versions, not tested minimums.

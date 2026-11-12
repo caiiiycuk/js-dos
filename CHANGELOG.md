@@ -13,6 +13,7 @@ Not all changes are documented here. To examine the full set of changes between 
 * Added standalone HTML, Vite, React, Vue and Angular project generation with local runtime assets. Generated projects run independently after MCP shutdown without a required CDN connection.
 * Added opt-in `runInBackground` support while preserving the ordinary player's default pause behavior. Updated emulators to 8.5.3 and fixed player cleanup for component unmount and remount.
 * Added native CI and MCP release packaging for all four targets, including offline runtime checks, checksums, license notices and source metadata. MCP releases use separate `mcp-v*` tags.
+* Updated MCP ZIP validation to zip 9.0.5 with explicit local/central header consistency checks for GHSA-m665-v7pm-7grj.
 
 8.5.3 - 07.10.2026
 ------------------

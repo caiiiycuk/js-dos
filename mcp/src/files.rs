@@ -64,13 +64,14 @@ pub fn validate(bytes: &[u8]) -> Result<serde_json::Value> {
     ensure!(bytes.len() <= MAX_ZIP, "ZIP exceeds 64 MiB transfer limit");
     let mut archive = ZipArchive::new(Cursor::new(bytes)).context("Invalid ZIP")?;
     ensure!(archive.len() <= MAX_FILES, "ZIP exceeds 4096 entries");
+    archive.validate_header_consistency()?;
     let mut total = 0u64;
     let mut names = HashSet::new();
     let mut files = HashSet::new();
     let mut config = None;
     for index in 0..archive.len() {
         let mut entry = archive.by_index(index)?;
-        let name = entry.name().trim_end_matches('/').to_owned();
+        let name = entry.name()?.trim_end_matches('/').to_owned();
         relative(&name)?;
         ensure!(
             names.insert(name.to_ascii_lowercase()),
@@ -331,6 +332,13 @@ mod tests {
                 .to_string()
                 .contains("Missing .jsdos/dosbox.conf")
         );
+    }
+    #[test]
+    fn rejects_mismatched_local_and_central_paths() {
+        let mut bytes = create("[autoexec]").unwrap();
+        assert_eq!(&bytes[30..48], b".jsdos/dosbox.conf");
+        bytes[30..48].copy_from_slice(b"../bad/dosbox.conf");
+        assert!(validate(&bytes).is_err());
     }
     #[test]
     fn failed_publication_preserves_existing_data() {

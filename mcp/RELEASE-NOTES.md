@@ -1,5 +1,7 @@
 # js-dos MCP
 
+ZIP validation uses zip 9.0.5 with explicit local/central header consistency checks for [GHSA-m665-v7pm-7grj](https://github.com/advisories/GHSA-m665-v7pm-7grj).
+
 Published emulators 8.5.3 is integrated. Native Linux x86_64, Windows x86_64 and macOS Intel/arm64 acceptance passed, including native audio cleanup, all five presets without a local SDK patch and extracted-archive smoke tests. Connection through OpenCode 2.2.5 is verified on Linux; that version has a cold-start readiness race described in the README.
 
 CI run [43047052131](https://github.com/caiiiycuk/js-dos/actions/runs/43047052131), PR head `0372f4487d6d1b1cc181c8eff29b85b41f91cad4`, produced these measured draft artifacts. Exact binary/archive SHA-256 values, browser versions and OS releases are recorded in `acceptance/43047052131.json`. The archives record the tested PR merge commit `0a311e56644b8dbc095fba3587cad2e45f49d811` and a clean working tree. Later documentation changes do not change these historical measurements.
