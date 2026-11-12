@@ -27,3 +27,7 @@ public/emulators/*
 !public/emulators/webrtcnet.mjs
 !public/emulators/webrtcnet.wasm
 *.zip
+mcp/assets/
+mcp/target/
+mcp/release/
+mcp/emulators-source/

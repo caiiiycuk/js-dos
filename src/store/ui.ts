@@ -1,7 +1,7 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
 import { lStorage } from "../host/lstorage";
 import { DosAction } from "../store";
-import { dosSlice } from "./dos";
+import { getEditor } from "../player-editor";
 
 export const ThemeValues = <const>["light", "dark", "cupcake", "bumblebee", "emerald", "corporate",
     "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua", "lofi",
@@ -221,7 +221,7 @@ export const uiSlice = createSlice({
             .addCase(createAction<string>("dos/bndReady"), (s, a) => {
                 if (s.autoStart && s.countDownStart === 0) {
                     (a as unknown as DosAction).asyncStore((store) => {
-                        store.dispatch(dosSlice.actions.bndPlay({}));
+                        getEditor(store).start().catch((error) => console.error(error));
                     });
                 } else {
                     s.window = "prerun";
@@ -239,4 +239,3 @@ export const uiSlice = createSlice({
             });
     },
 });
-

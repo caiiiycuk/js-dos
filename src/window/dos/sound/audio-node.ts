@@ -42,12 +42,14 @@ class SamplesQueue {
 }
 
 export function audioNode(ci: CommandInterface,
-                          bindVolumeFn?: (fn: (volume: number) => void) => () => void) {
+                          bindVolumeFn?: (fn: (volume: number) => void) => () => void,
+                          stateChanged?: (state: string) => void) {
     const sampleRate = ci.soundFrequency();
     const channels = 1;
 
     if (sampleRate === 0) {
-        console.warn("Can't create audio node with sampleRate === 0, ingnoring");
+        // SAFETY: Native backend worklets do not expose their AudioContext through CI samples.
+        stateChanged?.("backend-managed");
         return () => {};
     }
 
@@ -67,10 +69,13 @@ export function audioNode(ci: CommandInterface,
     }
 
     if (audioContext == null) {
+        stateChanged?.("unavailable");
         return () => {};
     }
 
     const samplesQueue = new SamplesQueue();
+    stateChanged?.(audioContext.state);
+    audioContext.onstatechange = () => stateChanged?.(audioContext?.state ?? "closed");
     const bufferSize = 2048;
     const preBufferSize = 2048;
 
@@ -127,6 +132,7 @@ export function audioNode(ci: CommandInterface,
     document.addEventListener("keydown", resumeWebAudio, { once: true });
 
     return () => {
+        stateChanged?.("closed");
         ci.events().onSoundPush(() => {});
 
         if (audioContext !== null) {

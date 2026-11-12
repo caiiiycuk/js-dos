@@ -3,15 +3,13 @@ import { dosSlice } from "../store/dos";
 import { State, useNonSerializableStore } from "../store";
 import { useT } from "../i18n";
 import { uiSlice } from "../store/ui";
-import { Emulators } from "emulators";
 import { useEffect, useState } from "preact/hooks";
 import { loadBundleFromUrl } from "../player-api-load";
 import { downloadArrayToFs } from "../download-file";
 import { uploadFile } from "./file-input";
 import { apiSave } from "../player-api";
 import { deleteChanges } from "../host/opfs";
-
-declare const emulators: Emulators;
+import { getEditor } from "../player-editor";
 
 export function PreRunWindow() {
     const emuVersion = useSelector((state: State) => state.dos.emuVersion);
@@ -145,15 +143,13 @@ function ChangesFrame() {
 }
 
 export function Play(props: { class?: string, button?: boolean }) {
-    const configChanged = useSelector((state: State) => state.editor.configChanged);
-    const bundleConfig = useSelector((state: State) => state.editor.bundleConfig);
     const frameVisible = useSelector((state: State) => state.ui.frame !== "none");
     const countDownStart = useSelector((state: State) => state.ui.countDownStart);
     const uiAutoStart = useSelector((state: State) => state.ui.autoStart);
     const editor = useSelector((state: State) => state.ui.editor);
     const [countDownRest, setCountDownRest] = useState<number>(countDownStart);
     const [_autoStart, setAutoStart] = useState<boolean>(uiAutoStart);
-    const nonSerializableStore = useNonSerializableStore();
+    const store = useStore();
     const dispatch = useDispatch();
     const t = useT();
     const autoStart = _autoStart && !frameVisible && !editor;
@@ -167,7 +163,7 @@ export function Play(props: { class?: string, button?: boolean }) {
         }
 
         if (countDownRest === 0 && countDownStart > 0 && autoStart) {
-            dispatch(dosSlice.actions.bndPlay({}));
+            onPlay();
         }
     }, [countDownRest, countDownStart, autoStart]);
 
@@ -176,22 +172,10 @@ export function Play(props: { class?: string, button?: boolean }) {
     }, [uiAutoStart]);
 
     async function onPlay() {
-        if (configChanged) {
-            const config = bundleConfig;
-            const bundle = nonSerializableStore.loadedBundle?.bundle;
-            if (bundle === null || config === null || !ArrayBuffer.isView(bundle)) {
-                throw new Error("Unexpected behaviour (internal state is broken), bundle is null");
-            }
-
-            try {
-                nonSerializableStore.loadedBundle!.bundle =
-                    await emulators.bundleUpdateConfig(bundle, config);
-                dispatch(dosSlice.actions.bndPlay({}));
-            } catch (e) {
-                dispatch(dosSlice.actions.bndError((e as Error).message ?? "unexpected error"));
-            }
-        } else {
-            dispatch(dosSlice.actions.bndPlay({}));
+        try {
+            await getEditor(store).start();
+        } catch (error) {
+            dispatch(dosSlice.actions.bndError((error as Error).message));
         }
     }
 

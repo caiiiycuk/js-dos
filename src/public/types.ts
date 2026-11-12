@@ -57,6 +57,7 @@ export interface DosOptions {
     onEvent: (event: DosEvent, arg?: any /* CommandInterface | boolean */) => void,
     fullScreen: boolean,
     autoStart: boolean,
+    runInBackground: boolean,
     fastForwardOnBoot: number,
     countDownStart: number,
     autoSave: boolean,
@@ -93,6 +94,7 @@ export interface DosOptions {
 }
 
 export interface DosProps {
+    editor: DosEditorApi;
     getVersion(): [string, string];
     getLocalChanges(key: string): Promise<Uint8Array | null>;
 
@@ -127,5 +129,59 @@ export interface DosProps {
 }
 
 export type DosFn = (element: HTMLDivElement, options: Partial<DosOptions>) => DosProps;
+
+export interface DosEditorConfig {
+    dosboxConf: string;
+    jsdosConf: { version: string; [key: string]: unknown };
+}
+
+export interface DosEditorState {
+    revision: number;
+    dirty: boolean;
+    bundle: string | null;
+    ready: boolean;
+    step: string;
+    error: string | null;
+    config: DosEditorConfig | null;
+    runningConfig: DosEditorConfig | null;
+    paused: boolean;
+    hidden: boolean;
+    runInBackground: boolean;
+    audio: string;
+    volume: number;
+}
+
+export type DosEditorErrorCode = "invalid-input" | "conflict" | "not-ready" | "backend" | "timeout";
+
+export interface DosEditorOperation {
+    expectedRevision?: number;
+}
+
+export type DosEditorFileOperation = { path: string; contents: Uint8Array | ReadableStream<Uint8Array> } |
+    { path: string; delete: true };
+
+export interface DosEditorFsNode {
+    name: string;
+    size: number | null;
+    nodes: DosEditorFsNode[] | null;
+}
+
+export interface DosEditorSnapshot {
+    bundle: Uint8Array;
+    revision: number;
+    warnings: string[];
+}
+
+export interface DosEditorApi {
+    state(): DosEditorState;
+    open(bundle: Uint8Array, options?: DosEditorOperation & { discardChanges?: boolean }): Promise<DosEditorState>;
+    setConfig(config: DosEditorConfig, options?: DosEditorOperation): Promise<DosEditorState>;
+    tree(): Promise<DosEditorFsNode>;
+    readFile(path: string): Promise<Uint8Array>;
+    files(operations: DosEditorFileOperation[], options?: DosEditorOperation): Promise<DosEditorState>;
+    start(options?: DosEditorOperation): Promise<DosEditorState>;
+    restart(options?: DosEditorOperation): Promise<DosEditorState>;
+    snapshot(options?: DosEditorOperation): Promise<DosEditorSnapshot>;
+}
 
 // declare const Dos: DosFn;

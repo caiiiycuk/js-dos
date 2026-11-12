@@ -1,0 +1,12 @@
+{
+  "emulators": {
+    "version": "8.5.3",
+    "repository": "https://github.com/js-dos/emulators",
+    "commit": "e6f4e5449a5b17ae3ea0fdccfd453c8d299e9ea5",
+    "npmIntegrity": "sha512-vaC1q+J6nYD9LIo357fUj6hmNrC6jqzPLFu8M1F8YH46qUZcXxU2KXQO7XdQJ0dQSWi2GHHeZnIMV4NB7IkpuA==",
+    "sourceArchive": "https://github.com/js-dos/emulators/archive/e6f4e5449a5b17ae3ea0fdccfd453c8d299e9ea5.tar.gz"
+  },
+  "dosbox": { "repository": "https://github.com/js-dos/dosbox", "commit": "528578d5a6f76afd4d5ef4e722b5670826f1183a" },
+  "dosboxX": { "repository": "https://github.com/js-dos/dosbox-x", "commit": "788fde99d3d451eab3621009186e5abe516f2b9c" },
+  "libzip": { "sourcePath": "native/libzip/libzip-1.5", "repository": "https://github.com/js-dos/emulators", "commit": "e6f4e5449a5b17ae3ea0fdccfd453c8d299e9ea5" }
+}

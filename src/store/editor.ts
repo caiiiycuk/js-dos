@@ -9,12 +9,18 @@ const initialState: {
     bundleConfig: DosConfig | null,
     errorMessage: string | null,
     fs: Node[],
+    revision: number,
+    dirty: boolean,
+    runningConfig: DosConfig | null,
 } = {
     // step: "empty",
     configChanged: false,
     bundleConfig: null,
     errorMessage: null,
     fs: [],
+    revision: 0,
+    dirty: false,
+    runningConfig: null,
 };
 
 export type EditorState = typeof initialState;
@@ -24,6 +30,9 @@ export const editorSlice = createSlice({
     initialState,
     reducers: {
         init: (s, a: { payload: DosConfig | null }) => {
+            s.revision++;
+            s.dirty = false;
+            s.runningConfig = null;
             if (a.payload === null) {
                 s.configChanged = true;
                 s.bundleConfig = {
@@ -38,8 +47,25 @@ export const editorSlice = createSlice({
             }
         },
         dosboxConf: (s, a: { payload: string }) => {
+            s.revision++;
+            s.dirty = true;
             s.configChanged = true;
             s.bundleConfig!.dosboxConf = a.payload;
+        },
+        config: (s, a: { payload: DosConfig }) => {
+            s.revision++;
+            s.dirty = true;
+            s.configChanged = true;
+            s.bundleConfig = a.payload;
+        },
+        filesChanged: (s) => {
+            s.revision++;
+            s.dirty = true;
+        },
+        started: (s, a: { payload: DosConfig }) => {
+            s.revision++;
+            s.runningConfig = a.payload;
+            s.configChanged = false;
         },
         // empty: (s) => {
         //     s.step = "empty";

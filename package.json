@@ -21,7 +21,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:mcp-assets": "node mcp/build-assets.mjs",
+    "test:editor": "node test/browser.mjs",
+    "test:mcp": "node test/browser.mjs --mcp",
+    "test:presets": "node --test test/presets-process.mjs && node test/browser.mjs --mcp --presets"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
@@ -38,7 +42,7 @@
     "@vitejs/plugin-basic-ssl": "^2.1.0",
     "autoprefixer": "^10.4.17",
     "daisyui": "^3.9.3",
-    "emulators": "8.5.2",
+    "emulators": "8.5.3",
     "eslint": "^8.56.0",
     "eslint-config-google": "^0.14.0",
     "postcss": "^8.4.33",

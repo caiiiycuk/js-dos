@@ -203,6 +203,7 @@ function useRenderBackend(canvas: HTMLCanvasElement,
 
 function useAudioBackend(ci: CommandInterface): void {
     const store = useStore() as Store;
+    const nonSerializableStore = useNonSerializableStore();
 
     useEffect(() => {
         const unbind = audioNode(ci, (setVolume) => {
@@ -218,18 +219,26 @@ function useAudioBackend(ci: CommandInterface): void {
 
             const unsubscribe = store.subscribe(updateVolumeIfNeeded);
             return unsubscribe;
-        });
+        }, (state) => nonSerializableStore.audioState = state);
 
         return unbind;
     }, [ci]);
 }
 
 function usePause(ci: CommandInterface): void {
+    const nonSerializableStore = useNonSerializableStore();
+    const runInBackground = nonSerializableStore.options.runInBackground === true;
     const paused = useSelector((state: State) => state.dos.paused);
     const documentHidden = useSelector((state: State) => state.ui.documentHidden);
     useEffect(() => {
-        (paused || documentHidden) ? ci.pause() : ci.resume();
-    }, [paused, documentHidden, ci]);
+        if (nonSerializableStore.editorExiting) {
+            ci.resume();
+        } else if (nonSerializableStore.editorSnapshotting || paused || (documentHidden && !runInBackground)) {
+            ci.pause();
+        } else {
+            ci.resume();
+        }
+    }, [paused, documentHidden, runInBackground, ci]);
 }
 
 function useStats(ci: CommandInterface): void {

@@ -1,0 +1,110 @@
+name: js-dos MCP
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['mcp/**', 'src/**', 'test/**', 'package.json', 'yarn.lock', '.github/workflows/mcp.yml']
+  push:
+    tags: ['mcp-v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcp-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  assets:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.17.1'
+          cache: yarn
+      - run: yarn install --frozen-lockfile --ignore-scripts
+      - run: yarn tsc --noEmit
+      - run: yarn eslint src test --ext ts,tsx --max-warnings 0
+      - run: yarn build
+      - run: yarn build:mcp-assets
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mcp-web-assets
+          path: mcp/assets
+          retention-days: 7
+  native:
+    needs: assets
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-22.04, name: linux-x86_64 }
+          - { os: windows-2022, name: windows-x86_64 }
+          - { os: macos-15-intel, name: macos-x86_64 }
+          - { os: macos-15, name: macos-arm64 }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: mcp-web-assets
+          path: mcp/assets
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.17.1'
+          cache: yarn
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: '1.95.0'
+          components: rustfmt, clippy
+      - run: yarn install --frozen-lockfile --ignore-scripts
+      - run: cargo fmt --manifest-path mcp/Cargo.toml --check
+      - run: cargo clippy --manifest-path mcp/Cargo.toml --locked --all-targets -- -D warnings
+      - name: Rust tests
+        shell: bash
+        run: cargo test --manifest-path mcp/Cargo.toml --locked 2>&1 | tee "$RUNNER_TEMP/mcp-rust-tests.log"
+      - name: Rust failure summary
+        if: failure()
+        shell: bash
+        run: |
+          if [[ -f "$RUNNER_TEMP/mcp-rust-tests.log" ]]; then
+            {
+              echo '### Rust test failure'
+              echo '```text'
+              tail -n 100 "$RUNNER_TEMP/mcp-rust-tests.log"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - run: node test/assets.mjs
+      - run: cargo build --manifest-path mcp/Cargo.toml --locked --release
+      - run: node test/stdio.mjs
+      - uses: browser-actions/setup-chrome@v2
+        if: runner.os != 'macOS'
+        id: chrome
+      - run: yarn test:presets
+        timeout-minutes: 30
+        env:
+          CHROME: ${{ runner.os == 'macOS' && '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' || steps.chrome.outputs.chrome-path }}
+          JSDOS_MCP_BINARY: ${{ github.workspace }}/mcp/target/release/jsdos-mcp${{ runner.os == 'Windows' && '.exe' || '' }}
+      - run: node mcp/package-release.mjs ${{ matrix.name }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jsdos-mcp-${{ matrix.name }}
+          path: mcp/release/*
+  release:
+    if: startsWith(github.ref, 'refs/tags/mcp-v')
+    needs: native
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: jsdos-mcp-*
+          path: release
+          merge-multiple: true
+      - run: gh release create "$GITHUB_REF_NAME" release/* --title "$GITHUB_REF_NAME" --notes-file mcp/RELEASE-NOTES.md
+        env:
+          GH_TOKEN: ${{ github.token }}

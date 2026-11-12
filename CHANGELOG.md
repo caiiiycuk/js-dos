@@ -4,6 +4,16 @@ Note that version numbers do not necessarily reflect the amount of changes betwe
 
 Not all changes are documented here. To examine the full set of changes between versions, you can use git to browse the changes between the tags.
 
+8.5.4 - 12.11.2026
+------------------
+
+* Added a local stdio MCP server with an embedded Studio, DOSBox and DOSBox-X runtime for Linux x86_64, Windows x86_64 and macOS Intel/arm64. The executable runs without Node.js or Rust.
+* Added the public `DosProps.editor` API for bundle creation, configuration and file editing, start/restart and full snapshot export. UI and MCP edits share revision checks to prevent overwriting newer changes.
+* Added MCP diagnostics with bounded stdout and backend messages, keyboard/mouse scenarios, screenshots and explicit errors and timeouts. Project build checks require permission, and browser diagnostics are opt-in.
+* Added standalone HTML, Vite, React, Vue and Angular project generation with local runtime assets. Generated projects run independently after MCP shutdown without a required CDN connection.
+* Added opt-in `runInBackground` support while preserving the ordinary player's default pause behavior. Updated emulators to 8.5.3 and fixed player cleanup for component unmount and remount.
+* Added native CI and MCP release packaging for all four targets, including offline runtime checks, checksums, license notices and source metadata. MCP releases use separate `mcp-v*` tags.
+
 8.5.3 - 07.10.2026
 ------------------
 

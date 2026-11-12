@@ -1,0 +1,413 @@
+diff --git a/src/dos/dosbox/ts/audio-worklet.ts b/src/dos/dosbox/ts/audio-worklet.ts
+index d0f2050..b16280f 100644
+--- a/src/dos/dosbox/ts/audio-worklet.ts
++++ b/src/dos/dosbox/ts/audio-worklet.ts
+@@ -1,28 +1,46 @@
+-export async function createAudioPort(): Promise<MessagePort | undefined> {
++export async function createAudioPort(): Promise<{ port: MessagePort, dispose: () => void } | undefined> {
+     let url: string | undefined;
++    let context: AudioContext | undefined;
++    let node: AudioWorkletNode | undefined;
++    const resumeWebAudio = () => {
++        if (context?.state === "suspended") {
++            context.resume().catch(console.error);
++        }
++    };
++    const dispose = () => {
++        if (typeof document !== "undefined") {
++            document.removeEventListener("pointerdown", resumeWebAudio, true);
++            document.removeEventListener("keydown", resumeWebAudio, true);
++        }
++        node?.port.close();
++        node?.disconnect();
++        node = undefined;
++        if (context !== undefined) {
++            if (context.state !== "closed") {
++                context.close().catch(console.error);
++            }
++            context = undefined;
++        }
++    };
+ 
+     try {
+         const blob = new Blob([audioWorkletCode], { type: "application/javascript" });
+         url = URL.createObjectURL(blob);
+-        const context = new AudioContext({ latencyHint: "interactive" });
++        context = new AudioContext({ latencyHint: "interactive" });
+         await context.audioWorklet.addModule(url);
+-        const node = new AudioWorkletNode(context, "jsdos-audio", {
++        node = new AudioWorkletNode(context, "jsdos-audio", {
+             numberOfInputs: 0,
+             numberOfOutputs: 1,
+             outputChannelCount: [1],
+         });
+         node.connect(context.destination);
+ 
+-        const resumeWebAudio = () => {
+-            if (context.state === "suspended") {
+-                context.resume().catch(console.error);
+-            }
+-        };
+         document.addEventListener("pointerdown", resumeWebAudio, { once: true, capture: true });
+         document.addEventListener("keydown", resumeWebAudio, { once: true, capture: true });
+ 
+-        return node.port;
++        return { port: node.port, dispose };
+     } catch (e) {
++        dispose();
+         console.error("error creating audio port", e);
+         return undefined;
+     } finally {
+diff --git a/src/dos/dosbox/ts/direct.ts b/src/dos/dosbox/ts/direct.ts
+index 6cfaf2d..f78e6e7 100644
+--- a/src/dos/dosbox/ts/direct.ts
++++ b/src/dos/dosbox/ts/direct.ts
+@@ -14,6 +14,7 @@ export async function dosDirect(wasmModule: WasmModule,
+     let handler: MessageHandler = messagesQueue.handler.bind(messagesQueue);
+ 
+     const module: any = {};
++    let audio: Awaited<ReturnType<typeof createAudioPort>>;
+ 
+     module.postMessage = (name: ServerMessage, props: { [key: string]: any }) => {
+         handler(name, props);
+@@ -37,6 +38,7 @@ export async function dosDirect(wasmModule: WasmModule,
+             messagesQueue.sendTo(handler);
+         },
+         exit: () => {
++            audio?.dispose();
+             if (typeof window !== "undefined") {
+                 window.removeEventListener("message", sleepHandler);
+             }
+@@ -50,12 +52,17 @@ export async function dosDirect(wasmModule: WasmModule,
+         window.addEventListener("message", sleepHandler, { passive: true });
+     }
+ 
+-    module.canvas = canvas;
+-    if (audioWorklet) {
+-        module.audioPort = await createAudioPort();
++    try {
++        module.canvas = canvas;
++        if (audioWorklet) {
++            audio = await createAudioPort();
++            module.audioPort = audio?.port;
++        }
++        await wasmModule.instantiate(module);
++        module.callMain([sessionId]);
++        return transportLayer;
++    } catch (error) {
++        transportLayer.exit?.();
++        throw error;
+     }
+-    await wasmModule.instantiate(module);
+-    module.callMain([sessionId]);
+-
+-    return transportLayer;
+ }
+diff --git a/src/dos/dosbox/ts/worker.ts b/src/dos/dosbox/ts/worker.ts
+index 55eba34..2bb7752 100644
+--- a/src/dos/dosbox/ts/worker.ts
++++ b/src/dos/dosbox/ts/worker.ts
+@@ -19,7 +19,10 @@ export async function dosWorker(workerUrl: string,
+     }
+     const localUrl = URL.createObjectURL(await response.blob());
+     const worker = new Worker(localUrl);
++    let audio: Awaited<ReturnType<typeof createAudioPort>>;
++    let exited = false;
+     worker.onerror = (e) => {
++        transportLayer.exit?.();
+         handler("ws-err", { type: e.type, filename: e.filename, message: e.message });
+     };
+     worker.onmessage = (e) => {
+@@ -45,6 +48,8 @@ export async function dosWorker(workerUrl: string,
+             messagesQueue.sendTo(handler);
+         },
+         exit: () => {
++            exited = true;
++            audio?.dispose();
+             URL.revokeObjectURL(localUrl);
+             worker.terminate();
+         },
+@@ -52,29 +57,33 @@ export async function dosWorker(workerUrl: string,
+     };
+ 
+     const transfer: Transferable[] = canvas ? [canvas] : [];
+-    let audioPort;
+-
+-    if (audioWorklet) {
+-        audioPort = await createAudioPort();
+-        if (audioPort) {
+-            transfer.push(audioPort);
+-        }
+-    }
+-
+     try {
+-        transportLayer.sendMessageToServer("wc-install", {
+-            module: (wasmModule as any).wasmModule,
+-            sessionId,
+-            canvas,
+-            audioPort,
+-        }, transfer);
+-    } catch (e) {
+-        transportLayer.sendMessageToServer("wc-install", {
+-            sessionId,
+-            canvas,
+-            audioPort,
+-        }, transfer);
++        if (audioWorklet) {
++            audio = await createAudioPort();
++            if (audio !== undefined) {
++                transfer.push(audio.port);
++            }
++        }
++        if (exited) {
++            throw new Error("Worker exited during initialization");
++        }
++        try {
++            transportLayer.sendMessageToServer("wc-install", {
++                module: (wasmModule as any).wasmModule,
++                sessionId,
++                canvas,
++                audioPort: audio?.port,
++            }, transfer);
++        } catch (e) {
++            transportLayer.sendMessageToServer("wc-install", {
++                sessionId,
++                canvas,
++                audioPort: audio?.port,
++            }, transfer);
++        }
++        return transportLayer;
++    } catch (error) {
++        transportLayer.exit?.();
++        throw error;
+     }
+-
+-    return transportLayer;
+ }
+diff --git a/test/src/node-runner.ts b/test/src/node-runner.ts
+index e0cbb79..b5a3f05 100644
+--- a/test/src/node-runner.ts
++++ b/test/src/node-runner.ts
+@@ -10,6 +10,7 @@ import { testDosBundle } from "./test-bundle";
+ import { testDos } from "./test-dos";
+ import { testProtocol } from "./test-protocol";
+ import { testAudioWorklet } from "./test-audio-worklet";
++import { testAudioLifecycle } from "./test-audio-lifecycle";
+ 
+ const repoRoot = resolve(__dirname, "../..");
+ const testRoot = join(repoRoot, "test");
+@@ -57,6 +58,7 @@ test("loader can load wdosbox.js from build/wasm", async () => {
+ 
+ testProtocol();
+ testAudioWorklet();
++testAudioLifecycle();
+ testLibZip();
+ testDosBundle();
+ testDos([
+diff --git a/test/src/test-audio-lifecycle.ts b/test/src/test-audio-lifecycle.ts
+new file mode 100644
+index 0000000..3c8b269
+--- /dev/null
++++ b/test/src/test-audio-lifecycle.ts
+@@ -0,0 +1,201 @@
++import { assert } from "chai";
++import { createAudioPort } from "../../src/dos/dosbox/ts/audio-worklet";
++import { dosDirect } from "../../src/dos/dosbox/ts/direct";
++import { dosWorker } from "../../src/dos/dosbox/ts/worker";
++
++export function testAudioLifecycle() {
++    suite("audio lifecycle");
++
++    for (const backend of ["direct", "worker"]) {
++        for (const fail of [false, true]) {
++            test(`${backend} releases audio after ${fail ? "initialization failure" : "exit"}`, async () => {
++                const browser = createAudioBrowser();
++                browser.failInstall = fail;
++                try {
++                    const module = {
++                        instantiate: async (instance: any) => {
++                            if (fail) {
++                                throw new Error("fixture initialization failure");
++                            }
++                            instance.callMain = () => undefined;
++                        },
++                    } as any;
++                    const creating = backend === "worker" ?
++                        dosWorker("data:text/javascript,", module, "fixture", undefined, true) :
++                        dosDirect(module, "fixture", undefined, true);
++                    if (fail) {
++                        try {
++                            await creating;
++                            assert.fail("initialization should fail");
++                        } catch (error) {
++                            assert.include(String(error), "fixture initialization failure");
++                        }
++                    } else {
++                        const transport = await creating;
++                        transport.exit?.();
++                        transport.exit?.();
++                    }
++                    assert.deepEqual(browser.contexts.map((context) => context.closeCount), [1]);
++                    assert.deepEqual(browser.nodes.map((node) => node.closedPorts), [1]);
++                    assert.deepEqual(browser.nodes.map((node) => node.disconnected), [1]);
++                    assert.equal(browser.listeners.get("pointerdown")?.size ?? 0, 0);
++                    assert.equal(browser.listeners.get("keydown")?.size ?? 0, 0);
++                } finally {
++                    browser.restore();
++                }
++            });
++        }
++    }
++
++    for (const failure of ["module", "node"]) {
++        test(`closes the context when ${failure} creation fails`, async () => {
++            const browser = createAudioBrowser();
++            browser.failModule = failure === "module";
++            browser.failNode = failure === "node";
++            try {
++                assert.isUndefined(await createAudioPort());
++                assert.deepEqual(browser.contexts.map((context) => context.closeCount), [1]);
++                assert.equal(browser.listeners.size, 0);
++            } finally {
++                browser.restore();
++            }
++        });
++    }
++
++    test("worker errors during audio creation release the late context", async () => {
++        const browser = createAudioBrowser();
++        browser.failDuringModule = true;
++        try {
++            try {
++                await dosWorker("data:text/javascript,", {} as any, "fixture", undefined, true);
++                assert.fail("initialization should fail");
++            } catch (error) {
++                assert.include(String(error), "Worker exited during initialization");
++            }
++            assert.deepEqual(browser.contexts.map((context) => context.closeCount), [1]);
++            assert.deepEqual(browser.nodes.map((node) => node.closedPorts), [1]);
++            assert.equal(browser.listeners.get("pointerdown")?.size ?? 0, 0);
++            assert.equal(browser.listeners.get("keydown")?.size ?? 0, 0);
++        } finally {
++            browser.restore();
++        }
++    });
++
++    test("worker errors release the live audio resources", async () => {
++        const browser = createAudioBrowser();
++        try {
++            const transport = await dosWorker("data:text/javascript,", {} as any, "fixture", undefined, true);
++            browser.workerError();
++            transport.exit?.();
++            assert.deepEqual(browser.contexts.map((context) => context.closeCount), [1]);
++            assert.deepEqual(browser.nodes.map((node) => node.closedPorts), [1]);
++            assert.equal(browser.listeners.get("pointerdown")?.size ?? 0, 0);
++            assert.equal(browser.listeners.get("keydown")?.size ?? 0, 0);
++        } finally {
++            browser.restore();
++        }
++    });
++}
++
++function createAudioBrowser() {
++    const browser = {
++        contexts: [] as { state: string, closeCount: number }[],
++        nodes: [] as { closedPorts: number, disconnected: number }[],
++        listeners: new Map<string, Set<() => void>>(),
++        failModule: false,
++        failDuringModule: false,
++        failNode: false,
++        failInstall: false,
++        workerError: () => undefined as void,
++        restore: () => undefined as void,
++    };
++    class Context {
++        state = "suspended";
++        closeCount = 0;
++        destination = {};
++        audioWorklet = {
++            addModule: async () => {
++                if (browser.failDuringModule) {
++                    browser.workerError();
++                }
++                if (browser.failModule) {
++                    throw new Error("fixture module failure");
++                }
++            },
++        };
++        constructor() {
++            browser.contexts.push(this);
++        }
++        close() {
++            this.closeCount++;
++            this.state = "closed";
++            return Promise.resolve();
++        }
++        resume() {
++            this.state = "running";
++            return Promise.resolve();
++        }
++    }
++    class Node {
++        closedPorts = 0;
++        disconnected = 0;
++        port = { close: () => this.closedPorts++ };
++        constructor() {
++            if (browser.failNode) {
++                throw new Error("fixture node failure");
++            }
++            browser.nodes.push(this);
++        }
++        connect() {
++            return undefined;
++        }
++        disconnect() {
++            this.disconnected++;
++        }
++    }
++    class Worker {
++        onerror: ((event: any) => void) | null = null;
++        constructor() {
++            browser.workerError = () => this.onerror?.({ type: "error", message: "fixture worker failure" });
++        }
++        postMessage() {
++            if (browser.failInstall) {
++                throw new Error("fixture initialization failure");
++            }
++        }
++        terminate() {
++            return undefined;
++        }
++    }
++    const replacements = {
++        AudioContext: Context,
++        AudioWorkletNode: Node,
++        Worker,
++        document: {
++            addEventListener: (name: string, callback: () => void) => {
++                if (!browser.listeners.has(name)) {
++                    browser.listeners.set(name, new Set());
++                }
++                browser.listeners.get(name)?.add(callback);
++            },
++            removeEventListener: (name: string, callback: () => void) => {
++                browser.listeners.get(name)?.delete(callback);
++            },
++        },
++    };
++    const descriptors = Object.keys(replacements).map((name) => [name,
++        Object.getOwnPropertyDescriptor(globalThis, name)] as const);
++    for (const [name, value] of Object.entries(replacements)) {
++        Object.defineProperty(globalThis, name, { configurable: true, writable: true, value });
++    }
++    browser.restore = () => {
++        for (const [name, descriptor] of descriptors) {
++            if (descriptor !== undefined) {
++                Object.defineProperty(globalThis, name, descriptor);
++            } else {
++                delete (globalThis as any)[name];
++            }
++        }
++    };
++    return browser;
++}
