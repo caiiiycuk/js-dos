@@ -26,6 +26,7 @@ dist-ssr
 public/emulators/*
 !public/emulators/webrtcnet.mjs
 !public/emulators/webrtcnet.wasm
+!public/emulators/mt32/
 *.zip
 mcp/assets/
 mcp/target/
