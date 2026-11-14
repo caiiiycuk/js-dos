@@ -1,3 +1,6 @@
+window.addEventListener("unhandledrejection", (event) => {
+    console.error("CRITICAL ASYNC ERROR:", event.reason);
+});
 import { render } from "preact";
 import "./index.css";
 

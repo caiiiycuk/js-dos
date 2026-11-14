@@ -15,6 +15,7 @@ import { SoftKeyboard } from "../soft-keyboard";
 import { useT } from "../../i18n";
 import { apiSave } from "../../player-api";
 import { createNet } from "../../webrtcnet/webrtcnet";
+import { initMt32Integration, feedMidiByte, disposeMt32 } from "./mt32/mt32-integration";
 
 declare const emulators: Emulators;
 
@@ -153,12 +154,24 @@ export function DosWindow(props: {
 
             nonSerializableStore.pendingCi = ci;
             ci
-                .then((ci) => {
+                .then(async (ci) => {
                     if (nonSerializableStore.stopped || disposed) {
                         return apiExit(ci);
                     }
                     setCi(ci);
                     dispatch(dosSlice.actions.ci(true));
+
+                    // Initializing the Roland MT-32 emulator and Web Audio
+                    await initMt32Integration();
+
+                    // Hooking into the capture of the MIDI byte stream from emulator events
+                    ci.events().onMessage((name: string, props: any) => {
+                        console.log("[DOS Message Debug]", name, props);
+                        if (name === "midi-byte" || name === "MIDI Raw Byte") {
+                            feedMidiByte(props.data);
+                        }
+                    });
+
                     if (pointer.mobile) {
                         ci.config()
                             .then((c) => {
@@ -201,6 +214,7 @@ export function DosWindow(props: {
                     if (nonSerializableStore.ci === ci) {
                         dispatch(dosSlice.actions.ci(false));
                         nonSerializableStore.ci = null;
+                        disposeMt32(); // Shut down the MT-32 and release audio resources upon exit
                     }
                     return apiExit(ci);
                 }).catch((error) => console.warn("Unable to clean up DOS backend", error));
